@@ -3708,7 +3708,7 @@ void CalcInverseCmd(float goal[3], float joint[3], float motor[3])
   static float Phi4 = 0.0;
 
   joint[0] = -1 * atan2f(goal[1], goal[0]);
-  joint[0] = GetFilterdSignal(&LPF_motor[0], joint[0]);
+  // joint[0] = GetFilterdSignal(&LPF_motor[0], joint[0]);
   // joint[0] = mwarctan2(goal[1], goal[0]);
 
   p1[0] = Lb * cos(joint[0]);
@@ -3726,9 +3726,9 @@ void CalcInverseCmd(float goal[3], float joint[3], float motor[3])
   Phi4 = acos(((Lac * Lac) + (Lp2h * Lp2h) - (Lg2h * Lg2h)) / (2 * Lac * Lg2h));
 
   joint[2] = (PI / 2.0) - Phi1 + Phi2;
-  joint[2] = GetFilterdSignal(&LPF_motor[2], joint[2]);
+  // joint[2] = GetFilterdSignal(&LPF_motor[2], joint[2]);
   joint[1] = PI - Phi3 - Phi4;
-  joint[1] = GetFilterdSignal(&LPF_motor[1], joint[1]);
+  // joint[1] = GetFilterdSignal(&LPF_motor[1], joint[1]);
   motor[0] = joint[0] * Rgn1;
   motor[1] = joint[1] * Rgn2;
   motor[2] = joint[2] * Rgn3;
