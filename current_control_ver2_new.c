@@ -3488,7 +3488,7 @@ void FDTD_Tm_Init()
 
 void SetLPF(LPF_param *Filter, float Ts, float fs, float Q)
 {
-  float w = 2 * PI * fs;
+  float w = fs;
   LPF_motor[0].Num = 1;
   LPF_motor[0].flag = 0;
   LPF_motor[0].Ts = Ts;
