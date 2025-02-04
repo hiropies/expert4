@@ -3488,7 +3488,7 @@ void FDTD_Tm_Init()
 
 void SetLPF(LPF_param *Filter, float Ts, float fs, float Q)
 {
-  float w = fs;
+  float w = 2 * PI * fs;
   LPF_motor[0].Num = 1;
   LPF_motor[0].flag = 0;
   LPF_motor[0].Ts = Ts;
@@ -3564,8 +3564,9 @@ void CalcHandCmd(float goal[3], float t_wait, float speed, float start_hand[3], 
 {
   const float D = 0.020;
   const float path = (1.5 * PI * D);
+  const float t_task = path * (60.0 / speed);
   const float freq = 1 / (t_task / 1.5);
-  const float t_task = 1.5 / freq;
+  // const float t_task = 1.5 / freq;
   // const float S1 = mwsin(theta);
   // const float C1 = mwcos(theta);
   // const float S2 = mwsin(theta2);
