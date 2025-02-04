@@ -1,0 +1,773 @@
+  ///	制御開始フラグが立った場合
+  if (1 <= flag_cont_start)
+  {
+
+    // flag_cont_start == 1 : 電流制御確認
+    if (1 == flag_cont_start)
+    {
+      /*****************************************************************************
+        ロボット TA1400
+        1軸目 : 電流指令　正　→　ロボットから見て　右
+                エンコーダ情報は右向きが正
+        2軸目 : 電流指令　正　→　ロボットから見て　上
+                エンコーダ情報は上向きが正
+        3軸目 : 電流指令　正　→　ロボットから見て　下
+
+        ＊軸によって違うので注意！！！（ギアとかによる）
+      ***************************************************************************** */
+
+      // 位置応答と速度応答をラッチ
+      axis1.qm = axis1.theta_rm_full - axis1.theta_rm_init;
+      axis2.qm = axis2.theta_rm_full - axis2.theta_rm_init;
+      axis2.qm = -1.0 * axis2.qm;
+      axis3.qm = axis3.theta_rm_full - axis3.theta_rm_init;
+      axis1.ql = axis1.theta_rl_full;
+      axis2.ql = axis2.theta_rl_full;
+      axis2.ql = -1.0 * axis2.ql;
+      axis3.ql = axis3.theta_rl_full;
+      axis1.wm = axis1.omega_rm;
+      axis2.wm = axis2.omega_rm;
+      axis2.wm = -1.0 * axis2.wm;
+      axis3.wm = axis3.omega_rm;
+      if (flag_on == 0)
+      {
+        axis1.qm_ref = 0.0;
+        axis2.qm_ref = 0.0;
+        axis3.qm_ref = 0.0;
+      }
+      else
+      {
+        axis1.qm_ref = axis1.qm;
+        axis2.qm_ref = axis2.qm;
+        axis3.qm_ref = axis3.qm;
+      }
+
+      CalcGravIcmp(joint); // 2,3軸の重力補償電流を計算　main関数の初期姿勢を要確認！！！！
+      CalcJl(joint);       // JLの変動は使うので3軸分計算
+
+      // // 可変ゲイン計算
+      // CalcPVGain();
+      // if (flag_PPgain == 1)
+      // {
+      //   axis1.Kpp = 15;
+      // }
+      // // 従来2
+      // else if (flag_PPgain == 2)
+      // {
+      //   axis1.Kpp = 15;
+      // }
+
+      // 負荷側情報計算
+      CalcFDTDWr_QmrefInputType(&axis1);
+      CalcFDTDWr_QmrefInputType(&axis2);
+      CalcFDTDWr_QmrefInputType(&axis3);
+
+      // 動力学トルクを計算
+      CalcTauLDyn(joint);
+      // FF制御　動力学補償電流
+      FDTD_Tm(&axis1);
+      FDTD_Tm(&axis2);
+      FDTD_Tm(&axis3);
+
+      // axis1.IrefQ = Ref_Iq_ref_direct;
+      // axis1.IrefQ = Ref_Iq_ref_direct*sinf(2.0*PI*t); // 正弦波指令 電流指令確認用;
+      // axis1.wm_ref = Ref_wM_direct * RectGenerator(t,ref_freq);
+      // axis1.IrefQ = Pcontroller((axis1.wm_ref - axis1.wm),Kpv);
+      // 動力学方程式より出るトルクの正負に合わせて補償電流を入れる
+      // inspectorで要確認！！！！
+      axis1.Icmd = 0.0;
+      axis2.Icmd = 0.0;
+      axis3.Icmd = 0.0;
+
+      axis1.IrefQ = axis1.Icmd;
+      axis2.IrefQ = axis2.Icmd + axis2.Icmp;
+      axis3.IrefQ = axis3.Icmd + axis3.Icmp;
+    }
+    if (2 <= flag_cont_start)
+    {
+      flag_on = 1;
+      if (flag_pv == 0)
+      {
+        flag_pv = 1;
+
+        // ****************************************************
+        // 時間測定 flag_pv = 0
+        // ****************************************************
+        // 制御周期測定用タイマのクリア
+        C6657_timer0_stop();
+        C6657_timer0_clear();
+        C6657_timer0_start();
+
+        // 位置応答と速度応答をラッチ
+        axis1.qm = axis1.theta_rm_full - axis1.theta_rm_init;
+        axis2.qm = axis2.theta_rm_full - axis2.theta_rm_init;
+        axis2.qm = -1.0 * axis2.qm;
+        axis3.qm = axis3.theta_rm_full - axis3.theta_rm_init;
+        axis1.ql = axis1.theta_rl_full;
+        axis2.ql = axis2.theta_rl_full;
+        axis2.ql = -1.0 * axis2.ql;
+        axis3.ql = axis3.theta_rl_full;
+        axis1.wm = axis1.omega_rm;
+        axis2.wm = axis2.omega_rm;
+        axis2.wm = -1.0 * axis2.wm;
+        axis3.wm = axis3.omega_rm;
+
+        // ラッチしたqlの情報をもとにJlを計算
+        CalcJl(joint); // JLの変動は使うので3軸分計算
+
+        // 可変ゲイン計算
+        CalcPVGain();
+        if (flag_PPgain == 1)
+        {
+          axis1.Kpp = 15;
+          axis2.Kpp = 15;
+          axis3.Kpp = 15;
+        }
+        else if (flag_PPgain == 2)
+        {
+          axis1.Kpp = 20;
+          axis2.Kpp = 20;
+          axis3.Kpp = 20;
+        }
+        else if (flag_PPgain == 3)
+        {
+          axis1.Kpp = 30;
+          axis2.Kpp = 30;
+          axis3.Kpp = 30;
+        }
+
+        float start2 = (float)C6657_timer0_read() * 4.8e-9 * 1e6;
+
+        if (flag_FF_triple == 1)
+        {
+          // 1,2軸動力学モデル更新
+          CalcFDTDWrInit_QmrefInputType_1st2nd();
+          WAVE_TimeWrInit = (float)C6657_timer0_read() * 4.8e-9 * 1e6 - start2;
+        }
+        else
+        {
+          // 2軸のみモデル更新
+          CalcFDTDWrInit_QmrefInputType_1st2nd();
+          WAVE_TimeWrInit = (float)C6657_timer0_read() * 4.8e-9 * 1e6 - start2;
+        }
+
+        // 制御周期の測定結果出力 ファンクションリファレンスp45より
+        // 制御にかかった時間を測定している。
+        WAVE_Timer0 = (float)C6657_timer0_read() * 4.8e-9 * 1e6;
+      }
+      else
+      {
+        flag_pv = 0;
+
+        // 制御周期測定用タイマのクリア
+        C6657_timer1_stop();
+        C6657_timer1_clear();
+        C6657_timer1_start();
+
+        float start3 = (float)C6657_timer1_read() * 4.8e-9 * 1e6;
+        // FF制御　FDTDで離散化した負荷側情報計算関数(qmref入力)
+        if (flag_FF_triple == 1)
+        {
+          CalcFDTDWr_QmrefInputType(&axis1); // 1軸目は動力学外乱入力なし
+          CalcFDTDWr_QmrefInputType(&axis2);
+          CalcFDTDWr_QmrefInputType(&axis3);
+          WAVE_TimeWr = (float)C6657_timer1_read() * 4.8e-9 * 1e6 - start3;
+        }
+        else
+        {
+          CalcFDTDWr_QmrefInputType(&axis2);
+          CalcFDTDWr_QmrefInputType(&axis3);
+          WAVE_TimeWr = (float)C6657_timer1_read() * 4.8e-9 * 1e6 - start3;
+        }
+
+        start3 = (float)C6657_timer1_read() * 4.8e-9 * 1e6;
+        // 動力学トルクを計算
+        CalcTauLDyn(joint); // 1軸目の動力学外乱は使わないのでコメントアウト
+        WAVE_TimeTauLdyn = (float)C6657_timer1_read() * 4.8e-9 * 1e6 - start3;
+
+        start3 = (float)C6657_timer1_read() * 4.8e-9 * 1e6;
+        // FF制御　動力学補償電流
+        FDTD_Tm(&axis1);
+        FDTD_Tm(&axis2);
+        FDTD_Tm(&axis3);
+        WAVE_TimeTm = (float)C6657_timer1_read() * 4.8e-9 * 1e6 - start3;
+
+        start3 = (float)C6657_timer1_read() * 4.8e-9 * 1e6;
+        CalcGravIcmp(joint);
+        WAVE_TimeGrav = (float)C6657_timer1_read() * 4.8e-9 * 1e6 - start3;
+
+        CalcGravIcmp(joint);
+
+        if (flag_SOB == 0)
+        {
+          // 状態推定(従来法SOB)
+          StateObserver(axis1.IrefQ, axis1.wm, &axis1.est_conv_wm, &axis1.est_conv_qs, &axis1.est_conv_wl, axis1.BDN);
+          StateObserver(axis2.I_SOBinput, axis2.wm, &axis2.est_conv_wm, &axis2.est_conv_qs, &axis2.est_conv_wl, axis2.BDN);
+          StateObserver(axis3.I_SOBinput, axis3.wm, &axis3.est_conv_wm, &axis3.est_conv_qs, &axis3.est_conv_wl, axis3.BDN);
+          // 状態フィードバック電流の計算
+          axis1.Isfb = axis1.est_conv_wm * axis1.fwm + axis1.est_conv_qs * axis1.fqs + axis1.est_conv_wl * axis1.fwl;
+          axis2.Isfb = axis2.est_conv_wm * axis2.fwm + axis2.est_conv_qs * axis2.fqs + axis2.est_conv_wl * axis2.fwl;
+          axis3.Isfb = axis3.est_conv_wm * axis3.fwm + axis3.est_conv_qs * axis3.fqs + axis3.est_conv_wl * axis3.fwl;
+        }
+        else if (flag_SOB == 1)
+        {
+          // 状態推定(従来法FDTDSOB)
+          FDTDSOB(&axis1);
+          FDTDSOB(&axis2);
+          FDTDSOB(&axis3);
+
+          // 状態フィードバック電流の計算
+          axis1.Isfb = axis1.est_prop_wm * axis1.fwm + axis1.est_prop_qs * axis1.fqs + axis1.est_prop_wl * axis1.fwl;
+          axis2.Isfb = axis2.est_prop_wm * axis2.fwm + axis2.est_prop_qs * axis2.fqs + axis2.est_prop_wl * axis2.fwl;
+          axis3.Isfb = axis3.est_prop_wm * axis3.fwm + axis3.est_prop_qs * axis3.fqs + axis3.est_prop_wl * axis3.fwl;
+        }
+        else if (flag_SOB == 2)
+        {
+          // 状態推定(提案法tauLdyn入力型FDTDSOB)
+          FDTD_T_SOB(&axis1);
+          FDTD_T_SOB(&axis2);
+          FDTD_T_SOB(&axis3);
+          // 状態フィードバック電流の計算
+          axis1.Isfb = axis1.est_prop_wm * axis1.fwm + axis1.est_prop_qs * axis1.fqs + axis1.est_prop_wl * axis1.fwl;
+          axis2.Isfb = axis2.est_prop_wm * axis2.fwm + axis2.est_prop_qs * axis2.fqs + axis2.est_prop_wl * axis2.fwl;
+          axis3.Isfb = axis3.est_prop_wm * axis3.fwm + axis3.est_prop_qs * axis3.fqs + axis3.est_prop_wl * axis3.fwl;
+        }
+        /* comment
+           2軸目は正の電流指令でアームが上向きに回る。
+           CalcTauLDyn、CalcGravIcmpで計算される動力学トルクはアームが上がるほうに正、下がるほうに負となる。 180deg 超えると逆
+           Tmで計算された補償電流は制御系に加算される前提で計算される。
+        */
+
+        // 3軸目状態オブザーバ
+        // StateObserver(axis3.IrefQ, axis3.wm, &axis3.est_conv_wm, &axis3.est_conv_qs, &axis3.est_conv_wl, axis3.BDN);
+        // axis3.Isfb = axis3.est_conv_wm*axis3.fwm + axis3.est_conv_qs*axis3.fqs + axis3.est_conv_wl*axis3.fwl;
+
+        if (2 == flag_cont_start)
+        {
+          static int flag_fin = 0;
+          // 初期姿勢から実験姿勢へ遷移
+          // ランプ指令用変数の設定
+          if (flag_reposition == 0 && flag_first_go == 0)
+          {
+            flag_reposition = 1;
+            flag_first_go = 1;
+            flag_first_back = 0;
+            flag_end1 = 0;
+            flag_end2 = 0;
+            flag_end3 = 0;
+          }
+          if (flag_reposition == 1)
+          {
+            start_go1 = axis1.qm;
+            start_go2 = axis2.qm;
+            start_go3 = axis3.qm;
+            flag_reposition = 0;
+            // 指令値の設定値
+            SetRampParams((cmd_1_soft[0]), (cmd_2_soft[0]), (cmd_3_soft[0]));
+          }
+          // ランプ指令用変数の設定
+
+          // 初期姿勢
+          //  1st-axis 0deg
+          //  2nd-axis 0deg
+          //  2rd-axis 0deg
+          // 待機姿勢
+          //  1st-axis -0.45260031 deg
+          //  2nd-axis -29.07706521 deg
+          //  3rd-axis 8.22494633 deg
+
+          /*****************************************************************************
+            ロボット TA1400
+            1軸目 : 電流指令　正　→　ロボットから見て　右
+                    エンコーダ情報は右向きが正
+            2軸目 : 電流指令　正　→　ロボットから見て　上
+                    エンコーダ情報は上向きが正
+            3軸目 : 電流指令　正　→　ロボットから見て　下
+
+            ＊軸によって違うので注意！！！（ギアとかによる）
+          ***************************************************************************** */
+
+          // 1軸目 位置指令
+          // ランプ関数生成関数で位置指令を決定
+          // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
+          axis1.qm_ref_z2 = axis1.qm_ref_z1;
+          axis1.qm_ref_z1 = axis1.qm_ref;
+          axis1.qm_ref = 1.0 * ManyRampGenerator1stAxis(axis1.a_ramp, axis1.vel, axis1.t_start, axis1.t_ramp, axis1.t_const, axis1.a_ramp_back, axis1.t_ramp_back);
+          // axis1.qm_ref = 0.0;
+          // 1軸目 位置P制御
+          axis1.wm_ref = (axis1.qm_ref_z2 - axis1.qm) * axis1.Kpp;
+
+          if (flag_FF == 1)
+          {
+            // 1軸目 速度PI制御＋SFB＋FF
+            axis1.IrefQ = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1) - axis1.Isfb + axis1.Iff;
+            axis1.I_SOBinput = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1) - axis1.Isfb;
+
+            if (flag_SOB == 1)
+            {
+              axis1.I_SOBinput = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1) - axis1.Isfb;
+            }
+            else if (flag_SOB == 2)
+            {
+              axis1.I_SOBinput = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1) - axis1.Isfb + axis1.Iff;
+            }
+          }
+          else if (flag_FF == 0)
+          {
+            // 1軸目 速度PI制御＋SFB
+            axis1.IrefQ = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1) - axis1.Isfb;
+            axis1.I_SOBinput = axis1.IrefQ;
+          }
+
+          // 2軸目 位置指令
+          // ランプ関数生成関数で位置指令を決定
+          // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
+          axis2.qm_ref_z2 = axis2.qm_ref_z1;
+          axis2.qm_ref_z1 = axis2.qm_ref;
+          axis2.qm_ref = 1.0 * ManyRampGenerator2ndAxis(axis2.a_ramp, axis2.vel, axis2.t_start, axis2.t_ramp, axis2.t_const, axis2.a_ramp_back, axis2.t_ramp_back);
+          // axis2.qm_ref = 0.0;
+          // 2軸目 位置P制御
+          axis2.wm_ref = (axis2.qm_ref_z2 - axis2.qm) * axis2.Kpp;
+
+          if (flag_FF == 1)
+          {
+            // 2軸目 速度PI制御＋SFB＋FF
+            axis2.IrefQ = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb + axis2.Iff;
+            axis2.I_SOBinput = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb;
+
+            if (flag_SOB == 1)
+            {
+              axis2.I_SOBinput = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb;
+            }
+            else if (flag_SOB == 2)
+            {
+              axis2.I_SOBinput = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb + axis2.Iff;
+            }
+          }
+          else if (flag_FF == 0)
+          {
+            // 2軸目 速度PI制御＋SFB
+            axis2.IrefQ = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb;
+            axis2.I_SOBinput = axis2.IrefQ;
+          }
+
+          // 3軸目 位置指令
+          // ランプ関数生成関数で位置指令を決定
+          // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
+          axis3.qm_ref_z2 = axis3.qm_ref_z1;
+          axis3.qm_ref_z1 = axis3.qm_ref;
+          axis3.qm_ref = 1.0 * ManyRampGenerator3rdAxis(axis3.a_ramp, axis3.vel, axis3.t_start, axis3.t_ramp, axis3.t_const, axis3.a_ramp_back, axis3.t_ramp_back);
+          // axis3.qm_ref = 0.0;
+          // 3軸目 位置P制御
+          axis3.wm_ref = (axis3.qm_ref_z2 - axis3.qm) * axis3.Kpp;
+
+          // 3軸目 速度PI制御＋SFB
+          if (flag_FF == 1)
+          {
+            // 3軸目 速度PI制御＋SFB＋FF
+            axis3.IrefQ = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb + axis3.Iff;
+            axis3.I_SOBinput = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb;
+
+            if (flag_SOB == 1)
+            {
+              axis3.I_SOBinput = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb;
+            }
+            else if (flag_SOB == 2)
+            {
+              axis3.I_SOBinput = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb + axis3.Iff;
+            }
+          }
+          else if (flag_FF == 0)
+          {
+            axis3.IrefQ = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb;
+            axis3.I_SOBinput = axis3.IrefQ;
+          }
+
+          if (flag_end1 == 1 && flag_end2 == 1 && flag_end3 == 1)
+          {
+            if (flag_fin > 20)
+            {
+              flag_CircleStart1 = 1;
+              flag_CircleStart2 = 1;
+              flag_CircleStart3 = 1;
+            }
+            else
+            {
+              flag_fin++;
+            }
+          }
+        }
+        else if (3 == flag_cont_start)
+        {
+          //-------------------------- 実験 -----------------------------
+          // y = -45°平面での円軌道
+
+          // ランプ指令用変数の設定
+
+          // 初期姿勢
+          //  1st-axis -0.45260031 deg
+          //  2nd-axis -29.07706521 deg
+          //  3rd-axis 8.22494633 deg
+          // 終端姿勢
+          //  1st-axis 0.45483276 deg
+          //  2nd-axis -29.072343 deg
+          //  3rd-axis 8.22969042 deg
+
+          /*****************************************************************************
+            ロボット TA1400
+            1軸目 : 電流指令　正　→　ロボットから見て　右
+                    エンコーダ情報は右向きが正
+            2軸目 : 電流指令　正　→　ロボットから見て　上
+                    エンコーダ情報は上向きが正
+            3軸目 : 電流指令　正　→　ロボットから見て　下
+
+            ＊軸によって違うので注意！！！（ギアとかによる）
+          ***************************************************************************** */
+          // 1軸目 位置指令
+          // ランプ関数生成関数で位置指令を決定
+          // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
+          axis1.qm_ref_z2 = axis1.qm_ref_z1;
+          axis1.qm_ref_z1 = axis1.qm_ref;
+          // axis1.qm_ref = axis1.posi_trg_rad;
+          axis1.qm_ref = GeneratorCircle1st(4.0, axis1.posi_trg_rad);
+          // axis1.qm_ref = 0.0;
+
+          // 1軸目 位置P制御
+          axis1.wm_ref = (axis1.qm_ref_z2 - axis1.qm) * axis1.Kpp;
+
+          if (flag_FF == 1)
+          {
+            // 1軸目 速度PI制御＋SFB＋FF
+            axis1.IrefQ = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1) - axis1.Isfb + axis1.Iff;
+            axis1.I_SOBinput = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1) - axis1.Isfb;
+
+            if (flag_SOB == 1)
+            {
+              axis1.I_SOBinput = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1) - axis1.Isfb;
+            }
+            else if (flag_SOB == 2)
+            {
+              axis1.I_SOBinput = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1) - axis1.Isfb + axis1.Iff;
+            }
+          }
+          else if (flag_FF == 0)
+          {
+            // 1軸目 速度PI制御＋SFB
+            axis1.IrefQ = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1) - axis1.Isfb;
+            axis1.I_SOBinput = axis1.IrefQ;
+          }
+
+          // 2軸目 位置指令
+          // ランプ関数生成関数で位置指令を決定
+          // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
+          axis2.qm_ref_z2 = axis2.qm_ref_z1;
+          axis2.qm_ref_z1 = axis2.qm_ref;
+          // axis2.qm_ref = axis2.posi_trg_rad;
+          axis2.qm_ref = GeneratorCircle2nd(4.0, axis2.posi_trg_rad);
+          // axis2.qm_ref = 0.0;
+
+          // 2軸目 速度P制御
+          axis2.wm_ref = (axis2.qm_ref_z2 - axis2.qm) * axis2.Kpp;
+
+          if (flag_FF == 1)
+          {
+            // 2軸目 速度PI制御＋SFB＋FF
+            axis2.IrefQ = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb + axis2.Iff;
+            axis2.I_SOBinput = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb;
+
+            if (flag_SOB == 1)
+            {
+              axis2.I_SOBinput = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb;
+            }
+            else if (flag_SOB == 2)
+            {
+              axis2.I_SOBinput = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb + axis2.Iff;
+            }
+          }
+          else if (flag_FF == 0)
+          {
+            // 2軸目 速度PI制御＋SFB
+            axis2.IrefQ = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb;
+            axis2.I_SOBinput = axis2.IrefQ;
+          }
+
+          // 3軸目 位置指令
+          // ランプ関数生成関数で位置指令を決定
+          // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
+          axis3.qm_ref_z2 = axis3.qm_ref_z1;
+          axis3.qm_ref_z1 = axis3.qm_ref;
+          // axis3.qm_ref = axis3.posi_trg_rad;
+          axis3.qm_ref = GeneratorCircle3rd(4.0, axis3.posi_trg_rad);
+          // axis3.qm_ref = 0.0;
+
+          // 3軸目 位置P制御
+          axis3.wm_ref = (axis3.qm_ref_z2 - axis3.qm) * axis3.Kpp;
+
+          // 3軸目 速度PI制御＋SFB
+          if (flag_FF == 1)
+          {
+            // 3軸目 速度PI制御＋SFB＋FF
+            axis3.IrefQ = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb + axis3.Iff;
+            axis3.I_SOBinput = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb;
+
+            if (flag_SOB == 1)
+            {
+              axis3.I_SOBinput = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb;
+            }
+            else if (flag_SOB == 2)
+            {
+              axis3.I_SOBinput = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb + axis3.Iff;
+            }
+          }
+          else if (flag_FF == 0)
+          {
+            axis3.IrefQ = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb;
+            axis3.I_SOBinput = axis3.IrefQ;
+          }
+        }
+        else if (4 == flag_cont_start)
+        {
+          static int flag_fin = 0;
+          //-------------------------- 実験 -----------------------------
+          // 実験終端姿勢からの戻り
+          // ランプ指令用変数の設定
+          if (flag_reposition == 0 && flag_first_back == 0)
+          {
+            flag_reposition = 1;
+            flag_first_back = 1;
+            flag_first_go = 0;
+            flag_end1 = 0;
+            flag_end2 = 0;
+            flag_end3 = 0;
+          }
+          if (flag_reposition == 1)
+          {
+            start_back1 = axis1.qm;
+            start_back2 = axis2.qm;
+            start_back3 = axis3.qm;
+            flag_reposition = 0;
+            // flag_reposition = 0;
+            // 指令値の設定値
+            SetRampParams((0.0 - start_back1), (0.0 - start_back2), (0.0 - start_back3));
+          }
+
+          /*****************************************************************************
+            ロボット TA1400
+            1軸目 : 電流指令　正　→　ロボットから見て　右
+                    エンコーダ情報は右向きが正
+            2軸目 : 電流指令　正　→　ロボットから見て　上
+                    エンコーダ情報は上向きが正
+            3軸目 : 電流指令　正　→　ロボットから見て　下
+
+            ＊軸によって違うので注意！！！（ギアとかによる）
+          ***************************************************************************** */
+          // 1軸目 位置指令
+          // ランプ関数生成関数で位置指令を決定
+          // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
+          axis1.qm_ref_z2 = axis1.qm_ref_z1;
+          axis1.qm_ref_z1 = axis1.qm_ref;
+          if (flag_end3 == 1)
+          {
+            axis1.qm_ref = 1.0 * ManyRampGenerator1stAxis(axis1.a_ramp, axis1.vel, axis1.t_start, axis1.t_ramp, axis1.t_const, axis1.a_ramp_back, axis1.t_ramp_back) + start_back1;
+          }
+          else
+          {
+            axis1.qm_ref = start_back1;
+          }
+
+          // 1軸目 速度P制御
+          axis1.wm_ref = (axis1.qm_ref_z2 - axis1.qm) * axis1.Kpp;
+
+          if (flag_FF == 1)
+          {
+            // 1軸目 速度PI制御＋SFB＋FF
+            axis1.IrefQ = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1) - axis1.Isfb + axis1.Iff;
+            axis1.I_SOBinput = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1) - axis1.Isfb;
+
+            if (flag_SOB == 1)
+            {
+              axis1.I_SOBinput = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1) - axis1.Isfb;
+            }
+            else if (flag_SOB == 2)
+            {
+              axis1.I_SOBinput = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1) - axis1.Isfb + axis1.Iff;
+            }
+          }
+          else if (flag_FF == 0)
+          {
+            // 1軸目 速度PI制御＋SFB
+            axis1.IrefQ = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1) - axis1.Isfb;
+            axis1.I_SOBinput = axis1.IrefQ;
+          }
+
+          // 2軸目 位置指令
+          // ランプ関数生成関数で位置指令を決定
+          // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
+          axis2.qm_ref_z2 = axis2.qm_ref_z1;
+          axis2.qm_ref_z1 = axis2.qm_ref;
+          if (flag_end3 == 1 && flag_end1 == 1)
+          {
+            axis2.qm_ref = 1.0 * ManyRampGenerator2ndAxis(axis2.a_ramp, axis2.vel, axis2.t_start, axis2.t_ramp, axis2.t_const, axis2.a_ramp_back, axis2.t_ramp_back) + start_back2;
+          }
+          else
+          {
+            axis2.qm_ref = start_back2;
+          }
+
+          // 2軸目 速度P制御
+          axis2.wm_ref = (axis2.qm_ref_z2 - axis2.qm) * axis2.Kpp;
+
+          if (flag_FF == 1)
+          {
+            // 2軸目 速度PI制御＋SFB＋FF
+            axis2.IrefQ = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb + axis2.Iff;
+            axis2.I_SOBinput = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb;
+
+            if (flag_SOB == 1)
+            {
+              axis2.I_SOBinput = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb;
+            }
+            else if (flag_SOB == 2)
+            {
+              axis2.I_SOBinput = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb + axis2.Iff;
+            }
+          }
+          else if (flag_FF == 0)
+          {
+            // 2軸目 速度PI制御＋SFB
+            axis2.IrefQ = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb;
+            axis2.I_SOBinput = axis2.IrefQ;
+          }
+
+          // 3軸目 位置指令
+          // ランプ関数生成関数で位置指令を決定
+          // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
+          axis3.qm_ref_z2 = axis3.qm_ref_z1;
+          axis3.qm_ref_z1 = axis3.qm_ref;
+          axis3.qm_ref = 1.0 * ManyRampGenerator3rdAxis(axis3.a_ramp, axis3.vel, axis3.t_start, axis3.t_ramp, axis3.t_const, axis3.a_ramp_back, axis3.t_ramp_back) + start_back3;
+          // axis3.qm_ref = start_back3;
+
+          // 3軸目 速度P制御
+          axis3.wm_ref = (axis3.qm_ref_z2 - axis3.qm) * axis3.Kpp;
+
+          // 3軸目 速度PI制御＋SFB
+          if (flag_FF == 1)
+          {
+            // 3軸目 速度PI制御＋SFB＋FF
+            axis3.IrefQ = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb + axis3.Iff;
+            axis3.I_SOBinput = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb;
+
+            if (flag_SOB == 1)
+            {
+              axis3.I_SOBinput = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb;
+            }
+            else if (flag_SOB == 2)
+            {
+              axis3.I_SOBinput = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb + axis3.Iff;
+            }
+          }
+          else if (flag_FF == 0)
+          {
+            axis3.IrefQ = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb;
+            axis3.I_SOBinput = axis3.IrefQ;
+          }
+          if (flag_end1 == 1 && flag_end2 == 1 && flag_end3 == 1)
+          {
+            if (flag_fin > 20)
+            {
+              flag_cont_start = 1;
+              flag_fin = 0;
+            }
+            else
+            {
+              flag_fin++;
+            }
+          }
+        }
+        else
+        {
+          axis1.IrefQ = 0.0;
+          axis2.IrefQ = axis2.Icmp;
+          axis3.IrefQ = axis3.Icmp;
+        }
+
+        // 制御周期の測定結果出力 ファンクションリファレンスp45より
+        // 制御にかかった時間を測定している。
+        WAVE_Timer1 = (float)C6657_timer1_read() * 4.8e-9 * 1e6;
+      }
+    }
+
+    /// 電流指令リミッタ
+    axis1.IrefQ = Limiter(joint[0].IrefQ, joint[0].IrefQ_Lim);
+    axis1.IrefD = Limiter(joint[0].IrefD, joint[0].IrefD_Lim);
+    axis2.IrefQ = Limiter(joint[1].IrefQ, joint[1].IrefQ_Lim);
+    axis2.IrefD = Limiter(joint[1].IrefD, joint[1].IrefD_Lim);
+    axis3.IrefQ = Limiter(joint[2].IrefQ, joint[2].IrefQ_Lim);
+    axis3.IrefD = Limiter(joint[2].IrefD, joint[2].IrefD_Lim);
+
+    axis2.IrefQ_inv_2nd = -1.0 * axis2.IrefQ;
+    axis2.IrefD_inv_2nd = -1.0 * axis2.IrefD;
+
+    /// リミット偏差フィードバック用計算
+    LimDiffCalcDQ(&joint[0]);
+    LimDiffCalcDQ(&joint[1]);
+    LimDiffCalcDQ(&joint[2]);
+
+    /// 指令値と応答の差分
+    joint[0].IdifQ = joint[0].IrefQ - joint[0].IresQ;
+    joint[0].IdifD = joint[0].IrefD - joint[0].IresD;
+    joint[1].IdifQ = joint[1].IrefQ_inv_2nd - joint[1].IresQ;
+    joint[1].IdifD = joint[1].IrefD_inv_2nd - joint[1].IresD;
+    joint[2].IdifQ = joint[2].IrefQ - joint[2].IresQ;
+    joint[2].IdifD = joint[2].IrefD - joint[2].IresD;
+    /// 電流PIコントローラ
+    joint[0].VrefQ = q_current[0].PIcontroller_withAntiwindup(joint[0].IdifQ, (joint[0].Vlim_diffQ / joint[0].KpiQ), joint[0].KpiQ, joint[0].KiiQ, Ts, &q_current[0].uZ1, &q_current[0].yZ1);
+    joint[0].VrefD = d_current[0].PIcontroller_withAntiwindup(joint[0].IdifD, (joint[0].Vlim_diffD / joint[0].KpiD), joint[0].KpiD, joint[0].KiiD, Ts, &d_current[0].uZ1, &d_current[0].yZ1);
+    joint[1].VrefQ = q_current[1].PIcontroller_withAntiwindup(joint[1].IdifQ, (joint[1].Vlim_diffQ / joint[1].KpiQ), joint[1].KpiQ, joint[1].KiiQ, Ts, &q_current[1].uZ1, &q_current[1].yZ1);
+    joint[1].VrefD = d_current[1].PIcontroller_withAntiwindup(joint[1].IdifD, (joint[1].Vlim_diffD / joint[1].KpiD), joint[1].KpiD, joint[1].KiiD, Ts, &d_current[1].uZ1, &d_current[1].yZ1);
+    joint[2].VrefQ = q_current[2].PIcontroller_withAntiwindup(joint[2].IdifQ, (joint[2].Vlim_diffQ / joint[2].KpiQ), joint[2].KpiQ, joint[2].KiiQ, Ts, &q_current[2].uZ1, &q_current[2].yZ1);
+    joint[2].VrefD = d_current[2].PIcontroller_withAntiwindup(joint[2].IdifD, (joint[2].Vlim_diffD / joint[2].KpiD), joint[2].KpiD, joint[2].KiiD, Ts, &d_current[2].uZ1, &d_current[2].yZ1);
+    /// 非干渉化制御
+    DecouplingControl(&joint[0]);
+    DecouplingControl(&joint[1]);
+    DecouplingControl(&joint[2]);
+
+    // 2相->3相変換 dq->ab->uvw
+    dq2ab(joint[0].VrefD_dcpl, joint[0].VrefQ_dcpl, joint[0].theta_re, &joint[0].VrefA, &joint[0].VrefB); //!< αβ軸へ変換
+    ab2uvw(joint[0].VrefA, joint[0].VrefB, &joint[0].VrefU, &joint[0].VrefV, &joint[0].VrefW);            //!< UVW相へ変換
+    dq2ab(joint[1].VrefD_dcpl, joint[1].VrefQ_dcpl, joint[1].theta_re, &joint[1].VrefA, &joint[1].VrefB); //!< αβ軸へ変換
+    ab2uvw(joint[1].VrefA, joint[1].VrefB, &joint[1].VrefU, &joint[1].VrefV, &joint[1].VrefW);            //!< UVW相へ変換
+    dq2ab(joint[2].VrefD_dcpl, joint[2].VrefQ_dcpl, joint[2].theta_re, &joint[2].VrefA, &joint[2].VrefB); //!< αβ軸へ変換
+    ab2uvw(joint[2].VrefA, joint[2].VrefB, &joint[2].VrefU, &joint[2].VrefV, &joint[2].VrefW);            //!< UVW相へ変換
+  }
+  else
+  { /// 制御OFFの時
+    // PE-ViewXはC89のコンパイラを使用している.
+    int i; // C89だとfor文のカウント変数を事前に宣言しておく必要がある。
+    for (i = 0; i < 3; i++)
+    {
+      joint[i].VrefU = 0;
+      joint[i].VrefV = 0;
+      joint[i].VrefW = 0;
+      joint[i].IrefQ = 0;
+      joint[i].IrefD = 0;
+    }
+  }
+
+  // PEV_inverter_control_break()でブレーキの制御を正論理PWMで制御するように設定した
+  // ファンクションリファレンスマニュアルpp.133の変調率の関係から、ブレーキチョッパのon/offの変調率は以下のように表される。
+  // +2 : 常時ON
+  // -2 : 常時OFF
+  if (flag_Vdc_setted == 1)
+  {
+    BrakeController(&axis1);
+    BrakeController(&axis2);
+    BrakeController(&axis3);
+    // axis2.MRBR = 2;
+  }
+  else
+  {
+    axis1.MRBR = -2;
+    axis2.MRBR = -2;
+    axis3.MRBR = -2;
+  }
