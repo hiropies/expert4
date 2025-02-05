@@ -68,7 +68,7 @@ static const float scale = 2.5;
 static const float scale_fast = 7.5;
 static const float scale_slow = 7.5;
 // static float start_hand[3] = {1.2746, 0.000, 0.2466};
-static float start_hand[3] = {1.3100, -0.050, 0.2820};
+static float start_hand[3] = {1.2746, -0.07071, 0.2466};
 
 enum SeqMode
 {
