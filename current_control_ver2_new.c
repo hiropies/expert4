@@ -3670,11 +3670,11 @@ void CalcHandCmd(float goal[3], float t_wait, float speed, float start_hand[3], 
 
 void LimitPosCmd(Robot *robo)
 {
-  if (robo->qm_ref > robo->qm_max)
+  if (robo->qm_ref >= robo->qm_max)
   {
     robo->qm_ref = robo->qm_max;
   }
-  else if (robo->qm_ref < robo->qm_min)
+  else if (robo->qm_min >= robo->qm_ref)
   {
     robo->qm_ref = robo->qm_min;
   }
@@ -5684,8 +5684,8 @@ void SetGain(Robot *robo)
 
   robo[0].ql_max = QL1_MAX * PI / 180.0;
   robo[0].ql_min = QL1_MIN * PI / 180.0;
-  robo[0].ql_max = robo[0].ql_max * robo[0].Rgn;
-  robo[0].ql_max = robo[0].ql_min * robo[0].Rgn;
+  robo[0].qm_max = robo[0].ql_max * robo[0].Rgn;
+  robo[0].qm_min = robo[0].ql_min * robo[0].Rgn;
 
   // 2軸 LCRメータ測定周波数  300Hz (Rはテスタで測定)				T = Ts*exp(-Rd/Ld*Ts)/(1-exp(-Rd/Ld*Ts))
   robo[1].KpiQ = 9.1576;   // PI電流制御器 比例ゲイン		KpQ = ( 1-exp(-Wcd*Ts) )/( (Ts + T)/(T*Rq)*(1-exp(-Rq/Lq*Ts)) )
@@ -5728,8 +5728,8 @@ void SetGain(Robot *robo)
 
   robo[1].ql_max = QL2_MAX * PI / 180.0;
   robo[1].ql_min = QL2_MIN * PI / 180.0;
-  robo[1].ql_max = robo[1].ql_max * robo[1].Rgn;
-  robo[1].ql_max = robo[1].ql_min * robo[1].Rgn;
+  robo[1].qm_max = robo[1].ql_max * robo[1].Rgn;
+  robo[1].qm_min = robo[1].ql_min * robo[1].Rgn;
 
   // 3軸 LCRメータ測定値　300Hz (Rはテスタで測定)					 T = Ts*exp(-Rd/Ld*Ts)/(1-exp(-Rd/Ld*Ts))
   robo[2].KpiQ = 13.2473e+000; // PI電流制御器 比例ゲイン		KpQ = ( 1-exp(-Wcd*Ts) )/( (Ts + T)/(T*Rq)*(1-exp(-Rq/Lq*Ts)) )
@@ -5776,8 +5776,8 @@ void SetGain(Robot *robo)
 
   robo[2].ql_max = QL3_MAX * PI / 180.0;
   robo[2].ql_min = QL3_MIN * PI / 180.0;
-  robo[2].ql_max = robo[2].ql_max * robo[2].Rgn;
-  robo[2].ql_max = robo[2].ql_min * robo[2].Rgn;
+  robo[2].qm_max = robo[2].ql_max * robo[2].Rgn;
+  robo[2].qm_min = robo[2].ql_min * robo[2].Rgn;
 }
 
 float Integrator_acc_ref(float u, const float Ts)

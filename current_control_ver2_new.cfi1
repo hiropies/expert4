@@ -1,7 +1,7 @@
 [COLUMN]
 "-1" "1" "2" "3" "4" "5" "6" "7" "8" 
 [VARIABLE]
-"" "flag_cont_start" "true" "" "false" "" "" "1" "" "4" 
+"" "flag_cont_start" "true" "" "true" "" "" "1" "" "2" 
 "" "flag_Vdc_setted" "true" "" "false" "" "" "1" "" "1" 
 "" "flag_FF" "true" "" "false" "" "" "1" "" "0" 
 "" "flag_SOB" "true" "" "false" "" "" "1" "" "2" 
