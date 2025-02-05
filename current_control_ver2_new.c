@@ -3642,11 +3642,11 @@ void CalcHandCmd(float goal[3], float t_wait, float speed, float start_hand[3], 
 
 void LimitPosCmd(Robot *robo)
 {
-  if (robo->qm_ref > robo->qm_max)
+  if (robo->qm_ref >= robo->qm_max)
   {
     robo->qm_ref = robo->qm_max;
   }
-  else if (robo->qm_ref < robo->qm_min)
+  else if (robo->qm_min >= robo->qm_ref)
   {
     robo->qm_ref = robo->qm_min;
   }
