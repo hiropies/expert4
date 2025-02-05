@@ -1045,20 +1045,20 @@ interrupt void ControlFunction(void)
       if (flag_on == 0)
       {
         axis1.qm_ref = 0.0;
-        LimitPosCmd(&axis1);
+        // LimitPosCmd(&axis1);
         axis2.qm_ref = 0.0;
-        LimitPosCmd(&axis2);
+        // LimitPosCmd(&axis2);
         axis3.qm_ref = 0.0;
-        LimitPosCmd(&axis3);
+        // LimitPosCmd(&axis3);
       }
       else
       {
         axis1.qm_ref = axis1.qm;
-        LimitPosCmd(&axis1);
+        // LimitPosCmd(&axis1);
         axis2.qm_ref = axis2.qm;
-        LimitPosCmd(&axis2);
+        // LimitPosCmd(&axis2);
         axis3.qm_ref = axis3.qm;
-        LimitPosCmd(&axis3);
+        // LimitPosCmd(&axis3);
       }
 
       CalcGravIcmp(joint); // 2,3軸の重力補償電流を計算　main関数の初期姿勢を要確認！！！！
@@ -1320,7 +1320,7 @@ interrupt void ControlFunction(void)
           axis1.qm_ref_z2 = axis1.qm_ref_z1;
           axis1.qm_ref_z1 = axis1.qm_ref;
           axis1.qm_ref = 1.0 * ManyRampGenerator1stAxis(axis1.a_ramp, axis1.vel, axis1.t_start, axis1.t_ramp, axis1.t_const, axis1.a_ramp_back, axis1.t_ramp_back);
-          LimitPosCmd(&axis1);
+          // LimitPosCmd(&axis1);
           // axis1.qm_ref = 0.0;
           // 1軸目 位置P制御
           axis1.wm_ref = (axis1.qm_ref_z2 - axis1.qm) * axis1.Kpp;
@@ -1353,7 +1353,7 @@ interrupt void ControlFunction(void)
           axis2.qm_ref_z2 = axis2.qm_ref_z1;
           axis2.qm_ref_z1 = axis2.qm_ref;
           axis2.qm_ref = 1.0 * ManyRampGenerator2ndAxis(axis2.a_ramp, axis2.vel, axis2.t_start, axis2.t_ramp, axis2.t_const, axis2.a_ramp_back, axis2.t_ramp_back);
-          LimitPosCmd(&axis2);
+          // LimitPosCmd(&axis2);
           // axis2.qm_ref = 0.0;
           // 2軸目 位置P制御
           axis2.wm_ref = (axis2.qm_ref_z2 - axis2.qm) * axis2.Kpp;
@@ -1386,7 +1386,7 @@ interrupt void ControlFunction(void)
           axis3.qm_ref_z2 = axis3.qm_ref_z1;
           axis3.qm_ref_z1 = axis3.qm_ref;
           axis3.qm_ref = 1.0 * ManyRampGenerator3rdAxis(axis3.a_ramp, axis3.vel, axis3.t_start, axis3.t_ramp, axis3.t_const, axis3.a_ramp_back, axis3.t_ramp_back);
-          LimitPosCmd(&axis3);
+          // LimitPosCmd(&axis3);
           // axis3.qm_ref = 0.0;
           // 3軸目 位置P制御
           axis3.wm_ref = (axis3.qm_ref_z2 - axis3.qm) * axis3.Kpp;
@@ -1475,7 +1475,7 @@ interrupt void ControlFunction(void)
           // axis1.qm_ref = axis1.posi_trg_rad;
           // axis1.qm_ref = GeneratorCircle1st(4.0, axis1.posi_trg_rad);
           axis1.qm_ref = motor_cmd[0];
-          LimitPosCmd(&axis1);
+          // LimitPosCmd(&axis1);
           // axis1.qm_ref = 0.0;
 
           // 1軸目 位置P制御
@@ -1511,7 +1511,7 @@ interrupt void ControlFunction(void)
           // axis2.qm_ref = axis2.posi_trg_rad;
           // axis2.qm_ref = GeneratorCircle2nd(4.0, axis2.posi_trg_rad);
           axis2.qm_ref = motor_cmd[1];
-          LimitPosCmd(&axis2);
+          // LimitPosCmd(&axis2);
           // axis2.qm_ref = 0.0;
 
           // 2軸目 速度P制御
@@ -1547,7 +1547,7 @@ interrupt void ControlFunction(void)
           // axis3.qm_ref = axis3.posi_trg_rad;
           // axis3.qm_ref = GeneratorCircle3rd(4.0, axis3.posi_trg_rad);
           axis3.qm_ref = motor_cmd[2];
-          LimitPosCmd(&axis3);
+          // LimitPosCmd(&axis3);
           // axis3.qm_ref = 0.0;
 
           // 3軸目 位置P制御
@@ -1625,7 +1625,7 @@ interrupt void ControlFunction(void)
             axis1.qm_ref = start_back1;
           }
 
-          LimitPosCmd(&axis1);
+          // LimitPosCmd(&axis1);
           // 1軸目 速度P制御
           axis1.wm_ref = (axis1.qm_ref_z2 - axis1.qm) * axis1.Kpp;
 
@@ -1665,7 +1665,7 @@ interrupt void ControlFunction(void)
             axis2.qm_ref = start_back2;
           }
 
-          LimitPosCmd(&axis2);
+          // LimitPosCmd(&axis2);
           // 2軸目 速度P制御
           axis2.wm_ref = (axis2.qm_ref_z2 - axis2.qm) * axis2.Kpp;
 
@@ -1698,7 +1698,7 @@ interrupt void ControlFunction(void)
           axis3.qm_ref_z1 = axis3.qm_ref;
           axis3.qm_ref = 1.0 * ManyRampGenerator3rdAxis(axis3.a_ramp, axis3.vel, axis3.t_start, axis3.t_ramp, axis3.t_const, axis3.a_ramp_back, axis3.t_ramp_back) + start_back3;
           // axis3.qm_ref = start_back3;
-          LimitPosCmd(&axis3);
+          // LimitPosCmd(&axis3);
 
           // 3軸目 速度P制御
           axis3.wm_ref = (axis3.qm_ref_z2 - axis3.qm) * axis3.Kpp;
