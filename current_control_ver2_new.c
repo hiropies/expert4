@@ -101,6 +101,7 @@ volatile int flag_SOB = 0;        // 状態オブザーバフラグ
 volatile int counter_2 = 0;       // 指令値Z^=2用カウンタ
 volatile int WAVE_LoopCount = 1;
 volatile int flag_FF_triple = 0;
+volatile int flag_cmd_end = 0;
 
 volatile float WAVE_Timer0 = 0.0; // タイマー記録変数
 volatile float WAVE_Timer1 = 0.0; // タイマー記録変数
@@ -933,10 +934,10 @@ void SetVoltReferences(Robot *robo);
 /// 位置指令生成関数
 // #pragma CODE_SECTION(func, “.CODE_ON_HIGHER_SPEED”)
 void SetLPF(LPF_param Filter[], float Ts, float fs, float Q);
-float GetFilterdSignal(LPF_param *Filter, float u);
+float GetFilterdSignal(LPF_param *Filter, float u, int flag_init);
 void CalcHandCmd(float goal[3], float t_wait, float speed, float start_hand[3], int flag_loop);
 void LimitPosCmd(Robot *robo);
-void CalcInverseCmd(float goal[3], float joint[3], float motor[3]);
+void CalcInverseCmd(float goal[3], float joint[3], float motor[3], int flag_reset);
 float GeneratorCircle1st(float t_wait, float start);
 float GeneratorCircle2nd(float t_wait, float start);
 float GeneratorCircle3rd(float t_wait, float start);
@@ -1045,20 +1046,20 @@ interrupt void ControlFunction(void)
       if (flag_on == 0)
       {
         axis1.qm_ref = 0.0;
-        // LimitPosCmd(&axis1);
+        LimitPosCmd(&axis1);
         axis2.qm_ref = 0.0;
-        // LimitPosCmd(&axis2);
+        LimitPosCmd(&axis2);
         axis3.qm_ref = 0.0;
-        // LimitPosCmd(&axis3);
+        LimitPosCmd(&axis3);
       }
       else
       {
         axis1.qm_ref = axis1.qm;
-        // LimitPosCmd(&axis1);
+        LimitPosCmd(&axis1);
         axis2.qm_ref = axis2.qm;
-        // LimitPosCmd(&axis2);
+        LimitPosCmd(&axis2);
         axis3.qm_ref = axis3.qm;
-        // LimitPosCmd(&axis3);
+        LimitPosCmd(&axis3);
       }
 
       CalcGravIcmp(joint); // 2,3軸の重力補償電流を計算　main関数の初期姿勢を要確認！！！！
@@ -1282,9 +1283,10 @@ interrupt void ControlFunction(void)
             hand_cmd[2] = start_hand[2];
             static float wait = 3.0;
             static float task = 1.5;
-            static float speed = 10.0; // [m/min] = 60 [m/s]
+            static float speed = 2.0; // [m/min] = 60 [m/s]
             static int flag = 0;
-            CalcInverseCmd(hand_cmd, joint_cmd, motor_cmd);
+            static int reset = 1;
+            CalcInverseCmd(hand_cmd, joint_cmd, motor_cmd, reset);
             start_go1 = axis1.qm;
             start_go2 = axis2.qm;
             start_go3 = axis3.qm;
@@ -1320,7 +1322,7 @@ interrupt void ControlFunction(void)
           axis1.qm_ref_z2 = axis1.qm_ref_z1;
           axis1.qm_ref_z1 = axis1.qm_ref;
           axis1.qm_ref = 1.0 * ManyRampGenerator1stAxis(axis1.a_ramp, axis1.vel, axis1.t_start, axis1.t_ramp, axis1.t_const, axis1.a_ramp_back, axis1.t_ramp_back);
-          // LimitPosCmd(&axis1);
+          LimitPosCmd(&axis1);
           // axis1.qm_ref = 0.0;
           // 1軸目 位置P制御
           axis1.wm_ref = (axis1.qm_ref_z2 - axis1.qm) * axis1.Kpp;
@@ -1353,7 +1355,7 @@ interrupt void ControlFunction(void)
           axis2.qm_ref_z2 = axis2.qm_ref_z1;
           axis2.qm_ref_z1 = axis2.qm_ref;
           axis2.qm_ref = 1.0 * ManyRampGenerator2ndAxis(axis2.a_ramp, axis2.vel, axis2.t_start, axis2.t_ramp, axis2.t_const, axis2.a_ramp_back, axis2.t_ramp_back);
-          // LimitPosCmd(&axis2);
+          LimitPosCmd(&axis2);
           // axis2.qm_ref = 0.0;
           // 2軸目 位置P制御
           axis2.wm_ref = (axis2.qm_ref_z2 - axis2.qm) * axis2.Kpp;
@@ -1386,7 +1388,7 @@ interrupt void ControlFunction(void)
           axis3.qm_ref_z2 = axis3.qm_ref_z1;
           axis3.qm_ref_z1 = axis3.qm_ref;
           axis3.qm_ref = 1.0 * ManyRampGenerator3rdAxis(axis3.a_ramp, axis3.vel, axis3.t_start, axis3.t_ramp, axis3.t_const, axis3.a_ramp_back, axis3.t_ramp_back);
-          // LimitPosCmd(&axis3);
+          LimitPosCmd(&axis3);
           // axis3.qm_ref = 0.0;
           // 3軸目 位置P制御
           axis3.wm_ref = (axis3.qm_ref_z2 - axis3.qm) * axis3.Kpp;
@@ -1455,8 +1457,9 @@ interrupt void ControlFunction(void)
           ***************************************************************************** */
           static float time_wait = 3.0;
           static float time_task = 1.5;
-          static float speed_hand = 10.0; // [m/min] = 60 [m/s]
+          static float speed_hand = 2.0; // [m/min] = 60 [m/s]
           static int flag_loop = 1;
+          static int filter_reset = 0;
 
           float start_cmd = (float)C6657_timer0_read() * 4.8e-9 * 1e6;
 
@@ -1464,7 +1467,7 @@ interrupt void ControlFunction(void)
           WAVE_TimeCalcCmd = (float)C6657_timer0_read() * 4.8e-9 * 1e6 - start_cmd;
 
           start_cmd = (float)C6657_timer0_read() * 4.8e-9 * 1e6;
-          CalcInverseCmd(hand_cmd, joint_cmd, motor_cmd);
+          CalcInverseCmd(hand_cmd, joint_cmd, motor_cmd, filter_reset);
           WAVE_TimeCalcInvCmd = (float)C6657_timer0_read() * 4.8e-9 * 1e6 - start_cmd;
 
           // 1軸目 位置指令
@@ -1475,7 +1478,7 @@ interrupt void ControlFunction(void)
           // axis1.qm_ref = axis1.posi_trg_rad;
           // axis1.qm_ref = GeneratorCircle1st(4.0, axis1.posi_trg_rad);
           axis1.qm_ref = motor_cmd[0];
-          // LimitPosCmd(&axis1);
+          LimitPosCmd(&axis1);
           // axis1.qm_ref = 0.0;
 
           // 1軸目 位置P制御
@@ -1511,7 +1514,7 @@ interrupt void ControlFunction(void)
           // axis2.qm_ref = axis2.posi_trg_rad;
           // axis2.qm_ref = GeneratorCircle2nd(4.0, axis2.posi_trg_rad);
           axis2.qm_ref = motor_cmd[1];
-          // LimitPosCmd(&axis2);
+          LimitPosCmd(&axis2);
           // axis2.qm_ref = 0.0;
 
           // 2軸目 速度P制御
@@ -1547,7 +1550,7 @@ interrupt void ControlFunction(void)
           // axis3.qm_ref = axis3.posi_trg_rad;
           // axis3.qm_ref = GeneratorCircle3rd(4.0, axis3.posi_trg_rad);
           axis3.qm_ref = motor_cmd[2];
-          // LimitPosCmd(&axis3);
+          LimitPosCmd(&axis3);
           // axis3.qm_ref = 0.0;
 
           // 3軸目 位置P制御
@@ -1592,6 +1595,7 @@ interrupt void ControlFunction(void)
           }
           if (flag_reposition == 1)
           {
+            flag_cmd_end = 0;
             start_back1 = axis1.qm;
             start_back2 = axis2.qm;
             start_back3 = axis3.qm;
@@ -1625,7 +1629,7 @@ interrupt void ControlFunction(void)
             axis1.qm_ref = start_back1;
           }
 
-          // LimitPosCmd(&axis1);
+          LimitPosCmd(&axis1);
           // 1軸目 速度P制御
           axis1.wm_ref = (axis1.qm_ref_z2 - axis1.qm) * axis1.Kpp;
 
@@ -1665,7 +1669,7 @@ interrupt void ControlFunction(void)
             axis2.qm_ref = start_back2;
           }
 
-          // LimitPosCmd(&axis2);
+          LimitPosCmd(&axis2);
           // 2軸目 速度P制御
           axis2.wm_ref = (axis2.qm_ref_z2 - axis2.qm) * axis2.Kpp;
 
@@ -1698,7 +1702,7 @@ interrupt void ControlFunction(void)
           axis3.qm_ref_z1 = axis3.qm_ref;
           axis3.qm_ref = 1.0 * ManyRampGenerator3rdAxis(axis3.a_ramp, axis3.vel, axis3.t_start, axis3.t_ramp, axis3.t_const, axis3.a_ramp_back, axis3.t_ramp_back) + start_back3;
           // axis3.qm_ref = start_back3;
-          // LimitPosCmd(&axis3);
+          LimitPosCmd(&axis3);
 
           // 3軸目 速度P制御
           axis3.wm_ref = (axis3.qm_ref_z2 - axis3.qm) * axis3.Kpp;
@@ -3585,55 +3589,60 @@ void CalcHandCmd(float goal[3], float t_wait, float speed, float start_hand[3], 
   static float fxZ, fyZ, fzZ;
   static float fx = 0, fy = 0, fz = 0;
   static int flag_init = 0;
-  if (flag_init == 0)
-  {
-    if (flag_loop == 1)
+  if(flag_cmd_end == 0){
+    if (flag_init == 0)
     {
-      flag_init = 1;
+      if (flag_loop == 1)
+      {
+        flag_init = 1;
+      }
+      goalZ[0] = start_hand[0];
+      goalZ[1] = start_hand[1];
+      goalZ[2] = start_hand[2];
+      fx = C1 * (start_hand[0] - x_slide) - S1 * (start_hand[2] - z_slide);
+      fy = (start_hand[1] - y_slide);
+      fz = S1 * (start_hand[0] - x_slide) + C1 * (start_hand[2] - z_slide);
+      fxZ = fx;
+      fyZ = fy;
+      fzZ = fz;
     }
-    else
+    if (Tall < t_wait)
     {
-      flag_init = 0;
+      goal[0] = goalZ[0];
+      goal[1] = goalZ[1];
+      goal[2] = goalZ[2];
+      Tall += Tp;
     }
-    goalZ[0] = start_hand[0];
-    goalZ[1] = start_hand[1];
-    goalZ[2] = start_hand[2];
-    fx = C1 * (start_hand[0] - x_slide) - S1 * (start_hand[2] - z_slide);
-    fy = (start_hand[1] - y_slide);
-    fz = S1 * (start_hand[0] - x_slide) + C1 * (start_hand[2] - z_slide);
-    fxZ = fx;
-    fyZ = fy;
-    fzZ = fz;
-  }
-  if (Tall < t_wait)
-  {
+    else if (Tall >= t_wait && Tall < (t_wait + t_task))
+    {
+      fx = (D / 2.0) * sin(2 * PI * freq * (Tall - t_wait));
+      fy = (D / 2.0) * cos(2 * PI * freq * (Tall - t_wait));
+      fz = 0;
+      goal[0] = C1 * fxZ + S1 * fzZ + x_slide;
+      goal[1] = fyZ + y_slide;
+      goal[2] = C1 * fzZ - S1 * fxZ + z_slide;
+      fxZ = fx;
+      fyZ = fy;
+      fzZ = fz;
+      goalZ[0] = goal[0];
+      goalZ[1] = goal[1];
+      goalZ[2] = goal[2];
+      Tall += Tp;
+    }
+    else if (Tall >= t_wait + t_task)
+    {
+      goal[0] = goalZ[0];
+      goal[1] = goalZ[1];
+      goal[2] = goalZ[2];
+      Tall += Tp;
+    flag_cmd_end = 1;
+    }
+  }else{
     goal[0] = goalZ[0];
     goal[1] = goalZ[1];
     goal[2] = goalZ[2];
-    Tall += Tp;
-  }
-  else if (Tall >= t_wait && Tall < (t_wait + t_task))
-  {
-    fx = (D / 2.0) * sin(2 * PI * freq * (Tall - t_wait));
-    fy = (D / 2.0) * cos(2 * PI * freq * (Tall - t_wait));
-    fz = 0;
-    goal[0] = C1 * fxZ + S1 * fzZ + x_slide;
-    goal[1] = fyZ + y_slide;
-    goal[2] = C1 * fzZ - S1 * fxZ + z_slide;
-    fxZ = fx;
-    fyZ = fy;
-    fzZ = fz;
-    goalZ[0] = goal[0];
-    goalZ[1] = goal[1];
-    goalZ[2] = goal[2];
-    Tall += Tp;
-  }
-  else if (Tall >= t_wait + t_task)
-  {
-    goal[0] = goalZ[0];
-    goal[1] = goalZ[1];
-    goal[2] = goalZ[2];
-    Tall += Tp;
+    Tall = 0;
+    flag_init = 0;
   }
   WAVE_fx = fx;
   WAVE_fy = fy;
