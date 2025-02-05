@@ -1283,7 +1283,7 @@ interrupt void ControlFunction(void)
             hand_cmd[2] = start_hand[2];
             static float wait = 3.0;
             static float task = 1.5;
-            // static float speed = 2.0; // [m/min] = 60 [m/s]
+            // static float speed = 1.0; // [m/min] = 60 [m/s]
             static int flag = 0;
             static int reset = 1;
             CalcInverseCmd(hand_cmd, joint_cmd, motor_cmd, reset);
@@ -1615,6 +1615,7 @@ interrupt void ControlFunction(void)
 
             ＊軸によって違うので注意！！！（ギアとかによる）
           ***************************************************************************** */
+          start3 = (float)C6657_timer1_read() * 4.8e-9 * 1e6;
           // 1軸目 位置指令
           // ランプ関数生成関数で位置指令を決定
           // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
@@ -1629,7 +1630,7 @@ interrupt void ControlFunction(void)
             axis1.qm_ref = start_back1;
           }
 
-          LimitPosCmd(&axis1);
+          // LimitPosCmd(&axis1);
           // 1軸目 速度P制御
           axis1.wm_ref = (axis1.qm_ref_z2 - axis1.qm) * axis1.Kpp;
 
@@ -1669,7 +1670,7 @@ interrupt void ControlFunction(void)
             axis2.qm_ref = start_back2;
           }
 
-          LimitPosCmd(&axis2);
+          // LimitPosCmd(&axis2);
           // 2軸目 速度P制御
           axis2.wm_ref = (axis2.qm_ref_z2 - axis2.qm) * axis2.Kpp;
 
@@ -1702,7 +1703,7 @@ interrupt void ControlFunction(void)
           axis3.qm_ref_z1 = axis3.qm_ref;
           axis3.qm_ref = 1.0 * ManyRampGenerator3rdAxis(axis3.a_ramp, axis3.vel, axis3.t_start, axis3.t_ramp, axis3.t_const, axis3.a_ramp_back, axis3.t_ramp_back) + start_back3;
           // axis3.qm_ref = start_back3;
-          LimitPosCmd(&axis3);
+          // LimitPosCmd(&axis3);
 
           // 3軸目 速度P制御
           axis3.wm_ref = (axis3.qm_ref_z2 - axis3.qm) * axis3.Kpp;
@@ -1740,6 +1741,7 @@ interrupt void ControlFunction(void)
               flag_fin++;
             }
           }
+          WAVE_TimeP_PI = (float)C6657_timer1_read() * 4.8e-9 * 1e6 - start3;
         }
         else
         {
@@ -1747,7 +1749,6 @@ interrupt void ControlFunction(void)
           axis2.IrefQ = axis2.Icmp;
           axis3.IrefQ = axis3.Icmp;
         }
-
         // 制御周期の測定結果出力 ファンクションリファレンスp45より
         // 制御にかかった時間を測定している。
         WAVE_Timer1 = (float)C6657_timer1_read() * 4.8e-9 * 1e6;
@@ -3428,7 +3429,6 @@ void FDTDSOB(Robot *robo)
 
 void FDTD_Tm(Robot *robo)
 {
-
   static float y_0 = 0.0;
   static float y_1 = 0.0;
   static float y_2 = 0.0;
