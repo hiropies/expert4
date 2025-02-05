@@ -1283,7 +1283,7 @@ interrupt void ControlFunction(void)
             hand_cmd[2] = start_hand[2];
             static float wait = 3.0;
             static float task = 1.5;
-            static float speed = 2.0; // [m/min] = 60 [m/s]
+            // static float speed = 2.0; // [m/min] = 60 [m/s]
             static int flag = 0;
             static int reset = 1;
             CalcInverseCmd(hand_cmd, joint_cmd, motor_cmd, reset);
@@ -1457,7 +1457,7 @@ interrupt void ControlFunction(void)
           ***************************************************************************** */
           static float time_wait = 3.0;
           static float time_task = 1.5;
-          static float speed_hand = 2.0; // [m/min] = 60 [m/s]
+          static float speed_hand = 1.0; // [m/min] = 60 [m/s]
           static int flag_loop = 1;
           static int filter_reset = 0;
 

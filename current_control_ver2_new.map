@@ -1,7 +1,7 @@
 ******************************************************************************
                TMS320C6x Linker PC v7.4.24                     
 ******************************************************************************
->> Linked Wed Feb 05 20:17:13 2025
+>> Linked Wed Feb 05 21:01:52 2025
 
 OUTPUT FILE NAME:   <current_control_ver2_new.out>
 ENTRY POINT SYMBOL: "_c_int00"  address: 0c034a40
@@ -24,7 +24,7 @@ MEMORY CONFIGURATION
   KNL1_BOOT_AREA        118fff84   00000078  00000000  00000078  RWIX
   KNL1_MAGIC_ADDRESS    118ffffc   00000004  00000000  00000004  RWIX
   USER_SRAM_2_4         11e00000   00008000  000033e0  00004c20  RWIX
-  USER_SRAM_3_4         11f00000   00008000  00004718  000038e8  RWIX
+  USER_SRAM_3_4         11f00000   00008000  00004714  000038ec  RWIX
   TI_BOOT_ROM           20b00000   00020000  00000000  00020000  RWIX
   KNL0_SRAM_2_4         80000000   000fe000  00000000  000fe000  RWIX
   USER_SRAM_4_4         80100000   01800000  00000000  01800000  RWIX
@@ -53,10 +53,10 @@ run origin  load origin   length   init length attrs members
 11f00000    11f00000    000032b8   000022b8    rw-
   11f00000    11f00000    000022b8   000022b8    rw- .data_2
   11f022b8    11f022b8    00001000   00000000    rw- .stack
-11f03300    11f03300    00001460   000011c4    rw-
+11f03300    11f03300    0000145c   000011c4    rw-
   11f03300    11f03300    00000d40   00000d40    rw- .DATA_ON_HIGHER_SPEED
   11f04040    11f04040    00000484   00000484    rw- .neardata
-  11f044c4    11f044c4    0000029c   00000000    rw- .bss
+  11f044c4    11f044c4    00000298   00000000    rw- .bss
 
 
 SECTION ALLOCATION MAP
@@ -186,104 +186,104 @@ section   page    origin      length       input sections
                   0c035694    00000004     --HOLE--
                   0c035698    0000000c                     : powf.obj (.fardata:Q$4)
                   0c0356a4    00000004     --HOLE--
-                  0c0356a8    0000000c     current_control_ver2_new.obj (.fardata:Vdc_mean$146)
+                  0c0356a8    0000000c     current_control_ver2_new.obj (.fardata:Vdc_mean$145)
                   0c0356b4    00000004     --HOLE--
-                  0c0356b8    0000000c     current_control_ver2_new.obj (.fardata:Vdc_sum$145)
+                  0c0356b8    0000000c     current_control_ver2_new.obj (.fardata:Vdc_sum$144)
                   0c0356c4    00000004     --HOLE--
-                  0c0356c8    0000000c     current_control_ver2_new.obj (.fardata:counter$144)
+                  0c0356c8    0000000c     current_control_ver2_new.obj (.fardata:counter$143)
                   0c0356d4    00000004     --HOLE--
-                  0c0356d8    0000000c     current_control_ver2_new.obj (.fardata:est_Qs_Z$27)
+                  0c0356d8    0000000c     current_control_ver2_new.obj (.fardata:est_Qs_Z$26)
                   0c0356e4    00000004     --HOLE--
-                  0c0356e8    0000000c     current_control_ver2_new.obj (.fardata:est_Qs_Z1$24)
+                  0c0356e8    0000000c     current_control_ver2_new.obj (.fardata:est_Qs_Z1$23)
                   0c0356f4    00000004     --HOLE--
-                  0c0356f8    0000000c     current_control_ver2_new.obj (.fardata:est_wL_Z$28)
+                  0c0356f8    0000000c     current_control_ver2_new.obj (.fardata:est_wL_Z$27)
                   0c035704    00000004     --HOLE--
-                  0c035708    0000000c     current_control_ver2_new.obj (.fardata:est_wL_Z1$25)
+                  0c035708    0000000c     current_control_ver2_new.obj (.fardata:est_wL_Z1$24)
                   0c035714    00000004     --HOLE--
-                  0c035718    0000000c     current_control_ver2_new.obj (.fardata:est_wM_Z$26)
+                  0c035718    0000000c     current_control_ver2_new.obj (.fardata:est_wM_Z$25)
                   0c035724    00000004     --HOLE--
-                  0c035728    0000000c     current_control_ver2_new.obj (.fardata:est_wM_Z1$23)
+                  0c035728    0000000c     current_control_ver2_new.obj (.fardata:est_wM_Z1$22)
                   0c035734    00000004     --HOLE--
-                  0c035738    0000000c     current_control_ver2_new.obj (.fardata:goalZ$64)
+                  0c035738    0000000c     current_control_ver2_new.obj (.fardata:goalZ$63)
                   0c035744    00000004     --HOLE--
                   0c035748    0000000c     current_control_ver2_new.obj (.fardata:hand_cmd$3)
                   0c035754    00000004     --HOLE--
                   0c035758    0000000c     current_control_ver2_new.obj (.fardata:joint_cmd$4)
                   0c035764    00000004     --HOLE--
-                  0c035768    0000000c     current_control_ver2_new.obj (.fardata:loop_count_num$130)
+                  0c035768    0000000c     current_control_ver2_new.obj (.fardata:loop_count_num$129)
                   0c035774    00000004     --HOLE--
                   0c035778    0000000c     current_control_ver2_new.obj (.fardata:motor_cmd$5)
                   0c035784    00000004     --HOLE--
-                  0c035788    0000000c     current_control_ver2_new.obj (.fardata:p1$72)
+                  0c035788    0000000c     current_control_ver2_new.obj (.fardata:p1$71)
                   0c035794    00000004     --HOLE--
-                  0c035798    0000000c     current_control_ver2_new.obj (.fardata:ql_Z$136)
+                  0c035798    0000000c     current_control_ver2_new.obj (.fardata:ql_Z$135)
                   0c0357a4    00000004     --HOLE--
-                  0c0357a8    0000000c     current_control_ver2_new.obj (.fardata:ql_Z1$142)
+                  0c0357a8    0000000c     current_control_ver2_new.obj (.fardata:ql_Z1$141)
                   0c0357b4    00000004     --HOLE--
-                  0c0357b8    0000000c     current_control_ver2_new.obj (.fardata:qm_Z$133)
+                  0c0357b8    0000000c     current_control_ver2_new.obj (.fardata:qm_Z$132)
                   0c0357c4    00000004     --HOLE--
-                  0c0357c8    0000000c     current_control_ver2_new.obj (.fardata:qm_Z1$139)
+                  0c0357c8    0000000c     current_control_ver2_new.obj (.fardata:qm_Z1$138)
                   0c0357d4    00000004     --HOLE--
-                  0c0357d8    0000000c     current_control_ver2_new.obj (.fardata:qm_prev$129)
+                  0c0357d8    0000000c     current_control_ver2_new.obj (.fardata:qm_prev$128)
                   0c0357e4    00000004     --HOLE--
-                  0c0357e8    0000000c     current_control_ver2_new.obj (.fardata:qs_Z$134)
+                  0c0357e8    0000000c     current_control_ver2_new.obj (.fardata:qs_Z$133)
                   0c0357f4    00000004     --HOLE--
-                  0c0357f8    0000000c     current_control_ver2_new.obj (.fardata:qs_Z$30)
+                  0c0357f8    0000000c     current_control_ver2_new.obj (.fardata:qs_Z$29)
                   0c035804    00000004     --HOLE--
-                  0c035808    0000000c     current_control_ver2_new.obj (.fardata:qs_Z$36)
+                  0c035808    0000000c     current_control_ver2_new.obj (.fardata:qs_Z$35)
                   0c035814    00000004     --HOLE--
-                  0c035818    0000000c     current_control_ver2_new.obj (.fardata:qs_Z1$140)
+                  0c035818    0000000c     current_control_ver2_new.obj (.fardata:qs_Z1$139)
                   0c035824    00000004     --HOLE--
-                  0c035828    0000000c     current_control_ver2_new.obj (.fardata:qs_Z1$33)
+                  0c035828    0000000c     current_control_ver2_new.obj (.fardata:qs_Z1$32)
                   0c035834    00000004     --HOLE--
-                  0c035838    0000000c     current_control_ver2_new.obj (.fardata:qs_Z1$39)
+                  0c035838    0000000c     current_control_ver2_new.obj (.fardata:qs_Z1$38)
                   0c035844    0000000c     rts6600_elf.lib : exit.obj (.fardata)
-                  0c035850    0000000c     current_control_ver2_new.obj (.fardata:sign_invers$131)
+                  0c035850    0000000c     current_control_ver2_new.obj (.fardata:sign_invers$130)
                   0c03585c    00000004     --HOLE--
                   0c035860    0000000c     current_control_ver2_new.obj (.fardata:start_hand)
                   0c03586c    00000004     --HOLE--
-                  0c035870    0000000c     current_control_ver2_new.obj (.fardata:wl_Z$135)
+                  0c035870    0000000c     current_control_ver2_new.obj (.fardata:wl_Z$134)
                   0c03587c    00000004     --HOLE--
-                  0c035880    0000000c     current_control_ver2_new.obj (.fardata:wl_Z$31)
+                  0c035880    0000000c     current_control_ver2_new.obj (.fardata:wl_Z$30)
                   0c03588c    00000004     --HOLE--
-                  0c035890    0000000c     current_control_ver2_new.obj (.fardata:wl_Z$37)
+                  0c035890    0000000c     current_control_ver2_new.obj (.fardata:wl_Z$36)
                   0c03589c    00000004     --HOLE--
-                  0c0358a0    0000000c     current_control_ver2_new.obj (.fardata:wl_Z1$141)
+                  0c0358a0    0000000c     current_control_ver2_new.obj (.fardata:wl_Z1$140)
                   0c0358ac    00000004     --HOLE--
-                  0c0358b0    0000000c     current_control_ver2_new.obj (.fardata:wl_Z1$34)
+                  0c0358b0    0000000c     current_control_ver2_new.obj (.fardata:wl_Z1$33)
                   0c0358bc    00000004     --HOLE--
-                  0c0358c0    0000000c     current_control_ver2_new.obj (.fardata:wl_Z1$40)
+                  0c0358c0    0000000c     current_control_ver2_new.obj (.fardata:wl_Z1$39)
                   0c0358cc    00000004     --HOLE--
-                  0c0358d0    0000000c     current_control_ver2_new.obj (.fardata:wm_Z$132)
+                  0c0358d0    0000000c     current_control_ver2_new.obj (.fardata:wm_Z$131)
                   0c0358dc    00000004     --HOLE--
-                  0c0358e0    0000000c     current_control_ver2_new.obj (.fardata:wm_Z$29)
+                  0c0358e0    0000000c     current_control_ver2_new.obj (.fardata:wm_Z$28)
                   0c0358ec    00000004     --HOLE--
-                  0c0358f0    0000000c     current_control_ver2_new.obj (.fardata:wm_Z$35)
+                  0c0358f0    0000000c     current_control_ver2_new.obj (.fardata:wm_Z$34)
                   0c0358fc    00000004     --HOLE--
-                  0c035900    0000000c     current_control_ver2_new.obj (.fardata:wm_Z1$138)
+                  0c035900    0000000c     current_control_ver2_new.obj (.fardata:wm_Z1$137)
                   0c03590c    00000004     --HOLE--
-                  0c035910    0000000c     current_control_ver2_new.obj (.fardata:wm_Z1$32)
+                  0c035910    0000000c     current_control_ver2_new.obj (.fardata:wm_Z1$31)
                   0c03591c    00000004     --HOLE--
-                  0c035920    0000000c     current_control_ver2_new.obj (.fardata:wm_Z1$38)
+                  0c035920    0000000c     current_control_ver2_new.obj (.fardata:wm_Z1$37)
                   0c03592c    00000004     --HOLE--
-                  0c035930    0000000c     current_control_ver2_new.obj (.fardata:wm_prev$128)
+                  0c035930    0000000c     current_control_ver2_new.obj (.fardata:wm_prev$127)
                   0c03593c    00000004     --HOLE--
-                  0c035940    0000000c     current_control_ver2_new.obj (.fardata:z_Z$137)
+                  0c035940    0000000c     current_control_ver2_new.obj (.fardata:z_Z$136)
                   0c03594c    00000004     --HOLE--
-                  0c035950    0000000c     current_control_ver2_new.obj (.fardata:z_Z1$143)
+                  0c035950    0000000c     current_control_ver2_new.obj (.fardata:z_Z1$142)
                   0c03595c    00000004     --HOLE--
-                  0c035960    00000008     current_control_ver2_new.obj (.fardata:loop_count_num$148)
+                  0c035960    00000008     current_control_ver2_new.obj (.fardata:loop_count_num$147)
                   0c035968    00000004     rts6600_elf.lib : powf.obj (.fardata:P$3)
 
 .far       0    0c03596c    0000000c     UNINITIALIZED
                   0c03596c    0000000c     mwio4.lib : EMIF16.obj (.far)
 
 .const     0    0c035980    00000078     
-                  0c035980    00000020     current_control_ver2_new.obj (.const:$P$T1$19)
-                  0c0359a0    00000020     current_control_ver2_new.obj (.const:$P$T2$20)
-                  0c0359c0    0000000c     current_control_ver2_new.obj (.const:$P$T0$18)
+                  0c035980    00000020     current_control_ver2_new.obj (.const:$P$T1$18)
+                  0c0359a0    00000020     current_control_ver2_new.obj (.const:$P$T2$19)
+                  0c0359c0    0000000c     current_control_ver2_new.obj (.const:$P$T0$17)
                   0c0359cc    00000004     --HOLE-- [fill = 0]
-                  0c0359d0    0000000c     current_control_ver2_new.obj (.const:$P$T3$147)
+                  0c0359d0    0000000c     current_control_ver2_new.obj (.const:$P$T3$146)
                   0c0359dc    00000004     --HOLE-- [fill = 0]
                   0c0359e0    00000008     current_control_ver2_new.obj (.const:cmd_1_soft)
                   0c0359e8    00000008     current_control_ver2_new.obj (.const:cmd_2_soft)
@@ -347,11 +347,11 @@ section   page    origin      length       input sections
                   11f044bc    00000004               : csl2_intcOpen.obj (.neardata)
                   11f044c0    00000004               : mw_platform.obj (.neardata)
 
-.bss       0    11f044c4    0000029c     UNINITIALIZED
-                  11f044c4    0000028c     current_control_ver2_new.obj (.bss)
-                  11f04750    00000008     mwio4.lib : EMIF16.obj (.bss)
-                  11f04758    00000004               : gpio_int.obj (.bss)
-                  11f0475c    00000004               : mw_spi.obj (.bss)
+.bss       0    11f044c4    00000298     UNINITIALIZED
+                  11f044c4    00000288     current_control_ver2_new.obj (.bss)
+                  11f0474c    00000008     mwio4.lib : EMIF16.obj (.bss)
+                  11f04754    00000004               : gpio_int.obj (.bss)
+                  11f04758    00000004               : mw_spi.obj (.bss)
 
 
 LINKER GENERATED COPY TABLES
@@ -628,8 +628,8 @@ address    name
 0c027690   DecouplingControl
 11e0252c   EMF_EnableIntr_s32
 11e02d20   EMF_ErrIntr_vo
-11f04754   EMF_ExtWaitErrCnt_u32s
-11f04750   EMF_ExtWaitErrInfo_u32s
+11f04750   EMF_ExtWaitErrCnt_u32s
+11f0474c   EMF_ExtWaitErrInfo_u32s
 11e024cc   EMF_Initialization_s32
 11e02414   EMF_Read2_s32
 11e023a8   EMF_Read3_s32
@@ -1147,7 +1147,7 @@ ffffffff   binit
 0c0339e0   frexpf
 11f00270   gpio_int_map
 11f03e98   gsub
-11f04758   hGpio
+11f04754   hGpio
 0c031174   i2cEepromGetStatus2
 0c030ff8   i2cEepromRead2
 0c030c68   i2cEepromWriteBlock2
@@ -1903,9 +1903,9 @@ address    name
 11f0470c   WAVE_VWX
 11f04710   WAVE_VWY
 11f04714   WAVE_VWZ
-11f04750   EMF_ExtWaitErrInfo_u32s
-11f04754   EMF_ExtWaitErrCnt_u32s
-11f04758   hGpio
+11f0474c   EMF_ExtWaitErrInfo_u32s
+11f04750   EMF_ExtWaitErrCnt_u32s
+11f04754   hGpio
 ffffffff   __TI_pprof_out_hndl
 ffffffff   __TI_prof_data_size
 ffffffff   __TI_prof_data_start
