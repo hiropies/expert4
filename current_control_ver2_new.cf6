@@ -84,7 +84,7 @@
     <BindWaveNormRec>
       <OnChipVarAddress>0</OnChipVarAddress>
       <OnchipVarType>0</OnchipVarType>
-      <bNormValDivValue>1</bNormValDivValue>
+      <bNormValDivValue>5</bNormValDivValue>
       <bNormPosValue>0</bNormPosValue>
       <bNormPosAngle>90</bNormPosAngle>
       <bNormOffsetValue>0</bNormOffsetValue>
@@ -97,7 +97,7 @@
     <BindWaveNormRec>
       <OnChipVarAddress>0</OnChipVarAddress>
       <OnchipVarType>0</OnchipVarType>
-      <bNormValDivValue>50</bNormValDivValue>
+      <bNormValDivValue>100</bNormValDivValue>
       <bNormPosValue>0</bNormPosValue>
       <bNormPosAngle>90</bNormPosAngle>
       <bNormOffsetValue>0</bNormOffsetValue>
@@ -110,7 +110,7 @@
     <BindWaveNormRec>
       <OnChipVarAddress>0</OnChipVarAddress>
       <OnchipVarType>0</OnchipVarType>
-      <bNormValDivValue>2</bNormValDivValue>
+      <bNormValDivValue>5</bNormValDivValue>
       <bNormPosValue>0</bNormPosValue>
       <bNormPosAngle>90</bNormPosAngle>
       <bNormOffsetValue>0</bNormOffsetValue>
@@ -123,7 +123,7 @@
     <BindWaveNormRec>
       <OnChipVarAddress>0</OnChipVarAddress>
       <OnchipVarType>0</OnchipVarType>
-      <bNormValDivValue>0.005</bNormValDivValue>
+      <bNormValDivValue>0.02</bNormValDivValue>
       <bNormPosValue>0</bNormPosValue>
       <bNormPosAngle>90</bNormPosAngle>
       <bNormOffsetValue>0</bNormOffsetValue>
@@ -149,7 +149,7 @@
     <BindWaveNormRec>
       <OnChipVarAddress>0</OnChipVarAddress>
       <OnchipVarType>0</OnchipVarType>
-      <bNormValDivValue>0.01</bNormValDivValue>
+      <bNormValDivValue>0.05</bNormValDivValue>
       <bNormPosValue>0</bNormPosValue>
       <bNormPosAngle>90</bNormPosAngle>
       <bNormOffsetValue>0</bNormOffsetValue>
@@ -175,7 +175,7 @@
     <BindWaveNormRec>
       <OnChipVarAddress>0</OnChipVarAddress>
       <OnchipVarType>0</OnchipVarType>
-      <bNormValDivValue>0.01</bNormValDivValue>
+      <bNormValDivValue>0.05</bNormValDivValue>
       <bNormPosValue>0</bNormPosValue>
       <bNormPosAngle>90</bNormPosAngle>
       <bNormOffsetValue>0</bNormOffsetValue>
@@ -201,7 +201,7 @@
     <BindWaveNormRec>
       <OnChipVarAddress>0</OnChipVarAddress>
       <OnchipVarType>0</OnchipVarType>
-      <bNormValDivValue>0.01</bNormValDivValue>
+      <bNormValDivValue>0.05</bNormValDivValue>
       <bNormPosValue>0</bNormPosValue>
       <bNormPosAngle>90</bNormPosAngle>
       <bNormOffsetValue>0</bNormOffsetValue>
@@ -214,7 +214,7 @@
     <BindWaveNormRec>
       <OnChipVarAddress>0</OnChipVarAddress>
       <OnchipVarType>0</OnchipVarType>
-      <bNormValDivValue>0.01</bNormValDivValue>
+      <bNormValDivValue>0.05</bNormValDivValue>
       <bNormPosValue>0</bNormPosValue>
       <bNormPosAngle>90</bNormPosAngle>
       <bNormOffsetValue>0</bNormOffsetValue>
@@ -227,7 +227,7 @@
     <BindWaveNormRec>
       <OnChipVarAddress>0</OnChipVarAddress>
       <OnchipVarType>0</OnchipVarType>
-      <bNormValDivValue>0.01</bNormValDivValue>
+      <bNormValDivValue>0.05</bNormValDivValue>
       <bNormPosValue>0</bNormPosValue>
       <bNormPosAngle>90</bNormPosAngle>
       <bNormOffsetValue>0</bNormOffsetValue>
@@ -872,8 +872,8 @@
   <bRecordLength>100000</bRecordLength>
   <bNumberOfData>100000</bNumberOfData>
   <bCurRangeValue>100</bCurRangeValue>
-  <bHorValue>0.1</bHorValue>
-  <bHorValue_rough>0.1</bHorValue_rough>
+  <bHorValue>0.2</bHorValue>
+  <bHorValue_rough>0.2</bHorValue_rough>
   <bCurPosValue>0</bCurPosValue>
   <bIndex_TrgNo>0</bIndex_TrgNo>
   <bTrgPosValue>0</bTrgPosValue>
