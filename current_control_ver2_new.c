@@ -4587,7 +4587,7 @@ void CalcFDTDWr_QmrefInputType(Robot *robo)
     ql_Z[0] = Wr_sub[0].a51cf * wm_Z1[0] + Wr_sub[0].a52cf * qm_Z1[0] + Wr_sub[0].a53cf / axis1.Jl_calc * qs_Z1[0] + (Wr_sub[0].a54cf1 + Wr_sub[0].a54cf2 / axis1.Jl_calc) * wl_Z1[0] + Wr_sub[0].a55cf * ql_Z1[0] + Wr_sub[0].a56cf * z_Z1[0] + Wr_sub[0].b5cf * robo->qm_ref;
     z_Z[0] = Wr_sub[0].a61cf * wm_Z1[0] + Wr_sub[0].a62cf * qm_Z1[0] + Wr_sub[0].a63cf * qs_Z1[0] + Wr_sub[0].a64cf * wl_Z1[0] + Wr_sub[0].a65cf * ql_Z1[0] + Wr_sub[0].a66cf * z_Z1[0] + Wr_sub[0].b6cf * robo->qm_ref;
 
-    // 状態量の更新axis2.
+    // 状態量の更新axis1.
     wm_Z1[0] = wm_Z[0];
     qm_Z1[0] = qm_Z[0];
     qs_Z1[0] = qs_Z[0];
