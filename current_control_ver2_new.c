@@ -3577,7 +3577,8 @@ void CalcHandCmd(float goal[3], float t_wait, float speed, float start_hand[3], 
   const float theta = -PI / 4;
   const float S1 = -0.7071;
   const float C1 = 0.7071;
-  const float x_slide = 1.2746;
+  // const float x_slide = 1.2746;
+  const float x_slide = 1.2846; // +x10mmオフセット実験用
   const float y_slide = 0.0;
   const float z_slide = 0.2466;
   static float Tall = 0;
