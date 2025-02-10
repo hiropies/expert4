@@ -3467,8 +3467,7 @@ void FDTD_Tm(Robot *robo)
 }
 
 void FDTD_Tm_Init()
-{
-  
+{  
   Tm_sub[0].den_0 = 0.0;
   Tm_sub[0].den_1 = 0.0;
   Tm_sub[0].den_2 = (Tp * Tp * axis1.Ksn * axis1.Ktn) / axis1.Rgn / axis1.Jmn;
@@ -3592,6 +3591,10 @@ void CalcHandCmd(float goal[3], float t_wait, float speed, float start_hand[3], 
       if (flag_loop == 1)
       {
         flag_init = 1;
+      }
+      else
+      {
+        flag_init = 0;
       }
       goalZ[0] = start_hand[0];
       goalZ[1] = start_hand[1];
