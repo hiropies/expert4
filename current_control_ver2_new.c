@@ -90,6 +90,7 @@ float range[] = {5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0}; /// AD変換レンジ 
 volatile int flag_cont_start = 0;  //!< 制御開始フラグ
 volatile float flag_dead = 1;      //!< デッドタイム補償フラグ
 volatile int flag_dyn_payload = 1; // 動力学計算ペイロード切り替えフラグ(0:無負荷、1:7.2kg負荷、2:4kg負荷)
+volatile int flag_CalcHandCmd = 0; // 軌跡指令切り替えフラグ(0:円 , 1:正方形　, 2:ひし形)
 volatile int flag_debug = 0;
 volatile int flag_pv = 0;         // 位置/速度制御切り替えフラグ
 volatile int flag_delay = 0;      // FF用　1/z^2 遅延フラグ
@@ -935,6 +936,7 @@ void SetVoltReferences(Robot *robo);
 // #pragma CODE_SECTION(func, “.CODE_ON_HIGHER_SPEED”)
 void SetLPF(LPF_param Filter[], float Ts, float fs, float Q);
 float GetFilterdSignal(LPF_param *Filter, float u, , int flag_filter, int flag_reset);
+int CalcHandCmdCenter(int flag_cmd, float goal[3], float t_wait, float speed, float start_hand[3], int flag_loop);
 int CalcHandCmdCircle(float goal[3], float t_wait, float speed, float start_hand[3], int flag_loop);
 int CalcHandCmdRectangle(float goal[3], float t_wait, float speed, float start_hand[3], int flag_loop);
 int CalcHandCmdDiamond(float goal[3], float t_wait, float speed, float start_hand[3], int flag_loop);
@@ -1280,15 +1282,19 @@ interrupt void ControlFunction(void)
           }
           if (flag_reposition == 1)
           {
-            hand_cmd[0] = start_hand[0];
-            hand_cmd[1] = start_hand[1];
-            hand_cmd[2] = start_hand[2];
+            // hand_cmd[0] = start_hand[0];
+            // hand_cmd[1] = start_hand[1];
+            // hand_cmd[2] = start_hand[2];
             static float wait = 3.0;
-            static float task = 1.5;
-            // static float speed = 1.0; // [m/min] = 60 [m/s]
+            static float speed = 10.0; // [m/min] = 60 [m/s]
+            static int flag_loop = 0;
+            static int filter = 0;
+            filter = CalcHandCmdCenter(flag_CalcHandCmd, hand_cmd, wait, speed, start_hand, flag_loop);
+            start_hand[0] = hand_cmd[0];
+            start_hand[1] = hand_cmd[1];
+            start_hand[2] = hand_cmd[2];
             static int flag = 0;
             static int reset = 1;
-            static int filter = 0;
             CalcInverseCmd(hand_cmd, joint_cmd, motor_cmd, filter, reset);
             start_go1 = axis1.qm;
             start_go2 = axis2.qm;
@@ -1459,14 +1465,13 @@ interrupt void ControlFunction(void)
             ＊軸によって違うので注意！！！（ギアとかによる）
           ***************************************************************************** */
           static float time_wait = 3.0;
-          static float time_task = 1.5;
-          static float speed_hand = 30.0; // [m/min] = 60 [m/s]
+          static float speed_hand = 10.0; // [m/min] = 60 [m/s]
           static int flag_loop = 1;
           static int filter_reset = 0;
 
           float start_cmd = (float)C6657_timer0_read() * 4.8e-9 * 1e6;
 
-          int flag_filter_on = CalcHandCmdCircle(hand_cmd, time_wait, speed_hand, start_hand, flag_loop);
+          int flag_filter_on = CalcHandCmdCenter(flag_CalcHandCmd ,hand_cmd, time_wait, speed_hand, start_hand, flag_loop);
           WAVE_TimeCalcCmd = (float)C6657_timer0_read() * 4.8e-9 * 1e6 - start_cmd;
 
           start_cmd = (float)C6657_timer0_read() * 4.8e-9 * 1e6;
@@ -3568,6 +3573,16 @@ float GetFilterdSignal(LPF_param *Filter, float u, int flag_init)
   Filter->yZ1 = y;
 }
 
+int CalcHandCmdCenter(int flag_cmd, float goal[3], float t_wait, float speed, float start_hand[3], int flag_loop){
+  if(flag_cmd == 0){
+    return CalcHandCmdCircle(goal[3], t_wait, speed, start_hand[3], flag_loop);
+  }else if(flag_cmd == 1){
+    return CalcHandCmdRectangle(goal[3], t_wait, speed, start_hand[3], flag_loop);
+  }else if(flag_cmd == 2){
+    return CalcHandCmdDiamond(goal[3], t_wait, speed, start_hand[3], flag_loop);
+  }
+}
+
 // 手先軌跡(円)
 int CalcHandCmdCircle(float goal[3], float t_wait, float speed, float start_hand[3], int flag_loop)
 {
@@ -3602,46 +3617,54 @@ int CalcHandCmdCircle(float goal[3], float t_wait, float speed, float start_hand
       {
         flag_init = 0;
       }
-      goalZ[0] = start_hand[0];
-      goalZ[1] = start_hand[1];
-      goalZ[2] = start_hand[2];
-      fx = C1 * (start_hand[0] - x_slide) - S1 * (start_hand[2] - z_slide);
-      fy = (start_hand[1] - y_slide);
-      fz = S1 * (start_hand[0] - x_slide) + C1 * (start_hand[2] - z_slide);
-      fxZ = fx;
-      fyZ = fy;
-      fzZ = fz;
-    }
-    if (Tall < t_wait)
-    {
-      goal[0] = goalZ[0];
-      goal[1] = goalZ[1];
-      goal[2] = goalZ[2];
-      Tall += Tp;
-    }
-    else if (Tall >= t_wait && Tall < (t_wait + t_task))
-    {
-      fx = (D / 2.0) * sin(2 * PI * freq * (Tall - t_wait));
-      fy = (D / 2.0) * cos(2 * PI * freq * (Tall - t_wait));
-      fz = 0;
+      fx = 0.000;
+      fy = -0.010;
+      fz = 0.000;
       goal[0] = C1 * fxZ + S1 * fzZ + x_slide;
       goal[1] = fyZ + y_slide;
       goal[2] = C1 * fzZ - S1 * fxZ + z_slide;
-      fxZ = fx;
-      fyZ = fy;
-      fzZ = fz;
       goalZ[0] = goal[0];
       goalZ[1] = goal[1];
       goalZ[2] = goal[2];
-      Tall += Tp;
+      // fx = C1 * (start_hand[0] - x_slide) - S1 * (start_hand[2] - z_slide);
+      // fy = (start_hand[1] - y_slide);
+      // fz = S1 * (start_hand[0] - x_slide) + C1 * (start_hand[2] - z_slide);
+      fxZ = fx;
+      fyZ = fy;
+      fzZ = fz;
     }
-    else if (Tall >= t_wait + t_task)
-    {
-      goal[0] = goalZ[0];
-      goal[1] = goalZ[1];
-      goal[2] = goalZ[2];
-      Tall += Tp;
-      flag_cmd_end = 1;
+    if(flag_init == 1){
+      if (Tall < t_wait)
+      {
+        goal[0] = goalZ[0];
+        goal[1] = goalZ[1];
+        goal[2] = goalZ[2];
+        Tall += Tp;
+      }
+      else if (Tall >= t_wait && Tall < (t_wait + t_task))
+      {
+        fx = (D / 2.0) * sin(2 * PI * freq * (Tall - t_wait));
+        fy = -(D / 2.0) * cos(2 * PI * freq * (Tall - t_wait));
+        fz = 0;
+        goal[0] = C1 * fxZ + S1 * fzZ + x_slide;
+        goal[1] = fyZ + y_slide;
+        goal[2] = C1 * fzZ - S1 * fxZ + z_slide;
+        fxZ = fx;
+        fyZ = fy;
+        fzZ = fz;
+        goalZ[0] = goal[0];
+        goalZ[1] = goal[1];
+        goalZ[2] = goal[2];
+        Tall += Tp;
+      }
+      else if (Tall >= t_wait + t_task)
+      {
+        goal[0] = goalZ[0];
+        goal[1] = goalZ[1];
+        goal[2] = goalZ[2];
+        Tall += Tp;
+        flag_cmd_end = 1;
+      }
     }
   }else{
     goal[0] = goalZ[0];
@@ -3686,79 +3709,85 @@ void CalcHandCmdRectangle(float goal[3], float t_wait, float speed, float start_
       {
         flag_init = 0;
       }
-      goalZ[0] = start_hand[0];
-      goalZ[1] = start_hand[1];
-      goalZ[2] = start_hand[2];
-      fx = C1 * (start_hand[0] - x_slide) - S1 * (start_hand[2] - z_slide);
-      fy = (start_hand[1] - y_slide);
-      fz = S1 * (start_hand[0] - x_slide) + C1 * (start_hand[2] - z_slide);
-      fxZ = fx;
-      fyZ = fy;
-      fzZ = fz;
-    }
-    if (Tall < t_wait)
-    {
-      goal[0] = goalZ[0];
-      goal[1] = goalZ[1];
-      goal[2] = goalZ[2];
-      Tall += Tp;
-    }
-    else if (Tall >= t_wait && Tall < (t_wait + t_task))
-    {
-      // 正方形（XY平面で見た時[10,-10]から反時計回りに初めて[10,10]で終わる）
-      // 正方形を5辺分描画するのでt_taskを5分割する
-      if ((Tall - t_wait) < t_task / 5.0)
-      {
-        fx = fxZ;              //  50 -> 50
-        fy = slope * Tp + fyZ; // -50 -> 50
-        fz = fzZ;
-      }
-      else if ((Tall - t_wait) >= t_task * (1.0 / 5.0) && (Tall - t_wait) < t_task * (2.0 / 5.0))
-      {
-        fx = -slope * Tp + fxZ; //  50 -> -50
-        fy = fyZ;               //  50 ->  50
-        fz = fzZ;
-      }
-      else if ((Tall - t_wait) >= t_task * (2.0 / 5.0) && (Tall - t_wait) < t_task * (3.0 / 5.0))
-      {
-        fx = fxZ;               // -50 -> -50
-        fy = -slope * Tp + fyZ; //  50 -> -50
-        fz = fzZ;
-      }
-      else if ((Tall - t_wait) >= t_task * (3.0 / 5.0) && (Tall - t_wait) < t_task * (4.0 / 5.0))
-      {
-        fx = slope * Tp + fxZ; // -50 ->  50
-        fy = fyZ;              // -50 -> -50
-        fz = fzZ;
-      }
-      else if ((Tall - t_wait) >= t_task * (4.0 / 5.0) && (Tall - t_wait) < t_task * (5.0 / 5.0))
-      {
-        fx = fxZ;              //  50 -> 50
-        fy = slope * Tp + fyZ; // -50 -> 50
-        fz = fzZ;
-      }
+      fx = 0.050;
+      fy = -0.050;
+      fz = 0.000;
       goal[0] = C1 * fxZ + S1 * fzZ + x_slide;
       goal[1] = fyZ + y_slide;
       goal[2] = C1 * fzZ - S1 * fxZ + z_slide;
-      fxZ = fx;
-      fyZ = fy;
-      fzZ = fz;
       goalZ[0] = goal[0];
       goalZ[1] = goal[1];
       goalZ[2] = goal[2];
-      Tall += Tp;
+      // fx = C1 * (start_hand[0] - x_slide) - S1 * (start_hand[2] - z_slide);
+      // fy = (start_hand[1] - y_slide);
+      // fz = S1 * (start_hand[0] - x_slide) + C1 * (start_hand[2] - z_slide);
+      fxZ = fx;
+      fyZ = fy;
+      fzZ = fz;
     }
-    else if (Tall >= t_wait + t_task)
-    {
-      goal[0] = goalZ[0];
-      goal[1] = goalZ[1];
-      goal[2] = goalZ[2];
-      Tall += Tp;
-      flag_cmd_end = 1;
+    if(flag_init == 1){
+      if (Tall < t_wait)
+      {
+        goal[0] = goalZ[0];
+        goal[1] = goalZ[1];
+        goal[2] = goalZ[2];
+        Tall += Tp;
+      }
+      else if (Tall >= t_wait && Tall < (t_wait + t_task))
+      {
+        // 正方形（XY平面で見た時[10,-10]から反時計回りに初めて[10,10]で終わる）
+        // 正方形を5辺分描画するのでt_taskを5分割する
+        if ((Tall - t_wait) < t_task / 5.0)
+        {
+          fx = fxZ;              //  50 -> 50
+          fy = slope * Tp + fyZ; // -50 -> 50
+          fz = fzZ;
+        }
+        else if ((Tall - t_wait) >= t_task * (1.0 / 5.0) && (Tall - t_wait) < t_task * (2.0 / 5.0))
+        {
+          fx = -slope * Tp + fxZ; //  50 -> -50
+          fy = fyZ;               //  50 ->  50
+          fz = fzZ;
+        }
+        else if ((Tall - t_wait) >= t_task * (2.0 / 5.0) && (Tall - t_wait) < t_task * (3.0 / 5.0))
+        {
+          fx = fxZ;               // -50 -> -50
+          fy = -slope * Tp + fyZ; //  50 -> -50
+          fz = fzZ;
+        }
+        else if ((Tall - t_wait) >= t_task * (3.0 / 5.0) && (Tall - t_wait) < t_task * (4.0 / 5.0))
+        {
+          fx = slope * Tp + fxZ; // -50 ->  50
+          fy = fyZ;              // -50 -> -50
+          fz = fzZ;
+        }
+        else if ((Tall - t_wait) >= t_task * (4.0 / 5.0) && (Tall - t_wait) < t_task * (5.0 / 5.0))
+        {
+          fx = fxZ;              //  50 -> 50
+          fy = slope * Tp + fyZ; // -50 -> 50
+          fz = fzZ;
+        }
+        goal[0] = C1 * fxZ + S1 * fzZ + x_slide;
+        goal[1] = fyZ + y_slide;
+        goal[2] = C1 * fzZ - S1 * fxZ + z_slide;
+        fxZ = fx;
+        fyZ = fy;
+        fzZ = fz;
+        goalZ[0] = goal[0];
+        goalZ[1] = goal[1];
+        goalZ[2] = goal[2];
+        Tall += Tp;
+      }
+      else if (Tall >= t_wait + t_task)
+      {
+        goal[0] = goalZ[0];
+        goal[1] = goalZ[1];
+        goal[2] = goalZ[2];
+        Tall += Tp;
+        flag_cmd_end = 1;
+      }
     }
-  }
-  else
-  {
+  }else{
     goal[0] = goalZ[0];
     goal[1] = goalZ[1];
     goal[2] = goalZ[2];
@@ -3809,86 +3838,94 @@ int CalcHandCmdDiamond(float goal[3], float t_wait, float speed, float start_han
       {
         flag_init = 0;
       }
-      goalZ[0] = start_hand[0];
-      goalZ[1] = start_hand[1];
-      goalZ[2] = start_hand[2];
+      fx = 0.000;
+      fy = -0.07071;
+      fz = 0.000;
+      goal[0] = (C1 * C2 * fx) + (S1 * fz) - (C1 * S2 * fy) + x_slide;
+      goal[1] = (S2 * fx) + (C2 * fy) + y_slide;
+      goal[2] = (C1 * fz) - (S1 * C2 * fx) + (S1 * S2 * fy) + z_slide;
+      goalZ[0] = goal[0];
+      goalZ[1] = goal[1];
+      goalZ[2] = goal[2];
       // 正方形用の手先→作業座標系変換
       // fx = C1 * (start_hand[0] - x_slide) - S1 * (start_hand[2] - z_slide);
       // fy = (start_hand[1] - y_slide);
       // fz = S1 * (start_hand[0] - x_slide) + C1 * (start_hand[2] - z_slide);
       // ひし形用の手先→作業座標系変換
-      fx = (C1 * C2 * (start_hand[0] - x_slide)) + (S2 * (start_hand[1] - y_slide)) - (S1 * C2 * (start_hand[2] - z_slide));
-      fy = (C1 * S2 * (start_hand[0] - x_slide)) + (C2 * (start_hand[1] - y_slide)) - (S1 * S2 * (start_hand[2] - z_slide));
-      fz = (S1 * (start_hand[0] - x_slide)) + (C1 * (start_hand[2] - z_slide));
+      // fx = (C1 * C2 * (start_hand[0] - x_slide)) + (S2 * (start_hand[1] - y_slide)) - (S1 * C2 * (start_hand[2] - z_slide));
+      // fy = (C1 * S2 * (start_hand[0] - x_slide)) + (C2 * (start_hand[1] - y_slide)) - (S1 * S2 * (start_hand[2] - z_slide));
+      // fz = (S1 * (start_hand[0] - x_slide)) + (C1 * (start_hand[2] - z_slide));
       fxZ = fx;
       fyZ = fy;
       fzZ = fz;
     }
-    if (Tall < t_wait)
-    {
-      goal[0] = goalZ[0];
-      goal[1] = goalZ[1];
-      goal[2] = goalZ[2];
-      Tall += Tp;
-    }
-    else if (Tall >= t_wait && Tall < (t_wait + t_task))
-    {
-      // 正方形（XY平面で見た時[10,-10]から反時計回りに初めて[10,10]で終わる）
-      // 正方形を5辺分描画するのでt_taskを5分割する
-      if ((Tall - t_wait) < t_task / 6.0)
+    if(flag_init == 1){
+      if (Tall < t_wait)
       {
-        fx = fxZ;              //  50 -> 50
-        fy = slope * Tp + fyZ; // -50 -> 50
-        fz = fzZ;
+        goal[0] = goalZ[0];
+        goal[1] = goalZ[1];
+        goal[2] = goalZ[2];
+        Tall += Tp;
       }
-      else if ((Tall - t_wait) >= t_task * (1.0 / 6.0) && (Tall - t_wait) < t_task * (2.0 / 6.0))
+      else if (Tall >= t_wait && Tall < (t_wait + t_task))
       {
-        fx = -slope * Tp + fxZ; //  50 -> -50
-        fy = fyZ;               //  50 ->  50
-        fz = fzZ;
+        // 正方形（XY平面で見た時[10,-10]から反時計回りに初めて[10,10]で終わる）
+        // 正方形を5辺分描画するのでt_taskを5分割する
+        if ((Tall - t_wait) < t_task / 6.0)
+        {
+          fx = fxZ;              //  50 -> 50
+          fy = slope * Tp + fyZ; // -50 -> 50
+          fz = fzZ;
+        }
+        else if ((Tall - t_wait) >= t_task * (1.0 / 6.0) && (Tall - t_wait) < t_task * (2.0 / 6.0))
+        {
+          fx = -slope * Tp + fxZ; //  50 -> -50
+          fy = fyZ;               //  50 ->  50
+          fz = fzZ;
+        }
+        else if ((Tall - t_wait) >= t_task * (2.0 / 6.0) && (Tall - t_wait) < t_task * (3.0 / 6.0))
+        {
+          fx = fxZ;               // -50 -> -50
+          fy = -slope * Tp + fyZ; //  50 -> -50
+          fz = fzZ;
+        }
+        else if ((Tall - t_wait) >= t_task * (3.0 / 6.0) && (Tall - t_wait) < t_task * (4.0 / 6.0))
+        {
+          fx = slope * Tp + fxZ; // -50 ->  50
+          fy = fyZ;              // -50 -> -50
+          fz = fzZ;
+        }
+        else if ((Tall - t_wait) >= t_task * (4.0 / 6.0) && (Tall - t_wait) < t_task * (5.0 / 6.0))
+        {
+          fx = fxZ;              //  50 -> 50
+          fy = slope * Tp + fyZ; // -50 -> 50
+          fz = fzZ;
+        }
+        else if ((Tall - t_wait) >= t_task * (5.0 / 6.0) && (Tall - t_wait) < t_task * (6.0 / 6.0))
+        {
+          fx = -slope * Tp + fxZ; //  50 -> -50
+          fy = fyZ;               //  50 ->  50
+          fz = fzZ;
+        }
+        goal[0] = (C1 * C2 * fx) + (S1 * fz) - (C1 * S2 * fy) + x_slide;
+        goal[1] = (S2 * fx) + (C2 * fy) + y_slide;
+        goal[2] = (C1 * fz) - (S1 * C2 * fx) + (S1 * S2 * fy) + z_slide;
+        fxZ = fx;
+        fyZ = fy;
+        fzZ = fz;
+        goalZ[0] = goal[0];
+        goalZ[1] = goal[1];
+        goalZ[2] = goal[2];
+        Tall += Tp;
       }
-      else if ((Tall - t_wait) >= t_task * (2.0 / 6.0) && (Tall - t_wait) < t_task * (3.0 / 6.0))
+      else if (Tall >= t_wait + t_task)
       {
-        fx = fxZ;               // -50 -> -50
-        fy = -slope * Tp + fyZ; //  50 -> -50
-        fz = fzZ;
+        goal[0] = goalZ[0];
+        goal[1] = goalZ[1];
+        goal[2] = goalZ[2];
+        Tall += Tp;
+        flag_cmd_end = 1;
       }
-      else if ((Tall - t_wait) >= t_task * (3.0 / 6.0) && (Tall - t_wait) < t_task * (4.0 / 6.0))
-      {
-        fx = slope * Tp + fxZ; // -50 ->  50
-        fy = fyZ;              // -50 -> -50
-        fz = fzZ;
-      }
-      else if ((Tall - t_wait) >= t_task * (4.0 / 6.0) && (Tall - t_wait) < t_task * (5.0 / 6.0))
-      {
-        fx = fxZ;              //  50 -> 50
-        fy = slope * Tp + fyZ; // -50 -> 50
-        fz = fzZ;
-      }
-      else if ((Tall - t_wait) >= t_task * (5.0 / 6.0) && (Tall - t_wait) < t_task * (6.0 / 6.0))
-      {
-        fx = -slope * Tp + fxZ; //  50 -> -50
-        fy = fyZ;               //  50 ->  50
-        fz = fzZ;
-      }
-      goal[0] = (C1 * C2 * fx) + (S1 * fz) - (C1 * S2 * fy) + x_slide;
-      goal[1] = (S2 * fx) + (C2 * fy) + y_slide;
-      goal[2] = (C1 * fz) - (S1 * C2 * fx) + (S1 * S2 * fy) + z_slide;
-      fxZ = fx;
-      fyZ = fy;
-      fzZ = fz;
-      goalZ[0] = goal[0];
-      goalZ[1] = goal[1];
-      goalZ[2] = goal[2];
-      Tall += Tp;
-    }
-    else if (Tall >= t_wait + t_task)
-    {
-      goal[0] = goalZ[0];
-      goal[1] = goalZ[1];
-      goal[2] = goalZ[2];
-      Tall += Tp;
-      flag_cmd_end = 1;
     }
   }else{
     goal[0] = goalZ[0];
