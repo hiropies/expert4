@@ -68,7 +68,8 @@ static const float scale = 2.5;
 static const float scale_fast = 7.5;
 static const float scale_slow = 7.5;
 // static float start_hand[3] = {1.2746, 0.000, 0.2466};
-static float start_hand[3] = {1.3100, -0.050, 0.2820};
+// static float start_hand[3] = {1.3100, -0.050, 0.2820}; // {1.2746, 0.000, 0.2466}を中心とする正方形
+static float start_hand[3] = {1.320, -0.050, 0.2820}; // {1.2846, 0.000, 0.2466}を中心とする正方形 +x側に10mmオフセット
 
 enum SeqMode
 {
@@ -1457,7 +1458,7 @@ interrupt void ControlFunction(void)
           ***************************************************************************** */
           static float time_wait = 3.0;
           static float time_task = 1.5;
-          static float speed_hand = 1.0; // [m/min] = 60 [m/s]
+          static float speed_hand = 10.0; // [m/min] = 60 [m/s]
           static int flag_loop = 1;
           static int filter_reset = 0;
 
