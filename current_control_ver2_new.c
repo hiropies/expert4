@@ -69,7 +69,8 @@ static const float scale_fast = 7.5;
 static const float scale_slow = 7.5;
 // static float start_hand[3] = {1.2746, 0.000, 0.2466};
 // static float start_hand[3] = {1.2746, -0.07071, 0.2466}; //{1.2746, 0.000, 0.2466}を中心としたひし形のスタート地点
-static float start_hand[3] = {1.2846, -0.07071, 0.2466}; //{1.2786, 0.000, 0.2466}を中心としたひし形のスタート地点
+static float start_hand[3] = {1.2846, -0.07071, 0.2466}; //{1.2846, 0.000, 0.2466}を中心としたひし形のスタート地点
+static float start_hand[3] = {1.2646, -0.07071, 0.2466}; //{1.2646, 0.000, 0.2466}を中心としたひし形のスタート地点
 
 enum SeqMode
 {
@@ -3587,6 +3588,7 @@ void CalcHandCmd(float goal[3], float t_wait, float speed, float start_hand[3], 
   // static float start_hand[3] = {1.2746, -0.07071, 0.2466};
   // const float x_slide = 1.2746;
   const float x_slide = 1.2846; // +x側10mmオフセット
+  const float x_slide = 1.2646; // -x側10mmオフセット
   const float y_slide = 0.0;
   const float z_slide = 0.2466;
   static float Tall = 0;
