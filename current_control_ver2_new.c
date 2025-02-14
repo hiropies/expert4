@@ -3759,7 +3759,7 @@ void CalcInverseCmd(float goal[3], float joint[3], float motor[3], int flag_rese
   Phi1 = acos(((Le * Le) + (Larm * Larm) - (Lp2h * Lp2h)) / (2 * Le * Larm));
   Phi2 = acos((Lh1 + Lh2 + Lj + Lk) / (Larm));
   Phi3 = acos(((Le * Le) + (Lp2h * Lp2h) - (Larm * Larm)) / (2 * Le * Lp2h));
-  Phi4 = acos(((Lac * Lac) + (Lp2h * Lp2h) - (Lg2h * Lg2h)) / (2 * Lac * Lg2h));
+  Phi4 = acos(((Lac * Lac) + (Lp2h * Lp2h) - (Lg2h * Lg2h)) / (2 * Lac * Lp2h));
 
   joint[2] = (PI / 2.0) - Phi1 + Phi2;
   // joint[2] = GetFilterdSignal(&LPF_motor[2], joint[2], flag_init);
