@@ -941,7 +941,9 @@ int CalcHandCmdCircle(float goal[3], float t_wait, float speed, float start_hand
 int CalcHandCmdRectangle(float goal[3], float t_wait, float speed, float start_hand[3], int flag_loop);
 int CalcHandCmdDiamond(float goal[3], float t_wait, float speed, float start_hand[3], int flag_loop);
 void LimitPosCmd(Robot *robo);
-void CalcInverseCmd(float goal[3], float joint[3], float motor[3], int flag_filter, int flag_reset);
+void CalcInverseCmd(float goal[3], float joint[3], float motor[3], float wm[3], int flag_filter, int flag_reset, float dt);
+// 疑似微分なんやで
+float backward_diff(float x, float xZ, float dt);
 float GeneratorCircle1st(float t_wait, float start);
 float GeneratorCircle2nd(float t_wait, float start);
 float GeneratorCircle3rd(float t_wait, float start);
@@ -988,6 +990,7 @@ interrupt void ControlFunction(void)
   static float hand_cmd[3] = {0, 0, 0};
   static float joint_cmd[3] = {0, 0, 0};
   static float motor_cmd[3] = {0, 0, 0};
+  static float wm_cmd[3] = {0, 0, 0};
 
   GetMultiPositions(joint); //!< 複数軸同時取得(特別な事情がない限りこっちを使う)
 
@@ -1295,7 +1298,8 @@ interrupt void ControlFunction(void)
             start_hand[2] = hand_cmd[2];
             static int flag = 0;
             static int reset = 1;
-            CalcInverseCmd(hand_cmd, joint_cmd, motor_cmd, filter, reset);
+            // float goal[3], float joint[3], float motor[3], float wm[3], int flag_filter, int flag_reset, float dt
+            CalcInverseCmd(hand_cmd, joint_cmd, motor_cmd, wm_cmd, filter, reset, Tp);
             start_go1 = axis1.qm;
             start_go2 = axis2.qm;
             start_go3 = axis3.qm;
@@ -1475,7 +1479,7 @@ interrupt void ControlFunction(void)
           WAVE_TimeCalcCmd = (float)C6657_timer0_read() * 4.8e-9 * 1e6 - start_cmd;
 
           start_cmd = (float)C6657_timer0_read() * 4.8e-9 * 1e6;
-          CalcInverseCmd(hand_cmd, joint_cmd, motor_cmd, flag_filter_on, filter_reset);
+          CalcInverseCmd(hand_cmd, joint_cmd, motor_cmd, wm_cmd, flag_filter_on, filter_reset, Tp);
           WAVE_TimeCalcInvCmd = (float)C6657_timer0_read() * 4.8e-9 * 1e6 - start_cmd;
 
           // 1軸目 位置指令
@@ -1483,14 +1487,20 @@ interrupt void ControlFunction(void)
           // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
           axis1.qm_ref_z2 = axis1.qm_ref_z1;
           axis1.qm_ref_z1 = axis1.qm_ref;
-          // axis1.qm_ref = axis1.posi_trg_rad;
-          // axis1.qm_ref = GeneratorCircle1st(4.0, axis1.posi_trg_rad);
-          axis1.qm_ref = motor_cmd[0];
+
+          // P制御用
+          // axis1.qm_ref = motor_cmd[0];
+
+          // D-PD制御用
+          axis1.qm_ref = Tp * wm_cmd[0] + axis1.qm_ref_z1;
+
           LimitPosCmd(&axis1);
           // axis1.qm_ref = 0.0;
 
           // 1軸目 位置P制御
-          axis1.wm_ref = (axis1.qm_ref_z2 - axis1.qm) * axis1.Kpp;
+          // axis1.wm_ref = (axis1.qm_ref_z2 - axis1.qm) * axis1.Kpp;
+          // 1軸目 位置D-PD制御
+          axis1.wm_ref = (axis1.qm_ref_z2 - axis1.qm) * axis1.Kpp + axis1.Kff * wm_cmd[0] - axis1.Kfb * axis1.wm;
 
           if (flag_FF == 1)
           {
@@ -1519,14 +1529,16 @@ interrupt void ControlFunction(void)
           // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
           axis2.qm_ref_z2 = axis2.qm_ref_z1;
           axis2.qm_ref_z1 = axis2.qm_ref;
-          // axis2.qm_ref = axis2.posi_trg_rad;
-          // axis2.qm_ref = GeneratorCircle2nd(4.0, axis2.posi_trg_rad);
-          axis2.qm_ref = motor_cmd[1];
+          // P制御用
+          // axis2.qm_ref = motor_cmd[1];
+          // D-PD制御用
+          axis2.qm_ref = Tp * wm_cmd[1] + axis2.qm_ref_z1;
           LimitPosCmd(&axis2);
-          // axis2.qm_ref = 0.0;
 
-          // 2軸目 速度P制御
-          axis2.wm_ref = (axis2.qm_ref_z2 - axis2.qm) * axis2.Kpp;
+          // 1軸目 位置P制御
+          // axis2.wm_ref = (axis2.qm_ref_z2 - axis2.qm) * axis2.Kpp;
+          // 1軸目 位置D-PD制御
+          axis2.wm_ref = (axis2.qm_ref_z2 - axis2.qm) * axis2.Kpp + axis2.Kff * wm_cmd[1] - axis2.Kfb * axis2.wm;
 
           if (flag_FF == 1)
           {
@@ -1555,14 +1567,16 @@ interrupt void ControlFunction(void)
           // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
           axis3.qm_ref_z2 = axis3.qm_ref_z1;
           axis3.qm_ref_z1 = axis3.qm_ref;
-          // axis3.qm_ref = axis3.posi_trg_rad;
-          // axis3.qm_ref = GeneratorCircle3rd(4.0, axis3.posi_trg_rad);
-          axis3.qm_ref = motor_cmd[2];
+          // P制御用
+          // axis3.qm_ref = motor_cmd[2];
+          // D-PD制御用
+          axis3.qm_ref = Tp * wm_cmd[2] + axis3.qm_ref_z1;
           LimitPosCmd(&axis3);
-          // axis3.qm_ref = 0.0;
 
-          // 3軸目 位置P制御
-          axis3.wm_ref = (axis3.qm_ref_z2 - axis3.qm) * axis3.Kpp;
+          // 1軸目 位置P制御
+          // axis3.wm_ref = (axis3.qm_ref_z2 - axis3.qm) * axis3.Kpp;
+          // 1軸目 位置D-PD制御
+          axis3.wm_ref = (axis3.qm_ref_z2 - axis3.qm) * axis3.Kpp + axis3.Kff * wm_cmd[2] - axis3.Kfb * axis3.wm;
 
           // 3軸目 速度PI制御＋SFB
           if (flag_FF == 1)
@@ -3953,8 +3967,11 @@ void LimitPosCmd(Robot *robo)
 }
 
 // 逆運動学（手先 -> モーター位置）
-void CalcInverseCmd(float goal[3], float joint[3], float motor[3], int flag_filter, int flag_reset)
+void CalcInverseCmd(float goal[3], float joint[3], float motor[3], float wm[3], int flag_filter, int flag_reset, float dt)
 {
+  static float 
+  static float motorZ[3];
+
   const float Rgn1 = 140.254;
   const float Rgn2 = 121;
   const float Rgn3 = 121;
@@ -4012,11 +4029,33 @@ void CalcInverseCmd(float goal[3], float joint[3], float motor[3], int flag_filt
   {
     joint[1] = GetFilterdSignal(&LPF_motor[1], joint[1], flag_init);
   }
+  
   motor[0] = joint[0] * Rgn1;
   motor[1] = joint[1] * Rgn2;
   motor[2] = joint[2] * Rgn3;
-  flag_init = 0;
+
+  if (motorZ[0] == NULL)
+  {
+    motorZ[0] = joint[0] * Rgn1;
+    motorZ[1] = joint[1] * Rgn2;
+    motorZ[2] = joint[2] * Rgn3;
   }
+
+  wm[0] = backward_diff(motor[0], motorZ[0], dt);
+  wm[1] = backward_diff(motor[1], motorZ[1], dt);
+  wm[2] = backward_diff(motor[2], motorZ[2], dt);
+
+  motorZ[0] = motor[0];
+  motorZ[1] = motor[1];
+  motorZ[2] = motor[2];
+
+  flag_init = 0;
+}
+
+float backward_diff(float x, float xZ, float dt)
+{
+  return ((x-xZ)/dt);
+}
 
 float GeneratorCircle1st(float t_wait, float start)
 {
