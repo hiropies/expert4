@@ -935,14 +935,21 @@ float GetVelocity(float theta, volatile float *theta_Z1, const float Ts);
 void SetVoltReferences(Robot *robo);
 /// 位置指令生成関数
 // #pragma CODE_SECTION(func, “.CODE_ON_HIGHER_SPEED”)
+// Filter設定
 void SetLPF(LPF_param Filter[], float Ts, float fs, float Q);
+// Filter処理
 float GetFilterdSignal(LPF_param *Filter, float u, int flag_init);
+// 手先指令生成
 void CalcHandCmd(float goal[3], float t_wait, float speed, float start_hand[3], int flag_loop);
+// 位置リミッタ
 void LimitPosCmd(Robot *robo);
+// 逆運動学
 void CalcInverseCmd(float goal[3], float joint[3], float motor[3], int flag_reset);
+// 円軌跡指令(配列式)
 float GeneratorCircle1st(float t_wait, float start);
 float GeneratorCircle2nd(float t_wait, float start);
 float GeneratorCircle3rd(float t_wait, float start);
+// 台形加速度指令(変位入力型　P2P)
 float ManyRampGenerator1stAxis(float a_ramp, float vel, float t_wait, float t_ramp, float t_const, float a_ramp_back, float t_ramp_back);
 float ManyRampGenerator2ndAxis(float a_ramp, float vel, float t_wait, float t_ramp, float t_const, float a_ramp_back, float t_ramp_back);
 float ManyRampGenerator3rdAxis(float a_ramp, float vel, float t_wait, float t_ramp, float t_const, float a_ramp_back, float t_ramp_back);
@@ -1091,9 +1098,6 @@ interrupt void ControlFunction(void)
       FDTD_Tm(&axis2);
       FDTD_Tm(&axis3);
 
-      // axis1.IrefQ = Ref_Iq_ref_direct;
-      // axis1.IrefQ = Ref_Iq_ref_direct*sinf(2.0*PI*t); // 正弦波指令 電流指令確認用;
-      // axis1.wm_ref = Ref_wM_direct * RectGenerator(t,ref_freq);
       // axis1.IrefQ = Pcontroller((axis1.wm_ref - axis1.wm),Kpv);
       // 動力学方程式より出るトルクの正負に合わせて補償電流を入れる
       // inspectorで要確認！！！！
@@ -3743,13 +3747,13 @@ void CalcInverseCmd(float goal[3], float joint[3], float motor[3], int flag_rese
   if(flag_reset == 1){
     flag_init = 1;
   }
-  joint[0] = -1 * atan2f(goal[1], goal[0]);
+  joint[0] = 1 * atan2f(goal[1], goal[0]);
   // joint[0] = GetFilterdSignal(&LPF_motor[0], joint[0], flag_init);
   // joint[0] = mwarctan2(goal[1], goal[0]);
 
-  p1[0] = Lb * cos(joint[0]);
+  p1[0] = Lb * cos(-joint[0]);
   // p1[0] = Lb * mwcos(joint[0]);
-  p1[1] = Lb * sin(joint[0]);
+  p1[1] = Lb * sin(-joint[0]);
   // p1[1] = Lb * mwsin(joint[0]);
   p1[2] = Lac;
 
@@ -3765,7 +3769,7 @@ void CalcInverseCmd(float goal[3], float joint[3], float motor[3], int flag_rese
   // joint[2] = GetFilterdSignal(&LPF_motor[2], joint[2], flag_init);
   joint[1] = PI - Phi3 - Phi4;
   // joint[1] = GetFilterdSignal(&LPF_motor[1], joint[1], flag_init);
-  motor[0] = joint[0] * Rgn1;
+  motor[0] = -joint[0] * Rgn1;
   motor[1] = joint[1] * Rgn2;
   motor[2] = joint[2] * Rgn3;
   flag_init = 0;
