@@ -1,0 +1,10 @@
+[COMPONENT]
+CONF	"current_control_ver2_new.cmd" 	# :2021年1月12日 20:04:12
+OBJ	"$(PEOS_PATH)\lib\Main.obj" "$(PEOS_PATH)\lib\mwio4.lib" "$(MATHLIB_PATH)\lib\mathlib.ae66" "$(COMPILER_PATH)/../lib/rts6600_elf.lib" "$(CSL_PATH)/lib/ti.csl.ae66" "$(CSL_PATH)/lib/ti.csl.intc.ae66" 	# :2021年1月12日 20:04:12
+HEADER	"$(PROJECT_PATH)" "$(PEOS_PATH)\inc" "$(COMPILER_PATH)\..\include" "$(CSL_PATH)" "$(MATHLIB_PATH)\inc" "$(MATHLIB_PATH)\packages" "$(CSL_PATH)\..\.." 	# :2021年1月12日 20:04:12
+SRC	"current_control_ver2_new.c" "enc.c" 	# :2021年1月12日 20:04:12
+[CONFIGURE]
+AUTO_MAKE	"YES" 	# :2021年1月12日 20:04:12
+STOP_RECONF	"NO" 	# :2021年1月12日 20:04:12
+PEOS_VER	"3_05" 	# :2021年1月12日 20:04:12
+TARGET_TYPE	"c6657" 	# :2021年1月12日 20:04:12
