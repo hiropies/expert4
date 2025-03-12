@@ -729,7 +729,7 @@ typedef struct Fdtd_Wr_Coefficient
   float a51cf, a52cf, a53cf, a54cf1, a54cf2, a55cf, a56cf, a57cf;
   float a61cf, a62cf, a63cf, a64cf, a65cf, a66cf, a67cf;
   float a71cf, a72cf, a73cf, a74cf, a75cf, a76cf, a77cf;
-  float b1cf, b2cf, b3cf, b4cf, b5cf, b6cf, a7cf;
+  float b1cf, b2cf, b3cf, b4cf, b5cf, b6cf, b7cf;
 
   // Iq入力とwm入力の関数でエラーにならないようにqm入力では使わない変数を宣言しておく
   float a22cf1, a22cf2, a23cf1, a23cf2, a34cf, a44cf;
@@ -5623,7 +5623,7 @@ void CalcFDTDWrInit_WmcmdInputType(void)
 void CalcFDTDWrUpdate_WmcmdInputType_1st2nd(void)
 {
   // 1軸目
-  float Tp_2 = Tp * Tp;
+  float Tp2 = Tp * Tp;
   Wr_DPD[0].a11cf = ((axis1.Jmn) - Tp * (axis1.Dmn + axis1.Ktn * (axis1.fwm + axis1.Kvp + axis1.Kfb * axis1.Kvp))) / axis1.Jmn;
   Wr_DPD[0].a12cf = -axis1.Ktn * axis1.Kvp * axis1.Kpp * Tp / axis1.Jmn;
   Wr_DPD[0].a13cf = (-axis1.Ktn * axis1.fqs * Tp - axis1.Ksn * Tp / axis1.Rgn) / axis1.Jmn;
@@ -5688,6 +5688,7 @@ void CalcFDTDWrUpdate_WmcmdInputType_1st2nd(void)
 
 void CalcFDTDWrUpdate_WmcmdInputType_2nd(void)
 {
+  float Tp2 = powf(Tp, 2);
   // 2軸目
   Wr_DPD[1].a11cf = ((axis2.Jmn) - Tp * (axis2.Dmn + axis2.Ktn * (axis2.fwm + axis2.Kvp + axis2.Kfb * axis2.Kvp))) / axis2.Jmn;
   Wr_DPD[1].a12cf = -axis2.Ktn * axis2.Kvp * axis2.Kpp * Tp / axis2.Jmn;
