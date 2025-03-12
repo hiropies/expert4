@@ -905,6 +905,7 @@ typedef volatile struct LPF_param
 } LPF_param;
 
 LPF_param LPF_motor[3] = {0};
+LPF_param LPF_cmd[3] = {0};
 /**
  *  プロトタイプ宣言
  **/
@@ -2213,8 +2214,10 @@ void MW_main(void)
 
   float Ts = Tp;
   float fs = 5.0;
+  float fs2 = 10.0;
   float Q = 1.0 / sqrt(2.0);
   SetLPF(LPF_motor, Ts, fs, Q);
+  SetLPF(LPF_cmd, Ts, fs2, Q);
 
   /// ゲインのセット
   SetGain(joint);
@@ -4113,8 +4116,11 @@ void CalcInverseCmd(float goal[3], float joint[3], float motor[3], float wm[3], 
   }
 
   wm[0] = backward_diff(motor[0], motorZ[0], dt);
+  wm[0] = GetFilterdSignal(&LPF_cmd[0], wm[0], flag_init);
   wm[1] = backward_diff(motor[1], motorZ[1], dt);
+  wm[1] = GetFilterdSignal(&LPF_cmd[1], wm[1], flag_init);
   wm[2] = backward_diff(motor[2], motorZ[2], dt);
+  wm[2] = GetFilterdSignal(&LPF_cmd[2], wm[2], flag_init);
 
   motorZ[0] = motor[0];
   motorZ[1] = motor[1];
