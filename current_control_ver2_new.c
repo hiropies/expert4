@@ -12,7 +12,6 @@
 
   pevボードの対応は毎回要チェック
   全体を作ってから制御手法が違うもので分けたほうがいいかも
-
 */
 
 /*
@@ -68,7 +67,9 @@ static const float scale = 2.5;
 static const float scale_fast = 7.5;
 static const float scale_slow = 7.5;
 // static float start_hand[3] = {1.2746, 0.000, 0.2466};
-static float start_hand[3] = {1.2746, 0.010, 0.2466};
+static float start_hand[3] = {1.2746, -0.07071, 0.2466}; //{1.2746, 0.000, 0.2466}を中心としたひし形のスタート地点
+// static float start_hand[3] = {1.2846, -0.07071, 0.2466}; //{1.2846, 0.000, 0.2466}を中心としたひし形のスタート地点
+// static float start_hand[3] = {1.2696, -0.07071, 0.2466}; //{1.2696, 0.000, 0.2466}を中心としたひし形のスタート地点
 
 enum SeqMode
 {
@@ -911,11 +912,18 @@ void CalcTauLDyn(Robot axis[]);
 void CalcJl(Robot axis[]);
 void CalcGravIcmp(Robot axis[]);
 void CalcDynamicsInit(int flag_dyn_payload);
+
 // FDTDで離散化した負荷側情報計算関数
 void CalcFDTDWr_QmrefInputType(Robot *robo);
 void CalcFDTDWrInit_QmrefInputType(void);
-void CalcFDTDWrInit_QmrefInputType_1st2nd(void);
-void CalcFDTDWrInit_QmrefInputType_2nd(void);
+void CalcFDTDWrUpdate_QmrefInputType_1st2nd(void);
+void CalcFDTDWrUpdate_QmrefInputType_2nd(void);
+
+// FDTDで離散化した負荷側情報計算関数(D-PD対応Wm_cmd入力型)
+void CalcFDTDWr_WmcmdInputType(Robot *robo);
+void CalcFDTDWrInit_WmcmdInputType(void);
+void CalcFDTDWrUpdate_WmcmdInputType_1st2nd(void);
+void CalcFDTDWrUpdate_WmcmdInputType_2nd(void);
 
 // ランプ位置指令生成関数
 float CalcPref2axis(float t_lim, float ql_deg_tilt, int flag);
@@ -934,10 +942,15 @@ void SetVoltReferences(Robot *robo);
 /// 位置指令生成関数
 // #pragma CODE_SECTION(func, “.CODE_ON_HIGHER_SPEED”)
 void SetLPF(LPF_param Filter[], float Ts, float fs, float Q);
-float GetFilterdSignal(LPF_param *Filter, float u, int flag_init);
-void CalcHandCmd(float goal[3], float t_wait, float speed, float start_hand[3], int flag_loop);
+float GetFilterdSignal(LPF_param *Filter, float u, , int flag_filter, int flag_reset);
+int CalcHandCmdCenter(int flag_cmd, float goal[3], float t_wait, float speed, float start_hand[3], int flag_loop);
+int CalcHandCmdCircle(float goal[3], float t_wait, float speed, float start_hand[3], int flag_loop);
+int CalcHandCmdRectangle(float goal[3], float t_wait, float speed, float start_hand[3], int flag_loop);
+int CalcHandCmdDiamond(float goal[3], float t_wait, float speed, float start_hand[3], int flag_loop);
 void LimitPosCmd(Robot *robo);
-void CalcInverseCmd(float goal[3], float joint[3], float motor[3], int flag_reset);
+void CalcInverseCmd(float goal[3], float joint[3], float motor[3], float wm[3], int flag_filter, int flag_reset, float dt);
+// 疑似微分なんやで
+float backward_diff(float x, float xZ, float dt);
 float GeneratorCircle1st(float t_wait, float start);
 float GeneratorCircle2nd(float t_wait, float start);
 float GeneratorCircle3rd(float t_wait, float start);
@@ -1089,9 +1102,6 @@ interrupt void ControlFunction(void)
       FDTD_Tm(&axis2);
       FDTD_Tm(&axis3);
 
-      // axis1.IrefQ = Ref_Iq_ref_direct;
-      // axis1.IrefQ = Ref_Iq_ref_direct*sinf(2.0*PI*t); // 正弦波指令 電流指令確認用;
-      // axis1.wm_ref = Ref_wM_direct * RectGenerator(t,ref_freq);
       // axis1.IrefQ = Pcontroller((axis1.wm_ref - axis1.wm),Kpv);
       // 動力学方程式より出るトルクの正負に合わせて補償電流を入れる
       // inspectorで要確認！！！！
@@ -1278,15 +1288,21 @@ interrupt void ControlFunction(void)
           }
           if (flag_reposition == 1)
           {
-            hand_cmd[0] = start_hand[0];
-            hand_cmd[1] = start_hand[1];
-            hand_cmd[2] = start_hand[2];
+            // hand_cmd[0] = start_hand[0];
+            // hand_cmd[1] = start_hand[1];
+            // hand_cmd[2] = start_hand[2];
             static float wait = 3.0;
-            static float task = 1.5;
-            static float speed = 2.0; // [m/min] = 60 [m/s]
+            static float speed = 10.0; // [m/min] = 60 [m/s]
+            static int flag_loop = 0;
+            static int filter = 0;
+            filter = CalcHandCmdCenter(flag_CalcHandCmd, hand_cmd, wait, speed, start_hand, flag_loop);
+            start_hand[0] = hand_cmd[0];
+            start_hand[1] = hand_cmd[1];
+            start_hand[2] = hand_cmd[2];
             static int flag = 0;
             static int reset = 1;
-            CalcInverseCmd(hand_cmd, joint_cmd, motor_cmd, reset);
+            // float goal[3], float joint[3], float motor[3], float wm[3], int flag_filter, int flag_reset, float dt
+            CalcInverseCmd(hand_cmd, joint_cmd, motor_cmd, wm_cmd, filter, reset, Tp);
             start_go1 = axis1.qm;
             start_go2 = axis2.qm;
             start_go3 = axis3.qm;
@@ -1456,18 +1472,18 @@ interrupt void ControlFunction(void)
             ＊軸によって違うので注意！！！（ギアとかによる）
           ***************************************************************************** */
           static float time_wait = 3.0;
-          static float time_task = 1.5;
-          static float speed_hand = 2.0; // [m/min] = 60 [m/s]
+          static float speed_hand = 10.0; // [m/min] = 60 [m/s]
           static int flag_loop = 1;
           static int filter_reset = 0;
 
           float start_cmd = (float)C6657_timer0_read() * 4.8e-9 * 1e6;
 
-          CalcHandCmd(hand_cmd, time_wait, speed_hand, start_hand, flag_loop);
+          int flag_filter_on = CalcHandCmdCenter(flag_CalcHandCmd ,hand_cmd, time_wait, speed_hand, start_hand, flag_loop);
           WAVE_TimeCalcCmd = (float)C6657_timer0_read() * 4.8e-9 * 1e6 - start_cmd;
 
           start_cmd = (float)C6657_timer0_read() * 4.8e-9 * 1e6;
           CalcInverseCmd(hand_cmd, joint_cmd, motor_cmd, filter_reset);
+          CalcInverseCmd(hand_cmd, joint_cmd, motor_cmd, wm_cmd, flag_filter_on, filter_reset, Tp);
           WAVE_TimeCalcInvCmd = (float)C6657_timer0_read() * 4.8e-9 * 1e6 - start_cmd;
 
           // 1軸目 位置指令
@@ -1479,10 +1495,20 @@ interrupt void ControlFunction(void)
           // axis1.qm_ref = GeneratorCircle1st(4.0, axis1.posi_trg_rad);
           axis1.qm_ref = motor_cmd[0];
           LimitPosCmd(&axis1);
+
+          // P制御用
+          // axis1.qm_ref = motor_cmd[0];
+
+          // D-PD制御用
+          axis1.qm_ref = Tp * wm_cmd[0] + axis1.qm_ref_z1;
+
+          LimitPosCmd(&axis1);
           // axis1.qm_ref = 0.0;
 
           // 1軸目 位置P制御
-          axis1.wm_ref = (axis1.qm_ref_z2 - axis1.qm) * axis1.Kpp;
+          // axis1.wm_ref = (axis1.qm_ref_z2 - axis1.qm) * axis1.Kpp;
+          // 1軸目 位置D-PD制御
+          axis1.wm_ref = (axis1.qm_ref_z2 - axis1.qm) * axis1.Kpp + axis1.Kff * wm_cmd[0] - axis1.Kfb * axis1.wm;
 
           if (flag_FF == 1)
           {
@@ -1519,6 +1545,16 @@ interrupt void ControlFunction(void)
 
           // 2軸目 速度P制御
           axis2.wm_ref = (axis2.qm_ref_z2 - axis2.qm) * axis2.Kpp;
+          // P制御用
+          // axis2.qm_ref = motor_cmd[1];
+          // D-PD制御用
+          axis2.qm_ref = Tp * wm_cmd[1] + axis2.qm_ref_z1;
+          LimitPosCmd(&axis2);
+
+          // 1軸目 位置P制御
+          // axis2.wm_ref = (axis2.qm_ref_z2 - axis2.qm) * axis2.Kpp;
+          // 1軸目 位置D-PD制御
+          axis2.wm_ref = (axis2.qm_ref_z2 - axis2.qm) * axis2.Kpp + axis2.Kff * wm_cmd[1] - axis2.Kfb * axis2.wm;
 
           if (flag_FF == 1)
           {
@@ -1555,6 +1591,16 @@ interrupt void ControlFunction(void)
 
           // 3軸目 位置P制御
           axis3.wm_ref = (axis3.qm_ref_z2 - axis3.qm) * axis3.Kpp;
+          // P制御用
+          // axis3.qm_ref = motor_cmd[2];
+          // D-PD制御用
+          axis3.qm_ref = Tp * wm_cmd[2] + axis3.qm_ref_z1;
+          LimitPosCmd(&axis3);
+
+          // 1軸目 位置P制御
+          // axis3.wm_ref = (axis3.qm_ref_z2 - axis3.qm) * axis3.Kpp;
+          // 1軸目 位置D-PD制御
+          axis3.wm_ref = (axis3.qm_ref_z2 - axis3.qm) * axis3.Kpp + axis3.Kff * wm_cmd[2] - axis3.Kfb * axis3.wm;
 
           // 3軸目 速度PI制御＋SFB
           if (flag_FF == 1)
@@ -1615,6 +1661,7 @@ interrupt void ControlFunction(void)
 
             ＊軸によって違うので注意！！！（ギアとかによる）
           ***************************************************************************** */
+          start3 = (float)C6657_timer1_read() * 4.8e-9 * 1e6;
           // 1軸目 位置指令
           // ランプ関数生成関数で位置指令を決定
           // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
@@ -1629,7 +1676,6 @@ interrupt void ControlFunction(void)
             axis1.qm_ref = start_back1;
           }
 
-          LimitPosCmd(&axis1);
           // 1軸目 速度P制御
           axis1.wm_ref = (axis1.qm_ref_z2 - axis1.qm) * axis1.Kpp;
 
@@ -1669,7 +1715,6 @@ interrupt void ControlFunction(void)
             axis2.qm_ref = start_back2;
           }
 
-          LimitPosCmd(&axis2);
           // 2軸目 速度P制御
           axis2.wm_ref = (axis2.qm_ref_z2 - axis2.qm) * axis2.Kpp;
 
@@ -1702,7 +1747,6 @@ interrupt void ControlFunction(void)
           axis3.qm_ref_z1 = axis3.qm_ref;
           axis3.qm_ref = 1.0 * ManyRampGenerator3rdAxis(axis3.a_ramp, axis3.vel, axis3.t_start, axis3.t_ramp, axis3.t_const, axis3.a_ramp_back, axis3.t_ramp_back) + start_back3;
           // axis3.qm_ref = start_back3;
-          LimitPosCmd(&axis3);
 
           // 3軸目 速度P制御
           axis3.wm_ref = (axis3.qm_ref_z2 - axis3.qm) * axis3.Kpp;
@@ -1740,6 +1784,7 @@ interrupt void ControlFunction(void)
               flag_fin++;
             }
           }
+          WAVE_TimeP_PI = (float)C6657_timer1_read() * 4.8e-9 * 1e6 - start3;
         }
         else
         {
@@ -1747,7 +1792,6 @@ interrupt void ControlFunction(void)
           axis2.IrefQ = axis2.Icmp;
           axis3.IrefQ = axis3.Icmp;
         }
-
         // 制御周期の測定結果出力 ファンクションリファレンスp45より
         // 制御にかかった時間を測定している。
         WAVE_Timer1 = (float)C6657_timer1_read() * 4.8e-9 * 1e6;
@@ -3532,12 +3576,15 @@ void SetLPF(LPF_param *Filter, float Ts, float fs, float Q)
 }
 
 // LPF
-float GetFilterdSignal(LPF_param *Filter, float u)
+float GetFilterdSignal(LPF_param *Filter, float u, int flag_init)
 {
   static float Q, w, Ts, y, yZ1, yZ2, yZ3, uZ1, uZ2, uZ3;
   Q = Filter->Q;
   w = Filter->w;
   Ts = Filter->Ts;
+  if(flag_init == 1){
+    Filter->flag = 0;
+  }
   if (Filter->flag == 0)
   {
     Filter->flag = 1;
@@ -3564,14 +3611,244 @@ float GetFilterdSignal(LPF_param *Filter, float u)
   Filter->yZ1 = y;
 }
 
+int CalcHandCmdCenter(int flag_cmd, float goal[3], float t_wait, float speed, float start_hand[3], int flag_loop){
+  if(flag_cmd == 0){
+    return CalcHandCmdCircle(goal[3], t_wait, speed, start_hand[3], flag_loop);
+  }else if(flag_cmd == 1){
+    return CalcHandCmdRectangle(goal[3], t_wait, speed, start_hand[3], flag_loop);
+  }else if(flag_cmd == 2){
+    return CalcHandCmdDiamond(goal[3], t_wait, speed, start_hand[3], flag_loop);
+  }
+}
+
 // 手先軌跡(円)
-void CalcHandCmd(float goal[3], float t_wait, float speed, float start_hand[3], int flag_loop)
+int CalcHandCmdCircle(float goal[3], float t_wait, float speed, float start_hand[3], int flag_loop)
 {
   const float D = 0.020;
   const float path = (1.5 * PI * D);
   const float t_task = path * (60.0 / speed);
   const float freq = 1 / (t_task / 1.5);
   // const float t_task = 1.5 / freq;
+  // const float S1 = mwsin(theta);
+  // const float C1 = mwcos(theta);
+  // const float S2 = mwsin(theta2);
+  // const float C2 = mwcos(theta2);
+  const float S1 = -0.7071;
+  const float C1 = 0.7071;
+  // static float start_hand[3] = {1.2746, -0.07071, 0.2466};
+  const float x_slide = 1.2746;
+  // const float x_slide = 1.2846; // +x側10mmオフセット
+  // const float x_slide = 1.2696; // -x側10mmオフセット
+  const float y_slide = 0.0;
+  const float z_slide = 0.2466;
+  static float Tall = 0;
+  static float goalZ[3] = {0, 0, 0};
+  static float fxZ, fyZ, fzZ;
+  static float fx = 0, fy = 0, fz = 0;
+  static int flag_init = 0;
+  if(flag_cmd_end == 0){
+    if (flag_init == 0)
+    {
+      if (flag_loop == 1)
+      {
+        flag_init = 1;
+      }
+      else
+      {
+        flag_init = 0;
+      }
+      fx = 0.000;
+      fy = -0.010;
+      fz = 0.000;
+      goal[0] = C1 * fxZ + S1 * fzZ + x_slide;
+      goal[1] = fyZ + y_slide;
+      goal[2] = C1 * fzZ - S1 * fxZ + z_slide;
+      goalZ[0] = goal[0];
+      goalZ[1] = goal[1];
+      goalZ[2] = goal[2];
+      // fx = C1 * (start_hand[0] - x_slide) - S1 * (start_hand[2] - z_slide);
+      // fy = (start_hand[1] - y_slide);
+      // fz = S1 * (start_hand[0] - x_slide) + C1 * (start_hand[2] - z_slide);
+      fxZ = fx;
+      fyZ = fy;
+      fzZ = fz;
+    }
+    if(flag_init == 1){
+      if (Tall < t_wait)
+      {
+        goal[0] = goalZ[0];
+        goal[1] = goalZ[1];
+        goal[2] = goalZ[2];
+        Tall += Tp;
+      }
+      else if (Tall >= t_wait && Tall < (t_wait + t_task))
+      {
+        fx = (D / 2.0) * sin(2 * PI * freq * (Tall - t_wait));
+        fy = -(D / 2.0) * cos(2 * PI * freq * (Tall - t_wait));
+        fz = 0;
+        goal[0] = C1 * fxZ + S1 * fzZ + x_slide;
+        goal[1] = fyZ + y_slide;
+        goal[2] = C1 * fzZ - S1 * fxZ + z_slide;
+        fxZ = fx;
+        fyZ = fy;
+        fzZ = fz;
+        goalZ[0] = goal[0];
+        goalZ[1] = goal[1];
+        goalZ[2] = goal[2];
+        Tall += Tp;
+      }
+      else if (Tall >= t_wait + t_task)
+      {
+        goal[0] = goalZ[0];
+        goal[1] = goalZ[1];
+        goal[2] = goalZ[2];
+        Tall += Tp;
+        flag_cmd_end = 1;
+      }
+    }
+  }else{
+    goal[0] = goalZ[0];
+    goal[1] = goalZ[1];
+    goal[2] = goalZ[2];
+    Tall = 0;
+    flag_init = 0;
+  }  WAVE_fx = fx;
+  WAVE_fy = fy;
+  WAVE_fz = fz;
+  return 1; //1を返すと逆運動学でFilterあり。０を返すとFilter無し。
+}
+
+// 手先軌跡(四角) 100mm四方の正方形
+// この関数におけるfx,fy,fzからGoalへの変換はy軸周りでの回転を前提としている。
+void CalcHandCmdRectangle(float goal[3], float t_wait, float speed, float start_hand[3], int flag_loop)
+{
+  const float path = (0.100 * 5);
+  const float t_task = path * (60.0 / speed);
+  const float slope = 0.100 / (t_task / 5.0);
+  const float theta = -PI / 4;
+  const float S1 = -0.7071;
+  const float C1 = 0.7071;
+  // static float start_hand[3] = {1.2746, -0.07071, 0.2466};
+  const float x_slide = 1.2746;
+  const float y_slide = 0.0;
+  const float z_slide = 0.2466;
+  static float Tall = 0;
+  static float goalZ[3] = {0, 0, 0};
+  static float fxZ, fyZ, fzZ;
+  static float fx = 0, fy = 0, fz = 0;
+  static int flag_init = 0;
+  if(flag_cmd_end == 0){
+    if (flag_init == 0)
+    {
+      if (flag_loop == 1)
+      {
+        flag_init = 1;
+      }
+      else
+      {
+        flag_init = 0;
+      }
+      fx = 0.050;
+      fy = -0.050;
+      fz = 0.000;
+      goal[0] = C1 * fxZ + S1 * fzZ + x_slide;
+      goal[1] = fyZ + y_slide;
+      goal[2] = C1 * fzZ - S1 * fxZ + z_slide;
+      goalZ[0] = goal[0];
+      goalZ[1] = goal[1];
+      goalZ[2] = goal[2];
+      // fx = C1 * (start_hand[0] - x_slide) - S1 * (start_hand[2] - z_slide);
+      // fy = (start_hand[1] - y_slide);
+      // fz = S1 * (start_hand[0] - x_slide) + C1 * (start_hand[2] - z_slide);
+      fxZ = fx;
+      fyZ = fy;
+      fzZ = fz;
+    }
+    if(flag_init == 1){
+      if (Tall < t_wait)
+      {
+        goal[0] = goalZ[0];
+        goal[1] = goalZ[1];
+        goal[2] = goalZ[2];
+        Tall += Tp;
+      }
+      else if (Tall >= t_wait && Tall < (t_wait + t_task))
+      {
+        // 正方形（XY平面で見た時[10,-10]から反時計回りに初めて[10,10]で終わる）
+        // 正方形を5辺分描画するのでt_taskを5分割する
+        if ((Tall - t_wait) < t_task / 5.0)
+        {
+          fx = fxZ;              //  50 -> 50
+          fy = slope * Tp + fyZ; // -50 -> 50
+          fz = fzZ;
+        }
+        else if ((Tall - t_wait) >= t_task * (1.0 / 5.0) && (Tall - t_wait) < t_task * (2.0 / 5.0))
+        {
+          fx = -slope * Tp + fxZ; //  50 -> -50
+          fy = fyZ;               //  50 ->  50
+          fz = fzZ;
+        }
+        else if ((Tall - t_wait) >= t_task * (2.0 / 5.0) && (Tall - t_wait) < t_task * (3.0 / 5.0))
+        {
+          fx = fxZ;               // -50 -> -50
+          fy = -slope * Tp + fyZ; //  50 -> -50
+          fz = fzZ;
+        }
+        else if ((Tall - t_wait) >= t_task * (3.0 / 5.0) && (Tall - t_wait) < t_task * (4.0 / 5.0))
+        {
+          fx = slope * Tp + fxZ; // -50 ->  50
+          fy = fyZ;              // -50 -> -50
+          fz = fzZ;
+        }
+        else if ((Tall - t_wait) >= t_task * (4.0 / 5.0) && (Tall - t_wait) < t_task * (5.0 / 5.0))
+        {
+          fx = fxZ;              //  50 -> 50
+          fy = slope * Tp + fyZ; // -50 -> 50
+          fz = fzZ;
+        }
+        goal[0] = C1 * fxZ + S1 * fzZ + x_slide;
+        goal[1] = fyZ + y_slide;
+        goal[2] = C1 * fzZ - S1 * fxZ + z_slide;
+        fxZ = fx;
+        fyZ = fy;
+        fzZ = fz;
+        goalZ[0] = goal[0];
+        goalZ[1] = goal[1];
+        goalZ[2] = goal[2];
+        Tall += Tp;
+      }
+      else if (Tall >= t_wait + t_task)
+      {
+        goal[0] = goalZ[0];
+        goal[1] = goalZ[1];
+        goal[2] = goalZ[2];
+        Tall += Tp;
+        flag_cmd_end = 1;
+      }
+    }
+  }else{
+    goal[0] = goalZ[0];
+    goal[1] = goalZ[1];
+    goal[2] = goalZ[2];
+    Tall = 0;
+    flag_init = 0;
+  }
+  WAVE_fx = fx;
+  WAVE_fy = fy;
+  WAVE_fz = fz;
+  return 0;
+}
+
+// 手先軌跡(ひし形) 一辺100mm,XY軸上に頂点を持つひし形
+// この関数におけるfx,fy,fzからGoalへの変換はz軸周り-45度の回転、y軸周りでの回転、伸長80％空間への並進としている。
+int CalcHandCmdDiamond(float goal[3], float t_wait, float speed, float start_hand[3], int flag_loop)
+{
+  const float l = 0.100;
+  const float path = (l * 6);
+  const float t_task = path * (60.0 / speed);
+  const float slope = l / (t_task / 6.0);
+  const float theta = -PI / 4;
+  const float theta2 = -PI / 4;
   // const float S1 = mwsin(theta);
   // const float C1 = mwcos(theta);
   // const float S2 = mwsin(theta2);
@@ -3596,46 +3873,98 @@ void CalcHandCmd(float goal[3], float t_wait, float speed, float start_hand[3], 
       {
         flag_init = 1;
       }
-      goalZ[0] = start_hand[0];
-      goalZ[1] = start_hand[1];
-      goalZ[2] = start_hand[2];
-      fx = C1 * (start_hand[0] - x_slide) - S1 * (start_hand[2] - z_slide);
-      fy = (start_hand[1] - y_slide);
-      fz = S1 * (start_hand[0] - x_slide) + C1 * (start_hand[2] - z_slide);
-      fxZ = fx;
-      fyZ = fy;
-      fzZ = fz;
-    }
-    if (Tall < t_wait)
-    {
-      goal[0] = goalZ[0];
-      goal[1] = goalZ[1];
-      goal[2] = goalZ[2];
-      Tall += Tp;
-    }
-    else if (Tall >= t_wait && Tall < (t_wait + t_task))
-    {
-      fx = (D / 2.0) * sin(2 * PI * freq * (Tall - t_wait));
-      fy = (D / 2.0) * cos(2 * PI * freq * (Tall - t_wait));
-      fz = 0;
-      goal[0] = C1 * fxZ + S1 * fzZ + x_slide;
-      goal[1] = fyZ + y_slide;
-      goal[2] = C1 * fzZ - S1 * fxZ + z_slide;
-      fxZ = fx;
-      fyZ = fy;
-      fzZ = fz;
+      else
+      {
+        flag_init = 0;
+      }
+      fx = 0.000;
+      fy = -0.07071;
+      fz = 0.000;
+      goal[0] = (C1 * C2 * fx) + (S1 * fz) - (C1 * S2 * fy) + x_slide;
+      goal[1] = (S2 * fx) + (C2 * fy) + y_slide;
+      goal[2] = (C1 * fz) - (S1 * C2 * fx) + (S1 * S2 * fy) + z_slide;
       goalZ[0] = goal[0];
       goalZ[1] = goal[1];
       goalZ[2] = goal[2];
-      Tall += Tp;
+      // 正方形用の手先→作業座標系変換
+      // fx = C1 * (start_hand[0] - x_slide) - S1 * (start_hand[2] - z_slide);
+      // fy = (start_hand[1] - y_slide);
+      // fz = S1 * (start_hand[0] - x_slide) + C1 * (start_hand[2] - z_slide);
+      // ひし形用の手先→作業座標系変換
+      // fx = (C1 * C2 * (start_hand[0] - x_slide)) + (S2 * (start_hand[1] - y_slide)) - (S1 * C2 * (start_hand[2] - z_slide));
+      // fy = (C1 * S2 * (start_hand[0] - x_slide)) + (C2 * (start_hand[1] - y_slide)) - (S1 * S2 * (start_hand[2] - z_slide));
+      // fz = (S1 * (start_hand[0] - x_slide)) + (C1 * (start_hand[2] - z_slide));
+      fxZ = fx;
+      fyZ = fy;
+      fzZ = fz;
     }
-    else if (Tall >= t_wait + t_task)
-    {
-      goal[0] = goalZ[0];
-      goal[1] = goalZ[1];
-      goal[2] = goalZ[2];
-      Tall += Tp;
-    flag_cmd_end = 1;
+    if(flag_init == 1){
+      if (Tall < t_wait)
+      {
+        goal[0] = goalZ[0];
+        goal[1] = goalZ[1];
+        goal[2] = goalZ[2];
+        Tall += Tp;
+      }
+      else if (Tall >= t_wait && Tall < (t_wait + t_task))
+      {
+        // 正方形（XY平面で見た時[10,-10]から反時計回りに初めて[10,10]で終わる）
+        // 正方形を5辺分描画するのでt_taskを5分割する
+        if ((Tall - t_wait) < t_task / 6.0)
+        {
+          fx = fxZ;              //  50 -> 50
+          fy = slope * Tp + fyZ; // -50 -> 50
+          fz = fzZ;
+        }
+        else if ((Tall - t_wait) >= t_task * (1.0 / 6.0) && (Tall - t_wait) < t_task * (2.0 / 6.0))
+        {
+          fx = -slope * Tp + fxZ; //  50 -> -50
+          fy = fyZ;               //  50 ->  50
+          fz = fzZ;
+        }
+        else if ((Tall - t_wait) >= t_task * (2.0 / 6.0) && (Tall - t_wait) < t_task * (3.0 / 6.0))
+        {
+          fx = fxZ;               // -50 -> -50
+          fy = -slope * Tp + fyZ; //  50 -> -50
+          fz = fzZ;
+        }
+        else if ((Tall - t_wait) >= t_task * (3.0 / 6.0) && (Tall - t_wait) < t_task * (4.0 / 6.0))
+        {
+          fx = slope * Tp + fxZ; // -50 ->  50
+          fy = fyZ;              // -50 -> -50
+          fz = fzZ;
+        }
+        else if ((Tall - t_wait) >= t_task * (4.0 / 6.0) && (Tall - t_wait) < t_task * (5.0 / 6.0))
+        {
+          fx = fxZ;              //  50 -> 50
+          fy = slope * Tp + fyZ; // -50 -> 50
+          fz = fzZ;
+        }
+        else if ((Tall - t_wait) >= t_task * (5.0 / 6.0) && (Tall - t_wait) < t_task * (6.0 / 6.0))
+        {
+          fx = -slope * Tp + fxZ; //  50 -> -50
+          fy = fyZ;               //  50 ->  50
+          fz = fzZ;
+        }
+        goal[0] = (C1 * C2 * fx) + (S1 * fz) - (C1 * S2 * fy) + x_slide;
+        goal[1] = (S2 * fx) + (C2 * fy) + y_slide;
+        goal[2] = (C1 * fz) - (S1 * C2 * fx) + (S1 * S2 * fy) + z_slide;
+        fxZ = fx;
+        fyZ = fy;
+        fzZ = fz;
+        goalZ[0] = goal[0];
+        goalZ[1] = goal[1];
+        goalZ[2] = goal[2];
+        Tall += Tp;
+      }
+      else if (Tall >= t_wait + t_task)
+      {
+        goal[0] = goalZ[0];
+        goal[1] = goalZ[1];
+        goal[2] = goalZ[2];
+        Tall += Tp;
+        flag_cmd_end = 1;
+      }
     }
   }else{
     goal[0] = goalZ[0];
@@ -3647,6 +3976,7 @@ void CalcHandCmd(float goal[3], float t_wait, float speed, float start_hand[3], 
   WAVE_fx = fx;
   WAVE_fy = fy;
   WAVE_fz = fz;
+  return 0;
 }
 
 void LimitPosCmd(Robot *robo)
@@ -3662,8 +3992,11 @@ void LimitPosCmd(Robot *robo)
 }
 
 // 逆運動学（手先 -> モーター位置）
-void CalcInverseCmd(float goal[3], float joint[3], float motor[3])
+void CalcInverseCmd(float goal[3], float joint[3], float motor[3], float wm[3], int flag_filter, int flag_reset, float dt)
 {
+  static float 
+  static float motorZ[3];
+
   const float Rgn1 = 140.254;
   const float Rgn2 = 121;
   const float Rgn3 = 121;
@@ -3688,8 +4021,10 @@ void CalcInverseCmd(float goal[3], float joint[3], float motor[3])
   static float Phi3 = 0.0;
   static float Phi4 = 0.0;
 
-  joint[0] = -1 * atan2f(goal[1], goal[0]);
-  joint[0] = GetFilterdSignal(&LPF_motor[0], joint[0]);
+  joint[0] = 1 * atan2f(goal[1], goal[0]);
+  if(flag_filter == 1){
+    joint[0] = GetFilterdSignal(&LPF_motor[0], joint[0], flag_init);
+  }
   // joint[0] = mwarctan2(goal[1], goal[0]);
 
   p1[0] = Lb * cos(joint[0]);
@@ -3704,15 +4039,37 @@ void CalcInverseCmd(float goal[3], float joint[3], float motor[3])
   Phi1 = acos(((Le * Le) + (Larm * Larm) - (Lp2h * Lp2h)) / (2 * Le * Larm));
   Phi2 = acos((Lh1 + Lh2 + Lj + Lk) / (Larm));
   Phi3 = acos(((Le * Le) + (Lp2h * Lp2h) - (Larm * Larm)) / (2 * Le * Lp2h));
-  Phi4 = acos(((Lac * Lac) + (Lp2h * Lp2h) - (Lg2h * Lg2h)) / (2 * Lac * Lg2h));
+  Phi4 = acos(((Lac * Lac) + (Lp2h * Lp2h) - (Lg2h * Lg2h)) / (2 * Lac * Lp2h));
 
   joint[2] = (PI / 2.0) - Phi1 + Phi2;
-  joint[2] = GetFilterdSignal(&LPF_motor[2], joint[2]);
+  if (flag_filter == 1)
+  {
+    joint[2] = GetFilterdSignal(&LPF_motor[2], joint[2], flag_init);
+  }
   joint[1] = PI - Phi3 - Phi4;
-  joint[1] = GetFilterdSignal(&LPF_motor[1], joint[1]);
-  motor[0] = joint[0] * Rgn1;
+  if (flag_filter == 1)
+  {
+    joint[1] = GetFilterdSignal(&LPF_motor[1], joint[1], flag_init);
+  }
+  motor[0] = -joint[0] * Rgn1;
   motor[1] = joint[1] * Rgn2;
   motor[2] = joint[2] * Rgn3;
+  if (motorZ[0] == NULL)
+  {
+    motorZ[0] = motor[0];
+    motorZ[1] = motor[1];
+    motorZ[2] = motor[2];
+  }
+
+  wm[0] = backward_diff(motor[0], motorZ[0], dt);
+  wm[1] = backward_diff(motor[1], motorZ[1], dt);
+  wm[2] = backward_diff(motor[2], motorZ[2], dt);
+
+  motorZ[0] = motor[0];
+  motorZ[1] = motor[1];
+  motorZ[2] = motor[2];
+
+  flag_init = 0;
 }
 
 float GeneratorCircle1st(float t_wait, float start)
@@ -4581,7 +4938,7 @@ void CalcFDTDWr_QmrefInputType(Robot *robo)
     ql_Z[0] = Wr_sub[0].a51cf * wm_Z1[0] + Wr_sub[0].a52cf * qm_Z1[0] + Wr_sub[0].a53cf / axis1.Jl_calc * qs_Z1[0] + (Wr_sub[0].a54cf1 + Wr_sub[0].a54cf2 / axis1.Jl_calc) * wl_Z1[0] + Wr_sub[0].a55cf * ql_Z1[0] + Wr_sub[0].a56cf * z_Z1[0] + Wr_sub[0].b5cf * robo->qm_ref;
     z_Z[0] = Wr_sub[0].a61cf * wm_Z1[0] + Wr_sub[0].a62cf * qm_Z1[0] + Wr_sub[0].a63cf * qs_Z1[0] + Wr_sub[0].a64cf * wl_Z1[0] + Wr_sub[0].a65cf * ql_Z1[0] + Wr_sub[0].a66cf * z_Z1[0] + Wr_sub[0].b6cf * robo->qm_ref;
 
-    // 状態量の更新axis2.
+    // 状態量の更新axis1.
     wm_Z1[0] = wm_Z[0];
     qm_Z1[0] = qm_Z[0];
     qs_Z1[0] = qs_Z[0];
