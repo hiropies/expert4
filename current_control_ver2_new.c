@@ -89,6 +89,9 @@ float range[] = {5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0}; /// AD変換レンジ 
 ************************************************************************/
 
 // フラグ
+volatile int WAVE_INIT_COUNT = 0;
+volatile float WAVE_FIL_Y = 0;
+
 volatile int flag_cont_start = 0;  //!< 制御開始フラグ
 volatile float flag_dead = 1;      //!< デッドタイム補償フラグ
 volatile int flag_dyn_payload = 1; // 動力学計算ペイロード切り替えフラグ(0:無負荷、1:7.2kg負荷、2:4kg負荷)
@@ -3587,47 +3590,45 @@ void FDTD_Tm_Init()
 void SetLPF(LPF_param *Filter, float Ts, float fs, float Q)
 {
   float w = 2 * PI * fs;
-  LPF_motor[0].Num = 1;
-  LPF_motor[0].flag = 0;
-  LPF_motor[0].Ts = Ts;
-  LPF_motor[0].w = w;
-  LPF_motor[0].Q = Q;
-  LPF_motor[0].uZ1 = 0.0;
-  LPF_motor[0].uZ2 = 0.0;
-  LPF_motor[0].uZ3 = 0.0;
-  LPF_motor[0].yZ1 = 0.0;
-  LPF_motor[0].yZ2 = 0.0;
-  LPF_motor[0].yZ3 = 0.0;
-
-  LPF_motor[1].Num = 2;
-  LPF_motor[1].flag = 0;
-  LPF_motor[1].Ts = Ts;
-  LPF_motor[1].w = w;
-  LPF_motor[1].Q = Q;
-  LPF_motor[1].uZ1 = 0.0;
-  LPF_motor[1].uZ2 = 0.0;
-  LPF_motor[1].uZ3 = 0.0;
-  LPF_motor[1].yZ1 = 0.0;
-  LPF_motor[1].yZ2 = 0.0;
-  LPF_motor[1].yZ3 = 0.0;
-
-  LPF_motor[2].Num = 3;
-  LPF_motor[2].flag = 0;
-  LPF_motor[2].Ts = Ts;
-  LPF_motor[2].w = w;
-  LPF_motor[2].Q = Q;
-  LPF_motor[2].uZ1 = 0.0;
-  LPF_motor[2].uZ2 = 0.0;
-  LPF_motor[2].uZ3 = 0.0;
-  LPF_motor[2].yZ1 = 0.0;
-  LPF_motor[2].yZ2 = 0.0;
-  LPF_motor[2].yZ3 = 0.0;
+  Filter[0].Num = 1;
+  Filter[0].flag = 0;
+  Filter[0].Ts = Ts;
+  Filter[0].w = w;
+  Filter[0].Q = Q;
+  Filter[0].uZ1 = 0.0;
+  Filter[0].uZ2 = 0.0;
+  Filter[0].uZ3 = 0.0;
+  Filter[0].yZ1 = 0.0;
+  Filter[0].yZ2 = 0.0;
+  Filter[0].yZ3 = 0.0;
+  Filter[1].Num = 2;
+  Filter[1].flag = 0;
+  Filter[1].Ts = Ts;
+  Filter[1].w = w;
+  Filter[1].Q = Q;
+  Filter[1].uZ1 = 0.0;
+  Filter[1].uZ2 = 0.0;
+  Filter[1].uZ3 = 0.0;
+  Filter[1].yZ1 = 0.0;
+  Filter[1].yZ2 = 0.0;
+  Filter[1].yZ3 = 0.0;
+  Filter[2].Num = 3;
+  Filter[2].flag = 0;
+  Filter[2].Ts = Ts;
+  Filter[2].w = w;
+  Filter[2].Q = Q;
+  Filter[2].uZ1 = 0.0;
+  Filter[2].uZ2 = 0.0;
+  Filter[2].uZ3 = 0.0;
+  Filter[2].yZ1 = 0.0;
+  Filter[2].yZ2 = 0.0;
+  Filter[2].yZ3 = 0.0;
 }
 
 // LPF
 float GetFilterdSignal(LPF_param *Filter, float u, int flag_init)
 {
-  static float Q, w, Ts, y, yZ1, yZ2, yZ3, uZ1, uZ2, uZ3;
+  float Q, w, Ts, y, yZ1, yZ2, yZ3, uZ1, uZ2, uZ3;
   Q = Filter->Q;
   w = Filter->w;
   Ts = Filter->Ts;
@@ -3636,6 +3637,7 @@ float GetFilterdSignal(LPF_param *Filter, float u, int flag_init)
   }
   if (Filter->flag == 0)
   {
+    WAVE_INIT_COUNT++;
     Filter->flag = 1;
     Filter->uZ1 = u;
     Filter->uZ2 = u;

@@ -1,7 +1,7 @@
 ******************************************************************************
                TMS320C6x Linker PC v7.4.24                     
 ******************************************************************************
->> Linked Wed Mar 12 21:59:23 2025
+>> Linked Wed Mar 12 22:28:27 2025
 
 OUTPUT FILE NAME:   <current_control_ver2_new.out>
 ENTRY POINT SYMBOL: "_c_int00"  address: 0c03a560
@@ -24,7 +24,7 @@ MEMORY CONFIGURATION
   KNL1_BOOT_AREA        118fff84   00000078  00000000  00000078  RWIX
   KNL1_MAGIC_ADDRESS    118ffffc   00000004  00000000  00000004  RWIX
   USER_SRAM_2_4         11e00000   00008000  000033e0  00004c20  RWIX
-  USER_SRAM_3_4         11f00000   00008000  00004ba4  0000345c  RWIX
+  USER_SRAM_3_4         11f00000   00008000  00004bac  00003454  RWIX
   TI_BOOT_ROM           20b00000   00020000  00000000  00020000  RWIX
   KNL0_SRAM_2_4         80000000   000fe000  00000000  000fe000  RWIX
   USER_SRAM_4_4         80100000   01800000  00000000  01800000  RWIX
@@ -56,9 +56,9 @@ run origin  load origin   length   init length attrs members
 11f02300    11f02300    00002158   00001158    rw-
   11f02300    11f02300    00001158   00001158    rw- .DATA_ON_HIGHER_SPEED
   11f03458    11f03458    00001000   00000000    rw- .stack
-11f04458    11f04458    00000794   000004f0    rw-
-  11f04458    11f04458    000004f0   000004f0    rw- .neardata
-  11f04948    11f04948    000002a4   00000000    rw- .bss
+11f04458    11f04458    0000079c   000004f8    rw-
+  11f04458    11f04458    000004f8   000004f8    rw- .neardata
+  11f04950    11f04950    000002a4   00000000    rw- .bss
 
 
 SECTION ALLOCATION MAP
@@ -190,11 +190,11 @@ section   page    origin      length       input sections
                   0c03b23c    00000004     --HOLE--
                   0c03b240    0000000c                     : powf.obj (.fardata:Q$4)
                   0c03b24c    00000004     --HOLE--
-                  0c03b250    0000000c     current_control_ver2_new.obj (.fardata:Vdc_mean$180)
+                  0c03b250    0000000c     current_control_ver2_new.obj (.fardata:Vdc_mean$170)
                   0c03b25c    00000004     --HOLE--
-                  0c03b260    0000000c     current_control_ver2_new.obj (.fardata:Vdc_sum$179)
+                  0c03b260    0000000c     current_control_ver2_new.obj (.fardata:Vdc_sum$169)
                   0c03b26c    00000004     --HOLE--
-                  0c03b270    0000000c     current_control_ver2_new.obj (.fardata:counter$178)
+                  0c03b270    0000000c     current_control_ver2_new.obj (.fardata:counter$168)
                   0c03b27c    00000004     --HOLE--
                   0c03b280    0000000c     current_control_ver2_new.obj (.fardata:est_Qs_Z$28)
                   0c03b28c    00000004     --HOLE--
@@ -208,109 +208,109 @@ section   page    origin      length       input sections
                   0c03b2cc    00000004     --HOLE--
                   0c03b2d0    0000000c     current_control_ver2_new.obj (.fardata:est_wM_Z1$24)
                   0c03b2dc    00000004     --HOLE--
-                  0c03b2e0    0000000c     current_control_ver2_new.obj (.fardata:goalZ$65)
+                  0c03b2e0    0000000c     current_control_ver2_new.obj (.fardata:goalZ$55)
                   0c03b2ec    00000004     --HOLE--
-                  0c03b2f0    0000000c     current_control_ver2_new.obj (.fardata:goalZ$74)
+                  0c03b2f0    0000000c     current_control_ver2_new.obj (.fardata:goalZ$64)
                   0c03b2fc    00000004     --HOLE--
-                  0c03b300    0000000c     current_control_ver2_new.obj (.fardata:goalZ$83)
+                  0c03b300    0000000c     current_control_ver2_new.obj (.fardata:goalZ$73)
                   0c03b30c    00000004     --HOLE--
                   0c03b310    0000000c     current_control_ver2_new.obj (.fardata:hand_cmd$3)
                   0c03b31c    00000004     --HOLE--
                   0c03b320    0000000c     current_control_ver2_new.obj (.fardata:joint_cmd$4)
                   0c03b32c    00000004     --HOLE--
-                  0c03b330    0000000c     current_control_ver2_new.obj (.fardata:loop_count_num$150)
+                  0c03b330    0000000c     current_control_ver2_new.obj (.fardata:loop_count_num$140)
                   0c03b33c    00000004     --HOLE--
-                  0c03b340    0000000c     current_control_ver2_new.obj (.fardata:m_Z$170)
+                  0c03b340    0000000c     current_control_ver2_new.obj (.fardata:m_Z$160)
                   0c03b34c    00000004     --HOLE--
-                  0c03b350    0000000c     current_control_ver2_new.obj (.fardata:m_Z1$177)
+                  0c03b350    0000000c     current_control_ver2_new.obj (.fardata:m_Z1$167)
                   0c03b35c    00000004     --HOLE--
                   0c03b360    0000000c     current_control_ver2_new.obj (.fardata:motor_cmd$5)
                   0c03b36c    00000004     --HOLE--
                   0c03b370    0000000c     current_control_ver2_new.obj (.fardata:motor_vel_cmd$6)
                   0c03b37c    00000004     --HOLE--
-                  0c03b380    0000000c     current_control_ver2_new.obj (.fardata:n_Z$169)
+                  0c03b380    0000000c     current_control_ver2_new.obj (.fardata:n_Z$159)
                   0c03b38c    00000004     --HOLE--
-                  0c03b390    0000000c     current_control_ver2_new.obj (.fardata:n_Z1$176)
+                  0c03b390    0000000c     current_control_ver2_new.obj (.fardata:n_Z1$166)
                   0c03b39c    00000004     --HOLE--
-                  0c03b3a0    0000000c     current_control_ver2_new.obj (.fardata:p1$92)
+                  0c03b3a0    0000000c     current_control_ver2_new.obj (.fardata:p1$82)
                   0c03b3ac    00000004     --HOLE--
-                  0c03b3b0    0000000c     current_control_ver2_new.obj (.fardata:ql_Z$156)
+                  0c03b3b0    0000000c     current_control_ver2_new.obj (.fardata:ql_Z$146)
                   0c03b3bc    00000004     --HOLE--
-                  0c03b3c0    0000000c     current_control_ver2_new.obj (.fardata:ql_Z$168)
+                  0c03b3c0    0000000c     current_control_ver2_new.obj (.fardata:ql_Z$158)
                   0c03b3cc    00000004     --HOLE--
-                  0c03b3d0    0000000c     current_control_ver2_new.obj (.fardata:ql_Z1$162)
+                  0c03b3d0    0000000c     current_control_ver2_new.obj (.fardata:ql_Z1$152)
                   0c03b3dc    00000004     --HOLE--
-                  0c03b3e0    0000000c     current_control_ver2_new.obj (.fardata:ql_Z1$175)
+                  0c03b3e0    0000000c     current_control_ver2_new.obj (.fardata:ql_Z1$165)
                   0c03b3ec    00000004     --HOLE--
-                  0c03b3f0    0000000c     current_control_ver2_new.obj (.fardata:qm_Z$153)
+                  0c03b3f0    0000000c     current_control_ver2_new.obj (.fardata:qm_Z$143)
                   0c03b3fc    00000004     --HOLE--
-                  0c03b400    0000000c     current_control_ver2_new.obj (.fardata:qm_Z$165)
+                  0c03b400    0000000c     current_control_ver2_new.obj (.fardata:qm_Z$155)
                   0c03b40c    00000004     --HOLE--
-                  0c03b410    0000000c     current_control_ver2_new.obj (.fardata:qm_Z1$159)
+                  0c03b410    0000000c     current_control_ver2_new.obj (.fardata:qm_Z1$149)
                   0c03b41c    00000004     --HOLE--
-                  0c03b420    0000000c     current_control_ver2_new.obj (.fardata:qm_Z1$172)
+                  0c03b420    0000000c     current_control_ver2_new.obj (.fardata:qm_Z1$162)
                   0c03b42c    00000004     --HOLE--
-                  0c03b430    0000000c     current_control_ver2_new.obj (.fardata:qm_prev$149)
+                  0c03b430    0000000c     current_control_ver2_new.obj (.fardata:qm_prev$139)
                   0c03b43c    00000004     --HOLE--
-                  0c03b440    0000000c     current_control_ver2_new.obj (.fardata:qs_Z$154)
+                  0c03b440    0000000c     current_control_ver2_new.obj (.fardata:qs_Z$144)
                   0c03b44c    00000004     --HOLE--
-                  0c03b450    0000000c     current_control_ver2_new.obj (.fardata:qs_Z$166)
+                  0c03b450    0000000c     current_control_ver2_new.obj (.fardata:qs_Z$156)
                   0c03b45c    00000004     --HOLE--
                   0c03b460    0000000c     current_control_ver2_new.obj (.fardata:qs_Z$31)
                   0c03b46c    00000004     --HOLE--
                   0c03b470    0000000c     current_control_ver2_new.obj (.fardata:qs_Z$37)
                   0c03b47c    00000004     --HOLE--
-                  0c03b480    0000000c     current_control_ver2_new.obj (.fardata:qs_Z1$160)
+                  0c03b480    0000000c     current_control_ver2_new.obj (.fardata:qs_Z1$150)
                   0c03b48c    00000004     --HOLE--
-                  0c03b490    0000000c     current_control_ver2_new.obj (.fardata:qs_Z1$173)
+                  0c03b490    0000000c     current_control_ver2_new.obj (.fardata:qs_Z1$163)
                   0c03b49c    00000004     --HOLE--
                   0c03b4a0    0000000c     current_control_ver2_new.obj (.fardata:qs_Z1$34)
                   0c03b4ac    00000004     --HOLE--
                   0c03b4b0    0000000c     current_control_ver2_new.obj (.fardata:qs_Z1$40)
                   0c03b4bc    0000000c     rts6600_elf.lib : exit.obj (.fardata)
-                  0c03b4c8    0000000c     current_control_ver2_new.obj (.fardata:sign_invers$151)
+                  0c03b4c8    0000000c     current_control_ver2_new.obj (.fardata:sign_invers$141)
                   0c03b4d4    00000004     --HOLE--
                   0c03b4d8    0000000c     current_control_ver2_new.obj (.fardata:start_hand)
                   0c03b4e4    00000004     --HOLE--
-                  0c03b4e8    0000000c     current_control_ver2_new.obj (.fardata:wl_Z$155)
+                  0c03b4e8    0000000c     current_control_ver2_new.obj (.fardata:wl_Z$145)
                   0c03b4f4    00000004     --HOLE--
-                  0c03b4f8    0000000c     current_control_ver2_new.obj (.fardata:wl_Z$167)
+                  0c03b4f8    0000000c     current_control_ver2_new.obj (.fardata:wl_Z$157)
                   0c03b504    00000004     --HOLE--
                   0c03b508    0000000c     current_control_ver2_new.obj (.fardata:wl_Z$32)
                   0c03b514    00000004     --HOLE--
                   0c03b518    0000000c     current_control_ver2_new.obj (.fardata:wl_Z$38)
                   0c03b524    00000004     --HOLE--
-                  0c03b528    0000000c     current_control_ver2_new.obj (.fardata:wl_Z1$161)
+                  0c03b528    0000000c     current_control_ver2_new.obj (.fardata:wl_Z1$151)
                   0c03b534    00000004     --HOLE--
-                  0c03b538    0000000c     current_control_ver2_new.obj (.fardata:wl_Z1$174)
+                  0c03b538    0000000c     current_control_ver2_new.obj (.fardata:wl_Z1$164)
                   0c03b544    00000004     --HOLE--
                   0c03b548    0000000c     current_control_ver2_new.obj (.fardata:wl_Z1$35)
                   0c03b554    00000004     --HOLE--
                   0c03b558    0000000c     current_control_ver2_new.obj (.fardata:wl_Z1$41)
                   0c03b564    00000004     --HOLE--
-                  0c03b568    0000000c     current_control_ver2_new.obj (.fardata:wm_Z$152)
+                  0c03b568    0000000c     current_control_ver2_new.obj (.fardata:wm_Z$142)
                   0c03b574    00000004     --HOLE--
-                  0c03b578    0000000c     current_control_ver2_new.obj (.fardata:wm_Z$164)
+                  0c03b578    0000000c     current_control_ver2_new.obj (.fardata:wm_Z$154)
                   0c03b584    00000004     --HOLE--
                   0c03b588    0000000c     current_control_ver2_new.obj (.fardata:wm_Z$30)
                   0c03b594    00000004     --HOLE--
                   0c03b598    0000000c     current_control_ver2_new.obj (.fardata:wm_Z$36)
                   0c03b5a4    00000004     --HOLE--
-                  0c03b5a8    0000000c     current_control_ver2_new.obj (.fardata:wm_Z1$158)
+                  0c03b5a8    0000000c     current_control_ver2_new.obj (.fardata:wm_Z1$148)
                   0c03b5b4    00000004     --HOLE--
-                  0c03b5b8    0000000c     current_control_ver2_new.obj (.fardata:wm_Z1$171)
+                  0c03b5b8    0000000c     current_control_ver2_new.obj (.fardata:wm_Z1$161)
                   0c03b5c4    00000004     --HOLE--
                   0c03b5c8    0000000c     current_control_ver2_new.obj (.fardata:wm_Z1$33)
                   0c03b5d4    00000004     --HOLE--
                   0c03b5d8    0000000c     current_control_ver2_new.obj (.fardata:wm_Z1$39)
                   0c03b5e4    00000004     --HOLE--
-                  0c03b5e8    0000000c     current_control_ver2_new.obj (.fardata:wm_prev$148)
+                  0c03b5e8    0000000c     current_control_ver2_new.obj (.fardata:wm_prev$138)
                   0c03b5f4    00000004     --HOLE--
-                  0c03b5f8    0000000c     current_control_ver2_new.obj (.fardata:z_Z$157)
+                  0c03b5f8    0000000c     current_control_ver2_new.obj (.fardata:z_Z$147)
                   0c03b604    00000004     --HOLE--
-                  0c03b608    0000000c     current_control_ver2_new.obj (.fardata:z_Z1$163)
+                  0c03b608    0000000c     current_control_ver2_new.obj (.fardata:z_Z1$153)
                   0c03b614    00000004     --HOLE--
-                  0c03b618    00000008     current_control_ver2_new.obj (.fardata:loop_count_num$182)
+                  0c03b618    00000008     current_control_ver2_new.obj (.fardata:loop_count_num$172)
                   0c03b620    00000004     rts6600_elf.lib : powf.obj (.fardata:P$3)
 
 .far       0    0c03b628    00000018     UNINITIALIZED
@@ -322,7 +322,7 @@ section   page    origin      length       input sections
                   0c03b6a0    00000020     current_control_ver2_new.obj (.const:$P$T2$21)
                   0c03b6c0    0000000c     current_control_ver2_new.obj (.const:$P$T0$19)
                   0c03b6cc    00000004     --HOLE-- [fill = 0]
-                  0c03b6d0    0000000c     current_control_ver2_new.obj (.const:$P$T3$181)
+                  0c03b6d0    0000000c     current_control_ver2_new.obj (.const:$P$T3$171)
                   0c03b6dc    00000004     --HOLE-- [fill = 0]
                   0c03b6e0    00000008     current_control_ver2_new.obj (.const:cmd_1_soft)
                   0c03b6e8    00000008     current_control_ver2_new.obj (.const:cmd_2_soft)
@@ -378,17 +378,17 @@ section   page    origin      length       input sections
                   11f03460    00000ff8     --HOLE--
 
 .neardata 
-*          0    11f04458    000004f0     
-                  11f04458    000004dc     current_control_ver2_new.obj (.neardata)
-                  11f04934    0000000c     mwio4.lib : timer_lib.obj (.neardata)
-                  11f04940    00000004               : csl2_intcOpen.obj (.neardata)
-                  11f04944    00000004               : mw_platform.obj (.neardata)
+*          0    11f04458    000004f8     
+                  11f04458    000004e4     current_control_ver2_new.obj (.neardata)
+                  11f0493c    0000000c     mwio4.lib : timer_lib.obj (.neardata)
+                  11f04948    00000004               : csl2_intcOpen.obj (.neardata)
+                  11f0494c    00000004               : mw_platform.obj (.neardata)
 
-.bss       0    11f04948    000002a4     UNINITIALIZED
-                  11f04948    00000294     current_control_ver2_new.obj (.bss)
-                  11f04bdc    00000008     mwio4.lib : EMIF16.obj (.bss)
-                  11f04be4    00000004               : gpio_int.obj (.bss)
-                  11f04be8    00000004               : mw_spi.obj (.bss)
+.bss       0    11f04950    000002a4     UNINITIALIZED
+                  11f04950    00000294     current_control_ver2_new.obj (.bss)
+                  11f04be4    00000008     mwio4.lib : EMIF16.obj (.bss)
+                  11f04bec    00000004               : gpio_int.obj (.bss)
+                  11f04bf0    00000004               : mw_spi.obj (.bss)
 
 
 LINKER GENERATED COPY TABLES
@@ -396,7 +396,7 @@ LINKER GENERATED COPY TABLES
 __TI_cinit_table @ 0c03dab8 records: 4, size/record: 8, table size: 32
 	.data_2: load addr=0c03b780, load size=00002069 bytes, run addr=11f00000, run size=000022b8 bytes, compression=rle
 	.fardata: load addr=0c03d7ec, load size=00000243 bytes, run addr=0c03aca0, run size=00000984 bytes, compression=rle
-	.neardata: load addr=0c03da30, load size=00000064 bytes, run addr=11f04458, run size=000004f0 bytes, compression=rle
+	.neardata: load addr=0c03da30, load size=00000064 bytes, run addr=11f04458, run size=000004f8 bytes, compression=rle
 	.DATA_ON_HIGHER_SPEED: load addr=0c03da94, load size=0000001a bytes, run addr=11f02300, run size=00001158 bytes, compression=rle
 
 
@@ -485,90 +485,90 @@ $.text:mwio4.lib<timer_lib.obj>$0x2ec  $Tramp$S$$C6657_timer2_clear
 $.text:mwio4.lib<timer_lib.obj>$0x140  $Tramp$S$$C6657_timer2_stop
    11e01aa0     0c03aad0     0c0317a0   current_control_ver2_new.obj (.text:retain)
 $.text:mwio4.lib<PEV_INV_LIB.obj>$0x394  $Tramp$S$$PEV_inverter_start_pwm
-   11e00394     0c03aae0     0c0272b8   current_control_ver2_new.obj (.text)
-                             0c0272c0   current_control_ver2_new.obj (.text)
-                             0c0272c8   current_control_ver2_new.obj (.text)
+   11e00394     0c03aae0     0c027290   current_control_ver2_new.obj (.text)
+                             0c027298   current_control_ver2_new.obj (.text)
+                             0c0272a0   current_control_ver2_new.obj (.text)
 $.text:mwio4.lib<timer_lib.obj>$0x298  $Tramp$S$$C6657_timer2_disable_int
-   11e01bf8     0c03aaf0     0c027284   current_control_ver2_new.obj (.text)
+   11e01bf8     0c03aaf0     0c027258   current_control_ver2_new.obj (.text)
 $.text:mwio4.lib<timer_lib.obj>$0x438  $Tramp$S$$C6657_timer1_disable_int
-   11e01d98     0c03ab00     0c027280   current_control_ver2_new.obj (.text)
+   11e01d98     0c03ab00     0c027254   current_control_ver2_new.obj (.text)
 $.text:mwio4.lib<timer_lib.obj>$0x5d8  $Tramp$S$$C6657_timer0_disable_int
-   11e01f38     0c03ab10     0c027278   current_control_ver2_new.obj (.text)
+   11e01f38     0c03ab10     0c027250   current_control_ver2_new.obj (.text)
 $.text:mwio4.lib<PEV_INV_LIB.obj>$0x1460  $Tramp$S$$PEV_ad_disable_int
-   11e01460     0c03ab20     0c027264   current_control_ver2_new.obj (.text)
-                             0c02726c   current_control_ver2_new.obj (.text)
-                             0c027270   current_control_ver2_new.obj (.text)
+   11e01460     0c03ab20     0c02723c   current_control_ver2_new.obj (.text)
+                             0c027244   current_control_ver2_new.obj (.text)
+                             0c027248   current_control_ver2_new.obj (.text)
 $.text:mwio4.lib<mwintc.obj>$0x3f0  $Tramp$S$$IRQ_globalEnable
-   11e029b0     0c03ab30     0c027260   current_control_ver2_new.obj (.text)
+   11e029b0     0c03ab30     0c027238   current_control_ver2_new.obj (.text)
 $.text:mwio4.lib<timer_lib.obj>$0x1d0  $Tramp$S$$C6657_timer2_init
-   11e01b30     0c03ab40     0c027258   current_control_ver2_new.obj (.text)
+   11e01b30     0c03ab40     0c027230   current_control_ver2_new.obj (.text)
 $.text:mwio4.lib<timer_lib.obj>$0x370  $Tramp$S$$C6657_timer1_init
-   11e01cd0     0c03ab50     0c02724c   current_control_ver2_new.obj (.text)
+   11e01cd0     0c03ab50     0c027224   current_control_ver2_new.obj (.text)
 $.text:mwio4.lib<timer_lib.obj>$0x510  $Tramp$S$$C6657_timer0_init
-   11e01e70     0c03ab60     0c027240   current_control_ver2_new.obj (.text)
+   11e01e70     0c03ab60     0c027214   current_control_ver2_new.obj (.text)
 $.text:mwio4.lib<PEV_INV_LIB.obj>$0xda8  $Tramp$S$$PEV_inverter_control_break
-   11e00da8     0c03ab70     0c027220   current_control_ver2_new.obj (.text)
-                             0c027228   current_control_ver2_new.obj (.text)
-                             0c027230   current_control_ver2_new.obj (.text)
-$.text:mwio4.lib<PEV_INV_LIB.obj>$0xcf4  $Tramp$S$$PEV_inverter_enable_int
-   11e00cf4     0c03ab80     0c027208   current_control_ver2_new.obj (.text)
-                             0c027210   current_control_ver2_new.obj (.text)
-                             0c027214   current_control_ver2_new.obj (.text)
-$.text:mwio4.lib<PEV_INV_LIB.obj>$0x958  $Tramp$S$$PEV_inverter_init_refload_timing
-   11e00958     0c03ab90     0c0271ec   current_control_ver2_new.obj (.text)
-                             0c0271f8   current_control_ver2_new.obj (.text)
+   11e00da8     0c03ab70     0c0271f4   current_control_ver2_new.obj (.text)
                              0c027200   current_control_ver2_new.obj (.text)
+                             0c027208   current_control_ver2_new.obj (.text)
+$.text:mwio4.lib<PEV_INV_LIB.obj>$0xcf4  $Tramp$S$$PEV_inverter_enable_int
+   11e00cf4     0c03ab80     0c0271e0   current_control_ver2_new.obj (.text)
+                             0c0271e8   current_control_ver2_new.obj (.text)
+                             0c0271ec   current_control_ver2_new.obj (.text)
+$.text:mwio4.lib<PEV_INV_LIB.obj>$0x958  $Tramp$S$$PEV_inverter_init_refload_timing
+   11e00958     0c03ab90     0c0271c4   current_control_ver2_new.obj (.text)
+                             0c0271d0   current_control_ver2_new.obj (.text)
+                             0c0271d4   current_control_ver2_new.obj (.text)
 $.text:mwio4.lib<PEV_INV_LIB.obj>$0xaa8  $Tramp$S$$PEV_inverter_init_adtrig_timing
-   11e00aa8     0c03aba0     0c0271c8   current_control_ver2_new.obj (.text)
-                             0c0271d8   current_control_ver2_new.obj (.text)
-                             0c0271e0   current_control_ver2_new.obj (.text)
+   11e00aa8     0c03aba0     0c0271a0   current_control_ver2_new.obj (.text)
+                             0c0271b0   current_control_ver2_new.obj (.text)
+                             0c0271b4   current_control_ver2_new.obj (.text)
 $.text:mwio4.lib<PEV_INV_LIB.obj>$0x5e8  $Tramp$S$$PEV_inverter_set_uvw
-   11e005e8     0c03abb0     0c027190   current_control_ver2_new.obj (.text)
-                             0c0271a8   current_control_ver2_new.obj (.text)
-                             0c0271b8   current_control_ver2_new.obj (.text)
+   11e005e8     0c03abb0     0c027168   current_control_ver2_new.obj (.text)
+                             0c027180   current_control_ver2_new.obj (.text)
+                             0c027190   current_control_ver2_new.obj (.text)
 $.text:mwio4.lib<PEV_INV_LIB.obj>$0xfe0  $Tramp$S$$PEV_ad_set_mode
-   11e00fe0     0c03abc0     0c027144   current_control_ver2_new.obj (.text)
-                             0c027158   current_control_ver2_new.obj (.text)
-                             0c02716c   current_control_ver2_new.obj (.text)
+   11e00fe0     0c03abc0     0c027118   current_control_ver2_new.obj (.text)
+                             0c027130   current_control_ver2_new.obj (.text)
+                             0c027144   current_control_ver2_new.obj (.text)
 $.text:mwio4.lib<PEV_INV_LIB.obj>$0xf48  $Tramp$S$$PEV_ad_set_range
-   11e00f48     0c03abd0     0c027140   current_control_ver2_new.obj (.text)
-                             0c02714c   current_control_ver2_new.obj (.text)
-                             0c027164   current_control_ver2_new.obj (.text)
-$.text:mwio4.lib<PEV_INV_LIB.obj>$0x150  $Tramp$S$$PEV_sync_pwm_out
-   11e00150     0c03abe0     0c027110   current_control_ver2_new.obj (.text)
+   11e00f48     0c03abd0     0c027114   current_control_ver2_new.obj (.text)
                              0c027124   current_control_ver2_new.obj (.text)
-$.text:mwio4.lib<PEV_INV_LIB.obj>$0x260  $Tramp$S$$PEV_sync_pwm_init
-   11e00260     0c03abf0     0c0270f0   current_control_ver2_new.obj (.text)
+                             0c027138   current_control_ver2_new.obj (.text)
+$.text:mwio4.lib<PEV_INV_LIB.obj>$0x150  $Tramp$S$$PEV_sync_pwm_out
+   11e00150     0c03abe0     0c0270ec   current_control_ver2_new.obj (.text)
                              0c0270f8   current_control_ver2_new.obj (.text)
-                             0c027108   current_control_ver2_new.obj (.text)
+$.text:mwio4.lib<PEV_INV_LIB.obj>$0x260  $Tramp$S$$PEV_sync_pwm_init
+   11e00260     0c03abf0     0c0270c8   current_control_ver2_new.obj (.text)
+                             0c0270d4   current_control_ver2_new.obj (.text)
+                             0c0270e0   current_control_ver2_new.obj (.text)
 $.text:mwio4.lib<PEV_INV_LIB.obj>$0x2b4  $Tramp$S$$PEV_sync_ad_out
-   11e002b4     0c03ac00     0c0270e8   current_control_ver2_new.obj (.text)
+   11e002b4     0c03ac00     0c0270c0   current_control_ver2_new.obj (.text)
 $.text:mwio4.lib<PEV_INV_LIB.obj>$0x30c  $Tramp$S$$PEV_sync_ad_init
-   11e0030c     0c03ac10     0c0270c4   current_control_ver2_new.obj (.text)
-                             0c0270d0   current_control_ver2_new.obj (.text)
-                             0c0270d8   current_control_ver2_new.obj (.text)
+   11e0030c     0c03ac10     0c0270a0   current_control_ver2_new.obj (.text)
+                             0c0270ac   current_control_ver2_new.obj (.text)
+                             0c0270b4   current_control_ver2_new.obj (.text)
 $.text:mwio4.lib<PEV_INV_LIB.obj>$0xb84  $Tramp$S$$PEV_inverter_init
-   11e00b84     0c03ac20     0c027094   current_control_ver2_new.obj (.text)
-                             0c0270a8   current_control_ver2_new.obj (.text)
-                             0c0270b8   current_control_ver2_new.obj (.text)
+   11e00b84     0c03ac20     0c02706c   current_control_ver2_new.obj (.text)
+                             0c027080   current_control_ver2_new.obj (.text)
+                             0c027090   current_control_ver2_new.obj (.text)
 $.text:mwio4.lib<gpio_int.obj>$0x14c  $Tramp$S$$GPI_enable_int_vo
-   11e0304c     0c03ac30     0c027074   current_control_ver2_new.obj (.text)
+   11e0304c     0c03ac30     0c02704c   current_control_ver2_new.obj (.text)
 $.text:mwio4.lib<gpio_int.obj>$0x0  $Tramp$S$$GPI_setVector_vo
-   11e02f00     0c03ac40     0c027064   current_control_ver2_new.obj (.text)
+   11e02f00     0c03ac40     0c027038   current_control_ver2_new.obj (.text)
 $.text:mwio4.lib<PEV_INV_LIB.obj>$0xde0  $Tramp$S$$PEV_int_init
-   11e00de0     0c03ac50     0c02704c   current_control_ver2_new.obj (.text)
+   11e00de0     0c03ac50     0c027020   current_control_ver2_new.obj (.text)
 $.text:mwio4.lib<mwintc.obj>$0x410  $Tramp$S$$IRQ_globalDisable
-   11e029d0     0c03ac60     0c026cc0   current_control_ver2_new.obj (.text)
+   11e029d0     0c03ac60     0c026ca0   current_control_ver2_new.obj (.text)
 $.text:mwio4.lib<PEV_INV_LIB.obj>$0x106c  $Tramp$S$$PEV_ad_in_grp
-   11e0106c     0c03ac70     0c01aa70   current_control_ver2_new.obj (.text)
-                             0c01ad40   current_control_ver2_new.obj (.text)
+   11e0106c     0c03ac70     0c01aa64   current_control_ver2_new.obj (.text)
+                             0c01ad30   current_control_ver2_new.obj (.text)
 $.text:mwio4.lib<PEV_INV_LIB.obj>$0x1040  $Tramp$S$$PEV_ad_in_st
-   11e01040     0c03ac80     0c01aa38   current_control_ver2_new.obj (.text)
+   11e01040     0c03ac80     0c01aa28   current_control_ver2_new.obj (.text)
+                             0c01aa50   current_control_ver2_new.obj (.text)
                              0c01aa60   current_control_ver2_new.obj (.text)
-                             0c01aa6c   current_control_ver2_new.obj (.text)
-                             0c01ad00   current_control_ver2_new.obj (.text)
+                             0c01acf0   current_control_ver2_new.obj (.text)
+                             0c01ad20   current_control_ver2_new.obj (.text)
                              0c01ad2c   current_control_ver2_new.obj (.text)
-                             0c01ad38   current_control_ver2_new.obj (.text)
 $.text:mwio4.lib<PEV_INV_LIB.obj>$0x3cc  $Tramp$S$$PEV_inverter_set_uvw_br
    11e003cc     0c03ac90     0c019a8c   current_control_ver2_new.obj (.text)
                              0c019ab4   current_control_ver2_new.obj (.text)
@@ -649,36 +649,36 @@ address    name
 11e03300   CSL_intcGlobalNmiEnable
 11e03240   CSL_intcInterruptDisable
 11e03220   CSL_intcInterruptEnable
-0c01b36c   CalcDynamicsInit
-0c023184   CalcFDTDTSOBInit
-0c01f5d0   CalcFDTDWrInit_QmrefInputType
-0c021448   CalcFDTDWrInit_WmcmdInputType
+0c01b34c   CalcDynamicsInit
+0c023164   CalcFDTDTSOBInit
+0c01f5b0   CalcFDTDWrInit_QmrefInputType
+0c021428   CalcFDTDWrInit_WmcmdInputType
 0c02dfb4   CalcFDTDWrUpdate_QmrefInputType_1st2nd
 0c02d294   CalcFDTDWrUpdate_QmrefInputType_2nd
 0c02eb58   CalcFDTDWrUpdate_WmcmdInputType_1st2nd
 0c02d820   CalcFDTDWrUpdate_WmcmdInputType_2nd
-0c029950   CalcFDTDWr_QmrefInputType
+0c029940   CalcFDTDWr_QmrefInputType
 0c02ab80   CalcFDTDWr_WmcmdInputType
-0c0294e4   CalcGravIcmp
+0c0294cc   CalcGravIcmp
 0c02fce0   CalcHandCmdCircle
 0c0310e4   CalcHandCmdDiamond
 0c030b94   CalcHandCmdRectangle
 0c030028   CalcInverseCmd
-0c029624   CalcJl
-0c01a9d0   CalcOffset
+0c02960c   CalcJl
+0c01a9c4   CalcOffset
 0c02c9cc   CalcPVGain
-0c0258c0   CalcPVGainInitCDM
+0c0258a0   CalcPVGainInitCDM
 0c030aa4   CalcPref2axis
 0c0308a4   CalcPrefRep2axis
 0c0306a4   CalcPrefRep3axis
 0c02c2b8   CalcTauLDyn
 0c0304f0   CalcVdcMean
 0c0316e0   ControlFunction
-0c029464   DecouplingControl
+0c029450   DecouplingControl
 11e0252c   EMF_EnableIntr_s32
 11e02d20   EMF_ErrIntr_vo
-11f04be0   EMF_ExtWaitErrCnt_u32s
-11f04bdc   EMF_ExtWaitErrInfo_u32s
+11f04be8   EMF_ExtWaitErrCnt_u32s
+11f04be4   EMF_ExtWaitErrInfo_u32s
 11e024cc   EMF_Initialization_s32
 11e02414   EMF_Read2_s32
 11e023a8   EMF_Read3_s32
@@ -704,29 +704,29 @@ address    name
 0c035d80   ENC_ss_init
 0c035ccc   ENC_start_abs
 0c035c20   ENC_stop_abs
-0c028950   FDTDSOB
-0c027b60   FDTD_T_SOB
-0c027900   FDTD_Tm
-0c025514   FDTD_Tm_Init
+0c028944   FDTDSOB
+0c027b44   FDTD_T_SOB
+0c0278e8   FDTD_Tm
+0c0254f4   FDTD_Tm_Init
 0c038dd0   FPGA_get_fpga_ver
 0c038d84   FPGA_read
 0c038d18   FPGA_read_f32
 0c038ca0   FPGA_write
 0c038c10   FPGA_write_f32
-11f04564   Flag_ARCS_clear
-11f04560   Flag_ARCS_start
+11f0456c   Flag_ARCS_clear
+11f04568   Flag_ARCS_start
 11e0306c   GPI_disable_int_vo
 11e0304c   GPI_enable_int_vo
 11e03024   GPI_init_vo
 11e02fd4   GPI_int_ack_vo
 11e02f00   GPI_setVector_vo
-0c02784c   GeneratorCircle1st
-0c0277a4   GeneratorCircle2nd
-0c0276f8   GeneratorCircle3rd
-0c027564   GetFilterdSignal
-0c01aee0   GetMultiPositions
-0c027530   GetVelocity
-0c01acb4   GetVoltAndCurrent
+0c027840   GeneratorCircle1st
+0c027790   GeneratorCircle2nd
+0c0276e8   GeneratorCircle3rd
+0c027540   GetFilterdSignal
+0c01aecc   GetMultiPositions
+0c02750c   GetVelocity
+0c01aca4   GetVoltAndCurrent
 0c038fcc   IPFPGA_get_fpga_ver
 0c038f80   IPFPGA_read
 0c038f08   IPFPGA_read_f32
@@ -735,22 +735,22 @@ address    name
 11e029d0   IRQ_globalDisable
 11e029b0   IRQ_globalEnable
 11e029a8   IRQ_globalRestore
-0c027510   Integrator_acc_ref
-0c0274f0   Integrator_acc_ref2
-0c0274d0   Integrator_acc_ref3
-0c0274b0   Integrator_w_ref
-0c027490   Integrator_w_ref2
-0c027470   Integrator_w_ref3
-11f0455c   Iq_off
+0c0274ec   Integrator_acc_ref
+0c0274cc   Integrator_acc_ref2
+0c0274ac   Integrator_acc_ref3
+0c02748c   Integrator_w_ref
+0c02746c   Integrator_w_ref2
+0c02744c   Integrator_w_ref3
+11f04564   Iq_off
 0c03ae68   LPF_cmd
 0c03aef0   LPF_motor
-0c027330   LimDiffCalcDQ
-0c0272d0   LimitPosCmd
+0c02730c   LimDiffCalcDQ
+0c0272a8   LimitPosCmd
 0c0197a4   Limiter
-0c026cb4   MW_main
-0c01a770   ManyRampGenerator1stAxis
-0c01a510   ManyRampGenerator2ndAxis
-0c01a2b8   ManyRampGenerator3rdAxis
+0c026c94   MW_main
+0c01a764   ManyRampGenerator1stAxis
+0c01a504   ManyRampGenerator2ndAxis
+0c01a2a4   ManyRampGenerator3rdAxis
 11f0344c   ModRatioU
 11f03450   ModRatioV
 11f03454   ModRatioW
@@ -799,14 +799,14 @@ address    name
 11e00078   PEV_updown_init_maxcount
 11e00034   PEV_updown_read_cnt
 11e00000   PEV_updown_set_mode
-0c01a274   PIcontroller
-0c01a230   PIcontroller_withAntiwindup
-0c01a224   Pcontroller
-11f04554   Ref_Iq_ref_direct
-11f04558   Ref_wM_direct
-0c01a220   SetBDN
-0c01a218   SetENC_CH
-0c019dd8   SetGain
+0c01a260   PIcontroller
+0c01a218   PIcontroller_withAntiwindup
+0c01a20c   Pcontroller
+11f0455c   Ref_Iq_ref_direct
+11f04560   Ref_wM_direct
+0c01a208   SetBDN
+0c01a204   SetENC_CH
+0c019dc4   SetGain
 0c019d34   SetLPF
 0c019b94   SetRampParams
 0c0197c4   SetVoltReferences
@@ -815,294 +815,296 @@ address    name
 0c018a20   TriangularAccelerationCommandGenerator
 0c018060   TriangularAccelerationCommandGeneratorInit
 0c01800c   VconPI5Axis
-11f0470c   WAVE_ACC_LW8079
-11f04710   WAVE_ACC_LW8174
-11f04714   WAVE_ACC_LW8174_axis
-11f04740   WAVE_AccCmd1
-11f04748   WAVE_AccCmd2
-11f04750   WAVE_AccCmd3
-11f049cc   WAVE_ENC1
-11f049d0   WAVE_ENC2
-11f049d4   WAVE_ENC3
-11f049c0   WAVE_ENC_temp1
-11f049c4   WAVE_ENC_temp2
-11f049c8   WAVE_ENC_temp3
+11f04714   WAVE_ACC_LW8079
+11f04718   WAVE_ACC_LW8174
+11f0471c   WAVE_ACC_LW8174_axis
+11f04748   WAVE_AccCmd1
+11f04750   WAVE_AccCmd2
+11f04758   WAVE_AccCmd3
+11f049d4   WAVE_ENC1
+11f049d8   WAVE_ENC2
+11f049dc   WAVE_ENC3
+11f049c8   WAVE_ENC_temp1
+11f049cc   WAVE_ENC_temp2
+11f049d0   WAVE_ENC_temp3
 11f02300   WAVE_Enc_error
-11f04718   WAVE_Fz
-11f044f8   WAVE_HandX
-11f044fc   WAVE_HandY
-11f04500   WAVE_HandZ
-11f04b74   WAVE_Icmp1
-11f04b78   WAVE_Icmp2
-11f04b7c   WAVE_Icmp3
-11f049b4   WAVE_Idc1
-11f049b8   WAVE_Idc2
-11f049bc   WAVE_Idc3
-11f04b8c   WAVE_Iff_1
-11f04b90   WAVE_Iff_2
-11f04b94   WAVE_Iff_3
-11f04a60   WAVE_Iq1
-11f04a64   WAVE_Iq2
-11f04a68   WAVE_Iq3
-11f04af0   WAVE_IrefD1
-11f04af4   WAVE_IrefD2
-11f04af8   WAVE_IrefD3
-11f04afc   WAVE_IrefQ1
-11f04b00   WAVE_IrefQ2
-11f04b04   WAVE_IrefQ3
-11f04990   WAVE_IresD1
-11f04994   WAVE_IresD2
-11f04998   WAVE_IresD3
-11f0499c   WAVE_IresQ1
-11f049a0   WAVE_IresQ2
-11f049a4   WAVE_IresQ3
-11f046e8   WAVE_IresU1
-11f046ec   WAVE_IresU2
-11f046f0   WAVE_IresU3
-11f046f4   WAVE_IresV1
-11f046f8   WAVE_IresV2
-11f046fc   WAVE_IresV3
-11f04700   WAVE_IresW1
-11f04704   WAVE_IresW2
-11f04708   WAVE_IresW3
-11f04a6c   WAVE_Isfb1
-11f04a70   WAVE_Isfb2
-11f04a74   WAVE_Isfb3
-11f04984   WAVE_Jl_calc1
-11f04988   WAVE_Jl_calc2
-11f0498c   WAVE_Jl_calc3
-11f044ec   WAVE_Joint1
-11f044f0   WAVE_Joint2
-11f044f4   WAVE_Joint3
-11f045b0   WAVE_Kpp1
-11f045e0   WAVE_Kpp2
-11f045c8   WAVE_Kpp3
-11f045b8   WAVE_Kvi1
-11f045e8   WAVE_Kvi2
-11f045d0   WAVE_Kvi3
-11f045b4   WAVE_Kvp1
-11f045e4   WAVE_Kvp2
-11f045cc   WAVE_Kvp3
-11f0448c   WAVE_LoopCount
-11f0496c   WAVE_MRBR1
-11f04970   WAVE_MRBR2
-11f04974   WAVE_MRBR3
-11f04948   WAVE_MRU1
-11f04954   WAVE_MRU2
-11f04960   WAVE_MRU3
-11f0494c   WAVE_MRV1
-11f04958   WAVE_MRV2
-11f04964   WAVE_MRV3
-11f04950   WAVE_MRW1
-11f0495c   WAVE_MRW2
-11f04968   WAVE_MRW3
-11f04a08   WAVE_TRG_WM1
-11f04a0c   WAVE_TRG_WM2
-11f04a10   WAVE_TRG_WM3
-11f044d8   WAVE_TimeACC
-11f044e4   WAVE_TimeCalcCmd
-11f044e8   WAVE_TimeCalcInvCmd
-11f044ac   WAVE_TimeConv2dq
-11f044dc   WAVE_TimeConv2uvw
-11f044b8   WAVE_TimeGain
-11f044a4   WAVE_TimeGetEnc
-11f044cc   WAVE_TimeGrav
-11f044e0   WAVE_TimeInsert
-11f044b4   WAVE_TimeJl
-11f044d4   WAVE_TimeP_PI
-11f044b0   WAVE_TimeResRatch
-11f044d0   WAVE_TimeSOB
-11f044a8   WAVE_TimeSetWm
-11f044c4   WAVE_TimeTauLdyn
-11f044c8   WAVE_TimeTm
-11f044c0   WAVE_TimeWr
-11f044bc   WAVE_TimeWrInit
-11f04498   WAVE_Timer0
-11f0449c   WAVE_Timer1
-11f044a0   WAVE_Timer2
-11f04b68   WAVE_Tq1
-11f04b6c   WAVE_Tq2
-11f04b70   WAVE_Tq3
-11f04728   WAVE_U_modulation
-11f04b9c   WAVE_VWX
-11f04ba0   WAVE_VWY
-11f04ba4   WAVE_VWZ
-11f0472c   WAVE_V_modulation
-11f049a8   WAVE_Vdc1
-11f049ac   WAVE_Vdc2
-11f049b0   WAVE_Vdc3
+11f0445c   WAVE_FIL_Y
+11f04720   WAVE_Fz
+11f04500   WAVE_HandX
+11f04504   WAVE_HandY
+11f04508   WAVE_HandZ
+11f04458   WAVE_INIT_COUNT
+11f04b7c   WAVE_Icmp1
+11f04b80   WAVE_Icmp2
+11f04b84   WAVE_Icmp3
+11f049bc   WAVE_Idc1
+11f049c0   WAVE_Idc2
+11f049c4   WAVE_Idc3
+11f04b94   WAVE_Iff_1
+11f04b98   WAVE_Iff_2
+11f04b9c   WAVE_Iff_3
+11f04a68   WAVE_Iq1
+11f04a6c   WAVE_Iq2
+11f04a70   WAVE_Iq3
+11f04af8   WAVE_IrefD1
+11f04afc   WAVE_IrefD2
+11f04b00   WAVE_IrefD3
+11f04b04   WAVE_IrefQ1
+11f04b08   WAVE_IrefQ2
+11f04b0c   WAVE_IrefQ3
+11f04998   WAVE_IresD1
+11f0499c   WAVE_IresD2
+11f049a0   WAVE_IresD3
+11f049a4   WAVE_IresQ1
+11f049a8   WAVE_IresQ2
+11f049ac   WAVE_IresQ3
+11f046f0   WAVE_IresU1
+11f046f4   WAVE_IresU2
+11f046f8   WAVE_IresU3
+11f046fc   WAVE_IresV1
+11f04700   WAVE_IresV2
+11f04704   WAVE_IresV3
+11f04708   WAVE_IresW1
+11f0470c   WAVE_IresW2
+11f04710   WAVE_IresW3
+11f04a74   WAVE_Isfb1
+11f04a78   WAVE_Isfb2
+11f04a7c   WAVE_Isfb3
+11f0498c   WAVE_Jl_calc1
+11f04990   WAVE_Jl_calc2
+11f04994   WAVE_Jl_calc3
+11f044f4   WAVE_Joint1
+11f044f8   WAVE_Joint2
+11f044fc   WAVE_Joint3
+11f045b8   WAVE_Kpp1
+11f045e8   WAVE_Kpp2
+11f045d0   WAVE_Kpp3
+11f045c0   WAVE_Kvi1
+11f045f0   WAVE_Kvi2
+11f045d8   WAVE_Kvi3
+11f045bc   WAVE_Kvp1
+11f045ec   WAVE_Kvp2
+11f045d4   WAVE_Kvp3
+11f04494   WAVE_LoopCount
+11f04974   WAVE_MRBR1
+11f04978   WAVE_MRBR2
+11f0497c   WAVE_MRBR3
+11f04950   WAVE_MRU1
+11f0495c   WAVE_MRU2
+11f04968   WAVE_MRU3
+11f04954   WAVE_MRV1
+11f04960   WAVE_MRV2
+11f0496c   WAVE_MRV3
+11f04958   WAVE_MRW1
+11f04964   WAVE_MRW2
+11f04970   WAVE_MRW3
+11f04a10   WAVE_TRG_WM1
+11f04a14   WAVE_TRG_WM2
+11f04a18   WAVE_TRG_WM3
+11f044e0   WAVE_TimeACC
+11f044ec   WAVE_TimeCalcCmd
+11f044f0   WAVE_TimeCalcInvCmd
+11f044b4   WAVE_TimeConv2dq
+11f044e4   WAVE_TimeConv2uvw
+11f044c0   WAVE_TimeGain
+11f044ac   WAVE_TimeGetEnc
+11f044d4   WAVE_TimeGrav
+11f044e8   WAVE_TimeInsert
+11f044bc   WAVE_TimeJl
+11f044dc   WAVE_TimeP_PI
+11f044b8   WAVE_TimeResRatch
+11f044d8   WAVE_TimeSOB
+11f044b0   WAVE_TimeSetWm
+11f044cc   WAVE_TimeTauLdyn
+11f044d0   WAVE_TimeTm
+11f044c8   WAVE_TimeWr
+11f044c4   WAVE_TimeWrInit
+11f044a0   WAVE_Timer0
+11f044a4   WAVE_Timer1
+11f044a8   WAVE_Timer2
+11f04b70   WAVE_Tq1
+11f04b74   WAVE_Tq2
+11f04b78   WAVE_Tq3
+11f04730   WAVE_U_modulation
+11f04ba4   WAVE_VWX
+11f04ba8   WAVE_VWY
+11f04bac   WAVE_VWZ
+11f04734   WAVE_V_modulation
+11f049b0   WAVE_Vdc1
+11f049b4   WAVE_Vdc2
+11f049b8   WAVE_Vdc3
 11f02310   WAVE_Vdc_ofst
-11f04744   WAVE_VelCmd1
-11f0474c   WAVE_VelCmd2
-11f04754   WAVE_VelCmd3
-11f04b20   WAVE_VrefD1
-11f04b28   WAVE_VrefD2
-11f04b30   WAVE_VrefD3
-11f04b08   WAVE_VrefD_dcpl1
-11f04b10   WAVE_VrefD_dcpl2
-11f04b18   WAVE_VrefD_dcpl3
-11f04b24   WAVE_VrefQ1
-11f04b2c   WAVE_VrefQ2
-11f04b34   WAVE_VrefQ3
-11f04b0c   WAVE_VrefQ_dcpl1
-11f04b14   WAVE_VrefQ_dcpl2
-11f04b1c   WAVE_VrefQ_dcpl3
-11f04aa8   WAVE_VrefU1
-11f04ab4   WAVE_VrefU2
-11f04ac0   WAVE_VrefU3
-11f04aac   WAVE_VrefV1
-11f04ab8   WAVE_VrefV2
-11f04ac4   WAVE_VrefV3
-11f04ab0   WAVE_VrefW1
-11f04abc   WAVE_VrefW2
-11f04ac8   WAVE_VrefW3
-11f0471c   WAVE_WSX
-11f04720   WAVE_WSY
-11f04724   WAVE_WSZ
-11f04730   WAVE_W_modulation
-11f045f8   WAVE_al_calc1
-11f04608   WAVE_al_calc2
-11f04618   WAVE_al_calc3
-11f04628   WAVE_al_calc_DPD1
-11f04638   WAVE_al_calc_DPD2
-11f04648   WAVE_al_calc_DPD3
-11f04a84   WAVE_am_TriAccCmd1
-11f04a88   WAVE_am_TriAccCmd2
-11f04a8c   WAVE_am_TriAccCmd3
-11f046c8   WAVE_est_ISOB_qs1
-11f046d4   WAVE_est_ISOB_qs2
-11f046e0   WAVE_est_ISOB_qs3
-11f046cc   WAVE_est_ISOB_wl1
-11f046d8   WAVE_est_ISOB_wl2
-11f046e4   WAVE_est_ISOB_wl3
-11f046c4   WAVE_est_ISOB_wm1
-11f046d0   WAVE_est_ISOB_wm2
-11f046dc   WAVE_est_ISOB_wm3
-11f04680   WAVE_est_conv_qs1
-11f0468c   WAVE_est_conv_qs2
-11f04698   WAVE_est_conv_qs3
-11f04684   WAVE_est_conv_wl1
-11f04690   WAVE_est_conv_wl2
-11f0469c   WAVE_est_conv_wl3
-11f0467c   WAVE_est_conv_wm1
-11f04688   WAVE_est_conv_wm2
-11f04694   WAVE_est_conv_wm3
-11f046a4   WAVE_est_prop_qs1
-11f046b0   WAVE_est_prop_qs2
-11f046bc   WAVE_est_prop_qs3
-11f046a8   WAVE_est_prop_wl1
-11f046b4   WAVE_est_prop_wl2
-11f046c0   WAVE_est_prop_wl3
-11f046a0   WAVE_est_prop_wm1
-11f046ac   WAVE_est_prop_wm2
-11f046b8   WAVE_est_prop_wm3
-11f0465c   WAVE_est_qs1
-11f04668   WAVE_est_qs2
-11f04674   WAVE_est_qs3
-11f04660   WAVE_est_wl1
-11f0466c   WAVE_est_wl2
-11f04678   WAVE_est_wl3
-11f04658   WAVE_est_wm1
-11f04664   WAVE_est_wm2
-11f04670   WAVE_est_wm3
-11f045c0   WAVE_fqs1
-11f045f0   WAVE_fqs2
-11f045d8   WAVE_fqs3
-11f045c4   WAVE_fwl1
-11f045f4   WAVE_fwl2
-11f045dc   WAVE_fwl3
-11f045bc   WAVE_fwm1
-11f045ec   WAVE_fwm2
-11f045d4   WAVE_fwm3
-11f04504   WAVE_fx
-11f04508   WAVE_fy
-11f0450c   WAVE_fz
-11f04a78   WAVE_jark1
-11f04a7c   WAVE_jark2
-11f04a80   WAVE_jark3
+11f0474c   WAVE_VelCmd1
+11f04754   WAVE_VelCmd2
+11f0475c   WAVE_VelCmd3
+11f04b28   WAVE_VrefD1
+11f04b30   WAVE_VrefD2
+11f04b38   WAVE_VrefD3
+11f04b10   WAVE_VrefD_dcpl1
+11f04b18   WAVE_VrefD_dcpl2
+11f04b20   WAVE_VrefD_dcpl3
+11f04b2c   WAVE_VrefQ1
+11f04b34   WAVE_VrefQ2
+11f04b3c   WAVE_VrefQ3
+11f04b14   WAVE_VrefQ_dcpl1
+11f04b1c   WAVE_VrefQ_dcpl2
+11f04b24   WAVE_VrefQ_dcpl3
+11f04ab0   WAVE_VrefU1
+11f04abc   WAVE_VrefU2
+11f04ac8   WAVE_VrefU3
+11f04ab4   WAVE_VrefV1
+11f04ac0   WAVE_VrefV2
+11f04acc   WAVE_VrefV3
+11f04ab8   WAVE_VrefW1
+11f04ac4   WAVE_VrefW2
+11f04ad0   WAVE_VrefW3
+11f04724   WAVE_WSX
+11f04728   WAVE_WSY
+11f0472c   WAVE_WSZ
+11f04738   WAVE_W_modulation
+11f04600   WAVE_al_calc1
+11f04610   WAVE_al_calc2
+11f04620   WAVE_al_calc3
+11f04630   WAVE_al_calc_DPD1
+11f04640   WAVE_al_calc_DPD2
+11f04650   WAVE_al_calc_DPD3
+11f04a8c   WAVE_am_TriAccCmd1
+11f04a90   WAVE_am_TriAccCmd2
+11f04a94   WAVE_am_TriAccCmd3
+11f046d0   WAVE_est_ISOB_qs1
+11f046dc   WAVE_est_ISOB_qs2
+11f046e8   WAVE_est_ISOB_qs3
+11f046d4   WAVE_est_ISOB_wl1
+11f046e0   WAVE_est_ISOB_wl2
+11f046ec   WAVE_est_ISOB_wl3
+11f046cc   WAVE_est_ISOB_wm1
+11f046d8   WAVE_est_ISOB_wm2
+11f046e4   WAVE_est_ISOB_wm3
+11f04688   WAVE_est_conv_qs1
+11f04694   WAVE_est_conv_qs2
+11f046a0   WAVE_est_conv_qs3
+11f0468c   WAVE_est_conv_wl1
+11f04698   WAVE_est_conv_wl2
+11f046a4   WAVE_est_conv_wl3
+11f04684   WAVE_est_conv_wm1
+11f04690   WAVE_est_conv_wm2
+11f0469c   WAVE_est_conv_wm3
+11f046ac   WAVE_est_prop_qs1
+11f046b8   WAVE_est_prop_qs2
+11f046c4   WAVE_est_prop_qs3
+11f046b0   WAVE_est_prop_wl1
+11f046bc   WAVE_est_prop_wl2
+11f046c8   WAVE_est_prop_wl3
+11f046a8   WAVE_est_prop_wm1
+11f046b4   WAVE_est_prop_wm2
+11f046c0   WAVE_est_prop_wm3
+11f04664   WAVE_est_qs1
+11f04670   WAVE_est_qs2
+11f0467c   WAVE_est_qs3
+11f04668   WAVE_est_wl1
+11f04674   WAVE_est_wl2
+11f04680   WAVE_est_wl3
+11f04660   WAVE_est_wm1
+11f0466c   WAVE_est_wm2
+11f04678   WAVE_est_wm3
+11f045c8   WAVE_fqs1
+11f045f8   WAVE_fqs2
+11f045e0   WAVE_fqs3
+11f045cc   WAVE_fwl1
+11f045fc   WAVE_fwl2
+11f045e4   WAVE_fwl3
+11f045c4   WAVE_fwm1
+11f045f4   WAVE_fwm2
+11f045dc   WAVE_fwm3
+11f0450c   WAVE_fx
+11f04510   WAVE_fy
+11f04514   WAVE_fz
+11f04a80   WAVE_jark1
+11f04a84   WAVE_jark2
+11f04a88   WAVE_jark3
 11f02304   WAVE_ofst_Iu
 11f02308   WAVE_ofst_Iv
 11f0230c   WAVE_ofst_Iw
-11f04b50   WAVE_omega_rm1
-11f04b5c   WAVE_omega_rm1_ref
-11f04b54   WAVE_omega_rm2
-11f04b60   WAVE_omega_rm2_ref
-11f04b58   WAVE_omega_rm3
-11f04b64   WAVE_omega_rm3_ref
-11f04a54   WAVE_ql1
-11f04a58   WAVE_ql2
-11f04a5c   WAVE_ql3
-11f04600   WAVE_ql_calc1
-11f04610   WAVE_ql_calc2
-11f04620   WAVE_ql_calc3
-11f04630   WAVE_ql_calc_DPD1
-11f04640   WAVE_ql_calc_DPD2
-11f04650   WAVE_ql_calc_DPD3
-11f04a3c   WAVE_qm1
-11f04a40   WAVE_qm2
-11f04a44   WAVE_qm3
-11f04a9c   WAVE_qm_TriAccCmd1
-11f04aa0   WAVE_qm_TriAccCmd2
-11f04aa4   WAVE_qm_TriAccCmd3
-11f04a48   WAVE_qm_ref1
-11f04a4c   WAVE_qm_ref2
-11f04a50   WAVE_qm_ref3
-11f04b98   WAVE_tauL_dyn_2nd
-11f04978   WAVE_tauLdyn1
-11f0497c   WAVE_tauLdyn2
-11f04980   WAVE_tauLdyn3
-11f049fc   WAVE_theta_re1
-11f04a00   WAVE_theta_re2
-11f04a04   WAVE_theta_re3
-11f049d8   WAVE_theta_rm1
-11f049dc   WAVE_theta_rm2
-11f049e0   WAVE_theta_rm3
-11f049f0   WAVE_theta_rm_full1
-11f049f4   WAVE_theta_rm_full2
-11f049f8   WAVE_theta_rm_full3
-11f049e4   WAVE_theta_rm_ref1
-11f049e8   WAVE_theta_rm_ref2
-11f049ec   WAVE_theta_rm_ref3
-11f04b38   WAVE_vd_lim_dif1
-11f04b40   WAVE_vd_lim_dif2
-11f04b48   WAVE_vd_lim_dif3
-11f04b3c   WAVE_vq_lim_dif1
-11f04b44   WAVE_vq_lim_dif2
-11f04b4c   WAVE_vq_lim_dif3
-11f04acc   WAVE_vu_ref_stand1
-11f04ad8   WAVE_vu_ref_stand2
-11f04ae4   WAVE_vu_ref_stand3
-11f04ad0   WAVE_vv_ref_stand1
-11f04adc   WAVE_vv_ref_stand2
-11f04ae8   WAVE_vv_ref_stand3
-11f04ad4   WAVE_vw_ref_stand1
-11f04ae0   WAVE_vw_ref_stand2
-11f04aec   WAVE_vw_ref_stand3
-11f045fc   WAVE_wl_calc1
-11f0460c   WAVE_wl_calc2
-11f0461c   WAVE_wl_calc3
-11f0462c   WAVE_wl_calc_DPD1
-11f0463c   WAVE_wl_calc_DPD2
-11f0464c   WAVE_wl_calc_DPD3
-11f04a14   WAVE_wm1
-11f04a18   WAVE_wm2
-11f04a1c   WAVE_wm3
-11f04a90   WAVE_wm_TriAccCmd1
-11f04a94   WAVE_wm_TriAccCmd2
-11f04a98   WAVE_wm_TriAccCmd3
-11f04604   WAVE_wm_calc1
-11f04614   WAVE_wm_calc2
-11f04624   WAVE_wm_calc3
-11f04634   WAVE_wm_calc_DPD1
-11f04644   WAVE_wm_calc_DPD2
-11f04654   WAVE_wm_calc_DPD3
-11f04a30   WAVE_wm_cmd1
-11f04a34   WAVE_wm_cmd2
-11f04a38   WAVE_wm_cmd3
-11f04a24   WAVE_wm_ref1
-11f04a28   WAVE_wm_ref2
-11f04a2c   WAVE_wm_ref3
-11f04a20   WAVE_wm_ref_org
+11f04b58   WAVE_omega_rm1
+11f04b64   WAVE_omega_rm1_ref
+11f04b5c   WAVE_omega_rm2
+11f04b68   WAVE_omega_rm2_ref
+11f04b60   WAVE_omega_rm3
+11f04b6c   WAVE_omega_rm3_ref
+11f04a5c   WAVE_ql1
+11f04a60   WAVE_ql2
+11f04a64   WAVE_ql3
+11f04608   WAVE_ql_calc1
+11f04618   WAVE_ql_calc2
+11f04628   WAVE_ql_calc3
+11f04638   WAVE_ql_calc_DPD1
+11f04648   WAVE_ql_calc_DPD2
+11f04658   WAVE_ql_calc_DPD3
+11f04a44   WAVE_qm1
+11f04a48   WAVE_qm2
+11f04a4c   WAVE_qm3
+11f04aa4   WAVE_qm_TriAccCmd1
+11f04aa8   WAVE_qm_TriAccCmd2
+11f04aac   WAVE_qm_TriAccCmd3
+11f04a50   WAVE_qm_ref1
+11f04a54   WAVE_qm_ref2
+11f04a58   WAVE_qm_ref3
+11f04ba0   WAVE_tauL_dyn_2nd
+11f04980   WAVE_tauLdyn1
+11f04984   WAVE_tauLdyn2
+11f04988   WAVE_tauLdyn3
+11f04a04   WAVE_theta_re1
+11f04a08   WAVE_theta_re2
+11f04a0c   WAVE_theta_re3
+11f049e0   WAVE_theta_rm1
+11f049e4   WAVE_theta_rm2
+11f049e8   WAVE_theta_rm3
+11f049f8   WAVE_theta_rm_full1
+11f049fc   WAVE_theta_rm_full2
+11f04a00   WAVE_theta_rm_full3
+11f049ec   WAVE_theta_rm_ref1
+11f049f0   WAVE_theta_rm_ref2
+11f049f4   WAVE_theta_rm_ref3
+11f04b40   WAVE_vd_lim_dif1
+11f04b48   WAVE_vd_lim_dif2
+11f04b50   WAVE_vd_lim_dif3
+11f04b44   WAVE_vq_lim_dif1
+11f04b4c   WAVE_vq_lim_dif2
+11f04b54   WAVE_vq_lim_dif3
+11f04ad4   WAVE_vu_ref_stand1
+11f04ae0   WAVE_vu_ref_stand2
+11f04aec   WAVE_vu_ref_stand3
+11f04ad8   WAVE_vv_ref_stand1
+11f04ae4   WAVE_vv_ref_stand2
+11f04af0   WAVE_vv_ref_stand3
+11f04adc   WAVE_vw_ref_stand1
+11f04ae8   WAVE_vw_ref_stand2
+11f04af4   WAVE_vw_ref_stand3
+11f04604   WAVE_wl_calc1
+11f04614   WAVE_wl_calc2
+11f04624   WAVE_wl_calc3
+11f04634   WAVE_wl_calc_DPD1
+11f04644   WAVE_wl_calc_DPD2
+11f04654   WAVE_wl_calc_DPD3
+11f04a1c   WAVE_wm1
+11f04a20   WAVE_wm2
+11f04a24   WAVE_wm3
+11f04a98   WAVE_wm_TriAccCmd1
+11f04a9c   WAVE_wm_TriAccCmd2
+11f04aa0   WAVE_wm_TriAccCmd3
+11f0460c   WAVE_wm_calc1
+11f0461c   WAVE_wm_calc2
+11f0462c   WAVE_wm_calc3
+11f0463c   WAVE_wm_calc_DPD1
+11f0464c   WAVE_wm_calc_DPD2
+11f0465c   WAVE_wm_calc_DPD3
+11f04a38   WAVE_wm_cmd1
+11f04a3c   WAVE_wm_cmd2
+11f04a40   WAVE_wm_cmd3
+11f04a2c   WAVE_wm_ref1
+11f04a30   WAVE_wm_ref2
+11f04a34   WAVE_wm_ref3
+11f04a28   WAVE_wm_ref_org
 11f02e18   Wr_DPD
 11f02b00   Wr_sub
 11e03380   _CSL2_intcDispatcherDummy
@@ -1171,51 +1173,51 @@ ffffffff   binit
 11e02688   cic0Out2Evnt
 0c039d80   copy_in
 0c038400   cos
-11f04488   counter_2
+11f04490   counter_2
 0c038be8   cvt_to_float_from_u32
 0c038bc0   cvt_to_u32_from_float
 0c03afd8   d_current
 11f02318   debug
 11f02328   debug2
 11f02338   debug3
-11f0456c   debug_theta
-11f04598   down_rotation_flag2
-11f045a0   down_rotation_flag3
-11f045a8   down_rotation_flag5
+11f04574   debug_theta
+11f045a0   down_rotation_flag2
+11f045a8   down_rotation_flag3
+11f045b0   down_rotation_flag5
 11f03130   dyn
 0c03aeec   errno
 0c03a660   evmI2CInit
 0c03a100   exit
 0c0391e0   expf
-11f04464   flag_CalcHandCmd
-11f04520   flag_CircleStart1
-11f04524   flag_CircleStart2
-11f04528   flag_CircleStart3
-11f04478   flag_FBgain
-11f04480   flag_FF
-11f04490   flag_FF_triple
-11f0447c   flag_PPgain
-11f04484   flag_SOB
-11f04474   flag_Vdc_setted
-11f04494   flag_cmd_end
-11f04458   flag_cont_start
-11f0445c   flag_dead
-11f04468   flag_debug
-11f04470   flag_delay
-11f04460   flag_dyn_payload
-11f0452c   flag_end1
-11f04530   flag_end2
-11f04534   flag_end3
-11f04518   flag_first_back
-11f04514   flag_first_go
-11f0451c   flag_hard
-11f04538   flag_on
-11f0446c   flag_pv
-11f04510   flag_reposition
+11f0446c   flag_CalcHandCmd
+11f04528   flag_CircleStart1
+11f0452c   flag_CircleStart2
+11f04530   flag_CircleStart3
+11f04480   flag_FBgain
+11f04488   flag_FF
+11f04498   flag_FF_triple
+11f04484   flag_PPgain
+11f0448c   flag_SOB
+11f0447c   flag_Vdc_setted
+11f0449c   flag_cmd_end
+11f04460   flag_cont_start
+11f04464   flag_dead
+11f04470   flag_debug
+11f04478   flag_delay
+11f04468   flag_dyn_payload
+11f04534   flag_end1
+11f04538   flag_end2
+11f0453c   flag_end3
+11f04520   flag_first_back
+11f0451c   flag_first_go
+11f04524   flag_hard
+11f04540   flag_on
+11f04474   flag_pv
+11f04518   flag_reposition
 0c039500   frexpf
 11f00270   gpio_int_map
 11f032b0   gsub
-11f04be4   hGpio
+11f04bec   hGpio
 0c036c94   i2cEepromGetStatus2
 0c036b18   i2cEepromRead2
 0c036788   i2cEepromWriteBlock2
@@ -1225,15 +1227,15 @@ ffffffff   binit
 11f00170   intcObj
 11f02348   joint
 0c039660   ldexpf
-11f04590   left_rotation_flag
-11f04570   load_angle_limit_deg1
-11f04574   load_angle_limit_deg2
-11f04578   load_angle_limit_deg3
-11f0457c   load_angle_limit_deg5
-11f04580   load_angle_limit_rad1
-11f04584   load_angle_limit_rad2
-11f04588   load_angle_limit_rad3
-11f0458c   load_angle_limit_rad5
+11f04598   left_rotation_flag
+11f04578   load_angle_limit_deg1
+11f0457c   load_angle_limit_deg2
+11f04580   load_angle_limit_deg3
+11f04584   load_angle_limit_deg5
+11f04588   load_angle_limit_rad1
+11f0458c   load_angle_limit_rad2
+11f04590   load_angle_limit_rad3
+11f04594   load_angle_limit_rad5
 0c03a8c0   main
 0c03a320   memcpy
 0c039f60   memset
@@ -1241,7 +1243,7 @@ ffffffff   binit
 0c03a800   modff
 0c0383c4   mw_Osal_platformSpiCsEnter
 0c0383b0   mw_Osal_platformSpiCsExit
-11f04940   mw_gp__CSL_intcCpuIntrTable
+11f04948   mw_gp__CSL_intcCpuIntrTable
 0c037fb8   mw_nor_erase
 0c037f4c   mw_nor_get_details
 0c037ed8   mw_nor_init
@@ -1253,7 +1255,7 @@ ffffffff   binit
 0c03820c   mw_platform_device_open
 0c038170   mw_platform_device_read
 0c0380d4   mw_platform_device_write
-11f04944   mw_platform_errno
+11f0494c   mw_platform_errno
 11e03360   mw_setVect
 0c037bd8   mw_spi_claim
 0c037b6c   mw_spi_cmd
@@ -1277,31 +1279,31 @@ ffffffff   binit
 0c036e00   powf
 0c03b068   q_current
 0c03b200   range
-11f04734   ref_Iq_direct1
-11f04738   ref_Iq_direct2
-11f0473c   ref_Iq_direct3
-11f04b80   ref_Iq_freq_direct1
-11f04b84   ref_Iq_freq_direct2
-11f04b88   ref_Iq_freq_direct3
-11f04568   ref_wm_direct
-11f04594   right_rotation_flag
+11f0473c   ref_Iq_direct1
+11f04740   ref_Iq_direct2
+11f04744   ref_Iq_direct3
+11f04b88   ref_Iq_freq_direct1
+11f04b8c   ref_Iq_freq_direct2
+11f04b90   ref_Iq_freq_direct3
+11f04570   ref_wm_direct
+11f0459c   right_rotation_flag
 0c03aca0   sen
 0c038940   sin
 0c0397c0   sqrt
 0c039a60   sqrtf
-11f04548   start_back1
-11f0454c   start_back2
-11f04550   start_back3
-11f0453c   start_go1
-11f04540   start_go2
-11f04544   start_go3
-11f04934   tmr1regs
-11f04938   tmr2regs
-11f0493c   tmr3regs
+11f04550   start_back1
+11f04554   start_back2
+11f04558   start_back3
+11f04544   start_go1
+11f04548   start_go2
+11f0454c   start_go3
+11f0493c   tmr1regs
+11f04940   tmr2regs
+11f04944   tmr3regs
 11f03238   tri
-11f0459c   up_rotation_flag2
-11f045a4   up_rotation_flag3
-11f045ac   up_rotation_flag5
+11f045a4   up_rotation_flag2
+11f045ac   up_rotation_flag3
+11f045b4   up_rotation_flag5
 0c03b0b0   velocity
 
 
@@ -1320,45 +1322,45 @@ address    name
 0c0197c4   SetVoltReferences
 0c019b94   SetRampParams
 0c019d34   SetLPF
-0c019dd8   SetGain
-0c01a218   SetENC_CH
-0c01a220   SetBDN
-0c01a224   Pcontroller
-0c01a230   PIcontroller_withAntiwindup
-0c01a274   PIcontroller
-0c01a2b8   ManyRampGenerator3rdAxis
-0c01a510   ManyRampGenerator2ndAxis
-0c01a770   ManyRampGenerator1stAxis
-0c01a9d0   CalcOffset
-0c01acb4   GetVoltAndCurrent
-0c01aee0   GetMultiPositions
-0c01b36c   CalcDynamicsInit
-0c01f5d0   CalcFDTDWrInit_QmrefInputType
-0c021448   CalcFDTDWrInit_WmcmdInputType
-0c023184   CalcFDTDTSOBInit
-0c025514   FDTD_Tm_Init
-0c0258c0   CalcPVGainInitCDM
-0c026cb4   MW_main
-0c0272d0   LimitPosCmd
-0c027330   LimDiffCalcDQ
-0c027470   Integrator_w_ref3
-0c027490   Integrator_w_ref2
-0c0274b0   Integrator_w_ref
-0c0274d0   Integrator_acc_ref3
-0c0274f0   Integrator_acc_ref2
-0c027510   Integrator_acc_ref
-0c027530   GetVelocity
-0c027564   GetFilterdSignal
-0c0276f8   GeneratorCircle3rd
-0c0277a4   GeneratorCircle2nd
-0c02784c   GeneratorCircle1st
-0c027900   FDTD_Tm
-0c027b60   FDTD_T_SOB
-0c028950   FDTDSOB
-0c029464   DecouplingControl
-0c0294e4   CalcGravIcmp
-0c029624   CalcJl
-0c029950   CalcFDTDWr_QmrefInputType
+0c019dc4   SetGain
+0c01a204   SetENC_CH
+0c01a208   SetBDN
+0c01a20c   Pcontroller
+0c01a218   PIcontroller_withAntiwindup
+0c01a260   PIcontroller
+0c01a2a4   ManyRampGenerator3rdAxis
+0c01a504   ManyRampGenerator2ndAxis
+0c01a764   ManyRampGenerator1stAxis
+0c01a9c4   CalcOffset
+0c01aca4   GetVoltAndCurrent
+0c01aecc   GetMultiPositions
+0c01b34c   CalcDynamicsInit
+0c01f5b0   CalcFDTDWrInit_QmrefInputType
+0c021428   CalcFDTDWrInit_WmcmdInputType
+0c023164   CalcFDTDTSOBInit
+0c0254f4   FDTD_Tm_Init
+0c0258a0   CalcPVGainInitCDM
+0c026c94   MW_main
+0c0272a8   LimitPosCmd
+0c02730c   LimDiffCalcDQ
+0c02744c   Integrator_w_ref3
+0c02746c   Integrator_w_ref2
+0c02748c   Integrator_w_ref
+0c0274ac   Integrator_acc_ref3
+0c0274cc   Integrator_acc_ref2
+0c0274ec   Integrator_acc_ref
+0c02750c   GetVelocity
+0c027540   GetFilterdSignal
+0c0276e8   GeneratorCircle3rd
+0c027790   GeneratorCircle2nd
+0c027840   GeneratorCircle1st
+0c0278e8   FDTD_Tm
+0c027b44   FDTD_T_SOB
+0c028944   FDTDSOB
+0c029450   DecouplingControl
+0c0294cc   CalcGravIcmp
+0c02960c   CalcJl
+0c029940   CalcFDTDWr_QmrefInputType
 0c02ab80   CalcFDTDWr_WmcmdInputType
 0c02c2b8   CalcTauLDyn
 0c02c9cc   CalcPVGain
@@ -1645,360 +1647,362 @@ address    name
 11f03450   ModRatioV
 11f03454   ModRatioW
 11f03458   _stack
+11f04458   WAVE_INIT_COUNT
 11f04458   __TI_STACK_END
 11f04458   __TI_STATIC_BASE
-11f04458   flag_cont_start
-11f0445c   flag_dead
-11f04460   flag_dyn_payload
-11f04464   flag_CalcHandCmd
-11f04468   flag_debug
-11f0446c   flag_pv
-11f04470   flag_delay
-11f04474   flag_Vdc_setted
-11f04478   flag_FBgain
-11f0447c   flag_PPgain
-11f04480   flag_FF
-11f04484   flag_SOB
-11f04488   counter_2
-11f0448c   WAVE_LoopCount
-11f04490   flag_FF_triple
-11f04494   flag_cmd_end
-11f04498   WAVE_Timer0
-11f0449c   WAVE_Timer1
-11f044a0   WAVE_Timer2
-11f044a4   WAVE_TimeGetEnc
-11f044a8   WAVE_TimeSetWm
-11f044ac   WAVE_TimeConv2dq
-11f044b0   WAVE_TimeResRatch
-11f044b4   WAVE_TimeJl
-11f044b8   WAVE_TimeGain
-11f044bc   WAVE_TimeWrInit
-11f044c0   WAVE_TimeWr
-11f044c4   WAVE_TimeTauLdyn
-11f044c8   WAVE_TimeTm
-11f044cc   WAVE_TimeGrav
-11f044d0   WAVE_TimeSOB
-11f044d4   WAVE_TimeP_PI
-11f044d8   WAVE_TimeACC
-11f044dc   WAVE_TimeConv2uvw
-11f044e0   WAVE_TimeInsert
-11f044e4   WAVE_TimeCalcCmd
-11f044e8   WAVE_TimeCalcInvCmd
-11f044ec   WAVE_Joint1
-11f044f0   WAVE_Joint2
-11f044f4   WAVE_Joint3
-11f044f8   WAVE_HandX
-11f044fc   WAVE_HandY
-11f04500   WAVE_HandZ
-11f04504   WAVE_fx
-11f04508   WAVE_fy
-11f0450c   WAVE_fz
-11f04510   flag_reposition
-11f04514   flag_first_go
-11f04518   flag_first_back
-11f0451c   flag_hard
-11f04520   flag_CircleStart1
-11f04524   flag_CircleStart2
-11f04528   flag_CircleStart3
-11f0452c   flag_end1
-11f04530   flag_end2
-11f04534   flag_end3
-11f04538   flag_on
-11f0453c   start_go1
-11f04540   start_go2
-11f04544   start_go3
-11f04548   start_back1
-11f0454c   start_back2
-11f04550   start_back3
-11f04554   Ref_Iq_ref_direct
-11f04558   Ref_wM_direct
-11f0455c   Iq_off
-11f04560   Flag_ARCS_start
-11f04564   Flag_ARCS_clear
-11f04568   ref_wm_direct
-11f0456c   debug_theta
-11f04570   load_angle_limit_deg1
-11f04574   load_angle_limit_deg2
-11f04578   load_angle_limit_deg3
-11f0457c   load_angle_limit_deg5
-11f04580   load_angle_limit_rad1
-11f04584   load_angle_limit_rad2
-11f04588   load_angle_limit_rad3
-11f0458c   load_angle_limit_rad5
-11f04590   left_rotation_flag
-11f04594   right_rotation_flag
-11f04598   down_rotation_flag2
-11f0459c   up_rotation_flag2
-11f045a0   down_rotation_flag3
-11f045a4   up_rotation_flag3
-11f045a8   down_rotation_flag5
-11f045ac   up_rotation_flag5
-11f045b0   WAVE_Kpp1
-11f045b4   WAVE_Kvp1
-11f045b8   WAVE_Kvi1
-11f045bc   WAVE_fwm1
-11f045c0   WAVE_fqs1
-11f045c4   WAVE_fwl1
-11f045c8   WAVE_Kpp3
-11f045cc   WAVE_Kvp3
-11f045d0   WAVE_Kvi3
-11f045d4   WAVE_fwm3
-11f045d8   WAVE_fqs3
-11f045dc   WAVE_fwl3
-11f045e0   WAVE_Kpp2
-11f045e4   WAVE_Kvp2
-11f045e8   WAVE_Kvi2
-11f045ec   WAVE_fwm2
-11f045f0   WAVE_fqs2
-11f045f4   WAVE_fwl2
-11f045f8   WAVE_al_calc1
-11f045fc   WAVE_wl_calc1
-11f04600   WAVE_ql_calc1
-11f04604   WAVE_wm_calc1
-11f04608   WAVE_al_calc2
-11f0460c   WAVE_wl_calc2
-11f04610   WAVE_ql_calc2
-11f04614   WAVE_wm_calc2
-11f04618   WAVE_al_calc3
-11f0461c   WAVE_wl_calc3
-11f04620   WAVE_ql_calc3
-11f04624   WAVE_wm_calc3
-11f04628   WAVE_al_calc_DPD1
-11f0462c   WAVE_wl_calc_DPD1
-11f04630   WAVE_ql_calc_DPD1
-11f04634   WAVE_wm_calc_DPD1
-11f04638   WAVE_al_calc_DPD2
-11f0463c   WAVE_wl_calc_DPD2
-11f04640   WAVE_ql_calc_DPD2
-11f04644   WAVE_wm_calc_DPD2
-11f04648   WAVE_al_calc_DPD3
-11f0464c   WAVE_wl_calc_DPD3
-11f04650   WAVE_ql_calc_DPD3
-11f04654   WAVE_wm_calc_DPD3
-11f04658   WAVE_est_wm1
-11f0465c   WAVE_est_qs1
-11f04660   WAVE_est_wl1
-11f04664   WAVE_est_wm2
-11f04668   WAVE_est_qs2
-11f0466c   WAVE_est_wl2
-11f04670   WAVE_est_wm3
-11f04674   WAVE_est_qs3
-11f04678   WAVE_est_wl3
-11f0467c   WAVE_est_conv_wm1
-11f04680   WAVE_est_conv_qs1
-11f04684   WAVE_est_conv_wl1
-11f04688   WAVE_est_conv_wm2
-11f0468c   WAVE_est_conv_qs2
-11f04690   WAVE_est_conv_wl2
-11f04694   WAVE_est_conv_wm3
-11f04698   WAVE_est_conv_qs3
-11f0469c   WAVE_est_conv_wl3
-11f046a0   WAVE_est_prop_wm1
-11f046a4   WAVE_est_prop_qs1
-11f046a8   WAVE_est_prop_wl1
-11f046ac   WAVE_est_prop_wm2
-11f046b0   WAVE_est_prop_qs2
-11f046b4   WAVE_est_prop_wl2
-11f046b8   WAVE_est_prop_wm3
-11f046bc   WAVE_est_prop_qs3
-11f046c0   WAVE_est_prop_wl3
-11f046c4   WAVE_est_ISOB_wm1
-11f046c8   WAVE_est_ISOB_qs1
-11f046cc   WAVE_est_ISOB_wl1
-11f046d0   WAVE_est_ISOB_wm2
-11f046d4   WAVE_est_ISOB_qs2
-11f046d8   WAVE_est_ISOB_wl2
-11f046dc   WAVE_est_ISOB_wm3
-11f046e0   WAVE_est_ISOB_qs3
-11f046e4   WAVE_est_ISOB_wl3
-11f046e8   WAVE_IresU1
-11f046ec   WAVE_IresU2
-11f046f0   WAVE_IresU3
-11f046f4   WAVE_IresV1
-11f046f8   WAVE_IresV2
-11f046fc   WAVE_IresV3
-11f04700   WAVE_IresW1
-11f04704   WAVE_IresW2
-11f04708   WAVE_IresW3
-11f0470c   WAVE_ACC_LW8079
-11f04710   WAVE_ACC_LW8174
-11f04714   WAVE_ACC_LW8174_axis
-11f04718   WAVE_Fz
-11f0471c   WAVE_WSX
-11f04720   WAVE_WSY
-11f04724   WAVE_WSZ
-11f04728   WAVE_U_modulation
-11f0472c   WAVE_V_modulation
-11f04730   WAVE_W_modulation
-11f04734   ref_Iq_direct1
-11f04738   ref_Iq_direct2
-11f0473c   ref_Iq_direct3
-11f04740   WAVE_AccCmd1
-11f04744   WAVE_VelCmd1
-11f04748   WAVE_AccCmd2
-11f0474c   WAVE_VelCmd2
-11f04750   WAVE_AccCmd3
-11f04754   WAVE_VelCmd3
-11f04934   tmr1regs
-11f04938   tmr2regs
-11f0493c   tmr3regs
-11f04940   mw_gp__CSL_intcCpuIntrTable
-11f04944   mw_platform_errno
-11f04948   WAVE_MRU1
-11f0494c   WAVE_MRV1
-11f04950   WAVE_MRW1
-11f04954   WAVE_MRU2
-11f04958   WAVE_MRV2
-11f0495c   WAVE_MRW2
-11f04960   WAVE_MRU3
-11f04964   WAVE_MRV3
-11f04968   WAVE_MRW3
-11f0496c   WAVE_MRBR1
-11f04970   WAVE_MRBR2
-11f04974   WAVE_MRBR3
-11f04978   WAVE_tauLdyn1
-11f0497c   WAVE_tauLdyn2
-11f04980   WAVE_tauLdyn3
-11f04984   WAVE_Jl_calc1
-11f04988   WAVE_Jl_calc2
-11f0498c   WAVE_Jl_calc3
-11f04990   WAVE_IresD1
-11f04994   WAVE_IresD2
-11f04998   WAVE_IresD3
-11f0499c   WAVE_IresQ1
-11f049a0   WAVE_IresQ2
-11f049a4   WAVE_IresQ3
-11f049a8   WAVE_Vdc1
-11f049ac   WAVE_Vdc2
-11f049b0   WAVE_Vdc3
-11f049b4   WAVE_Idc1
-11f049b8   WAVE_Idc2
-11f049bc   WAVE_Idc3
-11f049c0   WAVE_ENC_temp1
-11f049c4   WAVE_ENC_temp2
-11f049c8   WAVE_ENC_temp3
-11f049cc   WAVE_ENC1
-11f049d0   WAVE_ENC2
-11f049d4   WAVE_ENC3
-11f049d8   WAVE_theta_rm1
-11f049dc   WAVE_theta_rm2
-11f049e0   WAVE_theta_rm3
-11f049e4   WAVE_theta_rm_ref1
-11f049e8   WAVE_theta_rm_ref2
-11f049ec   WAVE_theta_rm_ref3
-11f049f0   WAVE_theta_rm_full1
-11f049f4   WAVE_theta_rm_full2
-11f049f8   WAVE_theta_rm_full3
-11f049fc   WAVE_theta_re1
-11f04a00   WAVE_theta_re2
-11f04a04   WAVE_theta_re3
-11f04a08   WAVE_TRG_WM1
-11f04a0c   WAVE_TRG_WM2
-11f04a10   WAVE_TRG_WM3
-11f04a14   WAVE_wm1
-11f04a18   WAVE_wm2
-11f04a1c   WAVE_wm3
-11f04a20   WAVE_wm_ref_org
-11f04a24   WAVE_wm_ref1
-11f04a28   WAVE_wm_ref2
-11f04a2c   WAVE_wm_ref3
-11f04a30   WAVE_wm_cmd1
-11f04a34   WAVE_wm_cmd2
-11f04a38   WAVE_wm_cmd3
-11f04a3c   WAVE_qm1
-11f04a40   WAVE_qm2
-11f04a44   WAVE_qm3
-11f04a48   WAVE_qm_ref1
-11f04a4c   WAVE_qm_ref2
-11f04a50   WAVE_qm_ref3
-11f04a54   WAVE_ql1
-11f04a58   WAVE_ql2
-11f04a5c   WAVE_ql3
-11f04a60   WAVE_Iq1
-11f04a64   WAVE_Iq2
-11f04a68   WAVE_Iq3
-11f04a6c   WAVE_Isfb1
-11f04a70   WAVE_Isfb2
-11f04a74   WAVE_Isfb3
-11f04a78   WAVE_jark1
-11f04a7c   WAVE_jark2
-11f04a80   WAVE_jark3
-11f04a84   WAVE_am_TriAccCmd1
-11f04a88   WAVE_am_TriAccCmd2
-11f04a8c   WAVE_am_TriAccCmd3
-11f04a90   WAVE_wm_TriAccCmd1
-11f04a94   WAVE_wm_TriAccCmd2
-11f04a98   WAVE_wm_TriAccCmd3
-11f04a9c   WAVE_qm_TriAccCmd1
-11f04aa0   WAVE_qm_TriAccCmd2
-11f04aa4   WAVE_qm_TriAccCmd3
-11f04aa8   WAVE_VrefU1
-11f04aac   WAVE_VrefV1
-11f04ab0   WAVE_VrefW1
-11f04ab4   WAVE_VrefU2
-11f04ab8   WAVE_VrefV2
-11f04abc   WAVE_VrefW2
-11f04ac0   WAVE_VrefU3
-11f04ac4   WAVE_VrefV3
-11f04ac8   WAVE_VrefW3
-11f04acc   WAVE_vu_ref_stand1
-11f04ad0   WAVE_vv_ref_stand1
-11f04ad4   WAVE_vw_ref_stand1
-11f04ad8   WAVE_vu_ref_stand2
-11f04adc   WAVE_vv_ref_stand2
-11f04ae0   WAVE_vw_ref_stand2
-11f04ae4   WAVE_vu_ref_stand3
-11f04ae8   WAVE_vv_ref_stand3
-11f04aec   WAVE_vw_ref_stand3
-11f04af0   WAVE_IrefD1
-11f04af4   WAVE_IrefD2
-11f04af8   WAVE_IrefD3
-11f04afc   WAVE_IrefQ1
-11f04b00   WAVE_IrefQ2
-11f04b04   WAVE_IrefQ3
-11f04b08   WAVE_VrefD_dcpl1
-11f04b0c   WAVE_VrefQ_dcpl1
-11f04b10   WAVE_VrefD_dcpl2
-11f04b14   WAVE_VrefQ_dcpl2
-11f04b18   WAVE_VrefD_dcpl3
-11f04b1c   WAVE_VrefQ_dcpl3
-11f04b20   WAVE_VrefD1
-11f04b24   WAVE_VrefQ1
-11f04b28   WAVE_VrefD2
-11f04b2c   WAVE_VrefQ2
-11f04b30   WAVE_VrefD3
-11f04b34   WAVE_VrefQ3
-11f04b38   WAVE_vd_lim_dif1
-11f04b3c   WAVE_vq_lim_dif1
-11f04b40   WAVE_vd_lim_dif2
-11f04b44   WAVE_vq_lim_dif2
-11f04b48   WAVE_vd_lim_dif3
-11f04b4c   WAVE_vq_lim_dif3
-11f04b50   WAVE_omega_rm1
-11f04b54   WAVE_omega_rm2
-11f04b58   WAVE_omega_rm3
-11f04b5c   WAVE_omega_rm1_ref
-11f04b60   WAVE_omega_rm2_ref
-11f04b64   WAVE_omega_rm3_ref
-11f04b68   WAVE_Tq1
-11f04b6c   WAVE_Tq2
-11f04b70   WAVE_Tq3
-11f04b74   WAVE_Icmp1
-11f04b78   WAVE_Icmp2
-11f04b7c   WAVE_Icmp3
-11f04b80   ref_Iq_freq_direct1
-11f04b84   ref_Iq_freq_direct2
-11f04b88   ref_Iq_freq_direct3
-11f04b8c   WAVE_Iff_1
-11f04b90   WAVE_Iff_2
-11f04b94   WAVE_Iff_3
-11f04b98   WAVE_tauL_dyn_2nd
-11f04b9c   WAVE_VWX
-11f04ba0   WAVE_VWY
-11f04ba4   WAVE_VWZ
-11f04bdc   EMF_ExtWaitErrInfo_u32s
-11f04be0   EMF_ExtWaitErrCnt_u32s
-11f04be4   hGpio
+11f0445c   WAVE_FIL_Y
+11f04460   flag_cont_start
+11f04464   flag_dead
+11f04468   flag_dyn_payload
+11f0446c   flag_CalcHandCmd
+11f04470   flag_debug
+11f04474   flag_pv
+11f04478   flag_delay
+11f0447c   flag_Vdc_setted
+11f04480   flag_FBgain
+11f04484   flag_PPgain
+11f04488   flag_FF
+11f0448c   flag_SOB
+11f04490   counter_2
+11f04494   WAVE_LoopCount
+11f04498   flag_FF_triple
+11f0449c   flag_cmd_end
+11f044a0   WAVE_Timer0
+11f044a4   WAVE_Timer1
+11f044a8   WAVE_Timer2
+11f044ac   WAVE_TimeGetEnc
+11f044b0   WAVE_TimeSetWm
+11f044b4   WAVE_TimeConv2dq
+11f044b8   WAVE_TimeResRatch
+11f044bc   WAVE_TimeJl
+11f044c0   WAVE_TimeGain
+11f044c4   WAVE_TimeWrInit
+11f044c8   WAVE_TimeWr
+11f044cc   WAVE_TimeTauLdyn
+11f044d0   WAVE_TimeTm
+11f044d4   WAVE_TimeGrav
+11f044d8   WAVE_TimeSOB
+11f044dc   WAVE_TimeP_PI
+11f044e0   WAVE_TimeACC
+11f044e4   WAVE_TimeConv2uvw
+11f044e8   WAVE_TimeInsert
+11f044ec   WAVE_TimeCalcCmd
+11f044f0   WAVE_TimeCalcInvCmd
+11f044f4   WAVE_Joint1
+11f044f8   WAVE_Joint2
+11f044fc   WAVE_Joint3
+11f04500   WAVE_HandX
+11f04504   WAVE_HandY
+11f04508   WAVE_HandZ
+11f0450c   WAVE_fx
+11f04510   WAVE_fy
+11f04514   WAVE_fz
+11f04518   flag_reposition
+11f0451c   flag_first_go
+11f04520   flag_first_back
+11f04524   flag_hard
+11f04528   flag_CircleStart1
+11f0452c   flag_CircleStart2
+11f04530   flag_CircleStart3
+11f04534   flag_end1
+11f04538   flag_end2
+11f0453c   flag_end3
+11f04540   flag_on
+11f04544   start_go1
+11f04548   start_go2
+11f0454c   start_go3
+11f04550   start_back1
+11f04554   start_back2
+11f04558   start_back3
+11f0455c   Ref_Iq_ref_direct
+11f04560   Ref_wM_direct
+11f04564   Iq_off
+11f04568   Flag_ARCS_start
+11f0456c   Flag_ARCS_clear
+11f04570   ref_wm_direct
+11f04574   debug_theta
+11f04578   load_angle_limit_deg1
+11f0457c   load_angle_limit_deg2
+11f04580   load_angle_limit_deg3
+11f04584   load_angle_limit_deg5
+11f04588   load_angle_limit_rad1
+11f0458c   load_angle_limit_rad2
+11f04590   load_angle_limit_rad3
+11f04594   load_angle_limit_rad5
+11f04598   left_rotation_flag
+11f0459c   right_rotation_flag
+11f045a0   down_rotation_flag2
+11f045a4   up_rotation_flag2
+11f045a8   down_rotation_flag3
+11f045ac   up_rotation_flag3
+11f045b0   down_rotation_flag5
+11f045b4   up_rotation_flag5
+11f045b8   WAVE_Kpp1
+11f045bc   WAVE_Kvp1
+11f045c0   WAVE_Kvi1
+11f045c4   WAVE_fwm1
+11f045c8   WAVE_fqs1
+11f045cc   WAVE_fwl1
+11f045d0   WAVE_Kpp3
+11f045d4   WAVE_Kvp3
+11f045d8   WAVE_Kvi3
+11f045dc   WAVE_fwm3
+11f045e0   WAVE_fqs3
+11f045e4   WAVE_fwl3
+11f045e8   WAVE_Kpp2
+11f045ec   WAVE_Kvp2
+11f045f0   WAVE_Kvi2
+11f045f4   WAVE_fwm2
+11f045f8   WAVE_fqs2
+11f045fc   WAVE_fwl2
+11f04600   WAVE_al_calc1
+11f04604   WAVE_wl_calc1
+11f04608   WAVE_ql_calc1
+11f0460c   WAVE_wm_calc1
+11f04610   WAVE_al_calc2
+11f04614   WAVE_wl_calc2
+11f04618   WAVE_ql_calc2
+11f0461c   WAVE_wm_calc2
+11f04620   WAVE_al_calc3
+11f04624   WAVE_wl_calc3
+11f04628   WAVE_ql_calc3
+11f0462c   WAVE_wm_calc3
+11f04630   WAVE_al_calc_DPD1
+11f04634   WAVE_wl_calc_DPD1
+11f04638   WAVE_ql_calc_DPD1
+11f0463c   WAVE_wm_calc_DPD1
+11f04640   WAVE_al_calc_DPD2
+11f04644   WAVE_wl_calc_DPD2
+11f04648   WAVE_ql_calc_DPD2
+11f0464c   WAVE_wm_calc_DPD2
+11f04650   WAVE_al_calc_DPD3
+11f04654   WAVE_wl_calc_DPD3
+11f04658   WAVE_ql_calc_DPD3
+11f0465c   WAVE_wm_calc_DPD3
+11f04660   WAVE_est_wm1
+11f04664   WAVE_est_qs1
+11f04668   WAVE_est_wl1
+11f0466c   WAVE_est_wm2
+11f04670   WAVE_est_qs2
+11f04674   WAVE_est_wl2
+11f04678   WAVE_est_wm3
+11f0467c   WAVE_est_qs3
+11f04680   WAVE_est_wl3
+11f04684   WAVE_est_conv_wm1
+11f04688   WAVE_est_conv_qs1
+11f0468c   WAVE_est_conv_wl1
+11f04690   WAVE_est_conv_wm2
+11f04694   WAVE_est_conv_qs2
+11f04698   WAVE_est_conv_wl2
+11f0469c   WAVE_est_conv_wm3
+11f046a0   WAVE_est_conv_qs3
+11f046a4   WAVE_est_conv_wl3
+11f046a8   WAVE_est_prop_wm1
+11f046ac   WAVE_est_prop_qs1
+11f046b0   WAVE_est_prop_wl1
+11f046b4   WAVE_est_prop_wm2
+11f046b8   WAVE_est_prop_qs2
+11f046bc   WAVE_est_prop_wl2
+11f046c0   WAVE_est_prop_wm3
+11f046c4   WAVE_est_prop_qs3
+11f046c8   WAVE_est_prop_wl3
+11f046cc   WAVE_est_ISOB_wm1
+11f046d0   WAVE_est_ISOB_qs1
+11f046d4   WAVE_est_ISOB_wl1
+11f046d8   WAVE_est_ISOB_wm2
+11f046dc   WAVE_est_ISOB_qs2
+11f046e0   WAVE_est_ISOB_wl2
+11f046e4   WAVE_est_ISOB_wm3
+11f046e8   WAVE_est_ISOB_qs3
+11f046ec   WAVE_est_ISOB_wl3
+11f046f0   WAVE_IresU1
+11f046f4   WAVE_IresU2
+11f046f8   WAVE_IresU3
+11f046fc   WAVE_IresV1
+11f04700   WAVE_IresV2
+11f04704   WAVE_IresV3
+11f04708   WAVE_IresW1
+11f0470c   WAVE_IresW2
+11f04710   WAVE_IresW3
+11f04714   WAVE_ACC_LW8079
+11f04718   WAVE_ACC_LW8174
+11f0471c   WAVE_ACC_LW8174_axis
+11f04720   WAVE_Fz
+11f04724   WAVE_WSX
+11f04728   WAVE_WSY
+11f0472c   WAVE_WSZ
+11f04730   WAVE_U_modulation
+11f04734   WAVE_V_modulation
+11f04738   WAVE_W_modulation
+11f0473c   ref_Iq_direct1
+11f04740   ref_Iq_direct2
+11f04744   ref_Iq_direct3
+11f04748   WAVE_AccCmd1
+11f0474c   WAVE_VelCmd1
+11f04750   WAVE_AccCmd2
+11f04754   WAVE_VelCmd2
+11f04758   WAVE_AccCmd3
+11f0475c   WAVE_VelCmd3
+11f0493c   tmr1regs
+11f04940   tmr2regs
+11f04944   tmr3regs
+11f04948   mw_gp__CSL_intcCpuIntrTable
+11f0494c   mw_platform_errno
+11f04950   WAVE_MRU1
+11f04954   WAVE_MRV1
+11f04958   WAVE_MRW1
+11f0495c   WAVE_MRU2
+11f04960   WAVE_MRV2
+11f04964   WAVE_MRW2
+11f04968   WAVE_MRU3
+11f0496c   WAVE_MRV3
+11f04970   WAVE_MRW3
+11f04974   WAVE_MRBR1
+11f04978   WAVE_MRBR2
+11f0497c   WAVE_MRBR3
+11f04980   WAVE_tauLdyn1
+11f04984   WAVE_tauLdyn2
+11f04988   WAVE_tauLdyn3
+11f0498c   WAVE_Jl_calc1
+11f04990   WAVE_Jl_calc2
+11f04994   WAVE_Jl_calc3
+11f04998   WAVE_IresD1
+11f0499c   WAVE_IresD2
+11f049a0   WAVE_IresD3
+11f049a4   WAVE_IresQ1
+11f049a8   WAVE_IresQ2
+11f049ac   WAVE_IresQ3
+11f049b0   WAVE_Vdc1
+11f049b4   WAVE_Vdc2
+11f049b8   WAVE_Vdc3
+11f049bc   WAVE_Idc1
+11f049c0   WAVE_Idc2
+11f049c4   WAVE_Idc3
+11f049c8   WAVE_ENC_temp1
+11f049cc   WAVE_ENC_temp2
+11f049d0   WAVE_ENC_temp3
+11f049d4   WAVE_ENC1
+11f049d8   WAVE_ENC2
+11f049dc   WAVE_ENC3
+11f049e0   WAVE_theta_rm1
+11f049e4   WAVE_theta_rm2
+11f049e8   WAVE_theta_rm3
+11f049ec   WAVE_theta_rm_ref1
+11f049f0   WAVE_theta_rm_ref2
+11f049f4   WAVE_theta_rm_ref3
+11f049f8   WAVE_theta_rm_full1
+11f049fc   WAVE_theta_rm_full2
+11f04a00   WAVE_theta_rm_full3
+11f04a04   WAVE_theta_re1
+11f04a08   WAVE_theta_re2
+11f04a0c   WAVE_theta_re3
+11f04a10   WAVE_TRG_WM1
+11f04a14   WAVE_TRG_WM2
+11f04a18   WAVE_TRG_WM3
+11f04a1c   WAVE_wm1
+11f04a20   WAVE_wm2
+11f04a24   WAVE_wm3
+11f04a28   WAVE_wm_ref_org
+11f04a2c   WAVE_wm_ref1
+11f04a30   WAVE_wm_ref2
+11f04a34   WAVE_wm_ref3
+11f04a38   WAVE_wm_cmd1
+11f04a3c   WAVE_wm_cmd2
+11f04a40   WAVE_wm_cmd3
+11f04a44   WAVE_qm1
+11f04a48   WAVE_qm2
+11f04a4c   WAVE_qm3
+11f04a50   WAVE_qm_ref1
+11f04a54   WAVE_qm_ref2
+11f04a58   WAVE_qm_ref3
+11f04a5c   WAVE_ql1
+11f04a60   WAVE_ql2
+11f04a64   WAVE_ql3
+11f04a68   WAVE_Iq1
+11f04a6c   WAVE_Iq2
+11f04a70   WAVE_Iq3
+11f04a74   WAVE_Isfb1
+11f04a78   WAVE_Isfb2
+11f04a7c   WAVE_Isfb3
+11f04a80   WAVE_jark1
+11f04a84   WAVE_jark2
+11f04a88   WAVE_jark3
+11f04a8c   WAVE_am_TriAccCmd1
+11f04a90   WAVE_am_TriAccCmd2
+11f04a94   WAVE_am_TriAccCmd3
+11f04a98   WAVE_wm_TriAccCmd1
+11f04a9c   WAVE_wm_TriAccCmd2
+11f04aa0   WAVE_wm_TriAccCmd3
+11f04aa4   WAVE_qm_TriAccCmd1
+11f04aa8   WAVE_qm_TriAccCmd2
+11f04aac   WAVE_qm_TriAccCmd3
+11f04ab0   WAVE_VrefU1
+11f04ab4   WAVE_VrefV1
+11f04ab8   WAVE_VrefW1
+11f04abc   WAVE_VrefU2
+11f04ac0   WAVE_VrefV2
+11f04ac4   WAVE_VrefW2
+11f04ac8   WAVE_VrefU3
+11f04acc   WAVE_VrefV3
+11f04ad0   WAVE_VrefW3
+11f04ad4   WAVE_vu_ref_stand1
+11f04ad8   WAVE_vv_ref_stand1
+11f04adc   WAVE_vw_ref_stand1
+11f04ae0   WAVE_vu_ref_stand2
+11f04ae4   WAVE_vv_ref_stand2
+11f04ae8   WAVE_vw_ref_stand2
+11f04aec   WAVE_vu_ref_stand3
+11f04af0   WAVE_vv_ref_stand3
+11f04af4   WAVE_vw_ref_stand3
+11f04af8   WAVE_IrefD1
+11f04afc   WAVE_IrefD2
+11f04b00   WAVE_IrefD3
+11f04b04   WAVE_IrefQ1
+11f04b08   WAVE_IrefQ2
+11f04b0c   WAVE_IrefQ3
+11f04b10   WAVE_VrefD_dcpl1
+11f04b14   WAVE_VrefQ_dcpl1
+11f04b18   WAVE_VrefD_dcpl2
+11f04b1c   WAVE_VrefQ_dcpl2
+11f04b20   WAVE_VrefD_dcpl3
+11f04b24   WAVE_VrefQ_dcpl3
+11f04b28   WAVE_VrefD1
+11f04b2c   WAVE_VrefQ1
+11f04b30   WAVE_VrefD2
+11f04b34   WAVE_VrefQ2
+11f04b38   WAVE_VrefD3
+11f04b3c   WAVE_VrefQ3
+11f04b40   WAVE_vd_lim_dif1
+11f04b44   WAVE_vq_lim_dif1
+11f04b48   WAVE_vd_lim_dif2
+11f04b4c   WAVE_vq_lim_dif2
+11f04b50   WAVE_vd_lim_dif3
+11f04b54   WAVE_vq_lim_dif3
+11f04b58   WAVE_omega_rm1
+11f04b5c   WAVE_omega_rm2
+11f04b60   WAVE_omega_rm3
+11f04b64   WAVE_omega_rm1_ref
+11f04b68   WAVE_omega_rm2_ref
+11f04b6c   WAVE_omega_rm3_ref
+11f04b70   WAVE_Tq1
+11f04b74   WAVE_Tq2
+11f04b78   WAVE_Tq3
+11f04b7c   WAVE_Icmp1
+11f04b80   WAVE_Icmp2
+11f04b84   WAVE_Icmp3
+11f04b88   ref_Iq_freq_direct1
+11f04b8c   ref_Iq_freq_direct2
+11f04b90   ref_Iq_freq_direct3
+11f04b94   WAVE_Iff_1
+11f04b98   WAVE_Iff_2
+11f04b9c   WAVE_Iff_3
+11f04ba0   WAVE_tauL_dyn_2nd
+11f04ba4   WAVE_VWX
+11f04ba8   WAVE_VWY
+11f04bac   WAVE_VWZ
+11f04be4   EMF_ExtWaitErrInfo_u32s
+11f04be8   EMF_ExtWaitErrCnt_u32s
+11f04bec   hGpio
 ffffffff   __TI_pprof_out_hndl
 ffffffff   __TI_prof_data_size
 ffffffff   __TI_prof_data_start
@@ -2010,4 +2014,4 @@ UNDEFED    __TI_INITARRAY_Limit
 UNDEFED    __TI_TLS_INIT_Base
 UNDEFED    __TI_TLS_INIT_Limit
 
-[700 symbols]
+[702 symbols]
