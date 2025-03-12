@@ -4082,6 +4082,10 @@ void CalcInverseCmd(float goal[3], float joint[3], float motor[3], float wm[3], 
   flag_init = 0;
 }
 
+float backward_diff(float x, float xZ, float dt){
+  return (x-xZ)/dt;
+}
+
 float GeneratorCircle1st(float t_wait, float start)
 {
   static float y = 0.0;
