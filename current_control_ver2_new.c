@@ -12,6 +12,7 @@
 
   pevボードの対応は毎回要チェック
   全体を作ってから制御手法が違うもので分けたほうがいいかも
+
 */
 
 /*
@@ -91,7 +92,7 @@ float range[] = {5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0}; /// AD変換レンジ 
 volatile int flag_cont_start = 0;  //!< 制御開始フラグ
 volatile float flag_dead = 1;      //!< デッドタイム補償フラグ
 volatile int flag_dyn_payload = 1; // 動力学計算ペイロード切り替えフラグ(0:無負荷、1:7.2kg負荷、2:4kg負荷)
-volatile int flag_CalcHandCmd = 1; // 手先軌跡選択フラグ(0:circle, 1:rectangle, 2:diamond)
+volatile int flag_CalcHandCmd = 0; // 手先軌跡選択フラグ(0:circle, 1:rectangle, 2:diamond)
 volatile int flag_debug = 0;
 volatile int flag_pv = 0;         // 位置/速度制御切り替えフラグ
 volatile int flag_delay = 0;      // FF用　1/z^2 遅延フラグ
@@ -244,6 +245,19 @@ volatile float WAVE_al_calc3 = 0.0;
 volatile float WAVE_wl_calc3 = 0.0;
 volatile float WAVE_ql_calc3 = 0.0;
 volatile float WAVE_wm_calc3 = 0.0;
+
+volatile float WAVE_al_calc_DPD1 = 0.0;
+volatile float WAVE_wl_calc_DPD1 = 0.0;
+volatile float WAVE_ql_calc_DPD1 = 0.0;
+volatile float WAVE_wm_calc_DPD1 = 0.0;
+volatile float WAVE_al_calc_DPD2 = 0.0;
+volatile float WAVE_wl_calc_DPD2 = 0.0;
+volatile float WAVE_ql_calc_DPD2 = 0.0;
+volatile float WAVE_wm_calc_DPD2 = 0.0;
+volatile float WAVE_al_calc_DPD3 = 0.0;
+volatile float WAVE_wl_calc_DPD3 = 0.0;
+volatile float WAVE_ql_calc_DPD3 = 0.0;
+volatile float WAVE_wm_calc_DPD3 = 0.0;
 
 volatile float WAVE_est_wm1 = 0.0;
 volatile float WAVE_est_qs1 = 0.0;
@@ -630,6 +644,13 @@ typedef volatile struct Robot
   float wl_calc;
   float al_calc;
   float wm_calc;
+
+  // Wr計算結果(DPD)
+  float ql_calc_DPD;
+  float wl_calc_DPD;
+  float al_calc_DPD;
+  float wm_calc_DPD;
+
   // 加速度センサrad/s^2換算値
   float al;
   // ランプ指令用変数
@@ -700,13 +721,15 @@ Fdtd_Tsob_Coefficient ob_sub[3] = {0};
 // Jlに関する係数 2慣性系プラントのqmref入力
 typedef struct Fdtd_Wr_Coefficient
 {
-  float a11cf, a12cf, a13cf, a14cf, a15cf, a16cf;
-  float a21cf, a22cf, a23cf, a24cf, a25cf, a26cf;
-  float a31cf, a32cf, a33cf1, a33cf2, a34cf1, a34cf2, a35cf, a36cf;
-  float a41cf, a42cf, a43cf, a44cf1, a44cf2, a45cf, a46cf;
-  float a51cf, a52cf, a53cf, a54cf1, a54cf2, a55cf, a56cf;
-  float a61cf, a62cf, a63cf, a64cf, a65cf, a66cf;
-  float b1cf, b2cf, b3cf, b4cf, b5cf, b6cf;
+  // _x7及び_7xはwm_cmd入力でのみ用いる
+  float a11cf, a12cf, a13cf, a14cf, a15cf, a16cf, a17cf;
+  float a21cf, a22cf, a23cf, a24cf, a25cf, a26cf, a27cf;
+  float a31cf, a32cf, a33cf1, a33cf2, a34cf1, a34cf2, a35cf, a36cf, a37cf;
+  float a41cf, a42cf, a43cf, a44cf1, a44cf2, a45cf, a46cf, a47cf;
+  float a51cf, a52cf, a53cf, a54cf1, a54cf2, a55cf, a56cf, a57cf;
+  float a61cf, a62cf, a63cf, a64cf, a65cf, a66cf, a67cf;
+  float a71cf, a72cf, a73cf, a74cf, a75cf, a76cf, a77cf;
+  float b1cf, b2cf, b3cf, b4cf, b5cf, b6cf, a7cf;
 
   // Iq入力とwm入力の関数でエラーにならないようにqm入力では使わない変数を宣言しておく
   float a22cf1, a22cf2, a23cf1, a23cf2, a34cf, a44cf;
@@ -1101,6 +1124,10 @@ interrupt void ControlFunction(void)
       CalcFDTDWr_QmrefInputType(&axis2);
       CalcFDTDWr_QmrefInputType(&axis3);
 
+      CalcFDTDWr_WmcmdInputType(&axis1);
+      CalcFDTDWr_WmcmdInputType(&axis2);
+      CalcFDTDWr_WmcmdInputType(&axis3);
+
       // 動力学トルクを計算
       CalcTauLDyn(joint);
       // FF制御　動力学補償電流
@@ -1156,20 +1183,32 @@ interrupt void ControlFunction(void)
         if (flag_PPgain == 1)
         {
           axis1.Kpp = 15;
+          axis1.Kff = 1.400;
+          axis1.Kfb = 0.400;
           axis2.Kpp = 15;
+          axis2.Kff = 1.400;
+          axis2.Kfb = 0.400;
           axis3.Kpp = 15;
+          axis3.Kff = 1.400;
+          axis3.Kfb = 0.400;
         }
         else if (flag_PPgain == 2)
         {
           axis1.Kpp = 20;
+          // axis1.Kff = 1.400;
+          // axis1.Kfb = 0.400;
+          axis1.Kff = 0.000;
+          axis1.Kfb = 0.000;
           axis2.Kpp = 20;
+          // axis2.Kff = 1.400;
+          // axis2.Kfb = 0.400;
+          axis2.Kff = 0.000;
+          axis2.Kfb = 0.000;
           axis3.Kpp = 20;
-        }
-        else if (flag_PPgain == 3)
-        {
-          axis1.Kpp = 30;
-          axis2.Kpp = 30;
-          axis3.Kpp = 30;
+          // axis3.Kff = 1.400;
+          // axis3.Kfb = 0.400;
+          axis3.Kff = 0.000;
+          axis3.Kfb = 0.000;
         }
 
         float start2 = (float)C6657_timer0_read() * 4.8e-9 * 1e6;
@@ -1178,12 +1217,14 @@ interrupt void ControlFunction(void)
         {
           // 1,2軸動力学モデル更新
           CalcFDTDWrUpdate_QmrefInputType_1st2nd();
+          CalcFDTDWrUpdate_WmcmdInputType_1st2nd();
           WAVE_TimeWrInit = (float)C6657_timer0_read() * 4.8e-9 * 1e6 - start2;
         }
         else
         {
           // 2軸のみモデル更新
-          CalcFDTDWrUpdate_QmrefInputType_1st2nd();
+          CalcFDTDWrUpdate_QmrefInputType_2nd();
+          CalcFDTDWrUpdate_WmcmdInputType_2nd();
           WAVE_TimeWrInit = (float)C6657_timer0_read() * 4.8e-9 * 1e6 - start2;
         }
 
@@ -1207,12 +1248,19 @@ interrupt void ControlFunction(void)
           CalcFDTDWr_QmrefInputType(&axis1); // 1軸目は動力学外乱入力なし
           CalcFDTDWr_QmrefInputType(&axis2);
           CalcFDTDWr_QmrefInputType(&axis3);
+
+          CalcFDTDWr_WmcmdInputType(&axis1);
+          CalcFDTDWr_WmcmdInputType(&axis2);
+          CalcFDTDWr_WmcmdInputType(&axis3);
           WAVE_TimeWr = (float)C6657_timer1_read() * 4.8e-9 * 1e6 - start3;
         }
         else
         {
           CalcFDTDWr_QmrefInputType(&axis2);
           CalcFDTDWr_QmrefInputType(&axis3);
+
+          CalcFDTDWr_WmcmdInputType(&axis2);
+          CalcFDTDWr_WmcmdInputType(&axis3);
           WAVE_TimeWr = (float)C6657_timer1_read() * 4.8e-9 * 1e6 - start3;
         }
 
@@ -1497,10 +1545,6 @@ interrupt void ControlFunction(void)
           // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
           axis1.qm_ref_z2 = axis1.qm_ref_z1;
           axis1.qm_ref_z1 = axis1.qm_ref;
-          // axis1.qm_ref = axis1.posi_trg_rad;
-          // axis1.qm_ref = GeneratorCircle1st(4.0, axis1.posi_trg_rad);
-          axis1.qm_ref = motor_cmd[0];
-          LimitPosCmd(&axis1);
 
           // P制御用
           // axis1.qm_ref = motor_cmd[0];
@@ -1543,14 +1587,6 @@ interrupt void ControlFunction(void)
           // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
           axis2.qm_ref_z2 = axis2.qm_ref_z1;
           axis2.qm_ref_z1 = axis2.qm_ref;
-          // axis2.qm_ref = axis2.posi_trg_rad;
-          // axis2.qm_ref = GeneratorCircle2nd(4.0, axis2.posi_trg_rad);
-          axis2.qm_ref = motor_cmd[1];
-          LimitPosCmd(&axis2);
-          // axis2.qm_ref = 0.0;
-
-          // 2軸目 速度P制御
-          axis2.wm_ref = (axis2.qm_ref_z2 - axis2.qm) * axis2.Kpp;
           // P制御用
           // axis2.qm_ref = motor_cmd[1];
           // D-PD制御用
@@ -1589,14 +1625,6 @@ interrupt void ControlFunction(void)
           // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
           axis3.qm_ref_z2 = axis3.qm_ref_z1;
           axis3.qm_ref_z1 = axis3.qm_ref;
-          // axis3.qm_ref = axis3.posi_trg_rad;
-          // axis3.qm_ref = GeneratorCircle3rd(4.0, axis3.posi_trg_rad);
-          axis3.qm_ref = motor_cmd[2];
-          LimitPosCmd(&axis3);
-          // axis3.qm_ref = 0.0;
-
-          // 3軸目 位置P制御
-          axis3.wm_ref = (axis3.qm_ref_z2 - axis3.qm) * axis3.Kpp;
           // P制御用
           // axis3.qm_ref = motor_cmd[2];
           // D-PD制御用
@@ -2031,6 +2059,19 @@ interrupt void ControlFunction(void)
   WAVE_ql_calc3 = axis3.ql_calc;
   WAVE_wm_calc3 = axis3.wm_calc;
 
+  WAVE_al_calc_DPD1 = axis1.al_calc_DPD;
+  WAVE_wl_calc_DPD1 = axis1.wl_calc_DPD;
+  WAVE_ql_calc_DPD1 = axis1.ql_calc_DPD;
+  WAVE_wm_calc_DPD1 = axis1.wm_calc_DPD;
+  WAVE_al_calc_DPD2 = axis2.al_calc_DPD;
+  WAVE_wl_calc_DPD2 = axis2.wl_calc_DPD;
+  WAVE_ql_calc_DPD2 = axis2.ql_calc_DPD;
+  WAVE_wm_calc_DPD2 = axis2.wm_calc_DPD;
+  WAVE_al_calc_DPD3 = axis3.al_calc_DPD;
+  WAVE_wl_calc_DPD3 = axis3.wl_calc_DPD;
+  WAVE_ql_calc_DPD3 = axis3.ql_calc_DPD;
+  WAVE_wm_calc_DPD3 = axis3.wm_calc_DPD;
+
   WAVE_TRG_WM1 = axis1.posi_trg_rad;
   WAVE_TRG_WM2 = axis2.posi_trg_rad;
   WAVE_TRG_WM3 = axis3.posi_trg_rad;
@@ -2213,6 +2254,7 @@ void MW_main(void)
 
   // 負荷側情報計算関数の定数計算関数
   CalcFDTDWrInit_QmrefInputType();
+  CalcFDTDWrInit_WmcmdInputType();
 
   // FDTD状態オブザーバの定数計算関数
   CalcFDTDTSOBInit();
@@ -3720,7 +3762,8 @@ int CalcHandCmdCircle(float goal[3], float t_wait, float speed, float start_hand
     goal[2] = goalZ[2];
     Tall = 0;
     flag_init = 0;
-  }  WAVE_fx = fx;
+  }
+  WAVE_fx = fx;
   WAVE_fy = fy;
   WAVE_fz = fz;
   return 1; //1を返すと逆運動学でFilterあり。０を返すとFilter無し。
@@ -4082,8 +4125,9 @@ void CalcInverseCmd(float goal[3], float joint[3], float motor[3], float wm[3], 
   flag_init = 0;
 }
 
-float backward_diff(float x, float xZ, float dt){
-  return (x-xZ)/dt;
+float backward_diff(float x, float xZ, float dt)
+{
+  return ((x - xZ) / dt);
 }
 
 float GeneratorCircle1st(float t_wait, float start)
@@ -5214,6 +5258,11 @@ void CalcFDTDWrUpdate_QmrefInputType_1st2nd(void)
   Wr_sub[0].a13cf = (-axis1.Ktn * axis1.fqs * Tp - axis1.Ksn * Tp / axis1.Rgn) / axis1.Jmn;
   Wr_sub[0].a14cf = -axis1.Ktn * axis1.fwl * Tp / axis1.Jmn;
 
+  Wr_sub[1].a21cf = Tp * Wr_sub[1].a11cf;
+  Wr_sub[1].a22cf = Tp * Wr_sub[1].a12cf + 1.0;
+  Wr_sub[1].a23cf = Tp * Wr_sub[1].a13cf;
+  Wr_sub[1].a24cf = Tp * Wr_sub[1].a14cf;
+
   Wr_sub[0].a31cf = (-axis1.Ktn * axis1.Kvp * Tp_2 - axis1.Ktn * axis1.fwm * Tp_2 - axis1.Dmn * Tp_2 + axis1.Jmn * Tp) / (axis1.Jmn * axis1.Rgn);
   Wr_sub[0].a32cf = -axis1.Ktn * axis1.Kvp * axis1.Kpp * Tp_2 / (axis1.Jmn * axis1.Rgn);
   Wr_sub[0].a33cf1 = 1.0 + (-axis1.Ktn * axis1.fqs * Tp_2 - axis1.Ksn * Tp_2 / axis1.Rgn) / (axis1.Jmn * axis1.Rgn);
@@ -5287,6 +5336,388 @@ void CalcFDTDWrUpdate_QmrefInputType_2nd(void)
   Wr_sub[1].b2cf = axis2.Kpp * axis2.Kvp * axis2.Ktn * Tp_2 / axis2.Jmn;
   Wr_sub[1].b3cf = axis2.Kpp * axis2.Kvp * axis2.Ktn * Tp_2 / (axis2.Jmn * axis2.Rgn);
   Wr_sub[1].b6cf = -axis2.Kpp * axis2.Kvp * axis2.Kvi * axis2.Ktn * Tp_2 / axis2.Jmn + Tp * axis2.Kpp * axis2.Kvi;
+}
+
+void CalcFDTDWr_WmcmdInputType(Robot *robo)
+{
+  // 状態変数の定義
+  static float wm_Z[3] = {0}, qm_Z[3] = {0}, qs_Z[3] = {0}, wl_Z[3] = {0}, ql_Z[3] = {0}, n_Z[3] = {0}, m_Z[3] = {0};
+  static float wm_Z1[3] = {0}, qm_Z1[3] = {0}, qs_Z1[3] = {0}, wl_Z1[3] = {0}, ql_Z1[3] = {0}, n_Z1[3] = {0}, m_Z1[3] = {0};
+
+  if (robo->BDN == BDN0)
+  {
+    // 状態量の計算
+    wm_Z[0] = Wr_sub[0].a11cf * wm_Z1[0] + Wr_sub[0].a12cf * qm_Z1[0] + Wr_sub[0].a13cf * qs_Z1[0] + Wr_sub[0].a14cf * wl_Z1[0] + Wr_sub[0].a15cf * ql_Z1[0] + Wr_sub[0].a16cf * n_Z1[0] + Wr_sub[0].a17cf * m_Z1[0] + Wr_sub[0].b1cf * robo->wm_cmd;
+    qm_Z[0] = Wr_sub[0].a21cf * wm_Z1[0] + Wr_sub[0].a22cf * qm_Z1[0] + Wr_sub[0].a23cf * qs_Z1[0] + Wr_sub[0].a24cf * wl_Z1[0] + Wr_sub[0].a25cf * ql_Z1[0] + Wr_sub[0].a26cf * n_Z1[0] + Wr_sub[0].a27cf * m_Z1[0] + Wr_sub[0].b2cf * robo->wm_cmd;
+    qs_Z[0] = Wr_sub[0].a31cf * wm_Z1[0] + Wr_sub[0].a32cf * qm_Z1[0] + (Wr_sub[0].a33cf1 + Wr_sub[0].a33cf2 / axis1.Jl_calc) * qs_Z1[0] + (Wr_sub[0].a34cf1 + Wr_sub[0].a34cf2 / axis1.Jl_calc) * wl_Z1[0] + Wr_sub[0].a35cf * ql_Z1[0] + Wr_sub[0].a36cf * n_Z1[0] + Wr_sub[0].a37cf * m_Z1[0] + Wr_sub[0].b3cf * robo->wm_cmd;
+    wl_Z[0] = Wr_sub[0].a41cf * wm_Z1[0] + Wr_sub[0].a42cf * qm_Z1[0] + Wr_sub[0].a43cf / axis1.Jl_calc * qs_Z1[0] + (Wr_sub[0].a44cf1 + Wr_sub[0].a44cf2 / axis1.Jl_calc) * wl_Z1[0] + Wr_sub[0].a45cf * ql_Z1[0] + Wr_sub[0].a46cf * n_Z1[0] + Wr_sub[0].a47cf * m_Z1[0] + Wr_sub[0].b4cf * robo->wm_cmd;
+    ql_Z[0] = Wr_sub[0].a51cf * wm_Z1[0] + Wr_sub[0].a52cf * qm_Z1[0] + Wr_sub[0].a53cf / axis1.Jl_calc * qs_Z1[0] + (Wr_sub[0].a54cf1 + Wr_sub[0].a54cf2 / axis1.Jl_calc) * wl_Z1[0] + Wr_sub[0].a55cf * ql_Z1[0] + Wr_sub[0].a56cf * n_Z1[0] + Wr_sub[0].a57cf * m_Z1[0] + Wr_sub[0].b5cf * robo->wm_cmd;
+    n_Z[0] = Wr_sub[0].a61cf * wm_Z1[0] + Wr_sub[0].a62cf * qm_Z1[0] + Wr_sub[0].a63cf * qs_Z1[0] + Wr_sub[0].a64cf * wl_Z1[0] + Wr_sub[0].a65cf * ql_Z1[0] + Wr_sub[0].a66cf * n_Z1[0] + Wr_sub[0].a67cf * m_Z1[0] + Wr_sub[0].b6cf * robo->wm_cmd;
+    m_Z[0] = Wr_sub[0].a71cf * wm_Z1[0] + Wr_sub[0].a72cf * qm_Z1[0] + Wr_sub[0].a73cf * qs_Z1[0] + Wr_sub[0].a74cf * wl_Z1[0] + Wr_sub[0].a75cf * ql_Z1[0] + Wr_sub[0].a76cf * n_Z1[0] + Wr_sub[0].a77cf * m_Z1[0] + Wr_sub[0].b7cf * robo->wm_cmd;
+
+    // 状態量の更新axis1.
+    wm_Z1[0] = wm_Z[0];
+    qm_Z1[0] = qm_Z[0];
+    qs_Z1[0] = qs_Z[0];
+    wl_Z1[0] = wl_Z[0];
+    ql_Z1[0] = ql_Z[0];
+    n_Z1[0] = n_Z[0];
+    m_Z1[0] = m_Z[0];
+
+    // 計算結果の代入
+    robo->ql_calc_DPD = robo->theta_rl_init + ql_Z[0];
+    robo->wl_calc_DPD = wl_Z[0];
+    robo->al_calc_DPD = (robo->Ksn * qs_Z[0] - robo->Dln * wl_Z[0]) / robo->Jl_calc;
+    robo->wm_calc_DPD = wm_Z[0];
+  }
+  else if (robo->BDN == BDN1)
+  {
+    // 状態量の計算
+    wm_Z[1] = Wr_sub[1].a11cf * wm_Z1[1] + Wr_sub[1].a12cf * qm_Z1[1] + Wr_sub[1].a13cf * qs_Z1[1] + Wr_sub[1].a14cf * wl_Z1[1] + Wr_sub[1].a15cf * ql_Z1[1] + Wr_sub[1].a16cf * n_Z1[1] + Wr_sub[1].a17cf * m_Z1[1] + Wr_sub[1].b1cf * robo->wm_cmd;
+    qm_Z[1] = Wr_sub[1].a21cf * wm_Z1[1] + Wr_sub[1].a22cf * qm_Z1[1] + Wr_sub[1].a23cf * qs_Z1[1] + Wr_sub[1].a24cf * wl_Z1[1] + Wr_sub[1].a25cf * ql_Z1[1] + Wr_sub[1].a26cf * n_Z1[1] + Wr_sub[1].a27cf * m_Z1[1] + Wr_sub[1].b2cf * robo->wm_cmd;
+    qs_Z[1] = Wr_sub[1].a31cf * wm_Z1[1] + Wr_sub[1].a32cf * qm_Z1[1] + (Wr_sub[1].a33cf1 + Wr_sub[0].a33cf2 / axis1.Jl_calc) * qs_Z1[0] + (Wr_sub[0].a34cf1 + Wr_sub[0].a34cf2 / axis1.Jl_calc) * wl_Z1[0] + Wr_sub[0].a35cf * ql_Z1[0] + Wr_sub[0].a36cf * n_Z1[0] + Wr_sub[0].a37cf * m_Z1[0] + Wr_sub[0].b3cf * robo->wm_cmd;
+    wl_Z[1] = Wr_sub[1].a41cf * wm_Z1[1] + Wr_sub[1].a42cf * qm_Z1[1] + Wr_sub[1].a43cf / axis1.Jl_calc * qs_Z1[1] + (Wr_sub[1].a44cf1 + Wr_sub[1].a44cf2 / axis1.Jl_calc) * wl_Z1[1] + Wr_sub[1].a45cf * ql_Z1[1] + Wr_sub[1].a46cf * n_Z1[1] + Wr_sub[1].a47cf * m_Z1[1] + Wr_sub[1].b4cf * robo->wm_cmd;
+    ql_Z[1] = Wr_sub[1].a51cf * wm_Z1[1] + Wr_sub[1].a52cf * qm_Z1[1] + Wr_sub[1].a53cf / axis1.Jl_calc * qs_Z1[1] + (Wr_sub[1].a54cf1 + Wr_sub[1].a54cf2 / axis1.Jl_calc) * wl_Z1[1] + Wr_sub[1].a55cf * ql_Z1[1] + Wr_sub[1].a56cf * n_Z1[1] + Wr_sub[1].a57cf * m_Z1[1] + Wr_sub[1].b5cf * robo->wm_cmd;
+    n_Z[1] = Wr_sub[1].a61cf * wm_Z1[1] + Wr_sub[1].a62cf * qm_Z1[1] + Wr_sub[1].a63cf * qs_Z1[1] + Wr_sub[1].a64cf * wl_Z1[1] + Wr_sub[1].a65cf * ql_Z1[1] + Wr_sub[1].a66cf * n_Z1[1] + Wr_sub[1].a67cf * m_Z1[1] + Wr_sub[1].b6cf * robo->wm_cmd;
+    m_Z[1] = Wr_sub[1].a71cf * wm_Z1[1] + Wr_sub[1].a72cf * qm_Z1[1] + Wr_sub[1].a73cf * qs_Z1[1] + Wr_sub[1].a74cf * wl_Z1[1] + Wr_sub[1].a75cf * ql_Z1[1] + Wr_sub[1].a76cf * n_Z1[1] + Wr_sub[1].a77cf * m_Z1[1] + Wr_sub[1].b7cf * robo->wm_cmd;
+
+    // 状態量の更新
+    wm_Z1[1] = wm_Z[1];
+    qm_Z1[1] = qm_Z[1];
+    qs_Z1[1] = qs_Z[1];
+    wl_Z1[1] = wl_Z[1];
+    ql_Z1[1] = ql_Z[1];
+    n_Z1[1] = n_Z[1];
+    m_Z1[1] = m_Z[1];
+
+    // 計算結果の代入
+    axis2.ql_calc_DPD = axis2.theta_rl_init + ql_Z[1];
+    axis2.wl_calc_DPD = wl_Z[1];
+    axis2.al_calc_DPD = (axis2.Ksn * qs_Z[1] - axis2.Dln * wl_Z[1]) / axis2.Jl_calc;
+    axis2.wm_calc_DPD = wm_Z[1];
+  }
+  else if (robo->BDN == BDN2)
+  {
+    // 状態量の計算
+    wm_Z[2] = Wr_sub[2].a11cf * wm_Z1[2] + Wr_sub[2].a12cf * qm_Z1[2] + Wr_sub[2].a13cf * qs_Z1[2] + Wr_sub[2].a14cf * wl_Z1[2] + Wr_sub[2].a15cf * ql_Z1[2] + Wr_sub[2].a16cf * n_Z1[2] + Wr_sub[2].a17cf * m_Z1[2] + Wr_sub[2].b1cf * robo->wm_cmd;
+    qm_Z[2] = Wr_sub[2].a21cf * wm_Z1[2] + Wr_sub[2].a22cf * qm_Z1[2] + Wr_sub[2].a23cf * qs_Z1[2] + Wr_sub[2].a24cf * wl_Z1[2] + Wr_sub[2].a25cf * ql_Z1[2] + Wr_sub[2].a26cf * n_Z1[2] + Wr_sub[2].a27cf * m_Z1[2] + Wr_sub[2].b2cf * robo->wm_cmd;
+    qs_Z[2] = Wr_sub[2].a31cf * wm_Z1[2] + Wr_sub[2].a32cf * qm_Z1[2] + (Wr_sub[2].a33cf1 + Wr_sub[0].a33cf2 / axis1.Jl_calc) * qs_Z1[0] + (Wr_sub[0].a34cf1 + Wr_sub[0].a34cf2 / axis1.Jl_calc) * wl_Z1[0] + Wr_sub[0].a35cf * ql_Z1[0] + Wr_sub[0].a36cf * n_Z1[0] + Wr_sub[0].a37cf * m_Z1[0] + Wr_sub[0].b3cf * robo->wm_cmd;
+    wl_Z[2] = Wr_sub[2].a41cf * wm_Z1[2] + Wr_sub[2].a42cf * qm_Z1[2] + Wr_sub[2].a43cf / axis1.Jl_calc * qs_Z1[2] + (Wr_sub[2].a44cf1 + Wr_sub[2].a44cf2 / axis1.Jl_calc) * wl_Z1[2] + Wr_sub[2].a45cf * ql_Z1[2] + Wr_sub[2].a46cf * n_Z1[2] + Wr_sub[2].a47cf * m_Z1[2] + Wr_sub[2].b4cf * robo->wm_cmd;
+    ql_Z[2] = Wr_sub[2].a51cf * wm_Z1[2] + Wr_sub[2].a52cf * qm_Z1[2] + Wr_sub[2].a53cf / axis1.Jl_calc * qs_Z1[2] + (Wr_sub[2].a54cf1 + Wr_sub[2].a54cf2 / axis1.Jl_calc) * wl_Z1[2] + Wr_sub[2].a55cf * ql_Z1[2] + Wr_sub[2].a56cf * n_Z1[2] + Wr_sub[2].a57cf * m_Z1[2] + Wr_sub[2].b5cf * robo->wm_cmd;
+    n_Z[2] = Wr_sub[2].a61cf * wm_Z1[2] + Wr_sub[2].a62cf * qm_Z1[2] + Wr_sub[2].a63cf * qs_Z1[2] + Wr_sub[2].a64cf * wl_Z1[2] + Wr_sub[2].a65cf * ql_Z1[2] + Wr_sub[2].a66cf * n_Z1[2] + Wr_sub[2].a67cf * m_Z1[2] + Wr_sub[2].b6cf * robo->wm_cmd;
+    m_Z[2] = Wr_sub[2].a71cf * wm_Z1[2] + Wr_sub[2].a72cf * qm_Z1[2] + Wr_sub[2].a73cf * qs_Z1[2] + Wr_sub[2].a74cf * wl_Z1[2] + Wr_sub[2].a75cf * ql_Z1[2] + Wr_sub[2].a76cf * n_Z1[2] + Wr_sub[2].a77cf * m_Z1[2] + Wr_sub[2].b7cf * robo->wm_cmd;
+
+    // 状態量の更新
+    wm_Z1[2] = wm_Z[2];
+    qm_Z1[2] = qm_Z[2];
+    qs_Z1[2] = qs_Z[2];
+    wl_Z1[2] = wl_Z[2];
+    ql_Z1[2] = ql_Z[2];
+    n_Z1[2] = n_Z[2];
+    m_Z1[2] = m_Z[2];
+
+    // 計算結果の代入
+    robo->ql_calc_DPD = robo->theta_rl_init + ql_Z[2];
+    robo->wl_calc_DPD = wl_Z[2];
+    robo->al_calc_DPD = (robo->Ksn * qs_Z[2] - robo->Dln * wl_Z[2]) / robo->Jl_calc;
+    robo->wm_calc_DPD = wm_Z[2];
+  }
+  else
+  {
+    // ボード番号認識できない場合
+  }
+}
+
+void CalcFDTDWrInit_WmcmdInputType(void)
+{
+  float Tp2 = powf(Tp, 2);
+  // 20220408 FDTD法適用見直し
+  // wm_cmd入力型FDTDWrのJlの係数の計算
+  // 1軸目
+  Wr_DPD[0].a11cf = ((axis1.Jmn) - Tp * (axis1.Dmn + axis1.Ktn * (axis1.fwm + axis1.Kvp + axis1.Kfb * axis1.Kvp))) / axis1.Jmn;
+  Wr_DPD[0].a12cf = -axis1.Ktn * axis1.Kvp * axis1.Kpp * Tp / axis1.Jmn;
+  Wr_DPD[0].a13cf = (-axis1.Ktn * axis1.fqs * Tp - axis1.Ksn * Tp / axis1.Rgn) / axis1.Jmn;
+  Wr_DPD[0].a14cf = -axis1.Ktn * axis1.fwl * Tp / axis1.Jmn;
+  Wr_DPD[0].a15cf = 0.0;
+  Wr_DPD[0].a16cf = axis1.Ktn * Tp / axis1.Jmn;
+  Wr_DPD[0].a17cf = Tp * axis1.Ktn * axis1.Kvp * axis1.Kpp / axis1.Jmn;
+  Wr_DPD[0].a21cf = (Tp * ((axis1.Jmn) - Tp * (axis1.Dmn + axis1.Ktn * (axis1.fwm + axis1.Kvp + axis1.Kfb * axis1.Kvp)))) / axis1.Jmn;
+  Wr_DPD[0].a22cf = 1 - (axis1.Ktn * axis1.Kvp * axis1.Kpp * Tp2) / axis1.Jmn;
+  Wr_DPD[0].a23cf = -((axis1.Ktn * axis1.fqs * axis1.Rgn + axis1.Ksn) * Tp2) / (axis1.Jmn * axis1.Rgn);
+  Wr_DPD[0].a24cf = -axis1.Ktn * axis1.fwl * Tp2 / axis1.Jmn;
+  Wr_DPD[0].a25cf = 0.0;
+  Wr_DPD[0].a26cf = axis1.Ktn * Tp2 / axis1.Jmn;
+  Wr_DPD[0].a27cf = Tp2 * axis1.Ktn * axis1.Kvp * axis1.Kpp / axis1.Jmn;
+  Wr_DPD[0].a31cf = (Tp / axis1.Rgn) * ((axis1.Jmn) - Tp * (axis1.Dmn + axis1.Ktn * (axis1.fwm + axis1.Kvp + axis1.Kfb * axis1.Kvp))) / axis1.Jmn;
+  Wr_DPD[0].a32cf = -axis1.Ktn * axis1.Kvp * axis1.Kpp * Tp2 / (axis1.Jmn * axis1.Rgn);
+  Wr_DPD[0].a33cf1 = 1.0 + (Tp2 * (axis1.Ksn / axis1.Rgn + axis1.fqs * axis1.Ktn)) / (axis1.Jmn * axis1.Rgn);
+  Wr_DPD[0].a33cf2 = -Tp2 * axis1.Ksn;
+  Wr_DPD[0].a34cf1 = -Tp - axis1.Ktn * axis1.fwl * Tp2 / (axis1.Jmn * axis1.Rgn);
+  Wr_DPD[0].a34cf2 = Tp2 * axis1.Dln;
+  Wr_DPD[0].a35cf = 0.0;
+  Wr_DPD[0].a36cf = axis1.Ktn * Tp2 / (axis1.Jmn * axis1.Rgn);
+  Wr_DPD[0].a37cf = axis1.Kvp * axis1.Kpp * axis1.Ktn * Tp2 / (axis1.Jmn * axis1.Rgn);
+  Wr_DPD[0].a41cf = 0.0;
+  Wr_DPD[0].a42cf = 0.0;
+  Wr_DPD[0].a43cf = Tp * axis1.Ksn;
+  Wr_DPD[0].a44cf1 = 1.0;
+  Wr_DPD[0].a44cf2 = -Tp * axis1.Dln;
+  Wr_DPD[0].a45cf = 0.0;
+  Wr_DPD[0].a46cf = 0.0;
+  Wr_DPD[0].a47cf = 0.0;
+  Wr_DPD[0].a51cf = 0.0;
+  Wr_DPD[0].a52cf = 0.0;
+  Wr_DPD[0].a53cf = Tp2 * axis1.Ksn;
+  Wr_DPD[0].a54cf1 = Tp;
+  Wr_DPD[0].a54cf2 = -Tp2 * axis1.Dln;
+  Wr_DPD[0].a55cf = 1.0;
+  Wr_DPD[0].a56cf = 0.0;
+  Wr_DPD[0].a57cf = 0.0;
+  Wr_DPD[0].a61cf = ((1 + axis1.Kfb) * axis1.Kvi * Tp * (-axis1.Jmn + (axis1.Dmn + axis1.Ktn * (axis1.fwm + axis1.Kvp + axis1.Kfb * axis1.Kvp)) * Tp)) / axis1.Jmn;
+  Wr_DPD[0].a62cf = (axis1.Kpp * axis1.Kvi * Tp * (-axis1.Jmn + (1 + axis1.Kfb) * axis1.Ktn * axis1.Kvp * Tp)) / axis1.Jmn;
+  Wr_DPD[0].a63cf = (Tp2 * (1 + axis1.Kfb) * axis1.Kvi * (axis1.Ksn + axis1.fqs * axis1.Ktn * axis1.Rgn)) / (axis1.Jmn * axis1.Rgn);
+  Wr_DPD[0].a64cf = (axis1.fwl * (1 + axis1.Kfb) * axis1.Ktn * axis1.Kvi * Tp2) / axis1.Jmn;
+  Wr_DPD[0].a65cf = 0;
+  Wr_DPD[0].a66cf = 1 - ((1 + axis1.Kfb) * axis1.Ktn * axis1.Kvi * Tp2) / axis1.Jmn;
+  Wr_DPD[0].a67cf = (axis1.Kpp * axis1.Kvi * Tp * (axis1.Jmn - (1 + axis1.Kfb) * axis1.Ktn * axis1.Kvp * Tp)) / axis1.Jmn;
+  Wr_DPD[0].a71cf = 0;
+  Wr_DPD[0].a72cf = 0;
+  Wr_DPD[0].a73cf = 0;
+  Wr_DPD[0].a74cf = 0;
+  Wr_DPD[0].a75cf = 0;
+  Wr_DPD[0].a76cf = 0;
+  Wr_DPD[0].a77cf = 1;
+  Wr_DPD[0].b1cf = axis1.Kff * axis1.Kvp * axis1.Ktn * Tp / axis1.Jmn;
+  Wr_DPD[0].b2cf = axis1.Kff * axis1.Kvp * axis1.Ktn * Tp2 / axis1.Jmn;
+  Wr_DPD[0].b3cf = axis1.Kff * axis1.Kvp * axis1.Ktn * Tp2 / (axis1.Jmn * axis1.Rgn);
+  Wr_DPD[0].b4cf = 0.0;
+  Wr_DPD[0].b5cf = 0.0;
+  Wr_DPD[0].b6cf = (axis1.Kff * axis1.Kvi * Tp * (axis1.Jmn - (1 + axis1.Kfb) * axis1.Ktn * axis1.Kfb * Tp)) / axis1.Jmn;
+  Wr_DPD[0].b7cf = Tp;
+
+  // 2軸目
+  Wr_DPD[1].a11cf = ((axis2.Jmn) - Tp * (axis2.Dmn + axis2.Ktn * (axis2.fwm + axis2.Kvp + axis2.Kfb * axis2.Kvp))) / axis2.Jmn;
+  Wr_DPD[1].a12cf = -axis2.Ktn * axis2.Kvp * axis2.Kpp * Tp / axis2.Jmn;
+  Wr_DPD[1].a13cf = (-axis2.Ktn * axis2.fqs * Tp - axis2.Ksn * Tp / axis2.Rgn) / axis2.Jmn;
+  Wr_DPD[1].a14cf = -axis2.Ktn * axis2.fwl * Tp / axis2.Jmn;
+  Wr_DPD[1].a15cf = 0.0;
+  Wr_DPD[1].a16cf = axis2.Ktn * Tp / axis2.Jmn;
+  Wr_DPD[1].a17cf = Tp * axis2.Ktn * axis2.Kvp * axis2.Kpp / axis2.Jmn;
+  Wr_DPD[1].a21cf = (Tp * ((axis2.Jmn) - Tp * (axis2.Dmn + axis2.Ktn * (axis2.fwm + axis2.Kvp + axis2.Kfb * axis2.Kvp)))) / axis2.Jmn;
+  Wr_DPD[1].a22cf = 1 - (axis2.Ktn * axis2.Kvp * axis2.Kpp * Tp2) / axis2.Jmn;
+  Wr_DPD[1].a23cf = -((axis2.Ktn * axis2.fqs * axis2.Rgn + axis2.Ksn) * Tp2) / (axis2.Jmn * axis2.Rgn);
+  Wr_DPD[1].a24cf = -axis2.Ktn * axis2.fwl * Tp2 / axis2.Jmn;
+  Wr_DPD[1].a25cf = 0.0;
+  Wr_DPD[1].a26cf = axis2.Ktn * Tp2 / axis2.Jmn;
+  Wr_DPD[1].a27cf = Tp2 * axis2.Ktn * axis2.Kvp * axis2.Kpp / axis2.Jmn;
+  Wr_DPD[1].a31cf = (Tp / axis2.Rgn) * ((axis2.Jmn) - Tp * (axis2.Dmn + axis2.Ktn * (axis2.fwm + axis2.Kvp + axis2.Kfb * axis2.Kvp))) / axis2.Jmn;
+  Wr_DPD[1].a32cf = -axis2.Ktn * axis2.Kvp * axis2.Kpp * Tp2 / (axis2.Jmn * axis2.Rgn);
+  Wr_DPD[1].a33cf1 = 1.0 + (Tp2 * (axis2.Ksn / axis2.Rgn + axis2.fqs * axis2.Ktn)) / (axis2.Jmn * axis2.Rgn);
+  Wr_DPD[1].a33cf2 = -Tp2 * axis2.Ksn;
+  Wr_DPD[1].a34cf1 = -Tp - axis2.Ktn * axis2.fwl * Tp2 / (axis2.Jmn * axis2.Rgn);
+  Wr_DPD[1].a34cf2 = Tp2 * axis2.Dln;
+  Wr_DPD[1].a35cf = 0.0;
+  Wr_DPD[1].a36cf = axis2.Ktn * Tp2 / (axis2.Jmn * axis2.Rgn);
+  Wr_DPD[1].a37cf = axis2.Kvp * axis2.Kpp * axis2.Ktn * Tp2 / (axis2.Jmn * axis2.Rgn);
+  Wr_DPD[1].a41cf = 0.0;
+  Wr_DPD[1].a42cf = 0.0;
+  Wr_DPD[1].a43cf = Tp * axis2.Ksn;
+  Wr_DPD[1].a44cf1 = 1.0;
+  Wr_DPD[1].a44cf2 = -Tp * axis2.Dln;
+  Wr_DPD[1].a45cf = 0.0;
+  Wr_DPD[1].a46cf = 0.0;
+  Wr_DPD[1].a47cf = 0.0;
+  Wr_DPD[1].a51cf = 0.0;
+  Wr_DPD[1].a52cf = 0.0;
+  Wr_DPD[1].a53cf = Tp2 * axis2.Ksn;
+  Wr_DPD[1].a54cf1 = Tp;
+  Wr_DPD[1].a54cf2 = -Tp2 * axis2.Dln;
+  Wr_DPD[1].a55cf = 1.0;
+  Wr_DPD[1].a56cf = 0.0;
+  Wr_DPD[1].a57cf = 0.0;
+  Wr_DPD[1].a61cf = ((1 + axis2.Kfb) * axis2.Kvi * Tp * (-axis2.Jmn + (axis2.Dmn + axis2.Ktn * (axis2.fwm + axis2.Kvp + axis2.Kfb * axis2.Kvp)) * Tp)) / axis2.Jmn;
+  Wr_DPD[1].a62cf = (axis2.Kpp * axis2.Kvi * Tp * (-axis2.Jmn + (1 + axis2.Kfb) * axis2.Ktn * axis2.Kvp * Tp)) / axis2.Jmn;
+  Wr_DPD[1].a63cf = (Tp2 * (1 + axis2.Kfb) * axis2.Kvi * (axis2.Ksn + axis2.fqs * axis2.Ktn * axis2.Rgn)) / (axis2.Jmn * axis2.Rgn);
+  Wr_DPD[1].a64cf = (axis2.fwl * (1 + axis2.Kfb) * axis2.Ktn * axis2.Kvi * Tp2) / axis2.Jmn;
+  Wr_DPD[1].a65cf = 0;
+  Wr_DPD[1].a66cf = 1 - ((1 + axis2.Kfb) * axis2.Ktn * axis2.Kvi * Tp2) / axis2.Jmn;
+  Wr_DPD[1].a67cf = (axis2.Kpp * axis2.Kvi * Tp * (axis2.Jmn - (1 + axis2.Kfb) * axis2.Ktn * axis2.Kvp * Tp)) / axis2.Jmn;
+  Wr_DPD[1].a71cf = 0;
+  Wr_DPD[1].a72cf = 0;
+  Wr_DPD[1].a73cf = 0;
+  Wr_DPD[1].a74cf = 0;
+  Wr_DPD[1].a75cf = 0;
+  Wr_DPD[1].a76cf = 0;
+  Wr_DPD[1].a77cf = 1;
+  Wr_DPD[1].b1cf = axis2.Kff * axis2.Kvp * axis2.Ktn * Tp / axis2.Jmn;
+  Wr_DPD[1].b2cf = axis2.Kff * axis2.Kvp * axis2.Ktn * Tp2 / axis2.Jmn;
+  Wr_DPD[1].b3cf = axis2.Kff * axis2.Kvp * axis2.Ktn * Tp2 / (axis2.Jmn * axis2.Rgn);
+  Wr_DPD[1].b4cf = 0.0;
+  Wr_DPD[1].b5cf = 0.0;
+  Wr_DPD[1].b6cf = (axis2.Kff * axis2.Kvi * Tp * (axis2.Jmn - (1 + axis2.Kfb) * axis2.Ktn * axis2.Kfb * Tp)) / axis2.Jmn;
+  Wr_DPD[1].b7cf = Tp;
+
+  // 3軸目
+  Wr_DPD[2].a11cf = ((axis3.Jmn) - Tp * (axis3.Dmn + axis3.Ktn * (axis3.fwm + axis3.Kvp + axis3.Kfb * axis3.Kvp))) / axis3.Jmn;
+  Wr_DPD[2].a12cf = -axis3.Ktn * axis3.Kvp * axis3.Kpp * Tp / axis3.Jmn;
+  Wr_DPD[2].a13cf = (-axis3.Ktn * axis3.fqs * Tp - axis3.Ksn * Tp / axis3.Rgn) / axis3.Jmn;
+  Wr_DPD[2].a14cf = -axis3.Ktn * axis3.fwl * Tp / axis3.Jmn;
+  Wr_DPD[2].a15cf = 0.0;
+  Wr_DPD[2].a16cf = axis3.Ktn * Tp / axis3.Jmn;
+  Wr_DPD[2].a17cf = Tp * axis3.Ktn * axis3.Kvp * axis3.Kpp / axis3.Jmn;
+  Wr_DPD[2].a21cf = (Tp * ((axis3.Jmn) - Tp * (axis3.Dmn + axis3.Ktn * (axis3.fwm + axis3.Kvp + axis3.Kfb * axis3.Kvp)))) / axis3.Jmn;
+  Wr_DPD[2].a22cf = 1 - (axis3.Ktn * axis3.Kvp * axis3.Kpp * Tp2) / axis3.Jmn;
+  Wr_DPD[2].a23cf = -((axis3.Ktn * axis3.fqs * axis3.Rgn + axis3.Ksn) * Tp2) / (axis3.Jmn * axis3.Rgn);
+  Wr_DPD[2].a24cf = -axis3.Ktn * axis3.fwl * Tp2 / axis3.Jmn;
+  Wr_DPD[2].a25cf = 0.0;
+  Wr_DPD[2].a26cf = axis3.Ktn * Tp2 / axis3.Jmn;
+  Wr_DPD[2].a27cf = Tp2 * axis3.Ktn * axis3.Kvp * axis3.Kpp / axis3.Jmn;
+  Wr_DPD[2].a31cf = (Tp / axis3.Rgn) * ((axis3.Jmn) - Tp * (axis3.Dmn + axis3.Ktn * (axis3.fwm + axis3.Kvp + axis3.Kfb * axis3.Kvp))) / axis3.Jmn;
+  Wr_DPD[2].a32cf = -axis3.Ktn * axis3.Kvp * axis3.Kpp * Tp2 / (axis3.Jmn * axis3.Rgn);
+  Wr_DPD[2].a33cf1 = 1.0 + (Tp2 * (axis3.Ksn / axis3.Rgn + axis3.fqs * axis3.Ktn)) / (axis3.Jmn * axis3.Rgn);
+  Wr_DPD[2].a33cf2 = -Tp2 * axis3.Ksn;
+  Wr_DPD[2].a34cf1 = -Tp - axis3.Ktn * axis3.fwl * Tp2 / (axis3.Jmn * axis3.Rgn);
+  Wr_DPD[2].a34cf2 = Tp2 * axis3.Dln;
+  Wr_DPD[2].a35cf = 0.0;
+  Wr_DPD[2].a36cf = axis3.Ktn * Tp2 / (axis3.Jmn * axis3.Rgn);
+  Wr_DPD[2].a37cf = axis3.Kvp * axis3.Kpp * axis3.Ktn * Tp2 / (axis3.Jmn * axis3.Rgn);
+  Wr_DPD[2].a41cf = 0.0;
+  Wr_DPD[2].a42cf = 0.0;
+  Wr_DPD[2].a43cf = Tp * axis3.Ksn;
+  Wr_DPD[2].a44cf1 = 1.0;
+  Wr_DPD[2].a44cf2 = -Tp * axis3.Dln;
+  Wr_DPD[2].a45cf = 0.0;
+  Wr_DPD[2].a46cf = 0.0;
+  Wr_DPD[2].a47cf = 0.0;
+  Wr_DPD[2].a51cf = 0.0;
+  Wr_DPD[2].a52cf = 0.0;
+  Wr_DPD[2].a53cf = Tp2 * axis3.Ksn;
+  Wr_DPD[2].a54cf1 = Tp;
+  Wr_DPD[2].a54cf2 = -Tp2 * axis3.Dln;
+  Wr_DPD[2].a55cf = 1.0;
+  Wr_DPD[2].a56cf = 0.0;
+  Wr_DPD[2].a57cf = 0.0;
+  Wr_DPD[2].a61cf = ((1 + axis3.Kfb) * axis3.Kvi * Tp * (-axis3.Jmn + (axis3.Dmn + axis3.Ktn * (axis3.fwm + axis3.Kvp + axis3.Kfb * axis3.Kvp)) * Tp)) / axis3.Jmn;
+  Wr_DPD[2].a62cf = (axis3.Kpp * axis3.Kvi * Tp * (-axis3.Jmn + (1 + axis3.Kfb) * axis3.Ktn * axis3.Kvp * Tp)) / axis3.Jmn;
+  Wr_DPD[2].a63cf = (Tp2 * (1 + axis3.Kfb) * axis3.Kvi * (axis3.Ksn + axis3.fqs * axis3.Ktn * axis3.Rgn)) / (axis3.Jmn * axis3.Rgn);
+  Wr_DPD[2].a64cf = (axis3.fwl * (1 + axis3.Kfb) * axis3.Ktn * axis3.Kvi * Tp2) / axis3.Jmn;
+  Wr_DPD[2].a65cf = 0;
+  Wr_DPD[2].a66cf = 1 - ((1 + axis3.Kfb) * axis3.Ktn * axis3.Kvi * Tp2) / axis3.Jmn;
+  Wr_DPD[2].a67cf = (axis3.Kpp * axis3.Kvi * Tp * (axis3.Jmn - (1 + axis3.Kfb) * axis3.Ktn * axis3.Kvp * Tp)) / axis3.Jmn;
+  Wr_DPD[2].a71cf = 0;
+  Wr_DPD[2].a72cf = 0;
+  Wr_DPD[2].a73cf = 0;
+  Wr_DPD[2].a74cf = 0;
+  Wr_DPD[2].a75cf = 0;
+  Wr_DPD[2].a76cf = 0;
+  Wr_DPD[2].a77cf = 1;
+  Wr_DPD[2].b1cf = axis3.Kff * axis3.Kvp * axis3.Ktn * Tp / axis3.Jmn;
+  Wr_DPD[2].b2cf = axis3.Kff * axis3.Kvp * axis3.Ktn * Tp2 / axis3.Jmn;
+  Wr_DPD[2].b3cf = axis3.Kff * axis3.Kvp * axis3.Ktn * Tp2 / (axis3.Jmn * axis3.Rgn);
+  Wr_DPD[2].b4cf = 0.0;
+  Wr_DPD[2].b5cf = 0.0;
+  Wr_DPD[2].b6cf = (axis3.Kff * axis3.Kvi * Tp * (axis3.Jmn - (1 + axis3.Kfb) * axis3.Ktn * axis3.Kfb * Tp)) / axis3.Jmn;
+  Wr_DPD[2].b7cf = Tp;
+}
+
+void CalcFDTDWrUpdate_WmcmdInputType_1st2nd(void)
+{
+  // 1軸目
+  float Tp_2 = Tp * Tp;
+  Wr_DPD[0].a11cf = ((axis1.Jmn) - Tp * (axis1.Dmn + axis1.Ktn * (axis1.fwm + axis1.Kvp + axis1.Kfb * axis1.Kvp))) / axis1.Jmn;
+  Wr_DPD[0].a12cf = -axis1.Ktn * axis1.Kvp * axis1.Kpp * Tp / axis1.Jmn;
+  Wr_DPD[0].a13cf = (-axis1.Ktn * axis1.fqs * Tp - axis1.Ksn * Tp / axis1.Rgn) / axis1.Jmn;
+  Wr_DPD[0].a14cf = -axis1.Ktn * axis1.fwl * Tp / axis1.Jmn;
+
+  Wr_DPD[0].a17cf = Tp * axis1.Ktn * axis1.Kvp * axis1.Kpp / axis1.Jmn;
+  Wr_DPD[0].a21cf = (Tp * ((axis1.Jmn) - Tp * (axis1.Dmn + axis1.Ktn * (axis1.fwm + axis1.Kvp + axis1.Kfb * axis1.Kvp)))) / axis1.Jmn;
+  Wr_DPD[0].a22cf = 1 - (axis1.Ktn * axis1.Kvp * axis1.Kpp * Tp2) / axis1.Jmn;
+  Wr_DPD[0].a23cf = -((axis1.Ktn * axis1.fqs * axis1.Rgn + axis1.Ksn) * Tp2) / (axis1.Jmn * axis1.Rgn);
+  Wr_DPD[0].a24cf = -axis1.Ktn * axis1.fwl * Tp2 / axis1.Jmn;
+  Wr_DPD[0].a27cf = Tp2 * axis1.Ktn * axis1.Kvp * axis1.Kpp / axis1.Jmn;
+
+  Wr_DPD[0].a31cf = (Tp / axis1.Rgn) * ((axis1.Jmn) - Tp * (axis1.Dmn + axis1.Ktn * (axis1.fwm + axis1.Kvp + axis1.Kfb * axis1.Kvp))) / axis1.Jmn;
+  Wr_DPD[0].a32cf = -axis1.Ktn * axis1.Kvp * axis1.Kpp * Tp2 / (axis1.Jmn * axis1.Rgn);
+  Wr_DPD[0].a33cf1 = 1.0 + (Tp2 * (axis1.Ksn / axis1.Rgn + axis1.fqs * axis1.Ktn)) / (axis1.Jmn * axis1.Rgn);
+  Wr_DPD[0].a34cf1 = -Tp - axis1.Ktn * axis1.fwl * Tp2 / (axis1.Jmn * axis1.Rgn);
+  Wr_DPD[0].a37cf = axis1.Kvp * axis1.Kpp * axis1.Ktn * Tp2 / (axis1.Jmn * axis1.Rgn);
+
+  Wr_DPD[0].a61cf = ((1 + axis1.Kfb) * axis1.Kvi * Tp * (-axis1.Jmn + (axis1.Dmn + axis1.Ktn * (axis1.fwm + axis1.Kvp + axis1.Kfb * axis1.Kvp)) * Tp)) / axis1.Jmn;
+  Wr_DPD[0].a62cf = (axis1.Kpp * axis1.Kvi * Tp * (-axis1.Jmn + (1 + axis1.Kfb) * axis1.Ktn * axis1.Kvp * Tp)) / axis1.Jmn;
+  Wr_DPD[0].a63cf = (Tp2 * (1 + axis1.Kfb) * axis1.Kvi * (axis1.Ksn + axis1.fqs * axis1.Ktn * axis1.Rgn)) / (axis1.Jmn * axis1.Rgn);
+  Wr_DPD[0].a64cf = (axis1.fwl * (1 + axis1.Kfb) * axis1.Ktn * axis1.Kvi * Tp2) / axis1.Jmn;
+  Wr_DPD[0].a66cf = 1 - ((1 + axis1.Kfb) * axis1.Ktn * axis1.Kvi * Tp2) / axis1.Jmn;
+  Wr_DPD[0].a67cf = (axis1.Kpp * axis1.Kvi * Tp * (axis1.Jmn - (1 + axis1.Kfb) * axis1.Ktn * axis1.Kvp * Tp)) / axis1.Jmn;
+
+  Wr_DPD[0].b1cf = axis1.Kff * axis1.Kvp * axis1.Ktn * Tp / axis1.Jmn;
+  Wr_DPD[0].b2cf = axis1.Kff * axis1.Kvp * axis1.Ktn * Tp2 / axis1.Jmn;
+  Wr_DPD[0].b3cf = axis1.Kff * axis1.Kvp * axis1.Ktn * Tp2 / (axis1.Jmn * axis1.Rgn);
+  Wr_DPD[0].b6cf = (axis1.Kff * axis1.Kvi * Tp * (axis1.Jmn - (1 + axis1.Kfb) * axis1.Ktn * axis1.Kfb * Tp)) / axis1.Jmn;
+
+  // 2軸目
+  Wr_DPD[1].a11cf = ((axis2.Jmn) - Tp * (axis2.Dmn + axis2.Ktn * (axis2.fwm + axis2.Kvp + axis2.Kfb * axis2.Kvp))) / axis2.Jmn;
+  Wr_DPD[1].a12cf = -axis2.Ktn * axis2.Kvp * axis2.Kpp * Tp / axis2.Jmn;
+  Wr_DPD[1].a13cf = (-axis2.Ktn * axis2.fqs * Tp - axis2.Ksn * Tp / axis2.Rgn) / axis2.Jmn;
+  Wr_DPD[1].a14cf = -axis2.Ktn * axis2.fwl * Tp / axis2.Jmn;
+  Wr_DPD[1].a17cf = Tp * axis2.Ktn * axis2.Kvp * axis2.Kpp / axis2.Jmn;
+
+  Wr_DPD[1].a21cf = (Tp * ((axis2.Jmn) - Tp * (axis2.Dmn + axis2.Ktn * (axis2.fwm + axis2.Kvp + axis2.Kfb * axis2.Kvp)))) / axis2.Jmn;
+  Wr_DPD[1].a22cf = 1 - (axis2.Ktn * axis2.Kvp * axis2.Kpp * Tp2) / axis2.Jmn;
+  Wr_DPD[1].a23cf = -((axis2.Ktn * axis2.fqs * axis2.Rgn + axis2.Ksn) * Tp2) / (axis2.Jmn * axis2.Rgn);
+  Wr_DPD[1].a24cf = -axis2.Ktn * axis2.fwl * Tp2 / axis2.Jmn;
+  Wr_DPD[1].a27cf = Tp2 * axis2.Ktn * axis2.Kvp * axis2.Kpp / axis2.Jmn;
+
+  Wr_DPD[1].a31cf = (Tp / axis2.Rgn) * ((axis2.Jmn) - Tp * (axis2.Dmn + axis2.Ktn * (axis2.fwm + axis2.Kvp + axis2.Kfb * axis2.Kvp))) / axis2.Jmn;
+  Wr_DPD[1].a32cf = -axis2.Ktn * axis2.Kvp * axis2.Kpp * Tp2 / (axis2.Jmn * axis2.Rgn);
+  Wr_DPD[1].a33cf1 = 1.0 + (Tp2 * (axis2.Ksn / axis2.Rgn + axis2.fqs * axis2.Ktn)) / (axis2.Jmn * axis2.Rgn);
+  Wr_DPD[1].a34cf1 = -Tp - axis2.Ktn * axis2.fwl * Tp2 / (axis2.Jmn * axis2.Rgn);
+  Wr_DPD[1].a37cf = axis2.Kvp * axis2.Kpp * axis2.Ktn * Tp2 / (axis2.Jmn * axis2.Rgn);
+
+  Wr_DPD[1].a61cf = ((1 + axis2.Kfb) * axis2.Kvi * Tp * (-axis2.Jmn + (axis2.Dmn + axis2.Ktn * (axis2.fwm + axis2.Kvp + axis2.Kfb * axis2.Kvp)) * Tp)) / axis2.Jmn;
+  Wr_DPD[1].a62cf = (axis2.Kpp * axis2.Kvi * Tp * (-axis2.Jmn + (1 + axis2.Kfb) * axis2.Ktn * axis2.Kvp * Tp)) / axis2.Jmn;
+  Wr_DPD[1].a63cf = (Tp2 * (1 + axis2.Kfb) * axis2.Kvi * (axis2.Ksn + axis2.fqs * axis2.Ktn * axis2.Rgn)) / (axis2.Jmn * axis2.Rgn);
+  Wr_DPD[1].a64cf = (axis2.fwl * (1 + axis2.Kfb) * axis2.Ktn * axis2.Kvi * Tp2) / axis2.Jmn;
+  Wr_DPD[1].a66cf = 1 - ((1 + axis2.Kfb) * axis2.Ktn * axis2.Kvi * Tp2) / axis2.Jmn;
+  Wr_DPD[1].a67cf = (axis2.Kpp * axis2.Kvi * Tp * (axis2.Jmn - (1 + axis2.Kfb) * axis2.Ktn * axis2.Kvp * Tp)) / axis2.Jmn;
+
+  Wr_DPD[1].b1cf = axis2.Kff * axis2.Kvp * axis2.Ktn * Tp / axis2.Jmn;
+  Wr_DPD[1].b2cf = axis2.Kff * axis2.Kvp * axis2.Ktn * Tp2 / axis2.Jmn;
+  Wr_DPD[1].b3cf = axis2.Kff * axis2.Kvp * axis2.Ktn * Tp2 / (axis2.Jmn * axis2.Rgn);
+  Wr_DPD[1].b6cf = (axis2.Kff * axis2.Kvi * Tp * (axis2.Jmn - (1 + axis2.Kfb) * axis2.Ktn * axis2.Kfb * Tp)) / axis2.Jmn;
+}
+
+void CalcFDTDWrUpdate_WmcmdInputType_2nd(void)
+{
+  // 2軸目
+  Wr_DPD[1].a11cf = ((axis2.Jmn) - Tp * (axis2.Dmn + axis2.Ktn * (axis2.fwm + axis2.Kvp + axis2.Kfb * axis2.Kvp))) / axis2.Jmn;
+  Wr_DPD[1].a12cf = -axis2.Ktn * axis2.Kvp * axis2.Kpp * Tp / axis2.Jmn;
+  Wr_DPD[1].a13cf = (-axis2.Ktn * axis2.fqs * Tp - axis2.Ksn * Tp / axis2.Rgn) / axis2.Jmn;
+  Wr_DPD[1].a14cf = -axis2.Ktn * axis2.fwl * Tp / axis2.Jmn;
+  Wr_DPD[1].a17cf = Tp * axis2.Ktn * axis2.Kvp * axis2.Kpp / axis2.Jmn;
+
+  Wr_DPD[1].a21cf = (Tp * ((axis2.Jmn) - Tp * (axis2.Dmn + axis2.Ktn * (axis2.fwm + axis2.Kvp + axis2.Kfb * axis2.Kvp)))) / axis2.Jmn;
+  Wr_DPD[1].a22cf = 1 - (axis2.Ktn * axis2.Kvp * axis2.Kpp * Tp2) / axis2.Jmn;
+  Wr_DPD[1].a23cf = -((axis2.Ktn * axis2.fqs * axis2.Rgn + axis2.Ksn) * Tp2) / (axis2.Jmn * axis2.Rgn);
+  Wr_DPD[1].a24cf = -axis2.Ktn * axis2.fwl * Tp2 / axis2.Jmn;
+  Wr_DPD[1].a27cf = Tp2 * axis2.Ktn * axis2.Kvp * axis2.Kpp / axis2.Jmn;
+
+  Wr_DPD[1].a31cf = (Tp / axis2.Rgn) * ((axis2.Jmn) - Tp * (axis2.Dmn + axis2.Ktn * (axis2.fwm + axis2.Kvp + axis2.Kfb * axis2.Kvp))) / axis2.Jmn;
+  Wr_DPD[1].a32cf = -axis2.Ktn * axis2.Kvp * axis2.Kpp * Tp2 / (axis2.Jmn * axis2.Rgn);
+  Wr_DPD[1].a33cf1 = 1.0 + (Tp2 * (axis2.Ksn / axis2.Rgn + axis2.fqs * axis2.Ktn)) / (axis2.Jmn * axis2.Rgn);
+  Wr_DPD[1].a34cf1 = -Tp - axis2.Ktn * axis2.fwl * Tp2 / (axis2.Jmn * axis2.Rgn);
+  Wr_DPD[1].a37cf = axis2.Kvp * axis2.Kpp * axis2.Ktn * Tp2 / (axis2.Jmn * axis2.Rgn);
+
+  Wr_DPD[1].a61cf = ((1 + axis2.Kfb) * axis2.Kvi * Tp * (-axis2.Jmn + (axis2.Dmn + axis2.Ktn * (axis2.fwm + axis2.Kvp + axis2.Kfb * axis2.Kvp)) * Tp)) / axis2.Jmn;
+  Wr_DPD[1].a62cf = (axis2.Kpp * axis2.Kvi * Tp * (-axis2.Jmn + (1 + axis2.Kfb) * axis2.Ktn * axis2.Kvp * Tp)) / axis2.Jmn;
+  Wr_DPD[1].a63cf = (Tp2 * (1 + axis2.Kfb) * axis2.Kvi * (axis2.Ksn + axis2.fqs * axis2.Ktn * axis2.Rgn)) / (axis2.Jmn * axis2.Rgn);
+  Wr_DPD[1].a64cf = (axis2.fwl * (1 + axis2.Kfb) * axis2.Ktn * axis2.Kvi * Tp2) / axis2.Jmn;
+  Wr_DPD[1].a66cf = 1 - ((1 + axis2.Kfb) * axis2.Ktn * axis2.Kvi * Tp2) / axis2.Jmn;
+  Wr_DPD[1].a67cf = (axis2.Kpp * axis2.Kvi * Tp * (axis2.Jmn - (1 + axis2.Kfb) * axis2.Ktn * axis2.Kvp * Tp)) / axis2.Jmn;
+
+  Wr_DPD[1].b1cf = axis2.Kff * axis2.Kvp * axis2.Ktn * Tp / axis2.Jmn;
+  Wr_DPD[1].b2cf = axis2.Kff * axis2.Kvp * axis2.Ktn * Tp2 / axis2.Jmn;
+  Wr_DPD[1].b3cf = axis2.Kff * axis2.Kvp * axis2.Ktn * Tp2 / (axis2.Jmn * axis2.Rgn);
+  Wr_DPD[1].b6cf = (axis2.Kff * axis2.Kvi * Tp * (axis2.Jmn - (1 + axis2.Kfb) * axis2.Ktn * axis2.Kfb * Tp)) / axis2.Jmn;
 }
 
 // 位置・速度制御系可変ゲイン演算関数
@@ -5525,7 +5956,6 @@ float CalcPrefRep3axis(float t_lim_up, float ql_deg_tilt_up, float t_lim_down, f
 
 void CalcTauLDyn(Robot axis[])
 {
-
   // 三角関数の定義
   float C1 = 0.0;
   float C2 = 0.0;
@@ -6023,6 +6453,8 @@ void SetGain(Robot *robo)
 
   // パナゲイン1軸目(適用値100%)
   robo[0].Kpp = 15;
+  robo[0].Kff = 1.400;
+  robo[0].Kfb = 0.400;
   robo[0].Kvp = 0.6071;
   robo[0].Kvi = 16.8644;
   // 倍率　
@@ -6062,6 +6494,8 @@ void SetGain(Robot *robo)
 
   // 設計ゲイン 標準形 等価時定数 速度:0.05, 位置0.1
   robo[1].Kpp = 15.4593;
+  robo[1].Kff = 1.400;
+  robo[1].Kfb = 0.400;
   robo[1].Kvp = 0.1265;
   robo[1].Kvi = 3.7963;
   robo[1].fwm = 0.1628;
@@ -6110,6 +6544,8 @@ void SetGain(Robot *robo)
 
   // 設計ゲイン
   robo[2].Kpp = 16.2426;
+  robo[2].Kff = 1.400;
+  robo[2].Kfb = 0.400;
   robo[2].Kvp = 0.1711;
   robo[2].Kvi = 5.1332;
   robo[2].fwm = -0.0134;
