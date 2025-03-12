@@ -67,8 +67,8 @@ static const float cmd_3_hard[] = {-0.388, -0.388};
 static const float scale = 2.5;
 static const float scale_fast = 7.5;
 static const float scale_slow = 7.5;
-// static float start_hand[3] = {1.2746, 0.000, 0.2466};
-static float start_hand[3] = {1.2746, -0.07071, 0.2466}; //{1.2746, 0.000, 0.2466}を中心としたひし形のスタート地点
+static float start_hand[3] = {1.2746, -0.010, 0.2466};
+// static float start_hand[3] = {1.2746, -0.07071, 0.2466}; //{1.2746, 0.000, 0.2466}を中心としたひし形のスタート地点
 // static float start_hand[3] = {1.2846, -0.07071, 0.2466}; //{1.2846, 0.000, 0.2466}を中心としたひし形のスタート地点
 // static float start_hand[3] = {1.2696, -0.07071, 0.2466}; //{1.2696, 0.000, 0.2466}を中心としたひし形のスタート地点
 
@@ -361,6 +361,9 @@ volatile float WAVE_wm_ref_org;
 volatile float WAVE_wm_ref1;
 volatile float WAVE_wm_ref2;
 volatile float WAVE_wm_ref3;
+volatile float WAVE_wm_cmd1;
+volatile float WAVE_wm_cmd2;
+volatile float WAVE_wm_cmd3;
 volatile float WAVE_qm1;
 volatile float WAVE_qm2;
 volatile float WAVE_qm3;
@@ -1351,9 +1354,9 @@ interrupt void ControlFunction(void)
             static int filter = 0;
             // filter = CalcHandCmdCenter(flag_CalcHandCmd, hand_cmd, wait, speed, start_hand, flag_loop);
             filter = CalcHandCmdCircle(hand_cmd, wait_cmd, speed, start_hand, flag_loop);
-            start_hand[0] = hand_cmd[0];
-            start_hand[1] = hand_cmd[1];
-            start_hand[2] = hand_cmd[2];
+            // start_hand[0] = hand_cmd[0];
+            // start_hand[1] = hand_cmd[1];
+            // start_hand[2] = hand_cmd[2];
             static int flag = 0;
             static int reset = 1;
             CalcInverseCmd(hand_cmd, joint_cmd, motor_cmd, motor_vel_cmd, filter, reset, Tp);
@@ -1547,18 +1550,14 @@ interrupt void ControlFunction(void)
           axis1.qm_ref_z1 = axis1.qm_ref;
 
           // P制御用
-          // axis1.qm_ref = motor_cmd[0];
+          axis1.qm_ref = motor_cmd[0];
+          LimitPosCmd(&axis1);
+          axis1.wm_ref = (axis1.qm_ref_z2 - axis1.qm) * axis1.Kpp;
 
           // D-PD制御用
-          axis1.qm_ref = Tp * motor_vel_cmd[0] + axis1.qm_ref_z1;
-
-          LimitPosCmd(&axis1);
-          // axis1.qm_ref = 0.0;
-
-          // 1軸目 位置P制御
-          // axis1.wm_ref = (axis1.qm_ref_z2 - axis1.qm) * axis1.Kpp;
-          // 1軸目 位置D-PD制御
-          axis1.wm_ref = (axis1.qm_ref_z2 - axis1.qm) * axis1.Kpp + axis1.Kff * motor_vel_cmd[0] - axis1.Kfb * axis1.wm;
+          // axis1.qm_ref = Tp * motor_vel_cmd[0] + axis1.qm_ref_z1;
+          // LimitPosCmd(&axis1);
+          // axis1.wm_ref = (axis1.qm_ref_z2 - axis1.qm) * axis1.Kpp + axis1.Kff * motor_vel_cmd[0] - axis1.Kfb * axis1.wm;
 
           if (flag_FF == 1)
           {
@@ -1588,15 +1587,13 @@ interrupt void ControlFunction(void)
           axis2.qm_ref_z2 = axis2.qm_ref_z1;
           axis2.qm_ref_z1 = axis2.qm_ref;
           // P制御用
-          // axis2.qm_ref = motor_cmd[1];
-          // D-PD制御用
-          axis2.qm_ref = Tp * motor_vel_cmd[1] + axis2.qm_ref_z1;
+          axis2.qm_ref = motor_cmd[1];
           LimitPosCmd(&axis2);
-
-          // 1軸目 位置P制御
-          // axis2.wm_ref = (axis2.qm_ref_z2 - axis2.qm) * axis2.Kpp;
-          // 1軸目 位置D-PD制御
-          axis2.wm_ref = (axis2.qm_ref_z2 - axis2.qm) * axis2.Kpp + axis2.Kff * motor_vel_cmd[1] - axis2.Kfb * axis2.wm;
+          axis2.wm_ref = (axis2.qm_ref_z2 - axis2.qm) * axis2.Kpp;
+          // D-PD制御用
+          // axis2.qm_ref = Tp * motor_vel_cmd[1] + axis2.qm_ref_z1;
+          // LimitPosCmd(&axis2);
+          // axis2.wm_ref = (axis2.qm_ref_z2 - axis2.qm) * axis2.Kpp + axis2.Kff * motor_vel_cmd[1] - axis2.Kfb * axis2.wm;
 
           if (flag_FF == 1)
           {
@@ -1626,15 +1623,13 @@ interrupt void ControlFunction(void)
           axis3.qm_ref_z2 = axis3.qm_ref_z1;
           axis3.qm_ref_z1 = axis3.qm_ref;
           // P制御用
-          // axis3.qm_ref = motor_cmd[2];
-          // D-PD制御用
-          axis3.qm_ref = Tp * motor_vel_cmd[2] + axis3.qm_ref_z1;
+          axis3.qm_ref = motor_cmd[2];
           LimitPosCmd(&axis3);
-
-          // 1軸目 位置P制御
-          // axis3.wm_ref = (axis3.qm_ref_z2 - axis3.qm) * axis3.Kpp;
-          // 1軸目 位置D-PD制御
-          axis3.wm_ref = (axis3.qm_ref_z2 - axis3.qm) * axis3.Kpp + axis3.Kff * motor_vel_cmd[2] - axis3.Kfb * axis3.wm;
+          axis3.wm_ref = (axis3.qm_ref_z2 - axis3.qm) * axis3.Kpp;
+          // D-PD制御用
+          // axis3.qm_ref = Tp * motor_vel_cmd[2] + axis3.qm_ref_z1;
+          // LimitPosCmd(&axis3);
+          // axis3.wm_ref = (axis3.qm_ref_z2 - axis3.qm) * axis3.Kpp + axis3.Kff * motor_vel_cmd[2] - axis3.Kfb * axis3.wm;
 
           // 3軸目 速度PI制御＋SFB
           if (flag_FF == 1)
@@ -1979,6 +1974,10 @@ interrupt void ControlFunction(void)
   WAVE_qm_ref2 = axis2.qm_ref;
   WAVE_qm_ref3 = axis3.qm_ref;
 
+  WAVE_wm_cmd1 = motor_vel_cmd[0];
+  WAVE_wm_cmd2 = motor_vel_cmd[1];
+  WAVE_wm_cmd3 = motor_vel_cmd[2];
+
   WAVE_IrefQ1 = axis1.IrefQ;
   WAVE_IrefQ2 = axis2.IrefQ;
   WAVE_IrefQ3 = axis3.IrefQ;
@@ -2153,7 +2152,6 @@ interrupt void ControlFunction(void)
   WAVE_fwm3 = axis3.fwm;
   WAVE_fqs3 = axis3.fqs;
   WAVE_fwl3 = axis3.fwl;
-
   // WAVE_ACC_LW8174_axis = axis2.al; // 加速度センサrad/s^2換算値
   // WAVE_ACC_LW8079 = ACC_LW8079;
   // WAVE_ACC_LW8174 = ACC_LW8174;
@@ -3710,9 +3708,9 @@ int CalcHandCmdCircle(float goal[3], float t_wait, float speed, float start_hand
       fx = 0.000;
       fy = -0.010;
       fz = 0.000;
-      goal[0] = C1 * fxZ + S1 * fzZ + x_slide;
-      goal[1] = fyZ + y_slide;
-      goal[2] = C1 * fzZ - S1 * fxZ + z_slide;
+      goal[0] = C1 * fx + S1 * fz + x_slide;
+      goal[1] = fy + y_slide;
+      goal[2] = C1 * fz - S1 * fx + z_slide;
       goalZ[0] = goal[0];
       goalZ[1] = goal[1];
       goalZ[2] = goal[2];
@@ -3736,9 +3734,9 @@ int CalcHandCmdCircle(float goal[3], float t_wait, float speed, float start_hand
         fx = (D / 2.0) * sin(2 * PI * freq * (Tall - t_wait));
         fy = -(D / 2.0) * cos(2 * PI * freq * (Tall - t_wait));
         fz = 0;
-        goal[0] = C1 * fxZ + S1 * fzZ + x_slide;
-        goal[1] = fyZ + y_slide;
-        goal[2] = C1 * fzZ - S1 * fxZ + z_slide;
+        goal[0] = C1 * fx + S1 * fz + x_slide;
+        goal[1] = fy + y_slide;
+        goal[2] = C1 * fz - S1 * fx + z_slide;
         fxZ = fx;
         fyZ = fy;
         fzZ = fz;
