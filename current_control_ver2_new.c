@@ -3658,6 +3658,7 @@ float GetFilterdSignal(LPF_param *Filter, float u, int flag_init)
   Filter->yZ3 = Filter->yZ2;
   Filter->yZ2 = Filter->yZ1;
   Filter->yZ1 = y;
+  return y;
 }
 
 // int CalcHandCmdCenter(int flag_cmd, float goal[3], float t_wait, float speed, float start_hand[3], int flag_loop){

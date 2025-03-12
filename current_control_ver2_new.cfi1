@@ -4,7 +4,7 @@
 "" "flag_cont_start" "true" "" "false" "" "" "1" "" "3" 
 "" "flag_Vdc_setted" "true" "" "false" "" "" "1" "" "1" 
 "" "flag_FF" "true" "" "false" "" "" "1" "" "1" 
-"" "flag_SOB" "true" "" "true" "" "" "1" "" "2" 
+"" "flag_SOB" "true" "" "false" "" "" "1" "" "2" 
 "" "flag_FF_triple" "true" "" "false" "" "" "1" "" "1" 
 "" "flag_pv" "true" "" "false" "" "" "1" "" "0" 
 "" "flag_hard" "true" "" "false" "" "" "1" "" "1" 
