@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<EventCfg xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <BackColorIndex>7</BackColorIndex>
+  <FrameColorIndex>19</FrameColorIndex>
+  <LineColorIndex>8</LineColorIndex>
+  <DispayItemColorIndex>0</DispayItemColorIndex>
+  <PixcelWidth>1</PixcelWidth>
+  <Smooth>true</Smooth>
+  <MaxEvent>5</MaxEvent>
+  <Mode>0</Mode>
+  <HoriSec>0.001</HoriSec>
+  <GUITrgPoint>0</GUITrgPoint>
+  <SharedTrgPoint>0</SharedTrgPoint>
+  <strMainID>
+    <string />
+    <string />
+    <string />
+    <string />
+  </strMainID>
+  <strSubID>
+    <string />
+    <string />
+    <string />
+    <string />
+  </strSubID>
+  <strFormula />
+  <strGrpCboMainID>
+    <string />
+    <string />
+    <string />
+    <string />
+    <string />
+    <string xsi:nil="true" />
+    <string xsi:nil="true" />
+    <string xsi:nil="true" />
+    <string xsi:nil="true" />
+    <string xsi:nil="true" />
+    <string xsi:nil="true" />
+    <string xsi:nil="true" />
+    <string xsi:nil="true" />
+    <string xsi:nil="true" />
+    <string xsi:nil="true" />
+    <string xsi:nil="true" />
+  </strGrpCboMainID>
+  <SubID>true</SubID>
+  <Option>true</Option>
+  <Label>true</Label>
+  <DisplayToolTip>true</DisplayToolTip>
+</EventCfg>
