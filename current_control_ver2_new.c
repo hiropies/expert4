@@ -55,9 +55,9 @@
 
 /// 制御用定数
 static const float PI = 3.14159265358979; /// 円周率
-static const float Fs = 10000;            /// キャリア周波数[Hz]
-static const float Ts = 100e-6;           /// [s]	電流制御系の制御周期 (Fsを変えたら変えること)
-static const float Tp = 200e-6;           /// [s]	位置/速度制御系の制御周期
+static const float Fs = 8000;            /// キャリア周波数[Hz]
+static const float Ts = 125e-6;           /// [s]	電流制御系の制御周期 (Fsを変えたら変えること)
+static const float Tp = 250e-6;           /// [s]	位置/速度制御系の制御周期
 static const float cmd_1_soft[] = {-1.094, -1.094};
 static const float cmd_2_soft[] = {87.72, 87.72};
 static const float cmd_3_soft[] = {-0.388, -0.388};
@@ -1554,14 +1554,14 @@ interrupt void ControlFunction(void)
           axis1.qm_ref_z1 = axis1.qm_ref;
 
           // P制御用
-          axis1.qm_ref = motor_cmd[0];
-          LimitPosCmd(&axis1);
-          axis1.wm_ref = (axis1.qm_ref_z2 - axis1.qm) * axis1.Kpp;
+          // axis1.qm_ref = motor_cmd[0];
+          // LimitPosCmd(&axis1);
+          // axis1.wm_ref = (axis1.qm_ref_z2 - axis1.qm) * axis1.Kpp;
 
           // D-PD制御用
-          // axis1.qm_ref = Tp * motor_vel_cmd[0] + axis1.qm_ref_z1;
-          // LimitPosCmd(&axis1);
-          // axis1.wm_ref = (axis1.qm_ref_z2 - axis1.qm) * axis1.Kpp + axis1.Kff * motor_vel_cmd[0] - axis1.Kfb * axis1.wm;
+          axis1.qm_ref = Tp * motor_vel_cmd[0] + axis1.qm_ref_z1;
+          LimitPosCmd(&axis1);
+          axis1.wm_ref = (axis1.qm_ref_z2 - axis1.qm) * axis1.Kpp + axis1.Kff * motor_vel_cmd[0] - axis1.Kfb * axis1.wm;
 
           if (flag_FF == 1)
           {
@@ -1591,13 +1591,13 @@ interrupt void ControlFunction(void)
           axis2.qm_ref_z2 = axis2.qm_ref_z1;
           axis2.qm_ref_z1 = axis2.qm_ref;
           // P制御用
-          axis2.qm_ref = motor_cmd[1];
-          LimitPosCmd(&axis2);
-          axis2.wm_ref = (axis2.qm_ref_z2 - axis2.qm) * axis2.Kpp;
-          // D-PD制御用
-          // axis2.qm_ref = Tp * motor_vel_cmd[1] + axis2.qm_ref_z1;
+          // axis2.qm_ref = motor_cmd[1];
           // LimitPosCmd(&axis2);
-          // axis2.wm_ref = (axis2.qm_ref_z2 - axis2.qm) * axis2.Kpp + axis2.Kff * motor_vel_cmd[1] - axis2.Kfb * axis2.wm;
+          // axis2.wm_ref = (axis2.qm_ref_z2 - axis2.qm) * axis2.Kpp;
+          // D-PD制御用
+          axis2.qm_ref = Tp * motor_vel_cmd[1] + axis2.qm_ref_z1;
+          LimitPosCmd(&axis2);
+          axis2.wm_ref = (axis2.qm_ref_z2 - axis2.qm) * axis2.Kpp + axis2.Kff * motor_vel_cmd[1] - axis2.Kfb * axis2.wm;
 
           if (flag_FF == 1)
           {
@@ -1627,13 +1627,13 @@ interrupt void ControlFunction(void)
           axis3.qm_ref_z2 = axis3.qm_ref_z1;
           axis3.qm_ref_z1 = axis3.qm_ref;
           // P制御用
-          axis3.qm_ref = motor_cmd[2];
-          LimitPosCmd(&axis3);
-          axis3.wm_ref = (axis3.qm_ref_z2 - axis3.qm) * axis3.Kpp;
-          // D-PD制御用
-          // axis3.qm_ref = Tp * motor_vel_cmd[2] + axis3.qm_ref_z1;
+          // axis3.qm_ref = motor_cmd[2];
           // LimitPosCmd(&axis3);
-          // axis3.wm_ref = (axis3.qm_ref_z2 - axis3.qm) * axis3.Kpp + axis3.Kff * motor_vel_cmd[2] - axis3.Kfb * axis3.wm;
+          // axis3.wm_ref = (axis3.qm_ref_z2 - axis3.qm) * axis3.Kpp;
+          // D-PD制御用
+          axis3.qm_ref = Tp * motor_vel_cmd[2] + axis3.qm_ref_z1;
+          LimitPosCmd(&axis3);
+          axis3.wm_ref = (axis3.qm_ref_z2 - axis3.qm) * axis3.Kpp + axis3.Kff * motor_vel_cmd[2] - axis3.Kfb * axis3.wm;
 
           // 3軸目 速度PI制御＋SFB
           if (flag_FF == 1)
@@ -4118,12 +4118,12 @@ void CalcInverseCmd(float goal[3], float joint[3], float motor[3], float wm[3], 
     motorZ[2] = motor[2];
   }
 
-  // wm[0] = backward_diff(motor[0], motorZ[0], dt);
-  // wm[0] = GetFilterdSignal(&LPF_cmd[0], wm[0], flag_init);
-  // wm[1] = backward_diff(motor[1], motorZ[1], dt);
-  // wm[1] = GetFilterdSignal(&LPF_cmd[1], wm[1], flag_init);
-  // wm[2] = backward_diff(motor[2], motorZ[2], dt);
-  // wm[2] = GetFilterdSignal(&LPF_cmd[2], wm[2], flag_init);
+  wm[0] = backward_diff(motor[0], motorZ[0], dt);
+  wm[0] = GetFilterdSignal(&LPF_cmd[0], wm[0], flag_init);
+  wm[1] = backward_diff(motor[1], motorZ[1], dt);
+  wm[1] = GetFilterdSignal(&LPF_cmd[1], wm[1], flag_init);
+  wm[2] = backward_diff(motor[2], motorZ[2], dt);
+  wm[2] = GetFilterdSignal(&LPF_cmd[2], wm[2], flag_init);
 
   motorZ[0] = motor[0];
   motorZ[1] = motor[1];
