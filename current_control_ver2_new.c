@@ -1127,13 +1127,13 @@ interrupt void ControlFunction(void)
       // }
 
       // 負荷側情報計算
-      CalcFDTDWr_QmrefInputType(&axis1);
-      CalcFDTDWr_QmrefInputType(&axis2);
-      CalcFDTDWr_QmrefInputType(&axis3);
+      // CalcFDTDWr_QmrefInputType(&axis1);
+      // CalcFDTDWr_QmrefInputType(&axis2);
+      // CalcFDTDWr_QmrefInputType(&axis3);
 
-      // CalcFDTDWr_WmcmdInputType(&axis1);
-      // CalcFDTDWr_WmcmdInputType(&axis2);
-      // CalcFDTDWr_WmcmdInputType(&axis3);
+      CalcFDTDWr_WmcmdInputType(&axis1);
+      CalcFDTDWr_WmcmdInputType(&axis2);
+      CalcFDTDWr_WmcmdInputType(&axis3);
 
       // 動力学トルクを計算
       CalcTauLDyn(joint);
@@ -1223,15 +1223,15 @@ interrupt void ControlFunction(void)
         if (flag_FF_triple == 1)
         {
           // 1,2軸動力学モデル更新
-          CalcFDTDWrUpdate_QmrefInputType_1st2nd();
-          // CalcFDTDWrUpdate_WmcmdInputType_1st2nd();
+          // CalcFDTDWrUpdate_QmrefInputType_1st2nd();
+          CalcFDTDWrUpdate_WmcmdInputType_1st2nd();
           WAVE_TimeWrInit = (float)C6657_timer0_read() * 4.8e-9 * 1e6 - start2;
         }
         else
         {
           // 2軸のみモデル更新
-          CalcFDTDWrUpdate_QmrefInputType_2nd();
-          // CalcFDTDWrUpdate_WmcmdInputType_2nd();
+          // CalcFDTDWrUpdate_QmrefInputType_2nd();
+          CalcFDTDWrUpdate_WmcmdInputType_2nd();
           WAVE_TimeWrInit = (float)C6657_timer0_read() * 4.8e-9 * 1e6 - start2;
         }
 
@@ -1252,22 +1252,22 @@ interrupt void ControlFunction(void)
         // FF制御　FDTDで離散化した負荷側情報計算関数(qmref入力)
         if (flag_FF_triple == 1)
         {
-          CalcFDTDWr_QmrefInputType(&axis1); // 1軸目は動力学外乱入力なし
-          CalcFDTDWr_QmrefInputType(&axis2);
-          CalcFDTDWr_QmrefInputType(&axis3);
+          // CalcFDTDWr_QmrefInputType(&axis1); // 1軸目は動力学外乱入力なし
+          // CalcFDTDWr_QmrefInputType(&axis2);
+          // CalcFDTDWr_QmrefInputType(&axis3);
 
-          // CalcFDTDWr_WmcmdInputType(&axis1);
-          // CalcFDTDWr_WmcmdInputType(&axis2);
-          // CalcFDTDWr_WmcmdInputType(&axis3);
+          CalcFDTDWr_WmcmdInputType(&axis1);
+          CalcFDTDWr_WmcmdInputType(&axis2);
+          CalcFDTDWr_WmcmdInputType(&axis3);
           WAVE_TimeWr = (float)C6657_timer1_read() * 4.8e-9 * 1e6 - start3;
         }
         else
         {
-          CalcFDTDWr_QmrefInputType(&axis2);
-          CalcFDTDWr_QmrefInputType(&axis3);
+          // CalcFDTDWr_QmrefInputType(&axis2);
+          // CalcFDTDWr_QmrefInputType(&axis3);
 
-          // CalcFDTDWr_WmcmdInputType(&axis2);
-          // CalcFDTDWr_WmcmdInputType(&axis3);
+          CalcFDTDWr_WmcmdInputType(&axis2);
+          CalcFDTDWr_WmcmdInputType(&axis3);
           WAVE_TimeWr = (float)C6657_timer1_read() * 4.8e-9 * 1e6 - start3;
         }
 
@@ -2256,8 +2256,8 @@ void MW_main(void)
   CalcDynamicsInit(flag_dyn_payload);
 
   // 負荷側情報計算関数の定数計算関数
-  CalcFDTDWrInit_QmrefInputType();
-  // CalcFDTDWrInit_WmcmdInputType();
+  // CalcFDTDWrInit_QmrefInputType();
+  CalcFDTDWrInit_WmcmdInputType();
 
   // FDTD状態オブザーバの定数計算関数
   CalcFDTDTSOBInit();
