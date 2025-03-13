@@ -2215,12 +2215,11 @@ void MW_main(void)
   SetBDN(&axis3, BDN2);       /// Robot構造体変数jointにボード番号をセット
   SetENC_CH(&axis3, ENC_CH2); /// Robot構造体変数jointにエンコーダchをセット
 
-  float Ts = Tp;
   float fs = 5.0;
   float fs2 = 10.0;
   float Q = 1.0 / sqrt(2.0);
-  SetLPF(LPF_motor, Ts, fs, Q);
-  SetLPF(LPF_cmd, Ts, fs2, Q);
+  SetLPF(LPF_motor, Tp, fs, Q);
+  SetLPF(LPF_cmd, Tp, fs2, Q);
 
   /// ゲインのセット
   SetGain(joint);
@@ -6425,8 +6424,8 @@ void SetGain(Robot *robo)
 
   // パナゲイン1軸目(適用値100%)
   robo[0].Kpp = 15;
-  robo[0].Kff = 1.400;
-  robo[0].Kfb = 0.400;
+  robo[0].Kff = 0.000;
+  robo[0].Kfb = 0.000;
   robo[0].Kvp = 0.6071;
   robo[0].Kvi = 16.8644;
   // 倍率　
@@ -6466,8 +6465,8 @@ void SetGain(Robot *robo)
 
   // 設計ゲイン 標準形 等価時定数 速度:0.05, 位置0.1
   robo[1].Kpp = 15.4593;
-  robo[1].Kff = 1.400;
-  robo[1].Kfb = 0.400;
+  robo[1].Kff = 0.000;
+  robo[1].Kfb = 0.000;
   robo[1].Kvp = 0.1265;
   robo[1].Kvi = 3.7963;
   robo[1].fwm = 0.1628;
@@ -6516,8 +6515,8 @@ void SetGain(Robot *robo)
 
   // 設計ゲイン
   robo[2].Kpp = 16.2426;
-  robo[2].Kff = 1.400;
-  robo[2].Kfb = 0.400;
+  robo[2].Kff = 0.000;
+  robo[2].Kfb = 0.000;
   robo[2].Kvp = 0.1711;
   robo[2].Kvi = 5.1332;
   robo[2].fwm = -0.0134;
