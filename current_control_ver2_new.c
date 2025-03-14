@@ -1193,29 +1193,29 @@ interrupt void ControlFunction(void)
         if (flag_PPgain == 1)
         {
           axis1.Kpp = 15;
-          axis1.Kff = 0.700;
+          axis1.Kff = 1.400;
           axis1.Kfb = 0.400;
           axis2.Kpp = 15;
-          axis1.Kff = 0.700;
+          axis1.Kff = 1.400;
           axis2.Kfb = 0.400;
           axis3.Kpp = 15;
-          axis1.Kff = 0.700;
+          axis1.Kff = 1.400;
           axis3.Kfb = 0.400;
         }
         else if (flag_PPgain == 2)
         {
           axis1.Kpp = 20;
-          axis1.Kff = 0.700;
+          axis1.Kff = 1.400;
           axis1.Kfb = 0.400;
           // axis1.Kff = 0.000;
           // axis1.Kfb = 0.000;
           axis2.Kpp = 20;
-          axis1.Kff = 0.700;
+          axis1.Kff = 1.400;
           axis2.Kfb = 0.400;
           // axis2.Kff = 0.000;
           // axis2.Kfb = 0.000;
           axis3.Kpp = 20;
-          axis3.Kff = 0.700;
+          axis3.Kff = 1.400;
           axis3.Kfb = 0.400;
           // axis3.Kff = 0.000;
           // axis3.Kfb = 0.000;
@@ -1573,7 +1573,7 @@ interrupt void ControlFunction(void)
           // axis1.wm_ref = (axis1.qm_ref_z2 - axis1.qm) * axis1.Kpp;
 
           // D-PD制御用
-          axis1.qm_ref = Tp * motor_vel_cmd[0] + axis1.qm_ref_z1;
+          axis1.qm_ref = Tp * axis1.wm_cmd + axis1.qm_ref_z1;
           LimitPosCmd(&axis1);
           axis1.wm_ref = (axis1.qm_ref_z2 - axis1.qm) * axis1.Kpp + axis1.Kff * motor_vel_cmd[0] - axis1.Kfb * axis1.wm;
 
@@ -1610,7 +1610,7 @@ interrupt void ControlFunction(void)
           // LimitPosCmd(&axis2);
           // axis2.wm_ref = (axis2.qm_ref_z2 - axis2.qm) * axis2.Kpp;
           // D-PD制御用
-          axis2.qm_ref = Tp * motor_vel_cmd[1] + axis2.qm_ref_z1;
+          axis2.qm_ref = Tp * axis2.wm_cmd + axis2.qm_ref_z1;
           LimitPosCmd(&axis2);
           axis2.wm_ref = (axis2.qm_ref_z2 - axis2.qm) * axis2.Kpp + axis2.Kff * motor_vel_cmd[1] - axis2.Kfb * axis2.wm;
 
@@ -1647,7 +1647,7 @@ interrupt void ControlFunction(void)
           // LimitPosCmd(&axis3);
           // axis3.wm_ref = (axis3.qm_ref_z2 - axis3.qm) * axis3.Kpp;
           // D-PD制御用
-          axis3.qm_ref = Tp * motor_vel_cmd[2] + axis3.qm_ref_z1;
+          axis3.qm_ref = Tp * axis3.wm_cmd + axis3.qm_ref_z1;
           LimitPosCmd(&axis3);
           axis3.wm_ref = (axis3.qm_ref_z2 - axis3.qm) * axis3.Kpp + axis3.Kff * motor_vel_cmd[2] - axis3.Kfb * axis3.wm;
 
@@ -1726,7 +1726,7 @@ interrupt void ControlFunction(void)
           {
             axis1.wm_cmd = 0.0;
             // axis1.qm_ref = start_back1;
-            axis1.qm_ref = axis1.wm_cmd * Tp + axis1.qm_ref_z1;
+            axis1.qm_ref =  axis1.qm_ref_z1;
           }
 
           // 1軸目 速度P制御
@@ -1768,7 +1768,7 @@ interrupt void ControlFunction(void)
           {
             axis2.wm_cmd = 0.0;
             // axis2.qm_ref = start_back2;
-            axis2.qm_ref = axis2.wm_cmd * Tp + axis2.qm_ref_z1;
+            axis2.qm_ref = axis2.qm_ref_z1;
           }
 
           // 2軸目 速度P制御
@@ -2002,12 +2002,12 @@ interrupt void ControlFunction(void)
   WAVE_qm_ref2 = axis2.qm_ref;
   WAVE_qm_ref3 = axis3.qm_ref;
 
-  WAVE_wm_cmd1 = motor_vel_cmd[0];
-  WAVE_wm_cmd2 = motor_vel_cmd[1];
-  WAVE_wm_cmd3 = motor_vel_cmd[2];
-  WAVE_wm_CCC1 = axis1.wm_cmd;
-  WAVE_wm_CCC2 = axis2.wm_cmd;
-  WAVE_wm_CCC3 = axis3.wm_cmd;
+  WAVE_wm_cmd1 = axis1.wm_cmd;
+  WAVE_wm_cmd2 = axis2.wm_cmd;
+  WAVE_wm_cmd3 = axis3.wm_cmd;
+  WAVE_wm_CCC1 = motor_vel_cmd[0];
+  WAVE_wm_CCC2 = motor_vel_cmd[1];
+  WAVE_wm_CCC3 = motor_vel_cmd[2];
 
   WAVE_IrefQ1 = axis1.IrefQ;
   WAVE_IrefQ2 = axis2.IrefQ;
@@ -6458,7 +6458,7 @@ void SetGain(Robot *robo)
 
   // パナゲイン1軸目(適用値100%)
   robo[0].Kpp = 15;
-  robo[0].Kff = 0.700;
+  robo[0].Kff = 1.400;
   robo[0].Kfb = 0.400;
   robo[0].Kvp = 0.6071;
   robo[0].Kvi = 16.8644;
@@ -6499,7 +6499,7 @@ void SetGain(Robot *robo)
 
   // 設計ゲイン 標準形 等価時定数 速度:0.05, 位置0.1
   robo[1].Kpp = 15.4593;
-  robo[1].Kff = 0.700;
+  robo[1].Kff = 1.400;
   robo[1].Kfb = 0.400;
   robo[1].Kvp = 0.1265;
   robo[1].Kvi = 3.7963;
@@ -6549,7 +6549,7 @@ void SetGain(Robot *robo)
 
   // 設計ゲイン
   robo[2].Kpp = 16.2426;
-  robo[2].Kff = 0.700;
+  robo[2].Kff = 1.400;
   robo[2].Kfb = 0.400;
   robo[2].Kvp = 0.1711;
   robo[2].Kvi = 5.1332;

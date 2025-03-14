@@ -1,9 +1,9 @@
 [COLUMN]
 "-1" "1" "2" "3" "4" "5" "6" "7" "8" 
 [VARIABLE]
-"" "flag_cont_start" "true" "" "false" "" "" "1" "" "1" 
+"" "flag_cont_start" "true" "" "false" "" "" "1" "" "4" 
 "" "flag_Vdc_setted" "true" "" "false" "" "" "1" "" "1" 
-"" "flag_FF" "true" "" "false" "" "" "1" "" "0" 
+"" "flag_FF" "true" "" "false" "" "" "1" "" "1" 
 "" "flag_SOB" "true" "" "false" "" "" "1" "" "2" 
 "" "flag_FF_triple" "true" "" "false" "" "" "1" "" "1" 
 "" "flag_PPgain" "true" "" "false" "" "" "1" "" "0" 
@@ -39,8 +39,8 @@
 "" "WAVE_IresQ3" "true" "" "false" "" "" "1" "" "" 
 "" "" "false" "" "false" "" "" "0" "" "" 
 "" "" "false" "" "false" "" "" "0" "" "" 
-"" "WAVE_wm_CCC3" "true" "" "false" "" "" "1" "" "" 
-"" "WAVE_wm_cmd3" "true" "" "false" "" "" "1" "" "" 
+"" "WAVE_ql_calc2" "true" "" "false" "" "" "1" "" "" 
+"" "WAVE_wm_cmd1" "true" "" "false" "" "" "1" "" "" 
 [VARIABLE_END]
 [Settings]
 "autoRefresh" "True" 
