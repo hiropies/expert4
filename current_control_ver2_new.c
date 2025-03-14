@@ -209,25 +209,31 @@ volatile float WAVE_MRBR3;
 /// ゲイン
 // 1軸目
 volatile float WAVE_Kpp1 = 0.0;
+volatile float WAVE_Kff1 = 0.0;
+volatile float WAVE_Kfb1 = 0.0;
 volatile float WAVE_Kvp1 = 0.0;
 volatile float WAVE_Kvi1 = 0.0;
 volatile float WAVE_fwm1 = 0.0;
 volatile float WAVE_fqs1 = 0.0;
 volatile float WAVE_fwl1 = 0.0;
 // 2軸目
-volatile float WAVE_Kpp3 = 0.0;
-volatile float WAVE_Kvp3 = 0.0;
-volatile float WAVE_Kvi3 = 0.0;
-volatile float WAVE_fwm3 = 0.0;
-volatile float WAVE_fqs3 = 0.0;
-volatile float WAVE_fwl3 = 0.0;
-// 3軸目
 volatile float WAVE_Kpp2 = 0.0;
+volatile float WAVE_Kff2 = 0.0;
+volatile float WAVE_Kfb2 = 0.0;
 volatile float WAVE_Kvp2 = 0.0;
 volatile float WAVE_Kvi2 = 0.0;
 volatile float WAVE_fwm2 = 0.0;
 volatile float WAVE_fqs2 = 0.0;
 volatile float WAVE_fwl2 = 0.0;
+// 3軸目
+volatile float WAVE_Kpp3 = 0.0;
+volatile float WAVE_Kff3 = 0.0;
+volatile float WAVE_Kfb3 = 0.0;
+volatile float WAVE_Kvp3 = 0.0;
+volatile float WAVE_Kvi3 = 0.0;
+volatile float WAVE_fwm3 = 0.0;
+volatile float WAVE_fqs3 = 0.0;
+volatile float WAVE_fwl3 = 0.0;
 
 // 動力学外乱トルク
 volatile float WAVE_tauLdyn1; // [Nm] 動力学外乱トルク
@@ -1198,33 +1204,27 @@ interrupt void ControlFunction(void)
         CalcPVGain();
         if (flag_PPgain == 1)
         {
-          axis1.Kpp = 15;
-          axis1.Kff = 1.400;
-          axis1.Kfb = 0.400;
-          axis2.Kpp = 15;
-          axis1.Kff = 1.400;
-          axis2.Kfb = 0.400;
-          axis3.Kpp = 15;
-          axis1.Kff = 1.400;
-          axis3.Kfb = 0.400;
+          axis1.Kpp = 20;
+          axis1.Kff = 0.00;
+          axis1.Kfb = 0.00;
+          axis2.Kpp = 20;
+          axis1.Kff = 0.00;
+          axis2.Kfb = 0.00;
+          axis3.Kpp = 20;
+          axis1.Kff = 0.00;
+          axis3.Kfb = 0.00;
         }
         else if (flag_PPgain == 2)
         {
           axis1.Kpp = 20;
           axis1.Kff = 1.400;
           axis1.Kfb = 0.400;
-          // axis1.Kff = 0.000;
-          // axis1.Kfb = 0.000;
           axis2.Kpp = 20;
           axis1.Kff = 1.400;
           axis2.Kfb = 0.400;
-          // axis2.Kff = 0.000;
-          // axis2.Kfb = 0.000;
           axis3.Kpp = 20;
           axis3.Kff = 1.400;
           axis3.Kfb = 0.400;
-          // axis3.Kff = 0.000;
-          // axis3.Kfb = 0.000;
         }
 
         float start2 = (float)C6657_timer0_read() * 4.8e-9 * 1e6;
@@ -1584,6 +1584,7 @@ interrupt void ControlFunction(void)
 
           // D-PD制御用
           axis1.qm_ref = motor_cmd[0];
+          // axis1.qm_ref = axis1.wm_cmd * Tp + axis1.qm_ref_z1;
           LimitPosCmd(&axis1);
           axis1.wm_ref = (axis1.qm_ref_z2 - axis1.qm) * axis1.Kpp + axis1.Kff * axis1.wm_cmd - axis1.Kfb * axis1.wm;
 
@@ -1621,6 +1622,7 @@ interrupt void ControlFunction(void)
           // axis2.wm_ref = (axis2.qm_ref_z2 - axis2.qm) * axis2.Kpp;
           // D-PD制御用
           axis2.qm_ref = motor_cmd[1];
+          // axis2.qm_ref = axis2.wm_cmd * Tp + axis2.qm_ref_z1;
           LimitPosCmd(&axis2);
           axis2.wm_ref = (axis2.qm_ref_z2 - axis2.qm) * axis2.Kpp + axis2.Kff * axis2.wm_cmd - axis2.Kfb * axis2.wm;
 
@@ -1658,6 +1660,7 @@ interrupt void ControlFunction(void)
           // axis3.wm_ref = (axis3.qm_ref_z2 - axis3.qm) * axis3.Kpp;
           // D-PD制御用
           axis3.qm_ref = motor_cmd[2];
+          // axis3.qm_ref = axis3.wm_cmd * Tp + axis3.qm_ref_z1;
           LimitPosCmd(&axis3);
           axis3.wm_ref = (axis3.qm_ref_z2 - axis3.qm) * axis3.Kpp + axis3.Kff * axis3.wm_cmd - axis3.Kfb * axis3.wm;
 
@@ -2174,6 +2177,8 @@ interrupt void ControlFunction(void)
   WAVE_est_ISOB_wl3 = axis3.est_ISOB_wl;
 
   WAVE_Kpp1 = axis1.Kpp;
+  WAVE_Kff1 = axis1.Kff;
+  WAVE_Kfb1 = axis1.Kfb;
   WAVE_Kvp1 = axis1.Kvp;
   WAVE_Kvi1 = axis1.Kvi;
   WAVE_fwm1 = axis1.fwm;
@@ -2181,6 +2186,8 @@ interrupt void ControlFunction(void)
   WAVE_fwl1 = axis1.fwl;
 
   WAVE_Kpp2 = axis2.Kpp;
+  WAVE_Kff2 = axis2.Kff;
+  WAVE_Kfb2 = axis2.Kfb;
   WAVE_Kvp2 = axis2.Kvp;
   WAVE_Kvi2 = axis2.Kvi;
   WAVE_fwm2 = axis2.fwm;
@@ -2188,6 +2195,8 @@ interrupt void ControlFunction(void)
   WAVE_fwl2 = axis2.fwl;
 
   WAVE_Kpp3 = axis3.Kpp;
+  WAVE_Kff3 = axis3.Kff;
+  WAVE_Kfb3 = axis3.Kfb;
   WAVE_Kvp3 = axis3.Kvp;
   WAVE_Kvi3 = axis3.Kvi;
   WAVE_fwm3 = axis3.fwm;
@@ -5515,9 +5524,9 @@ void CalcFDTDWr_WmcmdInputType(Robot *robo)
     // 状態量の計算
     wm_Z[0] = Wr_DPD[0].a11cf * wm_Z1[0] + Wr_DPD[0].a12cf * qm_Z1[0] + Wr_DPD[0].a13cf * qs_Z1[0] + Wr_DPD[0].a14cf * wl_Z1[0] + Wr_DPD[0].a15cf * ql_Z1[0] + Wr_DPD[0].a16cf * n_Z1[0] + Wr_DPD[0].a17cf * m_Z1[0] + Wr_DPD[0].b1cf * robo->wm_cmd;
     qm_Z[0] = Wr_DPD[0].a21cf * wm_Z1[0] + Wr_DPD[0].a22cf * qm_Z1[0] + Wr_DPD[0].a23cf * qs_Z1[0] + Wr_DPD[0].a24cf * wl_Z1[0] + Wr_DPD[0].a25cf * ql_Z1[0] + Wr_DPD[0].a26cf * n_Z1[0] + Wr_DPD[0].a27cf * m_Z1[0] + Wr_DPD[0].b2cf * robo->wm_cmd;
-    qs_Z[0] = Wr_DPD[0].a31cf * wm_Z1[0] + Wr_DPD[0].a32cf * qm_Z1[0] + (Wr_DPD[0].a33cf1 + Wr_DPD[0].a33cf2 / axis1.Jl_calc) * qs_Z1[0] + (Wr_DPD[0].a34cf1 + Wr_DPD[0].a34cf2 / axis1.Jl_calc) * wl_Z1[0] + Wr_DPD[0].a35cf * ql_Z1[0] + Wr_DPD[0].a36cf * n_Z1[0] + Wr_DPD[0].a37cf * m_Z1[0] + Wr_DPD[0].b3cf * robo->wm_cmd;
-    wl_Z[0] = Wr_DPD[0].a41cf * wm_Z1[0] + Wr_DPD[0].a42cf * qm_Z1[0] + Wr_DPD[0].a43cf / axis1.Jl_calc * qs_Z1[0] + (Wr_DPD[0].a44cf1 + Wr_DPD[0].a44cf2 / axis1.Jl_calc) * wl_Z1[0] + Wr_DPD[0].a45cf * ql_Z1[0] + Wr_DPD[0].a46cf * n_Z1[0] + Wr_DPD[0].a47cf * m_Z1[0] + Wr_DPD[0].b4cf * robo->wm_cmd;
-    ql_Z[0] = Wr_DPD[0].a51cf * wm_Z1[0] + Wr_DPD[0].a52cf * qm_Z1[0] + Wr_DPD[0].a53cf / axis1.Jl_calc * qs_Z1[0] + (Wr_DPD[0].a54cf1 + Wr_DPD[0].a54cf2 / axis1.Jl_calc) * wl_Z1[0] + Wr_DPD[0].a55cf * ql_Z1[0] + Wr_DPD[0].a56cf * n_Z1[0] + Wr_DPD[0].a57cf * m_Z1[0] + Wr_DPD[0].b5cf * robo->wm_cmd;
+    qs_Z[0] = Wr_DPD[0].a31cf * wm_Z1[0] + Wr_DPD[0].a32cf * qm_Z1[0] + (Wr_DPD[0].a33cf1 + Wr_DPD[0].a33cf2 / robo->Jl_calc) * qs_Z1[0] + (Wr_DPD[0].a34cf1 + Wr_DPD[0].a34cf2 / robo->Jl_calc) * wl_Z1[0] + Wr_DPD[0].a35cf * ql_Z1[0] + Wr_DPD[0].a36cf * n_Z1[0] + Wr_DPD[0].a37cf * m_Z1[0] + Wr_DPD[0].b3cf * robo->wm_cmd;
+    wl_Z[0] = Wr_DPD[0].a41cf * wm_Z1[0] + Wr_DPD[0].a42cf * qm_Z1[0] + Wr_DPD[0].a43cf / robo->Jl_calc * qs_Z1[0] + (Wr_DPD[0].a44cf1 + Wr_DPD[0].a44cf2 / robo->Jl_calc) * wl_Z1[0] + Wr_DPD[0].a45cf * ql_Z1[0] + Wr_DPD[0].a46cf * n_Z1[0] + Wr_DPD[0].a47cf * m_Z1[0] + Wr_DPD[0].b4cf * robo->wm_cmd;
+    ql_Z[0] = Wr_DPD[0].a51cf * wm_Z1[0] + Wr_DPD[0].a52cf * qm_Z1[0] + Wr_DPD[0].a53cf / robo->Jl_calc * qs_Z1[0] + (Wr_DPD[0].a54cf1 + Wr_DPD[0].a54cf2 / robo->Jl_calc) * wl_Z1[0] + Wr_DPD[0].a55cf * ql_Z1[0] + Wr_DPD[0].a56cf * n_Z1[0] + Wr_DPD[0].a57cf * m_Z1[0] + Wr_DPD[0].b5cf * robo->wm_cmd;
     n_Z[0]  = Wr_DPD[0].a61cf * wm_Z1[0] + Wr_DPD[0].a62cf * qm_Z1[0] + Wr_DPD[0].a63cf * qs_Z1[0] + Wr_DPD[0].a64cf * wl_Z1[0] + Wr_DPD[0].a65cf * ql_Z1[0] + Wr_DPD[0].a66cf * n_Z1[0] + Wr_DPD[0].a67cf * m_Z1[0] + Wr_DPD[0].b6cf * robo->wm_cmd;
     m_Z[0]  = Wr_DPD[0].a71cf * wm_Z1[0] + Wr_DPD[0].a72cf * qm_Z1[0] + Wr_DPD[0].a73cf * qs_Z1[0] + Wr_DPD[0].a74cf * wl_Z1[0] + Wr_DPD[0].a75cf * ql_Z1[0] + Wr_DPD[0].a76cf * n_Z1[0] + Wr_DPD[0].a77cf * m_Z1[0] + Wr_DPD[0].b7cf * robo->wm_cmd;
 
