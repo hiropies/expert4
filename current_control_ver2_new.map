@@ -1,7 +1,7 @@
 ******************************************************************************
                TMS320C6x Linker PC v7.4.24                     
 ******************************************************************************
->> Linked Sat Mar 15 05:40:33 2025
+>> Linked Sat Mar 15 06:52:51 2025
 
 OUTPUT FILE NAME:   <current_control_ver2_new.out>
 ENTRY POINT SYMBOL: "_c_int00"  address: 0c03bdc0
@@ -67,8 +67,8 @@ SECTION ALLOCATION MAP
 section   page    origin      length       input sections
 --------  ----  ----------  ----------   ----------------
 .text      0    0c018000    00024500     
-                  0c018000    0001a220     current_control_ver2_new.obj (.text)
-                  0c032220    000048a0     current_control_ver2_new.obj (.text:retain)
+                  0c018000    0001a200     current_control_ver2_new.obj (.text)
+                  0c032200    000048c0     current_control_ver2_new.obj (.text:retain)
                   0c036ac0    00000b20     enc.obj (.text)
                   0c0375e0    00000700     rts6600_elf.lib : pow.obj (.text:pow)
                   0c037ce0    000006c0     mwio4.lib : mw_i2c_eeprom.obj (.text)
@@ -448,55 +448,55 @@ $.text:mwio4.lib<EMIF16.obj>$0x180  $Tramp$S$$EMF_Write2_s32
                              0c03a404             : IPFPGA_LIB.obj (.text)
                              0c03a470             : IPFPGA_LIB.obj (.text)
 $.text:mwio4.lib<gpio_int.obj>$0xd4  $Tramp$S$$GPI_int_ack_vo
-   11e02fd4     0c03c270     0c0369d8   current_control_ver2_new.obj (.text:retain)
+   11e02fd4     0c03c270     0c0369d4   current_control_ver2_new.obj (.text:retain)
 $.text:mwio4.lib<timer_lib.obj>$0x178  $Tramp$S$$C6657_timer2_read
-   11e01ad8     0c03c280     0c036990   current_control_ver2_new.obj (.text:retain)
+   11e01ad8     0c03c280     0c036988   current_control_ver2_new.obj (.text:retain)
 $.text:mwio4.lib<timer_lib.obj>$0x340  $Tramp$S$$C6657_timer1_read
-   11e01ca0     0c03c290     0c032f4c   current_control_ver2_new.obj (.text:retain)
-                             0c032fb8   current_control_ver2_new.obj (.text:retain)
-                             0c032fe4   current_control_ver2_new.obj (.text:retain)
-                             0c03300c   current_control_ver2_new.obj (.text:retain)
-                             0c03303c   current_control_ver2_new.obj (.text:retain)
-                             0c033054   current_control_ver2_new.obj (.text:retain)
-                             0c0330bc   current_control_ver2_new.obj (.text:retain)
-                             0c0330d8   current_control_ver2_new.obj (.text:retain)
-                             0c033140   current_control_ver2_new.obj (.text:retain)
-                             0c033150   current_control_ver2_new.obj (.text:retain)
-                             0c03378c   current_control_ver2_new.obj (.text:retain)
-                             0c0337fc   current_control_ver2_new.obj (.text:retain)
-                             0c0341a4   current_control_ver2_new.obj (.text:retain)
-                             0c0341d4   current_control_ver2_new.obj (.text:retain)
-                             0c035738   current_control_ver2_new.obj (.text:retain)
-                             0c03576c   current_control_ver2_new.obj (.text:retain)
+   11e01ca0     0c03c290     0c032f30   current_control_ver2_new.obj (.text:retain)
+                             0c032f9c   current_control_ver2_new.obj (.text:retain)
+                             0c032fc4   current_control_ver2_new.obj (.text:retain)
+                             0c032fec   current_control_ver2_new.obj (.text:retain)
+                             0c03301c   current_control_ver2_new.obj (.text:retain)
+                             0c033034   current_control_ver2_new.obj (.text:retain)
+                             0c03309c   current_control_ver2_new.obj (.text:retain)
+                             0c0330b8   current_control_ver2_new.obj (.text:retain)
+                             0c033120   current_control_ver2_new.obj (.text:retain)
+                             0c033130   current_control_ver2_new.obj (.text:retain)
+                             0c033778   current_control_ver2_new.obj (.text:retain)
+                             0c0337f0   current_control_ver2_new.obj (.text:retain)
+                             0c0341b8   current_control_ver2_new.obj (.text:retain)
+                             0c0341e8   current_control_ver2_new.obj (.text:retain)
+                             0c035764   current_control_ver2_new.obj (.text:retain)
+                             0c035794   current_control_ver2_new.obj (.text:retain)
 $.text:mwio4.lib<timer_lib.obj>$0x320  $Tramp$S$$C6657_timer1_start
-   11e01c80     0c03c2a0     0c032f48   current_control_ver2_new.obj (.text:retain)
+   11e01c80     0c03c2a0     0c032f2c   current_control_ver2_new.obj (.text:retain)
 $.text:mwio4.lib<timer_lib.obj>$0x48c  $Tramp$S$$C6657_timer1_clear
-   11e01dec     0c03c2b0     0c032f44   current_control_ver2_new.obj (.text:retain)
+   11e01dec     0c03c2b0     0c032f28   current_control_ver2_new.obj (.text:retain)
 $.text:mwio4.lib<timer_lib.obj>$0x4e0  $Tramp$S$$C6657_timer0_read
-   11e01e40     0c03c2c0     0c032dc0   current_control_ver2_new.obj (.text:retain)
-                             0c032e08   current_control_ver2_new.obj (.text:retain)
-                             0c032e78   current_control_ver2_new.obj (.text:retain)
-                             0c032ea4   current_control_ver2_new.obj (.text:retain)
-                             0c032eb8   current_control_ver2_new.obj (.text:retain)
-                             0c032ee8   current_control_ver2_new.obj (.text:retain)
-                             0c0336e8   current_control_ver2_new.obj (.text:retain)
-                             0c034274   current_control_ver2_new.obj (.text:retain)
-                             0c0342d4   current_control_ver2_new.obj (.text:retain)
-                             0c034314   current_control_ver2_new.obj (.text:retain)
+   11e01e40     0c03c2c0     0c032da4   current_control_ver2_new.obj (.text:retain)
+                             0c032dec   current_control_ver2_new.obj (.text:retain)
+                             0c032e60   current_control_ver2_new.obj (.text:retain)
+                             0c032e88   current_control_ver2_new.obj (.text:retain)
+                             0c032ea0   current_control_ver2_new.obj (.text:retain)
+                             0c032ecc   current_control_ver2_new.obj (.text:retain)
+                             0c0336d8   current_control_ver2_new.obj (.text:retain)
+                             0c034294   current_control_ver2_new.obj (.text:retain)
+                             0c0342e4   current_control_ver2_new.obj (.text:retain)
+                             0c034324   current_control_ver2_new.obj (.text:retain)
 $.text:mwio4.lib<timer_lib.obj>$0x4c0  $Tramp$S$$C6657_timer0_start
-   11e01e20     0c03c2d0     0c032c60   current_control_ver2_new.obj (.text:retain)
+   11e01e20     0c03c2d0     0c032c44   current_control_ver2_new.obj (.text:retain)
 $.text:mwio4.lib<timer_lib.obj>$0x62c  $Tramp$S$$C6657_timer0_clear
-   11e01f8c     0c03c2e0     0c032c5c   current_control_ver2_new.obj (.text:retain)
+   11e01f8c     0c03c2e0     0c032c40   current_control_ver2_new.obj (.text:retain)
 $.text:mwio4.lib<timer_lib.obj>$0x308  $Tramp$S$$C6657_timer1_stop
-   11e01c68     0c03c2f0     0c032c44   current_control_ver2_new.obj (.text:retain)
+   11e01c68     0c03c2f0     0c032c28   current_control_ver2_new.obj (.text:retain)
 $.text:mwio4.lib<timer_lib.obj>$0x4a8  $Tramp$S$$C6657_timer0_stop
-   11e01e08     0c03c300     0c032c34   current_control_ver2_new.obj (.text:retain)
+   11e01e08     0c03c300     0c032c18   current_control_ver2_new.obj (.text:retain)
 $.text:mwio4.lib<timer_lib.obj>$0x154  $Tramp$S$$C6657_timer2_start
-   11e01ab4     0c03c310     0c0322ec   current_control_ver2_new.obj (.text:retain)
+   11e01ab4     0c03c310     0c0322cc   current_control_ver2_new.obj (.text:retain)
 $.text:mwio4.lib<timer_lib.obj>$0x2ec  $Tramp$S$$C6657_timer2_clear
-   11e01c4c     0c03c320     0c0322e8   current_control_ver2_new.obj (.text:retain)
+   11e01c4c     0c03c320     0c0322c8   current_control_ver2_new.obj (.text:retain)
 $.text:mwio4.lib<timer_lib.obj>$0x140  $Tramp$S$$C6657_timer2_stop
-   11e01aa0     0c03c330     0c0322e0   current_control_ver2_new.obj (.text:retain)
+   11e01aa0     0c03c330     0c0322c0   current_control_ver2_new.obj (.text:retain)
 $.text:mwio4.lib<PEV_INV_LIB.obj>$0x394  $Tramp$S$$PEV_inverter_start_pwm
    11e00394     0c03c340     0c02727c   current_control_ver2_new.obj (.text)
                              0c027284   current_control_ver2_new.obj (.text)
@@ -616,7 +616,7 @@ GLOBAL SYMBOLS: SORTED ALPHABETICALLY BY Name
 
 address    name
 --------   ----
-0c02ed8c   BrakeController
+0c02ed78   BrakeController
 0c03c1a0   C$$EXIT
 11e01f8c   C6657_timer0_clear
 11e01f78   C6657_timer0_clear_eventflag
@@ -666,27 +666,27 @@ address    name
 0c023168   CalcFDTDTSOBInit
 0c01f5b0   CalcFDTDWrInit_QmrefInputType
 0c021428   CalcFDTDWrInit_WmcmdInputType
-0c031664   CalcFDTDWrUpdate_QmrefInputType_1st2nd
-0c0310e0   CalcFDTDWrUpdate_QmrefInputType_2nd
+0c031644   CalcFDTDWrUpdate_QmrefInputType_1st2nd
+0c0310c0   CalcFDTDWrUpdate_QmrefInputType_2nd
 0c02c8ec   CalcFDTDWrUpdate_WmcmdInputType_1st2nd
 0c02c154   CalcFDTDWrUpdate_WmcmdInputType_2nd
-0c02fea0   CalcFDTDWr_QmrefInputType
+0c02fe80   CalcFDTDWr_QmrefInputType
 0c029920   CalcFDTDWr_WmcmdInputType
 0c0294ac   CalcGravIcmp
 0c02da64   CalcHandCmdCircle
-0c02f8a4   CalcHandCmdDiamond
-0c02f354   CalcHandCmdRectangle
+0c02f884   CalcHandCmdDiamond
+0c02f344   CalcHandCmdRectangle
 0c02dea0   CalcInverseCmd_vel
 0c0295ec   CalcJl
 0c01a9c4   CalcOffset
 0c02b88c   CalcPVGain
 0c0258a0   CalcPVGainInitCDM
-0c02f264   CalcPref2axis
-0c02f064   CalcPrefRep2axis
-0c02ee64   CalcPrefRep3axis
+0c02f250   CalcPref2axis
+0c02f050   CalcPrefRep2axis
+0c02ee4c   CalcPrefRep3axis
 0c02b178   CalcTauLDyn
-0c02ecb0   CalcVdcMean
-0c032220   ControlFunction
+0c02eca4   CalcVdcMean
+0c032200   ControlFunction
 0c029430   DecouplingControl
 11e0252c   EMF_EnableIntr_s32
 11e02d20   EMF_ErrIntr_vo
@@ -1396,17 +1396,17 @@ address    name
 0c02c8ec   CalcFDTDWrUpdate_WmcmdInputType_1st2nd
 0c02da64   CalcHandCmdCircle
 0c02dea0   CalcInverseCmd_vel
-0c02ecb0   CalcVdcMean
-0c02ed8c   BrakeController
-0c02ee64   CalcPrefRep3axis
-0c02f064   CalcPrefRep2axis
-0c02f264   CalcPref2axis
-0c02f354   CalcHandCmdRectangle
-0c02f8a4   CalcHandCmdDiamond
-0c02fea0   CalcFDTDWr_QmrefInputType
-0c0310e0   CalcFDTDWrUpdate_QmrefInputType_2nd
-0c031664   CalcFDTDWrUpdate_QmrefInputType_1st2nd
-0c032220   ControlFunction
+0c02eca4   CalcVdcMean
+0c02ed78   BrakeController
+0c02ee4c   CalcPrefRep3axis
+0c02f050   CalcPrefRep2axis
+0c02f250   CalcPref2axis
+0c02f344   CalcHandCmdRectangle
+0c02f884   CalcHandCmdDiamond
+0c02fe80   CalcFDTDWr_QmrefInputType
+0c0310c0   CalcFDTDWrUpdate_QmrefInputType_2nd
+0c031644   CalcFDTDWrUpdate_QmrefInputType_1st2nd
+0c032200   ControlFunction
 0c036ac0   ENC_stop_abs
 0c036b6c   ENC_start_abs
 0c036c20   ENC_ss_init

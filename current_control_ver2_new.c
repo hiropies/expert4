@@ -1588,7 +1588,7 @@ interrupt void ControlFunction(void)
           // 1軸目 位置指令
           // ランプ関数生成関数で位置指令を決定
           // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
-          axis1.wm_cmd = motor_vel_cmd[0];
+          axis1.wm_cmd = - motor_vel_cmd[0];
           axis1.qm_ref_z2 = axis1.qm_ref_z1;
           axis1.qm_ref_z1 = axis1.qm_ref;
 

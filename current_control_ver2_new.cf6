@@ -32,7 +32,7 @@
     <boolean>false</boolean>
   </_bRBtn_TrgWidth>
   <_bTrgWidthValue>
-    <double>0.0018</double>
+    <double>0.004</double>
     <double>0</double>
     <double>0</double>
     <double>0</double>
@@ -870,10 +870,10 @@
   <bCurBColorIndex>2</bCurBColorIndex>
   <bCurGrabColorIndex>3</bCurGrabColorIndex>
   <bRecordLength>100000</bRecordLength>
-  <bNumberOfData>50000</bNumberOfData>
+  <bNumberOfData>100000</bNumberOfData>
   <bCurRangeValue>100</bCurRangeValue>
-  <bHorValue>0.05</bHorValue>
-  <bHorValue_rough>0.05</bHorValue_rough>
+  <bHorValue>2</bHorValue>
+  <bHorValue_rough>2</bHorValue_rough>
   <bCurPosValue>0</bCurPosValue>
   <bIndex_TrgNo>0</bIndex_TrgNo>
   <bTrgPosValue>0</bTrgPosValue>
