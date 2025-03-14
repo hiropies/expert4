@@ -1131,15 +1131,30 @@ interrupt void ControlFunction(void)
 
       // // 可変ゲイン計算
       // CalcPVGain();
-      // if (flag_PPgain == 1)
-      // {
-      //   axis1.Kpp = 15;
-      // }
-      // // 従来2
-      // else if (flag_PPgain == 2)
-      // {
-      //   axis1.Kpp = 15;
-      // }
+      if (flag_PPgain == 1)
+        {
+          axis1.Kpp = 20;
+          axis1.Kff = 0.00;
+          axis1.Kfb = 0.00;
+          axis2.Kpp = 20;
+          axis1.Kff = 0.00;
+          axis2.Kfb = 0.00;
+          axis3.Kpp = 20;
+          axis1.Kff = 0.00;
+          axis3.Kfb = 0.00;
+        }
+        else if (flag_PPgain == 2)
+        {
+          axis1.Kpp = 20;
+          axis1.Kff = 1.400;
+          axis1.Kfb = 0.400;
+          axis2.Kpp = 20;
+          axis1.Kff = 1.400;
+          axis2.Kfb = 0.400;
+          axis3.Kpp = 20;
+          axis3.Kff = 1.400;
+          axis3.Kfb = 0.400;
+        }
 
       // 負荷側情報計算
       // CalcFDTDWr_QmrefInputType(&axis1);
