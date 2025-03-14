@@ -1583,8 +1583,8 @@ interrupt void ControlFunction(void)
           // axis1.wm_ref = (axis1.qm_ref_z2 - axis1.qm) * axis1.Kpp;
 
           // D-PD制御用
-          axis1.qm_ref = motor_cmd[0];
-          // axis1.qm_ref = axis1.wm_cmd * Tp + axis1.qm_ref_z1;
+          // axis1.qm_ref = motor_cmd[0];
+          axis1.qm_ref = axis1.wm_cmd * Tp + axis1.qm_ref_z1;
           LimitPosCmd(&axis1);
           axis1.wm_ref = (axis1.qm_ref_z2 - axis1.qm) * axis1.Kpp + axis1.Kff * axis1.wm_cmd - axis1.Kfb * axis1.wm;
 
@@ -1621,8 +1621,8 @@ interrupt void ControlFunction(void)
           // LimitPosCmd(&axis2);
           // axis2.wm_ref = (axis2.qm_ref_z2 - axis2.qm) * axis2.Kpp;
           // D-PD制御用
-          axis2.qm_ref = motor_cmd[1];
-          // axis2.qm_ref = axis2.wm_cmd * Tp + axis2.qm_ref_z1;
+          // axis2.qm_ref = motor_cmd[1];
+          axis2.qm_ref = axis2.wm_cmd * Tp + axis2.qm_ref_z1;
           LimitPosCmd(&axis2);
           axis2.wm_ref = (axis2.qm_ref_z2 - axis2.qm) * axis2.Kpp + axis2.Kff * axis2.wm_cmd - axis2.Kfb * axis2.wm;
 
@@ -1659,8 +1659,8 @@ interrupt void ControlFunction(void)
           // LimitPosCmd(&axis3);
           // axis3.wm_ref = (axis3.qm_ref_z2 - axis3.qm) * axis3.Kpp;
           // D-PD制御用
-          axis3.qm_ref = motor_cmd[2];
-          // axis3.qm_ref = axis3.wm_cmd * Tp + axis3.qm_ref_z1;
+          // axis3.qm_ref = motor_cmd[2];
+          axis3.qm_ref = axis3.wm_cmd * Tp + axis3.qm_ref_z1;
           LimitPosCmd(&axis3);
           axis3.wm_ref = (axis3.qm_ref_z2 - axis3.qm) * axis3.Kpp + axis3.Kff * axis3.wm_cmd - axis3.Kfb * axis3.wm;
 
@@ -4326,7 +4326,7 @@ void CalcInverseCmd_vel(float goal[3], float vel_hand[3], float ql_cmd[3], float
   for (i = 0; i < 3; i++)
   {
     ql_cmd[i] = motor[i];
-    wl_cmd[i] = (i == 0) ? -qm_vel[i] : qm_vel[i];
+    wl_cmd[i] = qm_vel[i];
     ql_init[i] = qm_first[i];
   }
   flag_init = 0;
