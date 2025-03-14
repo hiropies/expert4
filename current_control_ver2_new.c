@@ -4312,9 +4312,9 @@ void CalcInverseCmd_vel(float goal[3], float vel_hand[3], float ql_cmd[3], float
   motor[0] = joint[0] * Rgn1;
   motor[1] = joint[1] * Rgn2;
   motor[2] = joint[2] * Rgn3;
-  qm_vel[1] = ql_vel[1] * Rgn1;
-  qm_vel[2] = ql_vel[2] * Rgn2;
-  qm_vel[3] = ql_vel[3] * Rgn3;
+  qm_vel[0] = ql_vel[0] * Rgn1;
+  qm_vel[1] = ql_vel[1] * Rgn2;
+  qm_vel[2] = ql_vel[2] * Rgn3;
 
   if (initialized == 1){
     qm_first[0] = motor[0];
