@@ -141,9 +141,9 @@ volatile float WAVE_HandZ = 0.0;
 volatile float WAVE_fx = 0.0;
 volatile float WAVE_fy = 0.0;
 volatile float WAVE_fz = 0.0;
-volatile float WAVE_vfx = 0.0;
-volatile float WAVE_vfy = 0.0;
-volatile float WAVE_vfz = 0.0;
+volatile float WAVE_vx = 0.0;
+volatile float WAVE_vy = 0.0;
+volatile float WAVE_vz = 0.0;
 
 volatile int flag_reposition = 0;
 volatile int flag_first_go = 0;
@@ -990,7 +990,7 @@ int CalcHandCmdRectangle(float goal[3], float t_wait, float speed, float start_h
 int CalcHandCmdDiamond(float goal[3], float t_wait, float speed, float start_hand[3], int flag_loop);
 void LimitPosCmd(Robot *robo);
 // void CalcInverseCmd(float goal[3], float joint[3], float motor[3], float wm[3], int flag_filter, int flag_reset, float dt);
-void CalcInverseCmd_vel(float goal[3], float vel_hand[3], float ql_cmd[3], float wl_cmd[3], float ql_init[3]);
+void CalcInverseCmd_vel(float goal[3], float vel_hand[3], float ql_cmd[3], float wl_cmd[3], float ql_init[3], int flag_reset);
 // 疑似微分なんやで
 float backward_diff(float x, float xZ, float dt);
 float GeneratorCircle1st(float t_wait, float start);
@@ -3712,7 +3712,7 @@ float GetFilterdSignal(LPF_param *Filter, float u, int flag_init)
 // }
 
 // 手先軌跡(円)
-int CalcHandCmdCircle(float *goal[3], float *vel_hand[3], float t_wait, float speed, float start_hand[3], int flag_loop)
+int CalcHandCmdCircle(float goal[3], float vel_hand[3], float t_wait, float speed, float start_hand[3], int flag_loop)
 {
   const float D = 0.020;
   const float path = (PI * D);
@@ -4218,7 +4218,13 @@ void CalcInverseCmd_vel(float goal[3], float vel_hand[3], float ql_cmd[3], float
     initialized = 1;
   }
 
-  float p1[3] = {0, 0, 0};
+  float p1[3] = {0.0, 0.0, 0.0};
+  float x = goal[0];
+  float y = goal[1];
+  float z = goal[2];
+  float vx = vel_hand[0];
+  float vy = vel_hand[1];
+  float vz = vel_hand[2];
 
   joint[0] = -atan2(y, x);
   p1[0] = Lb * cos(joint[0]);
@@ -4237,9 +4243,12 @@ void CalcInverseCmd_vel(float goal[3], float vel_hand[3], float ql_cmd[3], float
   joint[1] = PI - Phi3 - Phi4;
 
   // 三角関数の計算
-  float S1 = sin(joint[0]), C1 = cos(joint[0]);
-  float S2 = sin(joint[1]), C2 = cos(joint[1]);
-  float S23 = sin(joint[1] + joint[2]), C23 = cos(joint[1] + joint[2]);
+  float S1 = sin(joint[0]);
+  float C1 = cos(joint[0]);
+  float S2 = sin(joint[1]);
+  float C2 = cos(joint[1]);
+  float S23 = sin(joint[1] + joint[2]),
+  float C23 = cos(joint[1] + joint[2]);
 
   // ヤコビアン行列の成分
   float J[3][3] = {
