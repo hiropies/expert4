@@ -141,6 +141,9 @@ volatile float WAVE_HandZ = 0.0;
 volatile float WAVE_fx = 0.0;
 volatile float WAVE_fy = 0.0;
 volatile float WAVE_fz = 0.0;
+volatile float WAVE_vfx = 0.0;
+volatile float WAVE_vfy = 0.0;
+volatile float WAVE_vfz = 0.0;
 
 volatile int flag_reposition = 0;
 volatile int flag_first_go = 0;
@@ -982,11 +985,12 @@ void SetVoltReferences(Robot *robo);
 void SetLPF(LPF_param Filter[], float Ts, float fs, float Q);
 float GetFilterdSignal(LPF_param *Filter, float u, int flag_init);
 int CalcHandCmdCenter(int flag_cmd, float goal[3], float t_wait, float speed, float start_hand[3], int flag_loop);
-int CalcHandCmdCircle(float goal[3], float t_wait, float speed, float start_hand[3], int flag_loop);
+int CalcHandCmdCircle(float goal[3], float vel_hand[3], float t_wait, float speed, float start_hand[3], int flag_loop);
 int CalcHandCmdRectangle(float goal[3], float t_wait, float speed, float start_hand[3], int flag_loop);
 int CalcHandCmdDiamond(float goal[3], float t_wait, float speed, float start_hand[3], int flag_loop);
 void LimitPosCmd(Robot *robo);
-void CalcInverseCmd(float goal[3], float joint[3], float motor[3], float wm[3], int flag_filter, int flag_reset, float dt);
+// void CalcInverseCmd(float goal[3], float joint[3], float motor[3], float wm[3], int flag_filter, int flag_reset, float dt);
+void CalcInverseCmd_vel(float goal[3], float vel_hand[3], float ql_cmd[3], float wl_cmd[3], float ql_init[3]);
 // 疑似微分なんやで
 float backward_diff(float x, float xZ, float dt);
 float GeneratorCircle1st(float t_wait, float start);
@@ -1033,9 +1037,11 @@ interrupt void ControlFunction(void)
   static unsigned long int LoopCount = 0; //!< 制御周期カウンタ
   static float t = 0.0;                   //!< [s]		時刻
   static float hand_cmd[3] = {0, 0, 0};
+  static float hand_vel[3] = {0, 0, 0};
   static float joint_cmd[3] = {0, 0, 0};
   static float motor_cmd[3] = {0, 0, 0};
-  static float motor_vel_cmd[3] = {0,0,0};
+  static float motor_vel_cmd[3] = {0, 0, 0};
+  static float motor_cmd_init[3] = {0, 0, 0};
 
   GetMultiPositions(joint); //!< 複数軸同時取得(特別な事情がない限りこっちを使う)
 
@@ -1360,13 +1366,14 @@ interrupt void ControlFunction(void)
             static int flag_loop = 0;
             static int filter = 0;
             // filter = CalcHandCmdCenter(flag_CalcHandCmd, hand_cmd, wait, speed, start_hand, flag_loop);
-            filter = CalcHandCmdCircle(hand_cmd, wait_cmd, speed, start_hand, flag_loop);
+            filter = CalcHandCmdCircle(hand_cmd, hand_vel, wait_cmd, speed, start_hand, flag_loop);
             // start_hand[0] = hand_cmd[0];
             // start_hand[1] = hand_cmd[1];
             // start_hand[2] = hand_cmd[2];
             static int flag = 0;
             static int reset = 1;
-            CalcInverseCmd(hand_cmd, joint_cmd, motor_cmd, motor_vel_cmd, filter, reset, Tp);
+            // CalcInverseCmd(hand_cmd, joint_cmd, motor_cmd, motor_vel_cmd, filter, reset, Tp);
+            CalcInverseCmd_vel(hand_cmd, hand_vel, motor_cmd, motor_vel_cmd, motor_cmd_init, 1);
             start_go1 = axis1.qm;
             start_go2 = axis2.qm;
             start_go3 = axis3.qm;
@@ -1549,15 +1556,18 @@ interrupt void ControlFunction(void)
           static float speed_hand = 10.0; // [m/min] = 60 [m/s]
           static int flag_loop = 1;
           static int filter_reset = 0;
+          static int inverse_reset = 1;
 
           float start_cmd = (float)C6657_timer0_read() * 4.8e-9 * 1e6;
 
           // int flag_filter_on = CalcHandCmdCenter(flag_CalcHandCmd ,hand_cmd, time_wait, speed_hand, start_hand, flag_loop);
-          int flag_filter_on = CalcHandCmdCircle(hand_cmd, time_wait, speed_hand, start_hand, flag_loop);
+          int flag_filter_on = CalcHandCmdCircle(hand_cmd, hand_vel, time_wait, speed_hand, start_hand, flag_loop);
           WAVE_TimeCalcCmd = (float)C6657_timer0_read() * 4.8e-9 * 1e6 - start_cmd;
 
           start_cmd = (float)C6657_timer0_read() * 4.8e-9 * 1e6;
-          CalcInverseCmd(hand_cmd, joint_cmd, motor_cmd, motor_vel_cmd, flag_filter_on, filter_reset, Tp);
+          // CalcInverseCmd(hand_cmd, joint_cmd, motor_cmd, motor_vel_cmd, flag_filter_on, filter_reset, Tp);
+          CalcInverseCmd_vel(hand_cmd, hand_vel, motor_cmd, motor_vel_cmd, motor_cmd_init, inverse_reset);
+          inverse_reset = 0;
           WAVE_TimeCalcInvCmd = (float)C6657_timer0_read() * 4.8e-9 * 1e6 - start_cmd;
 
           // 1軸目 位置指令
@@ -2246,7 +2256,7 @@ void MW_main(void)
   float fs2 = 10.0;
   float Q = 1.0 / sqrt(2.0);
   SetLPF(LPF_motor, Tp, fs, Q);
-  SetLPF(LPF_cmd, Tp, fs2, Q);
+  SetLPF(LPF_cmd, Tp, fs, Q);
 
   /// ゲインのセット
   SetGain(joint);
@@ -3702,12 +3712,12 @@ float GetFilterdSignal(LPF_param *Filter, float u, int flag_init)
 // }
 
 // 手先軌跡(円)
-int CalcHandCmdCircle(float goal[3], float t_wait, float speed, float start_hand[3], int flag_loop)
+int CalcHandCmdCircle(float *goal[3], float *vel_hand[3], float t_wait, float speed, float start_hand[3], int flag_loop)
 {
   const float D = 0.020;
-  const float path = (1.5 * PI * D);
-  const float t_task = path * (60.0 / speed);
-  const float freq = 1 / (t_task / 1.5);
+  const float path = (PI * D);
+  const float freq = 1 / (path / (speed/60.0));
+  const float t_task = (1.0 / freq) * 1.5;
   // const float t_task = 1.5 / freq;
   // const float S1 = mwsin(theta);
   // const float C1 = mwcos(theta);
@@ -3725,6 +3735,7 @@ int CalcHandCmdCircle(float goal[3], float t_wait, float speed, float start_hand
   static float goalZ[3] = {0, 0, 0};
   static float fxZ, fyZ, fzZ;
   static float fx = 0, fy = 0, fz = 0;
+  static float vfx = 0, vfy = 0, vfz = 0;
   static int flag_init = 0;
   if(flag_cmd_end == 0){
     if (flag_init == 0)
@@ -3743,6 +3754,9 @@ int CalcHandCmdCircle(float goal[3], float t_wait, float speed, float start_hand
       goal[0] = C1 * fx + S1 * fz + x_slide;
       goal[1] = fy + y_slide;
       goal[2] = C1 * fz - S1 * fx + z_slide;
+      vel_hand[0] = 0.0;
+      vel_hand[1] = 0.0;
+      vel_hand[2] = 0.0;
       goalZ[0] = goal[0];
       goalZ[1] = goal[1];
       goalZ[2] = goal[2];
@@ -3759,32 +3773,43 @@ int CalcHandCmdCircle(float goal[3], float t_wait, float speed, float start_hand
         goal[0] = goalZ[0];
         goal[1] = goalZ[1];
         goal[2] = goalZ[2];
-        Tall += Tp;
+        vel_hand[0] = 0.0;
+        vel_hand[1] = 0.0;
+        vel_hand[2] = 0.0;
       }
       else if (Tall >= t_wait && Tall < (t_wait + t_task))
       {
         fx = (D / 2.0) * sin(2 * PI * freq * (Tall - t_wait));
         fy = -(D / 2.0) * cos(2 * PI * freq * (Tall - t_wait));
         fz = 0;
+        vfx = (D / 2.0) * (2 * PI * freq) * cos(2 * PI * freq * (Tall - t_wait));
+        vfy = (D / 2.0) * (2 * PI * freq) * sin(2 * PI * freq * (Tall - t_wait));
+        vfz = 0;
+
         goal[0] = C1 * fx + S1 * fz + x_slide;
         goal[1] = fy + y_slide;
         goal[2] = C1 * fz - S1 * fx + z_slide;
+        vel_hand[0] = C1 * vfx + S1 * vfz;
+        vel_hand[1] = vfy;
+        vel_hand[2] = C1 * vfz + S1 * vfx;
         fxZ = fx;
         fyZ = fy;
         fzZ = fz;
         goalZ[0] = goal[0];
         goalZ[1] = goal[1];
         goalZ[2] = goal[2];
-        Tall += Tp;
       }
       else if (Tall >= t_wait + t_task)
       {
         goal[0] = goalZ[0];
         goal[1] = goalZ[1];
         goal[2] = goalZ[2];
-        Tall += Tp;
+        vel_hand[0] = 0;
+        vel_hand[1] = 0;
+        vel_hand[2] = 0;
         flag_cmd_end = 1;
       }
+      Tall += Tp;
     }
   }else{
     goal[0] = goalZ[0];
@@ -3796,6 +3821,9 @@ int CalcHandCmdCircle(float goal[3], float t_wait, float speed, float start_hand
   WAVE_fx = fx;
   WAVE_fy = fy;
   WAVE_fz = fz;
+  WAVE_vx = vfx;
+  WAVE_vy = vfy;
+  WAVE_vz = vfz;
   return 1; //1を返すと逆運動学でFilterあり。０を返すとFilter無し。
 }
 
@@ -4072,89 +4100,207 @@ void LimitPosCmd(Robot *robo)
   }
 }
 
-// 逆運動学（手先 -> モーター位置）
-void CalcInverseCmd(float goal[3], float joint[3], float motor[3], float wm[3], int flag_filter, int flag_reset, float dt)
-{
-  static float motorZ[3];
-  const float Rgn1 = 140.254;
-  const float Rgn2 = 121;
-  const float Rgn3 = 121;
-  const float Lb = 0.16;
-  const float Ld = 0.088;
-  const float Lac = 0.2685;
-  const float Le = 0.56;
-  const float Lf = 0.088;
-  const float Lg = 0.13;
-  const float Lh1 = 0.145;
-  const float Lh2 = 0.455;
-  const float Lii = 0.04;
-  const float Lj = 0.2;
-  const float Lk = 0.05;
-  const float Larm = sqrtf(((Lh1 + Lh2 + Lj + Lk) * (Lh1 + Lh2 + Lj + Lk) + (Lii + Lg) * (Lii + Lg)));
+// // 逆運動学（手先 -> モーター位置）
+// void CalcInverseCmd(float goal[3], float joint[3], float motor[3], float wm[3], int flag_filter, int flag_reset, float dt)
+// {
+//   static float motorZ[3];
+//   const float Rgn1 = 140.254;
+//   const float Rgn2 = 121;
+//   const float Rgn3 = 121;
+//   const float Lb = 0.16;
+//   const float Ld = 0.088;
+//   const float Lac = 0.2685;
+//   const float Le = 0.56;
+//   const float Lf = 0.088;
+//   const float Lg = 0.13;
+//   const float Lh1 = 0.145;
+//   const float Lh2 = 0.455;
+//   const float Lii = 0.04;
+//   const float Lj = 0.2;
+//   const float Lk = 0.05;
+//   const float Larm = sqrtf(((Lh1 + Lh2 + Lj + Lk) * (Lh1 + Lh2 + Lj + Lk) + (Lii + Lg) * (Lii + Lg)));
 
-  static float p1[3] = {0, 0, 0};
-  static float Lp2h = 0.0;
-  static float Lg2h = 0.0;
-  static float Phi1 = 0.0;
-  static float Phi2 = 0.0;
-  static float Phi3 = 0.0;
-  static float Phi4 = 0.0;
-  static int flag_init = 0;
-  if(flag_reset == 1){
+//   static float p1[3] = {0, 0, 0};
+//   static float Lp2h = 0.0;
+//   static float Lg2h = 0.0;
+//   static float Phi1 = 0.0;
+//   static float Phi2 = 0.0;
+//   static float Phi3 = 0.0;
+//   static float Phi4 = 0.0;
+//   static int flag_init = 0;
+//   if(flag_reset == 1){
+//     flag_init = 1;
+//   }
+
+//   joint[0] = 1 * atan2f(goal[1], goal[0]);
+//   if(flag_filter == 1){
+//     joint[0] = GetFilterdSignal(&LPF_motor[0], joint[0], flag_init);
+//   }
+//   // joint[0] = mwarctan2(goal[1], goal[0]);
+
+//   p1[0] = Lb * cos(joint[0]);
+//   // p1[0] = Lb * mwcos(joint[0]);
+//   p1[1] = Lb * sin(joint[0]);
+//   // p1[1] = Lb * mwsin(joint[0]);
+//   p1[2] = Lac;
+
+//   Lp2h = sqrtf((((goal[0] - p1[0]) * (goal[0] - p1[0])) + ((goal[1] - p1[1]) * (goal[1] - p1[1])) + ((goal[2] - p1[2]) * (goal[2] - p1[2]))));
+//   Lg2h = sqrtf((((goal[0] - p1[0]) * (goal[0] - p1[0])) + ((goal[1] - p1[1]) * (goal[1] - p1[1])) + ((goal[2] - 0.0) * (goal[2] - 0.0))));
+
+//   Phi1 = acos(((Le * Le) + (Larm * Larm) - (Lp2h * Lp2h)) / (2 * Le * Larm));
+//   Phi2 = acos((Lh1 + Lh2 + Lj + Lk) / (Larm));
+//   Phi3 = acos(((Le * Le) + (Lp2h * Lp2h) - (Larm * Larm)) / (2 * Le * Lp2h));
+//   Phi4 = acos(((Lac * Lac) + (Lp2h * Lp2h) - (Lg2h * Lg2h)) / (2 * Lac * Lp2h));
+
+//   joint[2] = (PI / 2.0) - Phi1 + Phi2;
+//   if (flag_filter == 1)
+//   {
+//     joint[2] = GetFilterdSignal(&LPF_motor[2], joint[2], flag_init);
+//   }
+//   joint[1] = PI - Phi3 - Phi4;
+//   if (flag_filter == 1)
+//   {
+//     joint[1] = GetFilterdSignal(&LPF_motor[1], joint[1], flag_init);
+//   }
+//   motor[0] = -joint[0] * Rgn1;
+//   motor[1] = joint[1] * Rgn2;
+//   motor[2] = joint[2] * Rgn3;
+//   if (flag_reset == 1)
+//   {
+//     motorZ[0] = motor[0];
+//     motorZ[1] = motor[1];
+//     motorZ[2] = motor[2];
+//   }
+
+//   wm[0] = backward_diff(motor[0], motorZ[0], dt);
+//   wm[1] = backward_diff(motor[1], motorZ[1], dt);
+//   wm[2] = backward_diff(motor[2], motorZ[2], dt);
+//   wm[0] = GetFilterdSignal(&LPF_cmd[0], wm[0], flag_init);
+//   wm[1] = GetFilterdSignal(&LPF_cmd[1], wm[1], flag_init);
+//   wm[2] = GetFilterdSignal(&LPF_cmd[2], wm[2], flag_init);
+
+//   motorZ[0] = motor[0];
+//   motorZ[1] = motor[1];
+//   motorZ[2] = motor[2];
+
+//   flag_init = 0;
+// }
+
+void CalcInverseCmd_vel(float goal[3], float vel_hand[3], float ql_cmd[3], float wl_cmd[3], float ql_init[3], int flag_reset)
+{
+  static int initialized = 0;
+  static float Rgn1, Rgn2, Rgn3;
+  static float Lb, Lac, Ld, Le, Lf, Lg, Lh1, Lh2, Lii, Lj, Lk, Larm, L4;
+  static float joint[3], motor[3], ql_vel[3], qm_vel[3], qm_first[3];
+  static int flag_init = 0
+  if (flag_reset == 1){
+    initialized = 0;
     flag_init = 1;
   }
-
-  joint[0] = 1 * atan2f(goal[1], goal[0]);
-  if(flag_filter == 1){
-    joint[0] = GetFilterdSignal(&LPF_motor[0], joint[0], flag_init);
+  if (initialized == 0)
+  {
+    Rgn1 = 140.254;
+    Rgn2 = 121;
+    Rgn3 = 121;
+    Lac = 0.2685;
+    Lb = 0.16;
+    Ld = 0.088;
+    Le = 0.56;
+    Lf = 0.088;
+    Lg = 0.13;
+    Lh1 = 0.145;
+    Lh2 = 0.455;
+    Lii = 0.04;
+    Lj = 0.2;
+    Lk = 0.05;
+    Larm = sqrt(pow(Lh1 + Lh2 + Lj + Lk, 2) + pow(Lii + Lg, 2));
+    L4 = Lh1 + Lh2 + Lj + Lk;
+    initialized = 1;
   }
-  // joint[0] = mwarctan2(goal[1], goal[0]);
 
+  float p1[3] = {0, 0, 0};
+
+  joint[0] = -atan2(y, x);
   p1[0] = Lb * cos(joint[0]);
-  // p1[0] = Lb * mwcos(joint[0]);
   p1[1] = Lb * sin(joint[0]);
-  // p1[1] = Lb * mwsin(joint[0]);
   p1[2] = Lac;
 
-  Lp2h = sqrtf((((goal[0] - p1[0]) * (goal[0] - p1[0])) + ((goal[1] - p1[1]) * (goal[1] - p1[1])) + ((goal[2] - p1[2]) * (goal[2] - p1[2]))));
-  Lg2h = sqrtf((((goal[0] - p1[0]) * (goal[0] - p1[0])) + ((goal[1] - p1[1]) * (goal[1] - p1[1])) + ((goal[2] - 0.0) * (goal[2] - 0.0))));
+  float Lp2h = sqrt(pow(x - p1[0], 2) + pow(y - p1[1], 2) + pow(z - p1[2], 2));
+  float Lg2h = sqrt(pow(x - p1[0], 2) + pow(y - p1[1], 2) + pow(z - 0.0, 2));
 
-  Phi1 = acos(((Le * Le) + (Larm * Larm) - (Lp2h * Lp2h)) / (2 * Le * Larm));
-  Phi2 = acos((Lh1 + Lh2 + Lj + Lk) / (Larm));
-  Phi3 = acos(((Le * Le) + (Lp2h * Lp2h) - (Larm * Larm)) / (2 * Le * Lp2h));
-  Phi4 = acos(((Lac * Lac) + (Lp2h * Lp2h) - (Lg2h * Lg2h)) / (2 * Lac * Lp2h));
+  float Phi1 = acos((Le * Le + Larm * Larm - Lp2h * Lp2h) / (2 * Le * Larm));
+  float Phi2 = acos((Lh1 + Lh2 + Lj + Lk) / Larm);
+  float Phi3 = acos((Le * Le + Lp2h * Lp2h - Larm * Larm) / (2 * Le * Lp2h));
+  float Phi4 = acos((Lac * Lac + Lp2h * Lp2h - Lg2h * Lg2h) / (2 * Lac * Lp2h));
 
   joint[2] = (PI / 2.0) - Phi1 + Phi2;
-  if (flag_filter == 1)
-  {
-    joint[2] = GetFilterdSignal(&LPF_motor[2], joint[2], flag_init);
-  }
   joint[1] = PI - Phi3 - Phi4;
-  if (flag_filter == 1)
+
+  // 三角関数の計算
+  float S1 = sin(joint[0]), C1 = cos(joint[0]);
+  float S2 = sin(joint[1]), C2 = cos(joint[1]);
+  float S23 = sin(joint[1] + joint[2]), C23 = cos(joint[1] + joint[2]);
+
+  // ヤコビアン行列の成分
+  float J[3][3] = {
+      {(Lf - Ld) * C1 - S1 * (Lb + L4 * C23 + Le * S2 + Lg * S23 + Lii * S23), C1 * (Le * C2 + Lg * C23 + Lii * C23 - L4 * S23), C1 * (Lg * C23 + Lii * C23 - L4 * S23)},
+      {-(Lf - Ld) * S1 - C1 * (Lb + L4 * C23 + Le * S2 + Lg * S23 + Lii * S23), -S1 * (Le * C2 + Lg * C23 + Lii * C23 - L4 * S23), -S1 * (Lg * C23 + Lii * C23 - L4 * S23)},
+      {0, -L4 * C23 - Le * S2 - (Lg + Lii) * S23, -L4 * C23 - Lg + Lii * S23}};
+
+  // 逆行列の計算 (手計算で導出)
+  float detJ = J[0][0] * (J[1][1] * J[2][2] - J[1][2] * J[2][1]) -
+                J[0][1] * (J[1][0] * J[2][2] - J[1][2] * J[2][0]) +
+                J[0][2] * (J[1][0] * J[2][1] - J[1][1] * J[2][0]);
+
+  if (fabs(detJ) < 1e-6)
   {
-    joint[1] = GetFilterdSignal(&LPF_motor[1], joint[1], flag_init);
+    ql_vel[0] = ql_vel[1] = ql_vel[2] = 0;
   }
-  motor[0] = -joint[0] * Rgn1;
+  else
+  {
+    float invJ[3][3];
+
+    invJ[0][0] = (J[1][1] * J[2][2] - J[1][2] * J[2][1]) / detJ;
+    invJ[0][1] = (J[0][2] * J[2][1] - J[0][1] * J[2][2]) / detJ;
+    invJ[0][2] = (J[0][1] * J[1][2] - J[0][2] * J[1][1]) / detJ;
+    invJ[1][0] = (J[1][2] * J[2][0] - J[1][0] * J[2][2]) / detJ;
+    invJ[1][1] = (J[0][0] * J[2][2] - J[0][2] * J[2][0]) / detJ;
+    invJ[1][2] = (J[0][2] * J[1][0] - J[0][0] * J[1][2]) / detJ;
+    invJ[2][0] = (J[1][0] * J[2][1] - J[1][1] * J[2][0]) / detJ;
+    invJ[2][1] = (J[0][1] * J[2][0] - J[0][0] * J[2][1]) / detJ;
+    invJ[2][2] = (J[0][0] * J[1][1] - J[0][1] * J[1][0]) / detJ;
+
+    ql_vel[0] = invJ[0][0] * vx + invJ[0][1] * vy + invJ[0][2] * vz;
+    ql_vel[1] = invJ[1][0] * vx + invJ[1][1] * vy + invJ[1][2] * vz;
+    ql_vel[2] = invJ[2][0] * vx + invJ[2][1] * vy + invJ[2][2] * vz;
+  }
+
+  joint[0] = GetFilterdSignal(&LPF_motor[0], joint[0], flag_init);
+  joint[1] = GetFilterdSignal(&LPF_motor[1], joint[1], flag_init);
+  joint[2] = GetFilterdSignal(&LPF_motor[2], joint[2], flag_init);
+  ql_vel[0] = GetFilterdSignal(&LPF_cmd[0], ql_vel[0], flag_init);
+  ql_vel[1] = GetFilterdSignal(&LPF_cmd[1], ql_vel[1], flag_init);
+  ql_vel[2] = GetFilterdSignal(&LPF_cmd[2], ql_vel[2], flag_init);
+
+  motor[0] = joint[0] * Rgn1;
   motor[1] = joint[1] * Rgn2;
   motor[2] = joint[2] * Rgn3;
-  if (flag_reset == 1)
-  {
-    motorZ[0] = motor[0];
-    motorZ[1] = motor[1];
-    motorZ[2] = motor[2];
+  qm_vel[1] = ql_vel[1] * Rgn1;
+  qm_vel[2] = ql_vel[2] * Rgn2;
+  qm_vel[3] = ql_vel[3] * Rgn3;
+
+  if (initialized == 1){
+    qm_first[0] = motor[0];
+    qm_first[1] = motor[1];
+    qm_first[2] = motor[2];
+    initialized = 2;
   }
-
-  wm[0] = backward_diff(motor[0], motorZ[0], dt);
-  wm[0] = GetFilterdSignal(&LPF_cmd[0], wm[0], flag_init);
-  wm[1] = backward_diff(motor[1], motorZ[1], dt);
-  wm[1] = GetFilterdSignal(&LPF_cmd[1], wm[1], flag_init);
-  wm[2] = backward_diff(motor[2], motorZ[2], dt);
-  wm[2] = GetFilterdSignal(&LPF_cmd[2], wm[2], flag_init);
-
-  motorZ[0] = motor[0];
-  motorZ[1] = motor[1];
-  motorZ[2] = motor[2];
-
+  for (int i = 0; i < 3; i++)
+  {
+    ql_cmd[i] = motor[i];
+    wl_cmd[i] = (i == 0) ? -ql_vel[i] : ql_vel[i];
+    ql_init[i] = qm_first[i];
+  }
   flag_init = 0;
 }
 
