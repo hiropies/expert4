@@ -1193,32 +1193,32 @@ interrupt void ControlFunction(void)
         if (flag_PPgain == 1)
         {
           axis1.Kpp = 15;
-          axis1.Kff = 1.400;
+          axis1.Kff = 0.700;
           axis1.Kfb = 0.400;
           axis2.Kpp = 15;
-          axis2.Kff = 1.400;
+          axis1.Kff = 0.700;
           axis2.Kfb = 0.400;
           axis3.Kpp = 15;
-          axis3.Kff = 1.400;
+          axis1.Kff = 0.700;
           axis3.Kfb = 0.400;
         }
         else if (flag_PPgain == 2)
         {
           axis1.Kpp = 20;
-          // axis1.Kff = 1.400;
-          // axis1.Kfb = 0.400;
-          axis1.Kff = 0.000;
-          axis1.Kfb = 0.000;
+          axis1.Kff = 0.700;
+          axis1.Kfb = 0.400;
+          // axis1.Kff = 0.000;
+          // axis1.Kfb = 0.000;
           axis2.Kpp = 20;
-          // axis2.Kff = 1.400;
-          // axis2.Kfb = 0.400;
-          axis2.Kff = 0.000;
-          axis2.Kfb = 0.000;
+          axis1.Kff = 0.700;
+          axis2.Kfb = 0.400;
+          // axis2.Kff = 0.000;
+          // axis2.Kfb = 0.000;
           axis3.Kpp = 20;
-          // axis3.Kff = 1.400;
-          // axis3.Kfb = 0.400;
-          axis3.Kff = 0.000;
-          axis3.Kfb = 0.000;
+          axis3.Kff = 0.700;
+          axis3.Kfb = 0.400;
+          // axis3.Kff = 0.000;
+          // axis3.Kfb = 0.000;
         }
 
         float start2 = (float)C6657_timer0_read() * 4.8e-9 * 1e6;
@@ -1407,7 +1407,9 @@ interrupt void ControlFunction(void)
           LimitPosCmd(&axis1);
           // axis1.qm_ref = 0.0;
           // 1軸目 位置P制御
-          axis1.wm_ref = (axis1.qm_ref_z2 - axis1.qm) * axis1.Kpp;
+          // axis1.wm_ref = (axis1.qm_ref_z2 - axis1.qm) * axis1.Kpp;
+          axis1.wm_ref = (axis1.qm_ref_z2 - axis1.qm) * axis1.Kpp + axis1.Kff * axis1.wm_cmd - axis1.Kfb * axis1.wm;
+          // axis3.wm_ref = (axis3.qm_ref_z2 - axis3.qm) * axis3.Kpp + axis3.Kff * axis3.wm_cmd - axis3.Kfb * axis3.wm;
 
           if (flag_FF == 1)
           {
@@ -1442,8 +1444,9 @@ interrupt void ControlFunction(void)
           LimitPosCmd(&axis2);
           // axis2.qm_ref = 0.0;
           // 2軸目 位置P制御
-          axis2.wm_ref = (axis2.qm_ref_z2 - axis2.qm) * axis2.Kpp;
-
+          // axis2.wm_ref = (axis2.qm_ref_z2 - axis2.qm) * axis2.Kpp;
+          axis2.wm_ref = (axis2.qm_ref_z2 - axis2.qm) * axis2.Kpp + axis2.Kff * axis2.wm_cmd - axis2.Kfb * axis2.wm;
+          
           if (flag_FF == 1)
           {
             // 2軸目 速度PI制御＋SFB＋FF
@@ -1477,7 +1480,8 @@ interrupt void ControlFunction(void)
           LimitPosCmd(&axis3);
           // axis3.qm_ref = 0.0;
           // 3軸目 位置P制御
-          axis3.wm_ref = (axis3.qm_ref_z2 - axis3.qm) * axis3.Kpp;
+          // axis3.wm_ref = (axis3.qm_ref_z2 - axis3.qm) * axis3.Kpp;
+          axis3.wm_ref = (axis3.qm_ref_z2 - axis3.qm) * axis3.Kpp + axis3.Kff * axis3.wm_cmd - axis3.Kfb * axis3.wm;
 
           // 3軸目 速度PI制御＋SFB
           if (flag_FF == 1)
@@ -1714,7 +1718,7 @@ interrupt void ControlFunction(void)
           axis1.qm_ref_z1 = axis1.qm_ref;
           if (flag_end3 == 1)
           {            
-            axis1.wm_cmd = 1.0 * ManyRampGenerator1stAxis(axis1.a_ramp, axis1.vel, axis1.t_start, axis1.t_ramp, axis1.t_const, axis1.a_ramp_back, axis1.t_ramp_back) + start_back1;
+            axis1.wm_cmd = 1.0 * ManyRampGenerator1stAxis(axis1.a_ramp, axis1.vel, axis1.t_start, axis1.t_ramp, axis1.t_const, axis1.a_ramp_back, axis1.t_ramp_back);
             // axis1.qm_ref = 1.0 * ManyRampGenerator1stAxis(axis1.a_ramp, axis1.vel, axis1.t_start, axis1.t_ramp, axis1.t_const, axis1.a_ramp_back, axis1.t_ramp_back) + start_back1;
             axis1.qm_ref = axis1.wm_cmd * Tp + axis1.qm_ref_z1;
           }
@@ -1757,7 +1761,7 @@ interrupt void ControlFunction(void)
           axis2.qm_ref_z1 = axis2.qm_ref;
           if (flag_end3 == 1 && flag_end1 == 1)
           {
-            axis2.wm_cmd = 1.0 * ManyRampGenerator2ndAxis(axis2.a_ramp, axis2.vel, axis2.t_start, axis2.t_ramp, axis2.t_const, axis2.a_ramp_back, axis2.t_ramp_back) + start_back2;
+            axis2.wm_cmd = 1.0 * ManyRampGenerator2ndAxis(axis2.a_ramp, axis2.vel, axis2.t_start, axis2.t_ramp, axis2.t_const, axis2.a_ramp_back, axis2.t_ramp_back);
             axis2.qm_ref = axis2.wm_cmd * Tp + axis2.qm_ref_z1;
           }
           else
@@ -1797,7 +1801,7 @@ interrupt void ControlFunction(void)
           // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
           axis3.qm_ref_z2 = axis3.qm_ref_z1;
           axis3.qm_ref_z1 = axis3.qm_ref;
-          axis3.wm_cmd = 1.0 * ManyRampGenerator3rdAxis(axis3.a_ramp, axis3.vel, axis3.t_start, axis3.t_ramp, axis3.t_const, axis3.a_ramp_back, axis3.t_ramp_back) + start_back3;
+          axis3.wm_cmd = 1.0 * ManyRampGenerator3rdAxis(axis3.a_ramp, axis3.vel, axis3.t_start, axis3.t_ramp, axis3.t_const, axis3.a_ramp_back, axis3.t_ramp_back);
           // axis3.qm_ref = 1.0 * ManyRampGenerator3rdAxis(axis3.a_ramp, axis3.vel, axis3.t_start, axis3.t_ramp, axis3.t_const, axis3.a_ramp_back, axis3.t_ramp_back) + start_back3;
           axis3.qm_ref = axis3.wm_cmd * Tp + axis3.qm_ref_z1;
 
@@ -2279,7 +2283,7 @@ void MW_main(void)
   CalcDynamicsInit(flag_dyn_payload);
 
   // 負荷側情報計算関数の定数計算関数
-  // CalcFDTDWrInit_QmrefInputType();
+  CalcFDTDWrInit_QmrefInputType();
   CalcFDTDWrInit_WmcmdInputType();
 
   // FDTD状態オブザーバの定数計算関数
@@ -6454,8 +6458,8 @@ void SetGain(Robot *robo)
 
   // パナゲイン1軸目(適用値100%)
   robo[0].Kpp = 15;
-  robo[0].Kff = 0.000;
-  robo[0].Kfb = 0.000;
+  robo[0].Kff = 0.700;
+  robo[0].Kfb = 0.400;
   robo[0].Kvp = 0.6071;
   robo[0].Kvi = 16.8644;
   // 倍率　
@@ -6495,8 +6499,8 @@ void SetGain(Robot *robo)
 
   // 設計ゲイン 標準形 等価時定数 速度:0.05, 位置0.1
   robo[1].Kpp = 15.4593;
-  robo[1].Kff = 0.000;
-  robo[1].Kfb = 0.000;
+  robo[1].Kff = 0.700;
+  robo[1].Kfb = 0.400;
   robo[1].Kvp = 0.1265;
   robo[1].Kvi = 3.7963;
   robo[1].fwm = 0.1628;
@@ -6545,8 +6549,8 @@ void SetGain(Robot *robo)
 
   // 設計ゲイン
   robo[2].Kpp = 16.2426;
-  robo[2].Kff = 0.000;
-  robo[2].Kfb = 0.000;
+  robo[2].Kff = 0.700;
+  robo[2].Kfb = 0.400;
   robo[2].Kvp = 0.1711;
   robo[2].Kvi = 5.1332;
   robo[2].fwm = -0.0134;
