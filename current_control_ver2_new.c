@@ -1588,7 +1588,7 @@ interrupt void ControlFunction(void)
           // 1軸目 位置指令
           // ランプ関数生成関数で位置指令を決定
           // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
-          axis1.wm_cmd = - motor_vel_cmd[0];
+          axis1.wm_cmd = -motor_vel_cmd[0];
           axis1.qm_ref_z2 = axis1.qm_ref_z1;
           axis1.qm_ref_z1 = axis1.qm_ref;
 
@@ -4281,8 +4281,8 @@ void CalcInverseCmd_vel(float goal[3], float vel_hand[3], float ql_cmd[3], float
   // ヤコビアン行列の成分
   J[0][0] = (Lf - Ld) * C1 - S1 * (Lb + L4 * C23 + Le * S2 + Lg * S23 + Lii * S23);
   J[0][1] = C1 * (Le * C2 + Lg * C23 + Lii * C23 - L4 * S23);
-  J[0][2] = C1 * (Lg * C23 + Lii * C23 - L4 * S23);
-  J[1][0] = -((Lf - Ld) * S1 - C1 * (Lb + L4 * C23 + Le * S2 + Lg * S23 + Lii * S23));
+  J[0][2] = C1*(Lg*C23+Lii*C23-L4*S23);
+  J[1][0] = -(Lf - Ld) * S1 - C1 * (Lb + L4 * C23 + Le * S2 + Lg * S23 + Lii * S23);
   J[1][1] = -S1 * (Le * C2 + Lg * C23 + Lii * C23 - L4 * S23);
   J[1][2] = -S1 * (Lg * C23 + Lii * C23 - L4 * S23);
   J[2][0] = 0;
