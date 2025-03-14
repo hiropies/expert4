@@ -4326,7 +4326,7 @@ void CalcInverseCmd_vel(float goal[3], float vel_hand[3], float ql_cmd[3], float
   for (i = 0; i < 3; i++)
   {
     ql_cmd[i] = motor[i];
-    wl_cmd[i] = (i == 0) ? -ql_vel[i] : ql_vel[i];
+    wl_cmd[i] = (i == 0) ? -qm_vel[i] : qm_vel[i];
     ql_init[i] = qm_first[i];
   }
   flag_init = 0;
