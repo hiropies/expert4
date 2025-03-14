@@ -4192,7 +4192,12 @@ void CalcInverseCmd_vel(float goal[3], float vel_hand[3], float ql_cmd[3], float
   static float Rgn1, Rgn2, Rgn3;
   static float Lb, Lac, Ld, Le, Lf, Lg, Lh1, Lh2, Lii, Lj, Lk, Larm, L4;
   static float joint[3], motor[3], ql_vel[3], qm_vel[3], qm_first[3];
-  static int flag_init = 0
+  static int flag_init = 0;
+  static float p1[3] = {0.0, 0.0, 0.0};
+  static float J[3][3] = {{0,0,0},
+                          {0,0,0},
+                          {0,0,0}};
+
   if (flag_reset == 1){
     initialized = 0;
     flag_init = 1;
@@ -4218,7 +4223,6 @@ void CalcInverseCmd_vel(float goal[3], float vel_hand[3], float ql_cmd[3], float
     initialized = 1;
   }
 
-  float p1[3] = {0.0, 0.0, 0.0};
   float x = goal[0];
   float y = goal[1];
   float z = goal[2];
@@ -4247,14 +4251,19 @@ void CalcInverseCmd_vel(float goal[3], float vel_hand[3], float ql_cmd[3], float
   float C1 = cos(joint[0]);
   float S2 = sin(joint[1]);
   float C2 = cos(joint[1]);
-  float S23 = sin(joint[1] + joint[2]),
+  float S23 = sin(joint[1] + joint[2]);
   float C23 = cos(joint[1] + joint[2]);
 
   // ヤコビアン行列の成分
-  float J[3][3] = {
-      {(Lf - Ld) * C1 - S1 * (Lb + L4 * C23 + Le * S2 + Lg * S23 + Lii * S23), C1 * (Le * C2 + Lg * C23 + Lii * C23 - L4 * S23), C1 * (Lg * C23 + Lii * C23 - L4 * S23)},
-      {-(Lf - Ld) * S1 - C1 * (Lb + L4 * C23 + Le * S2 + Lg * S23 + Lii * S23), -S1 * (Le * C2 + Lg * C23 + Lii * C23 - L4 * S23), -S1 * (Lg * C23 + Lii * C23 - L4 * S23)},
-      {0, -L4 * C23 - Le * S2 - (Lg + Lii) * S23, -L4 * C23 - Lg + Lii * S23}};
+  J[0][0] = (Lf - Ld) * C1 - S1 * (Lb + L4 * C23 + Le * S2 + Lg * S23 + Lii * S23);
+  J[0][1] = C1 * (Le * C2 + Lg * C23 + Lii * C23 - L4 * S23);
+  J[0][2] = C1 * (Lg * C23 + Lii * C23 - L4 * S23);
+  J[1][0] = -(Lf - Ld) * S1 - C1 * (Lb + L4 * C23 + Le * S2 + Lg * S23 + Lii * S23);
+  J[1][1] = -S1 * (Le * C2 + Lg * C23 + Lii * C23 - L4 * S23);
+  J[1][2] = -S1 * (Lg * C23 + Lii * C23 - L4 * S23);
+  J[2][0] = 0;
+  J[2][1] = -L4 * C23 - Le * S2 - (Lg + Lii) * S23;
+  J[2][2] = -L4 * C23 - Lg + Lii * S23;
 
   // 逆行列の計算 (手計算で導出)
   float detJ = J[0][0] * (J[1][1] * J[2][2] - J[1][2] * J[2][1]) -
@@ -4304,7 +4313,8 @@ void CalcInverseCmd_vel(float goal[3], float vel_hand[3], float ql_cmd[3], float
     qm_first[2] = motor[2];
     initialized = 2;
   }
-  for (int i = 0; i < 3; i++)
+  int i = 0;
+  for (i = 0; i < 3; i++)
   {
     ql_cmd[i] = motor[i];
     wl_cmd[i] = (i == 0) ? -ql_vel[i] : ql_vel[i];
