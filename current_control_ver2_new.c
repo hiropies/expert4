@@ -1157,13 +1157,13 @@ interrupt void ControlFunction(void)
         }
 
       // 負荷側情報計算
-      // CalcFDTDWr_QmrefInputType(&axis1);
-      // CalcFDTDWr_QmrefInputType(&axis2);
-      // CalcFDTDWr_QmrefInputType(&axis3);
+      CalcFDTDWr_QmrefInputType(&axis1);
+      CalcFDTDWr_QmrefInputType(&axis2);
+      CalcFDTDWr_QmrefInputType(&axis3);
 
-      CalcFDTDWr_WmcmdInputType(&axis1);
-      CalcFDTDWr_WmcmdInputType(&axis2);
-      CalcFDTDWr_WmcmdInputType(&axis3);
+      // CalcFDTDWr_WmcmdInputType(&axis1);
+      // CalcFDTDWr_WmcmdInputType(&axis2);
+      // CalcFDTDWr_WmcmdInputType(&axis3);
 
       // 動力学トルクを計算
       CalcTauLDyn(joint);
@@ -1247,15 +1247,15 @@ interrupt void ControlFunction(void)
         if (flag_FF_triple == 1)
         {
           // 1,2軸動力学モデル更新
-          // CalcFDTDWrUpdate_QmrefInputType_1st2nd();
-          CalcFDTDWrUpdate_WmcmdInputType_1st2nd();
+          CalcFDTDWrUpdate_QmrefInputType_1st2nd();
+          // CalcFDTDWrUpdate_WmcmdInputType_1st2nd();
           WAVE_TimeWrInit = (float)C6657_timer0_read() * 4.8e-9 * 1e6 - start2;
         }
         else
         {
           // 2軸のみモデル更新
-          // CalcFDTDWrUpdate_QmrefInputType_2nd();
-          CalcFDTDWrUpdate_WmcmdInputType_2nd();
+          CalcFDTDWrUpdate_QmrefInputType_2nd();
+          // CalcFDTDWrUpdate_WmcmdInputType_2nd();
           WAVE_TimeWrInit = (float)C6657_timer0_read() * 4.8e-9 * 1e6 - start2;
         }
 
@@ -1276,22 +1276,22 @@ interrupt void ControlFunction(void)
         // FF制御　FDTDで離散化した負荷側情報計算関数(qmref入力)
         if (flag_FF_triple == 1)
         {
-          // CalcFDTDWr_QmrefInputType(&axis1); // 1軸目は動力学外乱入力なし
-          // CalcFDTDWr_QmrefInputType(&axis2);
-          // CalcFDTDWr_QmrefInputType(&axis3);
+          CalcFDTDWr_QmrefInputType(&axis1); // 1軸目は動力学外乱入力なし
+          CalcFDTDWr_QmrefInputType(&axis2);
+          CalcFDTDWr_QmrefInputType(&axis3);
 
-          CalcFDTDWr_WmcmdInputType(&axis1);
-          CalcFDTDWr_WmcmdInputType(&axis2);
-          CalcFDTDWr_WmcmdInputType(&axis3);
+          // CalcFDTDWr_WmcmdInputType(&axis1);
+          // CalcFDTDWr_WmcmdInputType(&axis2);
+          // CalcFDTDWr_WmcmdInputType(&axis3);
           WAVE_TimeWr = (float)C6657_timer1_read() * 4.8e-9 * 1e6 - start3;
         }
         else
         {
-          // CalcFDTDWr_QmrefInputType(&axis2);
-          // CalcFDTDWr_QmrefInputType(&axis3);
+          CalcFDTDWr_QmrefInputType(&axis2);
+          CalcFDTDWr_QmrefInputType(&axis3);
 
-          CalcFDTDWr_WmcmdInputType(&axis2);
-          CalcFDTDWr_WmcmdInputType(&axis3);
+          // CalcFDTDWr_WmcmdInputType(&axis2);
+          // CalcFDTDWr_WmcmdInputType(&axis3);
           WAVE_TimeWr = (float)C6657_timer1_read() * 4.8e-9 * 1e6 - start3;
         }
 
@@ -3815,7 +3815,7 @@ int CalcHandCmdCircle(float goal[3], float vel_hand[3], float t_wait, float spee
         goal[2] = C1 * fz - S1 * fx + z_slide;
         vel_hand[0] = C1 * vfx + S1 * vfz;
         vel_hand[1] = vfy;
-        vel_hand[2] = C1 * vfz + S1 * vfx;
+        vel_hand[2] = C1 * vfz - S1 * vfx;
         fxZ = fx;
         fyZ = fy;
         fzZ = fz;
@@ -3839,15 +3839,18 @@ int CalcHandCmdCircle(float goal[3], float vel_hand[3], float t_wait, float spee
     goal[0] = goalZ[0];
     goal[1] = goalZ[1];
     goal[2] = goalZ[2];
+    vel_hand[0] = 0;
+    vel_hand[1] = 0;
+    vel_hand[2] = 0;
     Tall = 0;
     flag_init = 0;
   }
   WAVE_fx = goal[0];
-  WAVE_fy = goal[0];
-  WAVE_fz = goal[0];
-  WAVE_vx = vfx;
-  WAVE_vy = vfy;
-  WAVE_vz = vfz;
+  WAVE_fy = goal[1];
+  WAVE_fz = goal[2];
+  WAVE_vx = vel_hand[0];
+  WAVE_vy = vel_hand[1];
+  WAVE_vz = vel_hand[2];
   return 1; //1を返すと逆運動学でFilterあり。０を返すとFilter無し。
 }
 
