@@ -3842,9 +3842,9 @@ int CalcHandCmdCircle(float goal[3], float vel_hand[3], float t_wait, float spee
     Tall = 0;
     flag_init = 0;
   }
-  WAVE_fx = fx;
-  WAVE_fy = fy;
-  WAVE_fz = fz;
+  WAVE_fx = goal[0];
+  WAVE_fy = goal[0];
+  WAVE_fz = goal[0];
   WAVE_vx = vfx;
   WAVE_vy = vfy;
   WAVE_vz = vfz;
