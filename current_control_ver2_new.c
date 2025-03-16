@@ -3780,7 +3780,7 @@ int CalcHandCmdCircle(float goal[3], float vel_hand[3], float t_wait, float spee
         flag_init = 0;
       }
       fx = 0.000;
-      fy = -0.010;
+      fy = -D/2.0;
       fz = 0.000;
       goal[0] = C1 * fx + S1 * fz + x_slide;
       goal[1] = fy + y_slide;
