@@ -3763,7 +3763,7 @@ float GetFilterdSignal(LPF_param *Filter, float u, int flag_init)
 // 手先軌跡(円)
 int CalcHandCmdCircle(float goal[3], float vel_hand[3], float t_wait, float speed, float start_hand[3], int flag_loop)
 {
-  const float D = 0.020;
+  const float D = 0.010;
   const float path = (PI * D);
   const float freq = 1 / (path / (speed/60.0));
   const float t_task = (1.0 / freq) * 1.5;
