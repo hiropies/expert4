@@ -2298,8 +2298,7 @@ void MW_main(void)
   SetBDN(&axis3, BDN2);       /// Robot構造体変数jointにボード番号をセット
   SetENC_CH(&axis3, ENC_CH2); /// Robot構造体変数jointにエンコーダchをセット
 
-  float fs = 5.0;
-  float fs2 = 10.0;
+  float fs = 15.0;
   float Q = 1.0 / sqrt(2.0);
   SetLPF(LPF_motor, Tp, fs, Q);
   SetLPF(LPF_cmd, Tp, fs, Q);
@@ -3763,29 +3762,29 @@ float GetFilterdSignal(LPF_param *Filter, float u, int flag_init)
 // 手先軌跡(円)
 int CalcHandCmdCircle(float goal[3], float vel_hand[3], float t_wait, float speed, float start_hand[3], int flag_loop)
 {
-  const float D = 0.010;
-  const float path = (PI * D);
-  const float freq = 1 / (path / (speed/60.0));
-  const float t_task = (1.0 / freq) * 1.5;
+  float D = 0.010;
+  float path = (PI * D);
+  float freq = 1 / (path / (speed/60.0));
+  float t_task = (1.0 / freq) * 1.5;
   // const float t_task = 1.5 / freq;
   // const float S1 = mwsin(theta);
   // const float C1 = mwcos(theta);
   // const float S2 = mwsin(theta2);
   // const float C2 = mwcos(theta2);
-  const float S1 = -0.7071;
-  const float C1 = 0.7071;
+  float S1 = -0.7071;
+  float C1 = 0.7071;
   // static float start_hand[3] = {1.2746, -0.07071, 0.2466};
-  const float x_slide = 1.2746;
+  float x_slide = 1.2746;
   // const float x_slide = 1.2846; // +x側10mmオフセット
   // const float x_slide = 1.2696; // -x側10mmオフセット
-  const float y_slide = 0.0;
-  const float z_slide = 0.2466;
-  static float Tall = 0;
-  static float goalZ[3] = {0, 0, 0};
-  static float fxZ, fyZ, fzZ;
-  static float fx = 0, fy = 0, fz = 0;
-  static float vfx = 0, vfy = 0, vfz = 0;
-  static int flag_init = 0;
+  float y_slide = 0.0;
+  float z_slide = 0.2466;
+  float Tall = 0;
+  float goalZ[3] = {0, 0, 0};
+  float fxZ, fyZ, fzZ;
+  float fx = 0, fy = 0, fz = 0;
+  float vfx = 0, vfy = 0, vfz = 0;
+  int flag_init = 0;
   if(flag_cmd_end == 0){
     if (flag_init == 0)
     {
