@@ -144,6 +144,8 @@ volatile float WAVE_fz = 0.0;
 volatile float WAVE_vx = 0.0;
 volatile float WAVE_vy = 0.0;
 volatile float WAVE_vz = 0.0;
+volatile int WAVE_state = 0;
+volatile int WAVE_check = 0;
 
 volatile int flag_reposition = 0;
 volatile int flag_first_go = 0;
@@ -1434,8 +1436,12 @@ interrupt void ControlFunction(void)
           // axis1.qm_ref = 0.0;
           // 1軸目 位置P制御
           // axis1.wm_ref = (axis1.qm_ref_z2 - axis1.qm) * axis1.Kpp;
-          axis1.wm_ref = (axis1.qm_ref_z2 - axis1.qm) * axis1.Kpp + axis1.Kff * axis1.wm_cmd - axis1.Kfb * axis1.wm;
-          // axis3.wm_ref = (axis3.qm_ref_z2 - axis3.qm) * axis3.Kpp + axis3.Kff * axis3.wm_cmd - axis3.Kfb * axis3.wm;
+          // axis1.wm_ref = (axis1.qm_ref_z2 - axis1.qm) * axis1.Kpp + axis1.Kff * axis1.wm_cmd - axis1.Kfb * axis1.wm;
+          if(flag_PPgain == 2){
+            axis1.wm_ref = (axis1.qm_ref_z2 - axis1.qm) * axis1.Kpp + axis1.Kff * axis1.wm_cmd - axis1.Kfb * axis1.wm;
+          }else{
+            axis1.wm_ref = (axis1.qm_ref_z2 - axis1.qm) * axis1.Kpp;
+          }
 
           if (flag_FF == 1)
           {
@@ -1471,8 +1477,13 @@ interrupt void ControlFunction(void)
           // axis2.qm_ref = 0.0;
           // 2軸目 位置P制御
           // axis2.wm_ref = (axis2.qm_ref_z2 - axis2.qm) * axis2.Kpp;
-          axis2.wm_ref = (axis2.qm_ref_z2 - axis2.qm) * axis2.Kpp + axis2.Kff * axis2.wm_cmd - axis2.Kfb * axis2.wm;
-          
+          // axis2.wm_ref = (axis2.qm_ref_z2 - axis2.qm) * axis2.Kpp + axis2.Kff * axis2.wm_cmd - axis2.Kfb * axis2.wm;
+          if(flag_PPgain == 2){
+            axis2.wm_ref = (axis2.qm_ref_z2 - axis2.qm) * axis2.Kpp + axis2.Kff * axis2.wm_cmd - axis2.Kfb * axis2.wm;
+          }else{
+            axis2.wm_ref = (axis2.qm_ref_z2 - axis2.qm) * axis2.Kpp;
+          }
+
           if (flag_FF == 1)
           {
             // 2軸目 速度PI制御＋SFB＋FF
@@ -1507,7 +1518,12 @@ interrupt void ControlFunction(void)
           // axis3.qm_ref = 0.0;
           // 3軸目 位置P制御
           // axis3.wm_ref = (axis3.qm_ref_z2 - axis3.qm) * axis3.Kpp;
-          axis3.wm_ref = (axis3.qm_ref_z2 - axis3.qm) * axis3.Kpp + axis3.Kff * axis3.wm_cmd - axis3.Kfb * axis3.wm;
+          // axis3.wm_ref = (axis3.qm_ref_z2 - axis3.qm) * axis3.Kpp + axis3.Kff * axis3.wm_cmd - axis3.Kfb * axis3.wm;
+          if(flag_PPgain == 2){
+            axis3.wm_ref = (axis3.qm_ref_z2 - axis3.qm) * axis3.Kpp + axis3.Kff * axis3.wm_cmd - axis3.Kfb * axis3.wm;
+          }else{
+            axis3.wm_ref = (axis3.qm_ref_z2 - axis3.qm) * axis3.Kpp;
+          }
 
           // 3軸目 速度PI制御＋SFB
           if (flag_FF == 1)
@@ -1576,7 +1592,7 @@ interrupt void ControlFunction(void)
           static int flag_loop = 1;
           static int filter_reset = 0;
           static int inverse_reset = 1;
-
+          
           float start_cmd = (float)C6657_timer0_read() * 4.8e-9 * 1e6;
 
           // int flag_filter_on = CalcHandCmdCenter(flag_CalcHandCmd ,hand_cmd, time_wait, speed_hand, start_hand, flag_loop);
@@ -2298,7 +2314,8 @@ void MW_main(void)
   SetBDN(&axis3, BDN2);       /// Robot構造体変数jointにボード番号をセット
   SetENC_CH(&axis3, ENC_CH2); /// Robot構造体変数jointにエンコーダchをセット
 
-  float fs = 15.0;
+  float fs = 5.0;
+  float fs2 = 10.0;
   float Q = 1.0 / sqrt(2.0);
   SetLPF(LPF_motor, Tp, fs, Q);
   SetLPF(LPF_cmd, Tp, fs, Q);
@@ -3762,7 +3779,7 @@ float GetFilterdSignal(LPF_param *Filter, float u, int flag_init)
 // 手先軌跡(円)
 int CalcHandCmdCircle(float goal[3], float vel_hand[3], float t_wait, float speed, float start_hand[3], int flag_loop)
 {
-  float D = 0.010;
+  float D = 0.020;
   float path = (PI * D);
   float freq = 1 / (path / (speed/60.0));
   float t_task = (1.0 / freq) * 1.5;
@@ -3779,15 +3796,17 @@ int CalcHandCmdCircle(float goal[3], float vel_hand[3], float t_wait, float spee
   // const float x_slide = 1.2696; // -x側10mmオフセット
   float y_slide = 0.0;
   float z_slide = 0.2466;
-  float Tall = 0;
-  float goalZ[3] = {0, 0, 0};
-  float fxZ, fyZ, fzZ;
-  float fx = 0, fy = 0, fz = 0;
-  float vfx = 0, vfy = 0, vfz = 0;
-  int flag_init = 0;
+  static float Tall = 0;
+  static float goalZ[3] = {0, 0, 0};
+  static float fxZ, fyZ, fzZ;
+  static float fx = 0, fy = 0, fz = 0;
+  static float vfx = 0, vfy = 0, vfz = 0;
+  static int flag_init = 0;
   if(flag_cmd_end == 0){
+    WAVE_state = 1;
     if (flag_init == 0)
     {
+      WAVE_state = 2;
       if (flag_loop == 1)
       {
         flag_init = 1;
@@ -3816,8 +3835,10 @@ int CalcHandCmdCircle(float goal[3], float vel_hand[3], float t_wait, float spee
       fzZ = fz;
     }
     if(flag_init == 1){
+      WAVE_state = 3;
       if (Tall < t_wait)
       {
+        WAVE_state = 4;
         goal[0] = goalZ[0];
         goal[1] = goalZ[1];
         goal[2] = goalZ[2];
@@ -3827,6 +3848,7 @@ int CalcHandCmdCircle(float goal[3], float vel_hand[3], float t_wait, float spee
       }
       else if (Tall >= t_wait && Tall < (t_wait + t_task))
       {
+        WAVE_state = 5;
         fx = (D / 2.0) * sin(2 * PI * freq * (Tall - t_wait));
         fy = -(D / 2.0) * cos(2 * PI * freq * (Tall - t_wait));
         fz = 0;
@@ -3849,6 +3871,7 @@ int CalcHandCmdCircle(float goal[3], float vel_hand[3], float t_wait, float spee
       }
       else if (Tall >= t_wait + t_task)
       {
+        WAVE_state = 6;
         goal[0] = goalZ[0];
         goal[1] = goalZ[1];
         goal[2] = goalZ[2];
@@ -3869,6 +3892,7 @@ int CalcHandCmdCircle(float goal[3], float vel_hand[3], float t_wait, float spee
     Tall = 0;
     flag_init = 0;
   }
+  WAVE_check = 1;
   WAVE_fx = goal[0];
   WAVE_fy = goal[1];
   WAVE_fz = goal[2];
