@@ -103,10 +103,10 @@ volatile int flag_Vdc_setted = 0; // 位置/速度制御切り替えフラグ
 volatile int flag_FBgain = 1;     // パナ指定FBゲイン倍率
 volatile int flag_PPgain = 2;     // 位置Pゲイン
 volatile int flag_FF = 0;         // FF制御フラグ
-volatile int flag_SOB = 0;        // 状態オブザーバフラグ
+volatile int flag_SOB = 2;        // 状態オブザーバフラグ
 volatile int counter_2 = 0;       // 指令値Z^=2用カウンタ
 volatile int WAVE_LoopCount = 1;
-volatile int flag_FF_triple = 0;
+volatile int flag_FF_triple = 1;
 volatile int flag_cmd_end = 0;
 
 volatile float WAVE_Timer0 = 0.0; // タイマー記録変数
@@ -173,6 +173,7 @@ int Flag_ARCS_start = 0; // ARCSへの制御フラグ信号
 int Flag_ARCS_clear = 0; // ARCSへの制御フラグ信号
 
 //
+volatile float speed_hand = 2.0;           // 軌跡制御手先速度
 volatile float ref_wm_direct = 0.0;         // 全慣性測定用速度指令値
 volatile int debug_theta = 0;               // デバッグ用変数。axis1.theta_rl_fullをこれで置き換えて、プログラムの挙動を見る
 volatile float load_angle_limit_deg1 = 0.0; // 1軸 負荷側角度リミット
@@ -1383,11 +1384,11 @@ interrupt void ControlFunction(void)
             hand_cmd[1] = start_hand[1];
             hand_cmd[2] = start_hand[2];
             static float wait_cmd = 3.0;
-            static float speed = 10.0; // [m/min] = 60 [m/s]
+            // static float speed = 2.0; // [m/min] = 60 [m/s]
             static int flag_loop = 0;
             static int filter = 0;
-            // filter = CalcHandCmdCenter(flag_CalcHandCmd, hand_cmd, wait, speed, start_hand, flag_loop);
-            filter = CalcHandCmdCircle(hand_cmd, hand_vel, wait_cmd, speed, start_hand, flag_loop);
+            // filter = CalcHandCmdCenter(flag_CalcHandCmd, hand_cmd, wait, speed_hand, start_hand, flag_loop);
+            filter = CalcHandCmdCircle(hand_cmd, hand_vel, wait_cmd, speed_hand, start_hand, flag_loop);
             // start_hand[0] = hand_cmd[0];
             // start_hand[1] = hand_cmd[1];
             // start_hand[2] = hand_cmd[2];
@@ -1588,7 +1589,7 @@ interrupt void ControlFunction(void)
             ＊軸によって違うので注意！！！（ギアとかによる）
           ***************************************************************************** */
           static float time_wait = 3.0;
-          static float speed_hand = 10.0; // [m/min] = 60 [m/s]
+          // static float speed_hand = 10.0; // [m/min] = 60 [m/s]
           static int flag_loop = 1;
           static int filter_reset = 0;
           static int inverse_reset = 1;
@@ -2314,8 +2315,7 @@ void MW_main(void)
   SetBDN(&axis3, BDN2);       /// Robot構造体変数jointにボード番号をセット
   SetENC_CH(&axis3, ENC_CH2); /// Robot構造体変数jointにエンコーダchをセット
 
-  float fs = 5.0;
-  float fs2 = 10.0;
+  float fs = 10.0;
   float Q = 1.0 / sqrt(2.0);
   SetLPF(LPF_motor, Tp, fs, Q);
   SetLPF(LPF_cmd, Tp, fs, Q);
@@ -3779,7 +3779,7 @@ float GetFilterdSignal(LPF_param *Filter, float u, int flag_init)
 // 手先軌跡(円)
 int CalcHandCmdCircle(float goal[3], float vel_hand[3], float t_wait, float speed, float start_hand[3], int flag_loop)
 {
-  float D = 0.020;
+  float D = 0.010;
   float path = (PI * D);
   float freq = 1 / (path / (speed/60.0));
   float t_task = (1.0 / freq) * 1.5;
