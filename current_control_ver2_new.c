@@ -12,6 +12,7 @@
 
   pevボードの対応は毎回要チェック
   全体を作ってから制御手法が違うもので分けたほうがいいかも
+
 */
 
 /*
@@ -54,9 +55,9 @@
 
 /// 制御用定数
 static const float PI = 3.14159265358979; /// 円周率
-static const float Fs = 10000;            /// キャリア周波数[Hz]
-static const float Ts = 100e-6;           /// [s]	電流制御系の制御周期 (Fsを変えたら変えること)
-static const float Tp = 200e-6;           /// [s]	位置/速度制御系の制御周期
+static const float Fs = 8000;            /// キャリア周波数[Hz]
+static const float Ts = 125e-6;           /// [s]	電流制御系の制御周期 (Fsを変えたら変えること)
+static const float Tp = 250e-6;           /// [s]	位置/速度制御系の制御周期
 static const float cmd_1_soft[] = {-1.094, -1.094};
 static const float cmd_2_soft[] = {87.72, 87.72};
 static const float cmd_3_soft[] = {-0.388, -0.388};
@@ -66,8 +67,8 @@ static const float cmd_3_hard[] = {-0.388, -0.388};
 static const float scale = 2.5;
 static const float scale_fast = 7.5;
 static const float scale_slow = 7.5;
-// static float start_hand[3] = {1.2746, 0.000, 0.2466};
-static float start_hand[3] = {1.2746, -0.07071, 0.2466}; //{1.2746, 0.000, 0.2466}を中心としたひし形のスタート地点
+static float start_hand[3] = {1.2746, -0.010, 0.2466};
+// static float start_hand[3] = {1.2746, -0.07071, 0.2466}; //{1.2746, 0.000, 0.2466}を中心としたひし形のスタート地点
 // static float start_hand[3] = {1.2846, -0.07071, 0.2466}; //{1.2846, 0.000, 0.2466}を中心としたひし形のスタート地点
 // static float start_hand[3] = {1.2696, -0.07071, 0.2466}; //{1.2696, 0.000, 0.2466}を中心としたひし形のスタート地点
 
@@ -88,9 +89,13 @@ float range[] = {5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0}; /// AD変換レンジ 
 ************************************************************************/
 
 // フラグ
+volatile int WAVE_INIT_COUNT = 0;
+volatile float WAVE_FIL_Y = 0;
+
 volatile int flag_cont_start = 0;  //!< 制御開始フラグ
 volatile float flag_dead = 1;      //!< デッドタイム補償フラグ
 volatile int flag_dyn_payload = 1; // 動力学計算ペイロード切り替えフラグ(0:無負荷、1:7.2kg負荷、2:4kg負荷)
+volatile int flag_CalcHandCmd = 0; // 手先軌跡選択フラグ(0:circle, 1:rectangle, 2:diamond)
 volatile int flag_debug = 0;
 volatile int flag_pv = 0;         // 位置/速度制御切り替えフラグ
 volatile int flag_delay = 0;      // FF用　1/z^2 遅延フラグ
@@ -98,10 +103,10 @@ volatile int flag_Vdc_setted = 0; // 位置/速度制御切り替えフラグ
 volatile int flag_FBgain = 1;     // パナ指定FBゲイン倍率
 volatile int flag_PPgain = 2;     // 位置Pゲイン
 volatile int flag_FF = 0;         // FF制御フラグ
-volatile int flag_SOB = 0;        // 状態オブザーバフラグ
+volatile int flag_SOB = 2;        // 状態オブザーバフラグ
 volatile int counter_2 = 0;       // 指令値Z^=2用カウンタ
 volatile int WAVE_LoopCount = 1;
-volatile int flag_FF_triple = 0;
+volatile int flag_FF_triple = 1;
 volatile int flag_cmd_end = 0;
 
 volatile float WAVE_Timer0 = 0.0; // タイマー記録変数
@@ -136,6 +141,11 @@ volatile float WAVE_HandZ = 0.0;
 volatile float WAVE_fx = 0.0;
 volatile float WAVE_fy = 0.0;
 volatile float WAVE_fz = 0.0;
+volatile float WAVE_vx = 0.0;
+volatile float WAVE_vy = 0.0;
+volatile float WAVE_vz = 0.0;
+volatile int WAVE_state = 0;
+volatile int WAVE_check = 0;
 
 volatile int flag_reposition = 0;
 volatile int flag_first_go = 0;
@@ -163,6 +173,7 @@ int Flag_ARCS_start = 0; // ARCSへの制御フラグ信号
 int Flag_ARCS_clear = 0; // ARCSへの制御フラグ信号
 
 //
+volatile float speed_hand = 2.0;           // 軌跡制御手先速度
 volatile float ref_wm_direct = 0.0;         // 全慣性測定用速度指令値
 volatile int debug_theta = 0;               // デバッグ用変数。axis1.theta_rl_fullをこれで置き換えて、プログラムの挙動を見る
 volatile float load_angle_limit_deg1 = 0.0; // 1軸 負荷側角度リミット
@@ -201,25 +212,31 @@ volatile float WAVE_MRBR3;
 /// ゲイン
 // 1軸目
 volatile float WAVE_Kpp1 = 0.0;
+volatile float WAVE_Kff1 = 0.0;
+volatile float WAVE_Kfb1 = 0.0;
 volatile float WAVE_Kvp1 = 0.0;
 volatile float WAVE_Kvi1 = 0.0;
 volatile float WAVE_fwm1 = 0.0;
 volatile float WAVE_fqs1 = 0.0;
 volatile float WAVE_fwl1 = 0.0;
 // 2軸目
-volatile float WAVE_Kpp3 = 0.0;
-volatile float WAVE_Kvp3 = 0.0;
-volatile float WAVE_Kvi3 = 0.0;
-volatile float WAVE_fwm3 = 0.0;
-volatile float WAVE_fqs3 = 0.0;
-volatile float WAVE_fwl3 = 0.0;
-// 3軸目
 volatile float WAVE_Kpp2 = 0.0;
+volatile float WAVE_Kff2 = 0.0;
+volatile float WAVE_Kfb2 = 0.0;
 volatile float WAVE_Kvp2 = 0.0;
 volatile float WAVE_Kvi2 = 0.0;
 volatile float WAVE_fwm2 = 0.0;
 volatile float WAVE_fqs2 = 0.0;
 volatile float WAVE_fwl2 = 0.0;
+// 3軸目
+volatile float WAVE_Kpp3 = 0.0;
+volatile float WAVE_Kff3 = 0.0;
+volatile float WAVE_Kfb3 = 0.0;
+volatile float WAVE_Kvp3 = 0.0;
+volatile float WAVE_Kvi3 = 0.0;
+volatile float WAVE_fwm3 = 0.0;
+volatile float WAVE_fqs3 = 0.0;
+volatile float WAVE_fwl3 = 0.0;
 
 // 動力学外乱トルク
 volatile float WAVE_tauLdyn1; // [Nm] 動力学外乱トルク
@@ -243,6 +260,19 @@ volatile float WAVE_al_calc3 = 0.0;
 volatile float WAVE_wl_calc3 = 0.0;
 volatile float WAVE_ql_calc3 = 0.0;
 volatile float WAVE_wm_calc3 = 0.0;
+
+volatile float WAVE_al_calc_DPD1 = 0.0;
+volatile float WAVE_wl_calc_DPD1 = 0.0;
+volatile float WAVE_ql_calc_DPD1 = 0.0;
+volatile float WAVE_wm_calc_DPD1 = 0.0;
+volatile float WAVE_al_calc_DPD2 = 0.0;
+volatile float WAVE_wl_calc_DPD2 = 0.0;
+volatile float WAVE_ql_calc_DPD2 = 0.0;
+volatile float WAVE_wm_calc_DPD2 = 0.0;
+volatile float WAVE_al_calc_DPD3 = 0.0;
+volatile float WAVE_wl_calc_DPD3 = 0.0;
+volatile float WAVE_ql_calc_DPD3 = 0.0;
+volatile float WAVE_wm_calc_DPD3 = 0.0;
 
 volatile float WAVE_est_wm1 = 0.0;
 volatile float WAVE_est_qs1 = 0.0;
@@ -346,6 +376,12 @@ volatile float WAVE_wm_ref_org;
 volatile float WAVE_wm_ref1;
 volatile float WAVE_wm_ref2;
 volatile float WAVE_wm_ref3;
+volatile float WAVE_wm_cmd1;
+volatile float WAVE_wm_cmd2;
+volatile float WAVE_wm_cmd3;
+volatile float WAVE_wm_CCC1;
+volatile float WAVE_wm_CCC2;
+volatile float WAVE_wm_CCC3;
 volatile float WAVE_qm1;
 volatile float WAVE_qm2;
 volatile float WAVE_qm3;
@@ -544,6 +580,8 @@ typedef volatile struct Robot
   float KiiQ; //!< q軸電流Iゲイン
 
   float Kpp; // 位置Pゲイン
+  float Kff;
+  float Kfb;
   float Kvi; //!< 速度制御Iゲイン
   float Kvp; //!< 速度制御Pゲイン
   float fwm; //!< モータ速度状態FBゲイン
@@ -588,6 +626,7 @@ typedef volatile struct Robot
   float qm_ref_z1; // FF制御用
   float qm_ref_z2;
   float qm_ref_z3;
+  float wm_cmd;
 
   // 負荷側位置リミット
   float ql_max;
@@ -626,6 +665,13 @@ typedef volatile struct Robot
   float wl_calc;
   float al_calc;
   float wm_calc;
+
+  // Wr計算結果(DPD)
+  float ql_calc_DPD;
+  float wl_calc_DPD;
+  float al_calc_DPD;
+  float wm_calc_DPD;
+
   // 加速度センサrad/s^2換算値
   float al;
   // ランプ指令用変数
@@ -696,19 +742,22 @@ Fdtd_Tsob_Coefficient ob_sub[3] = {0};
 // Jlに関する係数 2慣性系プラントのqmref入力
 typedef struct Fdtd_Wr_Coefficient
 {
-  float a11cf, a12cf, a13cf, a14cf, a15cf, a16cf;
-  float a21cf, a22cf, a23cf, a24cf, a25cf, a26cf;
-  float a31cf, a32cf, a33cf1, a33cf2, a34cf1, a34cf2, a35cf, a36cf;
-  float a41cf, a42cf, a43cf, a44cf1, a44cf2, a45cf, a46cf;
-  float a51cf, a52cf, a53cf, a54cf1, a54cf2, a55cf, a56cf;
-  float a61cf, a62cf, a63cf, a64cf, a65cf, a66cf;
-  float b1cf, b2cf, b3cf, b4cf, b5cf, b6cf;
+  // _x7及び_7xはwm_cmd入力でのみ用いる
+  float a11cf, a12cf, a13cf, a14cf, a15cf, a16cf, a17cf;
+  float a21cf, a22cf, a23cf, a24cf, a25cf, a26cf, a27cf;
+  float a31cf, a32cf, a33cf1, a33cf2, a34cf1, a34cf2, a35cf, a36cf, a37cf;
+  float a41cf, a42cf, a43cf, a44cf1, a44cf2, a45cf, a46cf, a47cf;
+  float a51cf, a52cf, a53cf, a54cf1, a54cf2, a55cf, a56cf, a57cf;
+  float a61cf, a62cf, a63cf, a64cf, a65cf, a66cf, a67cf;
+  float a71cf, a72cf, a73cf, a74cf, a75cf, a76cf, a77cf;
+  float b1cf, b2cf, b3cf, b4cf, b5cf, b6cf, b7cf;
 
   // Iq入力とwm入力の関数でエラーにならないようにqm入力では使わない変数を宣言しておく
   float a22cf1, a22cf2, a23cf1, a23cf2, a34cf, a44cf;
 } Fdtd_Wr_Coefficient;
 
 Fdtd_Wr_Coefficient Wr_sub[3] = {0};
+Fdtd_Wr_Coefficient Wr_DPD[3] = {0};
 
 // *********************************
 // 動力学計算用構造体
@@ -874,6 +923,7 @@ typedef volatile struct LPF_param
 } LPF_param;
 
 LPF_param LPF_motor[3] = {0};
+LPF_param LPF_cmd[3] = {0};
 /**
  *  プロトタイプ宣言
  **/
@@ -921,9 +971,9 @@ void CalcFDTDWrUpdate_QmrefInputType_2nd(void);
 
 // FDTDで離散化した負荷側情報計算関数(D-PD対応Wm_cmd入力型)
 void CalcFDTDWr_WmcmdInputType(Robot *robo);
-void CalcFDTDWrInit_WmcmdInputType(void);
-void CalcFDTDWrUpdate_WmcmdInputType_1st2nd(void);
-void CalcFDTDWrUpdate_WmcmdInputType_2nd(void);
+void CalcFDTDWrInit_WmcmdInputType(Robot *robo);
+void CalcFDTDWrUpdate_WmcmdInputType_1st2nd(Robot *robo);
+void CalcFDTDWrUpdate_WmcmdInputType_2nd(Robot *robo);
 
 // ランプ位置指令生成関数
 float CalcPref2axis(float t_lim, float ql_deg_tilt, int flag);
@@ -942,13 +992,14 @@ void SetVoltReferences(Robot *robo);
 /// 位置指令生成関数
 // #pragma CODE_SECTION(func, “.CODE_ON_HIGHER_SPEED”)
 void SetLPF(LPF_param Filter[], float Ts, float fs, float Q);
-float GetFilterdSignal(LPF_param *Filter, float u, , int flag_filter, int flag_reset);
+float GetFilterdSignal(LPF_param *Filter, float u, int flag_init);
 int CalcHandCmdCenter(int flag_cmd, float goal[3], float t_wait, float speed, float start_hand[3], int flag_loop);
-int CalcHandCmdCircle(float goal[3], float t_wait, float speed, float start_hand[3], int flag_loop);
+int CalcHandCmdCircle(float goal[3], float vel_hand[3], float t_wait, float speed, float start_hand[3], int flag_loop);
 int CalcHandCmdRectangle(float goal[3], float t_wait, float speed, float start_hand[3], int flag_loop);
 int CalcHandCmdDiamond(float goal[3], float t_wait, float speed, float start_hand[3], int flag_loop);
 void LimitPosCmd(Robot *robo);
-void CalcInverseCmd(float goal[3], float joint[3], float motor[3], float wm[3], int flag_filter, int flag_reset, float dt);
+// void CalcInverseCmd(float goal[3], float joint[3], float motor[3], float wm[3], int flag_filter, int flag_reset, float dt);
+void CalcInverseCmd_vel(float goal[3], float vel_hand[3], float ql_cmd[3], float wl_cmd[3], float ql_init[3], int flag_reset);
 // 疑似微分なんやで
 float backward_diff(float x, float xZ, float dt);
 float GeneratorCircle1st(float t_wait, float start);
@@ -995,8 +1046,11 @@ interrupt void ControlFunction(void)
   static unsigned long int LoopCount = 0; //!< 制御周期カウンタ
   static float t = 0.0;                   //!< [s]		時刻
   static float hand_cmd[3] = {0, 0, 0};
+  static float hand_vel[3] = {0, 0, 0};
   static float joint_cmd[3] = {0, 0, 0};
   static float motor_cmd[3] = {0, 0, 0};
+  static float motor_vel_cmd[3] = {0, 0, 0};
+  static float motor_cmd_init[3] = {0, 0, 0};
 
   GetMultiPositions(joint); //!< 複数軸同時取得(特別な事情がない限りこっちを使う)
 
@@ -1080,20 +1134,39 @@ interrupt void ControlFunction(void)
 
       // // 可変ゲイン計算
       // CalcPVGain();
-      // if (flag_PPgain == 1)
-      // {
-      //   axis1.Kpp = 15;
-      // }
-      // // 従来2
-      // else if (flag_PPgain == 2)
-      // {
-      //   axis1.Kpp = 15;
-      // }
+      if (flag_PPgain == 1)
+        {
+          axis1.Kpp = 20;
+          axis1.Kff = 0.00;
+          axis1.Kfb = 0.00;
+          axis2.Kpp = 20;
+          axis1.Kff = 0.00;
+          axis2.Kfb = 0.00;
+          axis3.Kpp = 20;
+          axis1.Kff = 0.00;
+          axis3.Kfb = 0.00;
+        }
+        else if (flag_PPgain == 2)
+        {
+          axis1.Kpp = 20;
+          axis1.Kff = 1.400;
+          axis1.Kfb = 0.400;
+          axis2.Kpp = 20;
+          axis1.Kff = 1.400;
+          axis2.Kfb = 0.400;
+          axis3.Kpp = 20;
+          axis3.Kff = 1.400;
+          axis3.Kfb = 0.400;
+        }
 
       // 負荷側情報計算
-      CalcFDTDWr_QmrefInputType(&axis1);
-      CalcFDTDWr_QmrefInputType(&axis2);
-      CalcFDTDWr_QmrefInputType(&axis3);
+      // CalcFDTDWr_QmrefInputType(&axis1);
+      // CalcFDTDWr_QmrefInputType(&axis2);
+      // CalcFDTDWr_QmrefInputType(&axis3);
+
+      CalcFDTDWr_WmcmdInputType(&axis1);
+      CalcFDTDWr_WmcmdInputType(&axis2);
+      CalcFDTDWr_WmcmdInputType(&axis3);
 
       // 動力学トルクを計算
       CalcTauLDyn(joint);
@@ -1149,21 +1222,27 @@ interrupt void ControlFunction(void)
         CalcPVGain();
         if (flag_PPgain == 1)
         {
-          axis1.Kpp = 15;
-          axis2.Kpp = 15;
-          axis3.Kpp = 15;
+          axis1.Kpp = 20;
+          axis1.Kff = 0.00;
+          axis1.Kfb = 0.00;
+          axis2.Kpp = 20;
+          axis1.Kff = 0.00;
+          axis2.Kfb = 0.00;
+          axis3.Kpp = 20;
+          axis1.Kff = 0.00;
+          axis3.Kfb = 0.00;
         }
         else if (flag_PPgain == 2)
         {
           axis1.Kpp = 20;
+          axis1.Kff = 1.400;
+          axis1.Kfb = 0.400;
           axis2.Kpp = 20;
+          axis1.Kff = 1.400;
+          axis2.Kfb = 0.400;
           axis3.Kpp = 20;
-        }
-        else if (flag_PPgain == 3)
-        {
-          axis1.Kpp = 30;
-          axis2.Kpp = 30;
-          axis3.Kpp = 30;
+          axis3.Kff = 1.400;
+          axis3.Kfb = 0.400;
         }
 
         float start2 = (float)C6657_timer0_read() * 4.8e-9 * 1e6;
@@ -1171,13 +1250,19 @@ interrupt void ControlFunction(void)
         if (flag_FF_triple == 1)
         {
           // 1,2軸動力学モデル更新
-          CalcFDTDWrInit_QmrefInputType_1st2nd();
+          // CalcFDTDWrUpdate_QmrefInputType_1st2nd();
+          CalcFDTDWrUpdate_WmcmdInputType_1st2nd(&axis1);
+          CalcFDTDWrUpdate_WmcmdInputType_1st2nd(&axis2);
+          CalcFDTDWrUpdate_WmcmdInputType_1st2nd(&axis3);
           WAVE_TimeWrInit = (float)C6657_timer0_read() * 4.8e-9 * 1e6 - start2;
         }
         else
         {
           // 2軸のみモデル更新
-          CalcFDTDWrInit_QmrefInputType_1st2nd();
+          // CalcFDTDWrUpdate_QmrefInputType_2nd();
+          CalcFDTDWrUpdate_WmcmdInputType_2nd(&axis1);
+          CalcFDTDWrUpdate_WmcmdInputType_2nd(&axis2);
+          CalcFDTDWrUpdate_WmcmdInputType_2nd(&axis3);
           WAVE_TimeWrInit = (float)C6657_timer0_read() * 4.8e-9 * 1e6 - start2;
         }
 
@@ -1198,15 +1283,22 @@ interrupt void ControlFunction(void)
         // FF制御　FDTDで離散化した負荷側情報計算関数(qmref入力)
         if (flag_FF_triple == 1)
         {
-          CalcFDTDWr_QmrefInputType(&axis1); // 1軸目は動力学外乱入力なし
-          CalcFDTDWr_QmrefInputType(&axis2);
-          CalcFDTDWr_QmrefInputType(&axis3);
+          // CalcFDTDWr_QmrefInputType(&axis1); // 1軸目は動力学外乱入力なし
+          // CalcFDTDWr_QmrefInputType(&axis2);
+          // CalcFDTDWr_QmrefInputType(&axis3);
+
+          CalcFDTDWr_WmcmdInputType(&axis1);
+          CalcFDTDWr_WmcmdInputType(&axis2);
+          CalcFDTDWr_WmcmdInputType(&axis3);
           WAVE_TimeWr = (float)C6657_timer1_read() * 4.8e-9 * 1e6 - start3;
         }
         else
         {
-          CalcFDTDWr_QmrefInputType(&axis2);
-          CalcFDTDWr_QmrefInputType(&axis3);
+          // CalcFDTDWr_QmrefInputType(&axis2);
+          // CalcFDTDWr_QmrefInputType(&axis3);
+
+          CalcFDTDWr_WmcmdInputType(&axis2);
+          CalcFDTDWr_WmcmdInputType(&axis3);
           WAVE_TimeWr = (float)C6657_timer1_read() * 4.8e-9 * 1e6 - start3;
         }
 
@@ -1288,21 +1380,22 @@ interrupt void ControlFunction(void)
           }
           if (flag_reposition == 1)
           {
-            // hand_cmd[0] = start_hand[0];
-            // hand_cmd[1] = start_hand[1];
-            // hand_cmd[2] = start_hand[2];
-            static float wait = 3.0;
-            static float speed = 10.0; // [m/min] = 60 [m/s]
+            hand_cmd[0] = start_hand[0];
+            hand_cmd[1] = start_hand[1];
+            hand_cmd[2] = start_hand[2];
+            static float wait_cmd = 3.0;
+            // static float speed = 2.0; // [m/min] = 60 [m/s]
             static int flag_loop = 0;
             static int filter = 0;
-            filter = CalcHandCmdCenter(flag_CalcHandCmd, hand_cmd, wait, speed, start_hand, flag_loop);
-            start_hand[0] = hand_cmd[0];
-            start_hand[1] = hand_cmd[1];
-            start_hand[2] = hand_cmd[2];
+            // filter = CalcHandCmdCenter(flag_CalcHandCmd, hand_cmd, wait, speed_hand, start_hand, flag_loop);
+            filter = CalcHandCmdCircle(hand_cmd, hand_vel, wait_cmd, speed_hand, start_hand, flag_loop);
+            // start_hand[0] = hand_cmd[0];
+            // start_hand[1] = hand_cmd[1];
+            // start_hand[2] = hand_cmd[2];
             static int flag = 0;
             static int reset = 1;
-            // float goal[3], float joint[3], float motor[3], float wm[3], int flag_filter, int flag_reset, float dt
-            CalcInverseCmd(hand_cmd, joint_cmd, motor_cmd, wm_cmd, filter, reset, Tp);
+            // CalcInverseCmd(hand_cmd, joint_cmd, motor_cmd, motor_vel_cmd, filter, reset, Tp);
+            CalcInverseCmd_vel(hand_cmd, hand_vel, motor_cmd, motor_vel_cmd, motor_cmd_init, 1);
             start_go1 = axis1.qm;
             start_go2 = axis2.qm;
             start_go3 = axis3.qm;
@@ -1337,11 +1430,19 @@ interrupt void ControlFunction(void)
           // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
           axis1.qm_ref_z2 = axis1.qm_ref_z1;
           axis1.qm_ref_z1 = axis1.qm_ref;
-          axis1.qm_ref = 1.0 * ManyRampGenerator1stAxis(axis1.a_ramp, axis1.vel, axis1.t_start, axis1.t_ramp, axis1.t_const, axis1.a_ramp_back, axis1.t_ramp_back);
+          axis1.wm_cmd = 1.0 * ManyRampGenerator1stAxis(axis1.a_ramp, axis1.vel, axis1.t_start, axis1.t_ramp, axis1.t_const, axis1.a_ramp_back, axis1.t_ramp_back);
+          // axis1.qm_ref = 1.0 * ManyRampGenerator1stAxis(axis1.a_ramp, axis1.vel, axis1.t_start, axis1.t_ramp, axis1.t_const, axis1.a_ramp_back, axis1.t_ramp_back);
+          axis1.qm_ref = axis1.wm_cmd * Tp + axis1.qm_ref_z1;
           LimitPosCmd(&axis1);
           // axis1.qm_ref = 0.0;
           // 1軸目 位置P制御
-          axis1.wm_ref = (axis1.qm_ref_z2 - axis1.qm) * axis1.Kpp;
+          // axis1.wm_ref = (axis1.qm_ref_z2 - axis1.qm) * axis1.Kpp;
+          // axis1.wm_ref = (axis1.qm_ref_z2 - axis1.qm) * axis1.Kpp + axis1.Kff * axis1.wm_cmd - axis1.Kfb * axis1.wm;
+          if(flag_PPgain == 2){
+            axis1.wm_ref = (axis1.qm_ref_z2 - axis1.qm) * axis1.Kpp + axis1.Kff * axis1.wm_cmd - axis1.Kfb * axis1.wm;
+          }else{
+            axis1.wm_ref = (axis1.qm_ref_z2 - axis1.qm) * axis1.Kpp;
+          }
 
           if (flag_FF == 1)
           {
@@ -1370,11 +1471,19 @@ interrupt void ControlFunction(void)
           // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
           axis2.qm_ref_z2 = axis2.qm_ref_z1;
           axis2.qm_ref_z1 = axis2.qm_ref;
-          axis2.qm_ref = 1.0 * ManyRampGenerator2ndAxis(axis2.a_ramp, axis2.vel, axis2.t_start, axis2.t_ramp, axis2.t_const, axis2.a_ramp_back, axis2.t_ramp_back);
+          axis2.wm_cmd = 1.0 * ManyRampGenerator2ndAxis(axis2.a_ramp, axis2.vel, axis2.t_start, axis2.t_ramp, axis2.t_const, axis2.a_ramp_back, axis2.t_ramp_back);
+          // axis2.qm_ref = 1.0 * ManyRampGenerator2ndAxis(axis2.a_ramp, axis2.vel, axis2.t_start, axis2.t_ramp, axis2.t_const, axis2.a_ramp_back, axis2.t_ramp_back);
+          axis2.qm_ref = axis2.wm_cmd * Tp + axis2.qm_ref_z1;
           LimitPosCmd(&axis2);
           // axis2.qm_ref = 0.0;
           // 2軸目 位置P制御
-          axis2.wm_ref = (axis2.qm_ref_z2 - axis2.qm) * axis2.Kpp;
+          // axis2.wm_ref = (axis2.qm_ref_z2 - axis2.qm) * axis2.Kpp;
+          // axis2.wm_ref = (axis2.qm_ref_z2 - axis2.qm) * axis2.Kpp + axis2.Kff * axis2.wm_cmd - axis2.Kfb * axis2.wm;
+          if(flag_PPgain == 2){
+            axis2.wm_ref = (axis2.qm_ref_z2 - axis2.qm) * axis2.Kpp + axis2.Kff * axis2.wm_cmd - axis2.Kfb * axis2.wm;
+          }else{
+            axis2.wm_ref = (axis2.qm_ref_z2 - axis2.qm) * axis2.Kpp;
+          }
 
           if (flag_FF == 1)
           {
@@ -1403,11 +1512,19 @@ interrupt void ControlFunction(void)
           // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
           axis3.qm_ref_z2 = axis3.qm_ref_z1;
           axis3.qm_ref_z1 = axis3.qm_ref;
-          axis3.qm_ref = 1.0 * ManyRampGenerator3rdAxis(axis3.a_ramp, axis3.vel, axis3.t_start, axis3.t_ramp, axis3.t_const, axis3.a_ramp_back, axis3.t_ramp_back);
+          axis3.wm_cmd = 1.0 * ManyRampGenerator3rdAxis(axis3.a_ramp, axis3.vel, axis3.t_start, axis3.t_ramp, axis3.t_const, axis3.a_ramp_back, axis3.t_ramp_back);
+          // axis3.qm_ref = 1.0 * ManyRampGenerator3rdAxis(axis3.a_ramp, axis3.vel, axis3.t_start, axis3.t_ramp, axis3.t_const, axis3.a_ramp_back, axis3.t_ramp_back);
+          axis3.qm_ref = axis3.wm_cmd * Tp + axis3.qm_ref_z1;
           LimitPosCmd(&axis3);
           // axis3.qm_ref = 0.0;
           // 3軸目 位置P制御
-          axis3.wm_ref = (axis3.qm_ref_z2 - axis3.qm) * axis3.Kpp;
+          // axis3.wm_ref = (axis3.qm_ref_z2 - axis3.qm) * axis3.Kpp;
+          // axis3.wm_ref = (axis3.qm_ref_z2 - axis3.qm) * axis3.Kpp + axis3.Kff * axis3.wm_cmd - axis3.Kfb * axis3.wm;
+          if(flag_PPgain == 2){
+            axis3.wm_ref = (axis3.qm_ref_z2 - axis3.qm) * axis3.Kpp + axis3.Kff * axis3.wm_cmd - axis3.Kfb * axis3.wm;
+          }else{
+            axis3.wm_ref = (axis3.qm_ref_z2 - axis3.qm) * axis3.Kpp;
+          }
 
           // 3軸目 速度PI制御＋SFB
           if (flag_FF == 1)
@@ -1472,43 +1589,44 @@ interrupt void ControlFunction(void)
             ＊軸によって違うので注意！！！（ギアとかによる）
           ***************************************************************************** */
           static float time_wait = 3.0;
-          static float speed_hand = 10.0; // [m/min] = 60 [m/s]
+          // static float speed_hand = 10.0; // [m/min] = 60 [m/s]
           static int flag_loop = 1;
           static int filter_reset = 0;
-
+          static int inverse_reset = 1;
+          
           float start_cmd = (float)C6657_timer0_read() * 4.8e-9 * 1e6;
 
-          int flag_filter_on = CalcHandCmdCenter(flag_CalcHandCmd ,hand_cmd, time_wait, speed_hand, start_hand, flag_loop);
+          // int flag_filter_on = CalcHandCmdCenter(flag_CalcHandCmd ,hand_cmd, time_wait, speed_hand, start_hand, flag_loop);
+          int flag_filter_on = CalcHandCmdCircle(hand_cmd, hand_vel, time_wait, speed_hand, start_hand, flag_loop);
           WAVE_TimeCalcCmd = (float)C6657_timer0_read() * 4.8e-9 * 1e6 - start_cmd;
 
           start_cmd = (float)C6657_timer0_read() * 4.8e-9 * 1e6;
-          CalcInverseCmd(hand_cmd, joint_cmd, motor_cmd, filter_reset);
-          CalcInverseCmd(hand_cmd, joint_cmd, motor_cmd, wm_cmd, flag_filter_on, filter_reset, Tp);
+          // CalcInverseCmd(hand_cmd, joint_cmd, motor_cmd, motor_vel_cmd, flag_filter_on, filter_reset, Tp);
+          CalcInverseCmd_vel(hand_cmd, hand_vel, motor_cmd, motor_vel_cmd, motor_cmd_init, inverse_reset);
+          inverse_reset = 0;
           WAVE_TimeCalcInvCmd = (float)C6657_timer0_read() * 4.8e-9 * 1e6 - start_cmd;
 
           // 1軸目 位置指令
           // ランプ関数生成関数で位置指令を決定
           // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
+          axis1.wm_cmd = motor_vel_cmd[0];
           axis1.qm_ref_z2 = axis1.qm_ref_z1;
           axis1.qm_ref_z1 = axis1.qm_ref;
-          // axis1.qm_ref = axis1.posi_trg_rad;
-          // axis1.qm_ref = GeneratorCircle1st(4.0, axis1.posi_trg_rad);
-          axis1.qm_ref = motor_cmd[0];
-          LimitPosCmd(&axis1);
 
           // P制御用
           // axis1.qm_ref = motor_cmd[0];
+          // LimitPosCmd(&axis1);
+          // axis1.wm_ref = (axis1.qm_ref_z2 - axis1.qm) * axis1.Kpp;
 
           // D-PD制御用
-          axis1.qm_ref = Tp * wm_cmd[0] + axis1.qm_ref_z1;
-
+          // axis1.qm_ref = motor_cmd[0];
+          axis1.qm_ref = axis1.wm_cmd * Tp + axis1.qm_ref_z1;
           LimitPosCmd(&axis1);
-          // axis1.qm_ref = 0.0;
-
-          // 1軸目 位置P制御
-          // axis1.wm_ref = (axis1.qm_ref_z2 - axis1.qm) * axis1.Kpp;
-          // 1軸目 位置D-PD制御
-          axis1.wm_ref = (axis1.qm_ref_z2 - axis1.qm) * axis1.Kpp + axis1.Kff * wm_cmd[0] - axis1.Kfb * axis1.wm;
+          if(flag_PPgain == 2){
+            axis1.wm_ref = (axis1.qm_ref_z2 - axis1.qm) * axis1.Kpp + axis1.Kff * axis1.wm_cmd - axis1.Kfb * axis1.wm;
+          }else{
+            axis1.wm_ref = (axis1.qm_ref_z2 - axis1.qm) * axis1.Kpp;
+          }
 
           if (flag_FF == 1)
           {
@@ -1535,26 +1653,25 @@ interrupt void ControlFunction(void)
           // 2軸目 位置指令
           // ランプ関数生成関数で位置指令を決定
           // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
+          axis2.wm_cmd = motor_vel_cmd[1];
           axis2.qm_ref_z2 = axis2.qm_ref_z1;
           axis2.qm_ref_z1 = axis2.qm_ref;
-          // axis2.qm_ref = axis2.posi_trg_rad;
-          // axis2.qm_ref = GeneratorCircle2nd(4.0, axis2.posi_trg_rad);
-          axis2.qm_ref = motor_cmd[1];
-          LimitPosCmd(&axis2);
-          // axis2.qm_ref = 0.0;
-
-          // 2軸目 速度P制御
-          axis2.wm_ref = (axis2.qm_ref_z2 - axis2.qm) * axis2.Kpp;
           // P制御用
           // axis2.qm_ref = motor_cmd[1];
-          // D-PD制御用
-          axis2.qm_ref = Tp * wm_cmd[1] + axis2.qm_ref_z1;
-          LimitPosCmd(&axis2);
-
-          // 1軸目 位置P制御
+          // LimitPosCmd(&axis2);
           // axis2.wm_ref = (axis2.qm_ref_z2 - axis2.qm) * axis2.Kpp;
-          // 1軸目 位置D-PD制御
-          axis2.wm_ref = (axis2.qm_ref_z2 - axis2.qm) * axis2.Kpp + axis2.Kff * wm_cmd[1] - axis2.Kfb * axis2.wm;
+          // D-PD制御用
+          // axis2.qm_ref = motor_cmd[1];
+          axis2.qm_ref = axis2.wm_cmd * Tp + axis2.qm_ref_z1;
+          LimitPosCmd(&axis2);
+          if (flag_PPgain == 2)
+          {
+            axis2.wm_ref = (axis2.qm_ref_z2 - axis2.qm) * axis2.Kpp + axis2.Kff * axis2.wm_cmd - axis2.Kfb * axis2.wm;
+          }
+          else
+          {
+            axis2.wm_ref = (axis2.qm_ref_z2 - axis2.qm) * axis2.Kpp;
+          }
 
           if (flag_FF == 1)
           {
@@ -1581,26 +1698,25 @@ interrupt void ControlFunction(void)
           // 3軸目 位置指令
           // ランプ関数生成関数で位置指令を決定
           // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
+          axis3.wm_cmd = motor_vel_cmd[2];
           axis3.qm_ref_z2 = axis3.qm_ref_z1;
           axis3.qm_ref_z1 = axis3.qm_ref;
-          // axis3.qm_ref = axis3.posi_trg_rad;
-          // axis3.qm_ref = GeneratorCircle3rd(4.0, axis3.posi_trg_rad);
-          axis3.qm_ref = motor_cmd[2];
-          LimitPosCmd(&axis3);
-          // axis3.qm_ref = 0.0;
-
-          // 3軸目 位置P制御
-          axis3.wm_ref = (axis3.qm_ref_z2 - axis3.qm) * axis3.Kpp;
           // P制御用
           // axis3.qm_ref = motor_cmd[2];
-          // D-PD制御用
-          axis3.qm_ref = Tp * wm_cmd[2] + axis3.qm_ref_z1;
-          LimitPosCmd(&axis3);
-
-          // 1軸目 位置P制御
+          // LimitPosCmd(&axis3);
           // axis3.wm_ref = (axis3.qm_ref_z2 - axis3.qm) * axis3.Kpp;
-          // 1軸目 位置D-PD制御
-          axis3.wm_ref = (axis3.qm_ref_z2 - axis3.qm) * axis3.Kpp + axis3.Kff * wm_cmd[2] - axis3.Kfb * axis3.wm;
+          // D-PD制御用
+          // axis3.qm_ref = motor_cmd[2];
+          axis3.qm_ref = axis3.wm_cmd * Tp + axis3.qm_ref_z1;
+          LimitPosCmd(&axis3);
+          if (flag_PPgain == 2)
+          {
+            axis3.wm_ref = (axis3.qm_ref_z2 - axis3.qm) * axis3.Kpp + axis3.Kff * axis3.wm_cmd - axis3.Kfb * axis3.wm;
+          }
+          else
+          {
+            axis3.wm_ref = (axis3.qm_ref_z2 - axis3.qm) * axis3.Kpp;
+          }
 
           // 3軸目 速度PI制御＋SFB
           if (flag_FF == 1)
@@ -1668,12 +1784,16 @@ interrupt void ControlFunction(void)
           axis1.qm_ref_z2 = axis1.qm_ref_z1;
           axis1.qm_ref_z1 = axis1.qm_ref;
           if (flag_end3 == 1)
-          {
-            axis1.qm_ref = 1.0 * ManyRampGenerator1stAxis(axis1.a_ramp, axis1.vel, axis1.t_start, axis1.t_ramp, axis1.t_const, axis1.a_ramp_back, axis1.t_ramp_back) + start_back1;
+          {            
+            axis1.wm_cmd = 1.0 * ManyRampGenerator1stAxis(axis1.a_ramp, axis1.vel, axis1.t_start, axis1.t_ramp, axis1.t_const, axis1.a_ramp_back, axis1.t_ramp_back);
+            // axis1.qm_ref = 1.0 * ManyRampGenerator1stAxis(axis1.a_ramp, axis1.vel, axis1.t_start, axis1.t_ramp, axis1.t_const, axis1.a_ramp_back, axis1.t_ramp_back) + start_back1;
+            axis1.qm_ref = axis1.wm_cmd * Tp + axis1.qm_ref_z1;
           }
           else
           {
-            axis1.qm_ref = start_back1;
+            axis1.wm_cmd = 0.0;
+            // axis1.qm_ref = start_back1;
+            axis1.qm_ref =  axis1.qm_ref_z1;
           }
 
           // 1軸目 速度P制御
@@ -1708,11 +1828,14 @@ interrupt void ControlFunction(void)
           axis2.qm_ref_z1 = axis2.qm_ref;
           if (flag_end3 == 1 && flag_end1 == 1)
           {
-            axis2.qm_ref = 1.0 * ManyRampGenerator2ndAxis(axis2.a_ramp, axis2.vel, axis2.t_start, axis2.t_ramp, axis2.t_const, axis2.a_ramp_back, axis2.t_ramp_back) + start_back2;
+            axis2.wm_cmd = 1.0 * ManyRampGenerator2ndAxis(axis2.a_ramp, axis2.vel, axis2.t_start, axis2.t_ramp, axis2.t_const, axis2.a_ramp_back, axis2.t_ramp_back);
+            axis2.qm_ref = axis2.wm_cmd * Tp + axis2.qm_ref_z1;
           }
           else
           {
-            axis2.qm_ref = start_back2;
+            axis2.wm_cmd = 0.0;
+            // axis2.qm_ref = start_back2;
+            axis2.qm_ref = axis2.qm_ref_z1;
           }
 
           // 2軸目 速度P制御
@@ -1745,8 +1868,9 @@ interrupt void ControlFunction(void)
           // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
           axis3.qm_ref_z2 = axis3.qm_ref_z1;
           axis3.qm_ref_z1 = axis3.qm_ref;
-          axis3.qm_ref = 1.0 * ManyRampGenerator3rdAxis(axis3.a_ramp, axis3.vel, axis3.t_start, axis3.t_ramp, axis3.t_const, axis3.a_ramp_back, axis3.t_ramp_back) + start_back3;
-          // axis3.qm_ref = start_back3;
+          axis3.wm_cmd = 1.0 * ManyRampGenerator3rdAxis(axis3.a_ramp, axis3.vel, axis3.t_start, axis3.t_ramp, axis3.t_const, axis3.a_ramp_back, axis3.t_ramp_back);
+          // axis3.qm_ref = 1.0 * ManyRampGenerator3rdAxis(axis3.a_ramp, axis3.vel, axis3.t_start, axis3.t_ramp, axis3.t_const, axis3.a_ramp_back, axis3.t_ramp_back) + start_back3;
+          axis3.qm_ref = axis3.wm_cmd * Tp + axis3.qm_ref_z1;
 
           // 3軸目 速度P制御
           axis3.wm_ref = (axis3.qm_ref_z2 - axis3.qm) * axis3.Kpp;
@@ -1945,6 +2069,13 @@ interrupt void ControlFunction(void)
   WAVE_qm_ref2 = axis2.qm_ref;
   WAVE_qm_ref3 = axis3.qm_ref;
 
+  WAVE_wm_cmd1 = axis1.wm_cmd;
+  WAVE_wm_cmd2 = axis2.wm_cmd;
+  WAVE_wm_cmd3 = axis3.wm_cmd;
+  WAVE_wm_CCC1 = motor_vel_cmd[0];
+  WAVE_wm_CCC2 = motor_vel_cmd[1];
+  WAVE_wm_CCC3 = motor_vel_cmd[2];
+
   WAVE_IrefQ1 = axis1.IrefQ;
   WAVE_IrefQ2 = axis2.IrefQ;
   WAVE_IrefQ3 = axis3.IrefQ;
@@ -2025,6 +2156,19 @@ interrupt void ControlFunction(void)
   WAVE_ql_calc3 = axis3.ql_calc;
   WAVE_wm_calc3 = axis3.wm_calc;
 
+  WAVE_al_calc_DPD1 = axis1.al_calc_DPD;
+  WAVE_wl_calc_DPD1 = axis1.wl_calc_DPD;
+  WAVE_ql_calc_DPD1 = axis1.ql_calc_DPD;
+  WAVE_wm_calc_DPD1 = axis1.wm_calc_DPD;
+  WAVE_al_calc_DPD2 = axis2.al_calc_DPD;
+  WAVE_wl_calc_DPD2 = axis2.wl_calc_DPD;
+  WAVE_ql_calc_DPD2 = axis2.ql_calc_DPD;
+  WAVE_wm_calc_DPD2 = axis2.wm_calc_DPD;
+  WAVE_al_calc_DPD3 = axis3.al_calc_DPD;
+  WAVE_wl_calc_DPD3 = axis3.wl_calc_DPD;
+  WAVE_ql_calc_DPD3 = axis3.ql_calc_DPD;
+  WAVE_wm_calc_DPD3 = axis3.wm_calc_DPD;
+
   WAVE_TRG_WM1 = axis1.posi_trg_rad;
   WAVE_TRG_WM2 = axis2.posi_trg_rad;
   WAVE_TRG_WM3 = axis3.posi_trg_rad;
@@ -2087,6 +2231,8 @@ interrupt void ControlFunction(void)
   WAVE_est_ISOB_wl3 = axis3.est_ISOB_wl;
 
   WAVE_Kpp1 = axis1.Kpp;
+  WAVE_Kff1 = axis1.Kff;
+  WAVE_Kfb1 = axis1.Kfb;
   WAVE_Kvp1 = axis1.Kvp;
   WAVE_Kvi1 = axis1.Kvi;
   WAVE_fwm1 = axis1.fwm;
@@ -2094,6 +2240,8 @@ interrupt void ControlFunction(void)
   WAVE_fwl1 = axis1.fwl;
 
   WAVE_Kpp2 = axis2.Kpp;
+  WAVE_Kff2 = axis2.Kff;
+  WAVE_Kfb2 = axis2.Kfb;
   WAVE_Kvp2 = axis2.Kvp;
   WAVE_Kvi2 = axis2.Kvi;
   WAVE_fwm2 = axis2.fwm;
@@ -2101,12 +2249,13 @@ interrupt void ControlFunction(void)
   WAVE_fwl2 = axis2.fwl;
 
   WAVE_Kpp3 = axis3.Kpp;
+  WAVE_Kff3 = axis3.Kff;
+  WAVE_Kfb3 = axis3.Kfb;
   WAVE_Kvp3 = axis3.Kvp;
   WAVE_Kvi3 = axis3.Kvi;
   WAVE_fwm3 = axis3.fwm;
   WAVE_fqs3 = axis3.fqs;
   WAVE_fwl3 = axis3.fwl;
-
   // WAVE_ACC_LW8174_axis = axis2.al; // 加速度センサrad/s^2換算値
   // WAVE_ACC_LW8079 = ACC_LW8079;
   // WAVE_ACC_LW8174 = ACC_LW8174;
@@ -2166,10 +2315,10 @@ void MW_main(void)
   SetBDN(&axis3, BDN2);       /// Robot構造体変数jointにボード番号をセット
   SetENC_CH(&axis3, ENC_CH2); /// Robot構造体変数jointにエンコーダchをセット
 
-  float Ts = Tp;
-  float fs = 5.0;
+  float fs = 10.0;
   float Q = 1.0 / sqrt(2.0);
-  SetLPF(LPF_motor, Ts, fs, Q);
+  SetLPF(LPF_motor, Tp, fs, Q);
+  SetLPF(LPF_cmd, Tp, fs, Q);
 
   /// ゲインのセット
   SetGain(joint);
@@ -2207,6 +2356,10 @@ void MW_main(void)
 
   // 負荷側情報計算関数の定数計算関数
   CalcFDTDWrInit_QmrefInputType();
+  
+  CalcFDTDWrInit_WmcmdInputType(&axis1);
+  CalcFDTDWrInit_WmcmdInputType(&axis2);
+  CalcFDTDWrInit_WmcmdInputType(&axis3);
 
   // FDTD状態オブザーバの定数計算関数
   CalcFDTDTSOBInit();
@@ -3538,47 +3691,45 @@ void FDTD_Tm_Init()
 void SetLPF(LPF_param *Filter, float Ts, float fs, float Q)
 {
   float w = 2 * PI * fs;
-  LPF_motor[0].Num = 1;
-  LPF_motor[0].flag = 0;
-  LPF_motor[0].Ts = Ts;
-  LPF_motor[0].w = w;
-  LPF_motor[0].Q = Q;
-  LPF_motor[0].uZ1 = 0.0;
-  LPF_motor[0].uZ2 = 0.0;
-  LPF_motor[0].uZ3 = 0.0;
-  LPF_motor[0].yZ1 = 0.0;
-  LPF_motor[0].yZ2 = 0.0;
-  LPF_motor[0].yZ3 = 0.0;
-
-  LPF_motor[1].Num = 2;
-  LPF_motor[1].flag = 0;
-  LPF_motor[1].Ts = Ts;
-  LPF_motor[1].w = w;
-  LPF_motor[1].Q = Q;
-  LPF_motor[1].uZ1 = 0.0;
-  LPF_motor[1].uZ2 = 0.0;
-  LPF_motor[1].uZ3 = 0.0;
-  LPF_motor[1].yZ1 = 0.0;
-  LPF_motor[1].yZ2 = 0.0;
-  LPF_motor[1].yZ3 = 0.0;
-
-  LPF_motor[2].Num = 3;
-  LPF_motor[2].flag = 0;
-  LPF_motor[2].Ts = Ts;
-  LPF_motor[2].w = w;
-  LPF_motor[2].Q = Q;
-  LPF_motor[2].uZ1 = 0.0;
-  LPF_motor[2].uZ2 = 0.0;
-  LPF_motor[2].uZ3 = 0.0;
-  LPF_motor[2].yZ1 = 0.0;
-  LPF_motor[2].yZ2 = 0.0;
-  LPF_motor[2].yZ3 = 0.0;
+  Filter[0].Num = 1;
+  Filter[0].flag = 0;
+  Filter[0].Ts = Ts;
+  Filter[0].w = w;
+  Filter[0].Q = Q;
+  Filter[0].uZ1 = 0.0;
+  Filter[0].uZ2 = 0.0;
+  Filter[0].uZ3 = 0.0;
+  Filter[0].yZ1 = 0.0;
+  Filter[0].yZ2 = 0.0;
+  Filter[0].yZ3 = 0.0;
+  Filter[1].Num = 2;
+  Filter[1].flag = 0;
+  Filter[1].Ts = Ts;
+  Filter[1].w = w;
+  Filter[1].Q = Q;
+  Filter[1].uZ1 = 0.0;
+  Filter[1].uZ2 = 0.0;
+  Filter[1].uZ3 = 0.0;
+  Filter[1].yZ1 = 0.0;
+  Filter[1].yZ2 = 0.0;
+  Filter[1].yZ3 = 0.0;
+  Filter[2].Num = 3;
+  Filter[2].flag = 0;
+  Filter[2].Ts = Ts;
+  Filter[2].w = w;
+  Filter[2].Q = Q;
+  Filter[2].uZ1 = 0.0;
+  Filter[2].uZ2 = 0.0;
+  Filter[2].uZ3 = 0.0;
+  Filter[2].yZ1 = 0.0;
+  Filter[2].yZ2 = 0.0;
+  Filter[2].yZ3 = 0.0;
 }
 
 // LPF
 float GetFilterdSignal(LPF_param *Filter, float u, int flag_init)
 {
-  static float Q, w, Ts, y, yZ1, yZ2, yZ3, uZ1, uZ2, uZ3;
+  float Q, w, Ts, y, yZ1, yZ2, yZ3, uZ1, uZ2, uZ3;
   Q = Filter->Q;
   w = Filter->w;
   Ts = Filter->Ts;
@@ -3587,6 +3738,7 @@ float GetFilterdSignal(LPF_param *Filter, float u, int flag_init)
   }
   if (Filter->flag == 0)
   {
+    WAVE_INIT_COUNT++;
     Filter->flag = 1;
     Filter->uZ1 = u;
     Filter->uZ2 = u;
@@ -3609,46 +3761,52 @@ float GetFilterdSignal(LPF_param *Filter, float u, int flag_init)
   Filter->yZ3 = Filter->yZ2;
   Filter->yZ2 = Filter->yZ1;
   Filter->yZ1 = y;
+  return y;
 }
 
-int CalcHandCmdCenter(int flag_cmd, float goal[3], float t_wait, float speed, float start_hand[3], int flag_loop){
-  if(flag_cmd == 0){
-    return CalcHandCmdCircle(goal[3], t_wait, speed, start_hand[3], flag_loop);
-  }else if(flag_cmd == 1){
-    return CalcHandCmdRectangle(goal[3], t_wait, speed, start_hand[3], flag_loop);
-  }else if(flag_cmd == 2){
-    return CalcHandCmdDiamond(goal[3], t_wait, speed, start_hand[3], flag_loop);
-  }
-}
+// int CalcHandCmdCenter(int flag_cmd, float goal[3], float t_wait, float speed, float start_hand[3], int flag_loop){
+//   float wait_dummy = t_wait;
+//   float vel_dummy = speed;
+//   if(flag_cmd == 0){
+//     return CalcHandCmdCircle(goal[3], 3.00, 10.0, start_hand[3], flag_loop);
+//   }else if(flag_cmd == 1){
+//     return CalcHandCmdRectangle(goal[3], 3.00, 10.0, start_hand[3], flag_loop);
+//   }else if(flag_cmd == 2){
+//     return CalcHandCmdDiamond(goal[3], 3.00, 10.0, start_hand[3], flag_loop);
+//   }
+// }
 
 // 手先軌跡(円)
-int CalcHandCmdCircle(float goal[3], float t_wait, float speed, float start_hand[3], int flag_loop)
+int CalcHandCmdCircle(float goal[3], float vel_hand[3], float t_wait, float speed, float start_hand[3], int flag_loop)
 {
-  const float D = 0.020;
-  const float path = (1.5 * PI * D);
-  const float t_task = path * (60.0 / speed);
-  const float freq = 1 / (t_task / 1.5);
+  float D = 0.010;
+  float path = (PI * D);
+  float freq = 1 / (path / (speed/60.0));
+  float t_task = (1.0 / freq) * 1.5;
   // const float t_task = 1.5 / freq;
   // const float S1 = mwsin(theta);
   // const float C1 = mwcos(theta);
   // const float S2 = mwsin(theta2);
   // const float C2 = mwcos(theta2);
-  const float S1 = -0.7071;
-  const float C1 = 0.7071;
+  float S1 = -0.7071;
+  float C1 = 0.7071;
   // static float start_hand[3] = {1.2746, -0.07071, 0.2466};
-  const float x_slide = 1.2746;
+  float x_slide = 1.2746;
   // const float x_slide = 1.2846; // +x側10mmオフセット
   // const float x_slide = 1.2696; // -x側10mmオフセット
-  const float y_slide = 0.0;
-  const float z_slide = 0.2466;
+  float y_slide = 0.0;
+  float z_slide = 0.2466;
   static float Tall = 0;
   static float goalZ[3] = {0, 0, 0};
   static float fxZ, fyZ, fzZ;
   static float fx = 0, fy = 0, fz = 0;
+  static float vfx = 0, vfy = 0, vfz = 0;
   static int flag_init = 0;
   if(flag_cmd_end == 0){
+    WAVE_state = 1;
     if (flag_init == 0)
     {
+      WAVE_state = 2;
       if (flag_loop == 1)
       {
         flag_init = 1;
@@ -3658,11 +3816,14 @@ int CalcHandCmdCircle(float goal[3], float t_wait, float speed, float start_hand
         flag_init = 0;
       }
       fx = 0.000;
-      fy = -0.010;
+      fy = -D/2.0;
       fz = 0.000;
-      goal[0] = C1 * fxZ + S1 * fzZ + x_slide;
-      goal[1] = fyZ + y_slide;
-      goal[2] = C1 * fzZ - S1 * fxZ + z_slide;
+      goal[0] = C1 * fx + S1 * fz + x_slide;
+      goal[1] = fy + y_slide;
+      goal[2] = C1 * fz - S1 * fx + z_slide;
+      vel_hand[0] = 0.0;
+      vel_hand[1] = 0.0;
+      vel_hand[2] = 0.0;
       goalZ[0] = goal[0];
       goalZ[1] = goal[1];
       goalZ[2] = goal[2];
@@ -3674,53 +3835,76 @@ int CalcHandCmdCircle(float goal[3], float t_wait, float speed, float start_hand
       fzZ = fz;
     }
     if(flag_init == 1){
+      WAVE_state = 3;
       if (Tall < t_wait)
       {
+        WAVE_state = 4;
         goal[0] = goalZ[0];
         goal[1] = goalZ[1];
         goal[2] = goalZ[2];
-        Tall += Tp;
+        vel_hand[0] = 0.0;
+        vel_hand[1] = 0.0;
+        vel_hand[2] = 0.0;
       }
       else if (Tall >= t_wait && Tall < (t_wait + t_task))
       {
+        WAVE_state = 5;
         fx = (D / 2.0) * sin(2 * PI * freq * (Tall - t_wait));
         fy = -(D / 2.0) * cos(2 * PI * freq * (Tall - t_wait));
         fz = 0;
-        goal[0] = C1 * fxZ + S1 * fzZ + x_slide;
-        goal[1] = fyZ + y_slide;
-        goal[2] = C1 * fzZ - S1 * fxZ + z_slide;
+        vfx = (D / 2.0) * (2 * PI * freq) * cos(2 * PI * freq * (Tall - t_wait));
+        vfy = (D / 2.0) * (2 * PI * freq) * sin(2 * PI * freq * (Tall - t_wait));
+        vfz = 0;
+
+        goal[0] = C1 * fx + S1 * fz + x_slide;
+        goal[1] = fy + y_slide;
+        goal[2] = C1 * fz - S1 * fx + z_slide;
+        vel_hand[0] = C1 * vfx + S1 * vfz;
+        vel_hand[1] = vfy;
+        vel_hand[2] = C1 * vfz - S1 * vfx;
         fxZ = fx;
         fyZ = fy;
         fzZ = fz;
         goalZ[0] = goal[0];
         goalZ[1] = goal[1];
         goalZ[2] = goal[2];
-        Tall += Tp;
       }
       else if (Tall >= t_wait + t_task)
       {
+        WAVE_state = 6;
         goal[0] = goalZ[0];
         goal[1] = goalZ[1];
         goal[2] = goalZ[2];
-        Tall += Tp;
+        vel_hand[0] = 0;
+        vel_hand[1] = 0;
+        vel_hand[2] = 0;
         flag_cmd_end = 1;
       }
+      Tall += Tp;
     }
   }else{
     goal[0] = goalZ[0];
     goal[1] = goalZ[1];
     goal[2] = goalZ[2];
+    vel_hand[0] = 0;
+    vel_hand[1] = 0;
+    vel_hand[2] = 0;
     Tall = 0;
     flag_init = 0;
-  }  WAVE_fx = fx;
-  WAVE_fy = fy;
-  WAVE_fz = fz;
+  }
+  WAVE_check = 1;
+  WAVE_fx = goal[0];
+  WAVE_fy = goal[1];
+  WAVE_fz = goal[2];
+  WAVE_vx = vel_hand[0];
+  WAVE_vy = vel_hand[1];
+  WAVE_vz = vel_hand[2];
   return 1; //1を返すと逆運動学でFilterあり。０を返すとFilter無し。
 }
 
 // 手先軌跡(四角) 100mm四方の正方形
 // この関数におけるfx,fy,fzからGoalへの変換はy軸周りでの回転を前提としている。
-void CalcHandCmdRectangle(float goal[3], float t_wait, float speed, float start_hand[3], int flag_loop)
+int CalcHandCmdRectangle(float goal[3], float t_wait, float speed, float start_hand[3], int flag_loop)
 {
   const float path = (0.100 * 5);
   const float t_task = path * (60.0 / speed);
@@ -3991,85 +4175,232 @@ void LimitPosCmd(Robot *robo)
   }
 }
 
-// 逆運動学（手先 -> モーター位置）
-void CalcInverseCmd(float goal[3], float joint[3], float motor[3], float wm[3], int flag_filter, int flag_reset, float dt)
+// // 逆運動学（手先 -> モーター位置）
+// void CalcInverseCmd(float goal[3], float joint[3], float motor[3], float wm[3], int flag_filter, int flag_reset, float dt)
+// {
+//   static float motorZ[3];
+//   const float Rgn1 = 140.254;
+//   const float Rgn2 = 121;
+//   const float Rgn3 = 121;
+//   const float Lb = 0.16;
+//   const float Ld = 0.088;
+//   const float Lac = 0.2685;
+//   const float Le = 0.56;
+//   const float Lf = 0.088;
+//   const float Lg = 0.13;
+//   const float Lh1 = 0.145;
+//   const float Lh2 = 0.455;
+//   const float Lii = 0.04;
+//   const float Lj = 0.2;
+//   const float Lk = 0.05;
+//   const float Larm = sqrtf(((Lh1 + Lh2 + Lj + Lk) * (Lh1 + Lh2 + Lj + Lk) + (Lii + Lg) * (Lii + Lg)));
+
+//   static float p1[3] = {0, 0, 0};
+//   static float Lp2h = 0.0;
+//   static float Lg2h = 0.0;
+//   static float Phi1 = 0.0;
+//   static float Phi2 = 0.0;
+//   static float Phi3 = 0.0;
+//   static float Phi4 = 0.0;
+//   static int flag_init = 0;
+//   if(flag_reset == 1){
+//     flag_init = 1;
+//   }
+
+//   joint[0] = 1 * atan2f(goal[1], goal[0]);
+//   if(flag_filter == 1){
+//     joint[0] = GetFilterdSignal(&LPF_motor[0], joint[0], flag_init);
+//   }
+//   // joint[0] = mwarctan2(goal[1], goal[0]);
+
+//   p1[0] = Lb * cos(joint[0]);
+//   // p1[0] = Lb * mwcos(joint[0]);
+//   p1[1] = Lb * sin(joint[0]);
+//   // p1[1] = Lb * mwsin(joint[0]);
+//   p1[2] = Lac;
+
+//   Lp2h = sqrtf((((goal[0] - p1[0]) * (goal[0] - p1[0])) + ((goal[1] - p1[1]) * (goal[1] - p1[1])) + ((goal[2] - p1[2]) * (goal[2] - p1[2]))));
+//   Lg2h = sqrtf((((goal[0] - p1[0]) * (goal[0] - p1[0])) + ((goal[1] - p1[1]) * (goal[1] - p1[1])) + ((goal[2] - 0.0) * (goal[2] - 0.0))));
+
+//   Phi1 = acos(((Le * Le) + (Larm * Larm) - (Lp2h * Lp2h)) / (2 * Le * Larm));
+//   Phi2 = acos((Lh1 + Lh2 + Lj + Lk) / (Larm));
+//   Phi3 = acos(((Le * Le) + (Lp2h * Lp2h) - (Larm * Larm)) / (2 * Le * Lp2h));
+//   Phi4 = acos(((Lac * Lac) + (Lp2h * Lp2h) - (Lg2h * Lg2h)) / (2 * Lac * Lp2h));
+
+//   joint[2] = (PI / 2.0) - Phi1 + Phi2;
+//   if (flag_filter == 1)
+//   {
+//     joint[2] = GetFilterdSignal(&LPF_motor[2], joint[2], flag_init);
+//   }
+//   joint[1] = PI - Phi3 - Phi4;
+//   if (flag_filter == 1)
+//   {
+//     joint[1] = GetFilterdSignal(&LPF_motor[1], joint[1], flag_init);
+//   }
+//   motor[0] = -joint[0] * Rgn1;
+//   motor[1] = joint[1] * Rgn2;
+//   motor[2] = joint[2] * Rgn3;
+//   if (flag_reset == 1)
+//   {
+//     motorZ[0] = motor[0];
+//     motorZ[1] = motor[1];
+//     motorZ[2] = motor[2];
+//   }
+
+//   wm[0] = backward_diff(motor[0], motorZ[0], dt);
+//   wm[1] = backward_diff(motor[1], motorZ[1], dt);
+//   wm[2] = backward_diff(motor[2], motorZ[2], dt);
+//   wm[0] = GetFilterdSignal(&LPF_cmd[0], wm[0], flag_init);
+//   wm[1] = GetFilterdSignal(&LPF_cmd[1], wm[1], flag_init);
+//   wm[2] = GetFilterdSignal(&LPF_cmd[2], wm[2], flag_init);
+
+//   motorZ[0] = motor[0];
+//   motorZ[1] = motor[1];
+//   motorZ[2] = motor[2];
+
+//   flag_init = 0;
+// }
+
+void CalcInverseCmd_vel(float goal[3], float vel_hand[3], float ql_cmd[3], float wl_cmd[3], float ql_init[3], int flag_reset)
 {
-  static float 
-  static float motorZ[3];
+  static int initialized = 0;
+  static float Rgn1, Rgn2, Rgn3;
+  static float Lb, Lac, Ld, Le, Lf, Lg, Lh1, Lh2, Lii, Lj, Lk, Larm, L4;
+  static float joint[3], motor[3], ql_vel[3], qm_vel[3], qm_first[3];
+  static int flag_init = 0;
+  static float p1[3] = {0.0, 0.0, 0.0};
+  static float J[3][3] = {{0,0,0},
+                          {0,0,0},
+                          {0,0,0}};
 
-  const float Rgn1 = 140.254;
-  const float Rgn2 = 121;
-  const float Rgn3 = 121;
-  const float Lb = 0.16;
-  const float Ld = 0.088;
-  const float Lac = 0.2685;
-  const float Le = 0.56;
-  const float Lf = 0.088;
-  const float Lg = 0.13;
-  const float Lh1 = 0.145;
-  const float Lh2 = 0.455;
-  const float Lii = 0.04;
-  const float Lj = 0.2;
-  const float Lk = 0.05;
-  const float Larm = sqrtf(((Lh1 + Lh2 + Lj + Lk) * (Lh1 + Lh2 + Lj + Lk) + (Lii + Lg) * (Lii + Lg)));
-
-  static float p1[3] = {0, 0, 0};
-  static float Lp2h = 0.0;
-  static float Lg2h = 0.0;
-  static float Phi1 = 0.0;
-  static float Phi2 = 0.0;
-  static float Phi3 = 0.0;
-  static float Phi4 = 0.0;
-
-  joint[0] = 1 * atan2f(goal[1], goal[0]);
-  if(flag_filter == 1){
-    joint[0] = GetFilterdSignal(&LPF_motor[0], joint[0], flag_init);
+  if (flag_reset == 1){
+    initialized = 0;
+    flag_init = 1;
   }
-  // joint[0] = mwarctan2(goal[1], goal[0]);
+  if (initialized == 0)
+  {
+    Rgn1 = 140.254;
+    Rgn2 = 121;
+    Rgn3 = 121;
+    Lac = 0.2685;
+    Lb = 0.16;
+    Ld = 0.088;
+    Le = 0.56;
+    Lf = 0.088;
+    Lg = 0.13;
+    Lh1 = 0.145;
+    Lh2 = 0.455;
+    Lii = 0.04;
+    Lj = 0.2;
+    Lk = 0.05;
+    Larm = sqrt(pow(Lh1 + Lh2 + Lj + Lk, 2) + pow(Lii + Lg, 2));
+    L4 = Lh1 + Lh2 + Lj + Lk;
+    initialized = 1;
+  }
 
+  float x = goal[0];
+  float y = goal[1];
+  float z = goal[2];
+  float vx = vel_hand[0];
+  float vy = vel_hand[1];
+  float vz = vel_hand[2];
+
+  joint[0] = -atan2(y, x);
   p1[0] = Lb * cos(joint[0]);
-  // p1[0] = Lb * mwcos(joint[0]);
   p1[1] = Lb * sin(joint[0]);
-  // p1[1] = Lb * mwsin(joint[0]);
   p1[2] = Lac;
 
-  Lp2h = sqrtf((((goal[0] - p1[0]) * (goal[0] - p1[0])) + ((goal[1] - p1[1]) * (goal[1] - p1[1])) + ((goal[2] - p1[2]) * (goal[2] - p1[2]))));
-  Lg2h = sqrtf((((goal[0] - p1[0]) * (goal[0] - p1[0])) + ((goal[1] - p1[1]) * (goal[1] - p1[1])) + ((goal[2] - 0.0) * (goal[2] - 0.0))));
+  float Lp2h = sqrt(pow(x - p1[0], 2) + pow(y - p1[1], 2) + pow(z - p1[2], 2));
+  float Lg2h = sqrt(pow(x - p1[0], 2) + pow(y - p1[1], 2) + pow(z - 0.0, 2));
 
-  Phi1 = acos(((Le * Le) + (Larm * Larm) - (Lp2h * Lp2h)) / (2 * Le * Larm));
-  Phi2 = acos((Lh1 + Lh2 + Lj + Lk) / (Larm));
-  Phi3 = acos(((Le * Le) + (Lp2h * Lp2h) - (Larm * Larm)) / (2 * Le * Lp2h));
-  Phi4 = acos(((Lac * Lac) + (Lp2h * Lp2h) - (Lg2h * Lg2h)) / (2 * Lac * Lp2h));
+  float Phi1 = acos((Le * Le + Larm * Larm - Lp2h * Lp2h) / (2 * Le * Larm));
+  float Phi2 = acos((Lh1 + Lh2 + Lj + Lk) / Larm);
+  float Phi3 = acos((Le * Le + Lp2h * Lp2h - Larm * Larm) / (2 * Le * Lp2h));
+  float Phi4 = acos((Lac * Lac + Lp2h * Lp2h - Lg2h * Lg2h) / (2 * Lac * Lp2h));
 
   joint[2] = (PI / 2.0) - Phi1 + Phi2;
-  if (flag_filter == 1)
-  {
-    joint[2] = GetFilterdSignal(&LPF_motor[2], joint[2], flag_init);
-  }
   joint[1] = PI - Phi3 - Phi4;
-  if (flag_filter == 1)
+
+  // 三角関数の計算
+  float S1 = sin(joint[0]);
+  float C1 = cos(joint[0]);
+  float S2 = sin(joint[1]);
+  float C2 = cos(joint[1]);
+  float S23 = sin(joint[1] + joint[2]);
+  float C23 = cos(joint[1] + joint[2]);
+
+  // ヤコビアン行列の成分
+  J[0][0] = (Lf - Ld) * C1 - S1 * (Lb + L4 * C23 + Le * S2 + Lg * S23 + Lii * S23);
+  J[0][1] = C1 * (Le * C2 + Lg * C23 + Lii * C23 - L4 * S23);
+  J[0][2] = C1*(Lg*C23+Lii*C23-L4*S23);
+  J[1][0] = -(Lf - Ld) * S1 - C1 * (Lb + L4 * C23 + Le * S2 + Lg * S23 + Lii * S23);
+  J[1][1] = -S1 * (Le * C2 + Lg * C23 + Lii * C23 - L4 * S23);
+  J[1][2] = -S1 * (Lg * C23 + Lii * C23 - L4 * S23);
+  J[2][0] = 0;
+  J[2][1] = -L4 * C23 - Le * S2 - (Lg + Lii) * S23;
+  J[2][2] = -L4 * C23 - Lg + Lii * S23;
+
+  // 逆行列の計算 (手計算で導出)
+  float detJ = J[0][0] * (J[1][1] * J[2][2] - J[1][2] * J[2][1]) -
+                J[0][1] * (J[1][0] * J[2][2] - J[1][2] * J[2][0]) +
+                J[0][2] * (J[1][0] * J[2][1] - J[1][1] * J[2][0]);
+
+  if (fabs(detJ) < 1e-6)
   {
-    joint[1] = GetFilterdSignal(&LPF_motor[1], joint[1], flag_init);
+    ql_vel[0] = ql_vel[1] = ql_vel[2] = 0;
   }
-  motor[0] = -joint[0] * Rgn1;
+  else
+  {
+    float invJ[3][3];
+
+    invJ[0][0] = (J[1][1] * J[2][2] - J[1][2] * J[2][1]) / detJ;
+    invJ[0][1] = (J[0][2] * J[2][1] - J[0][1] * J[2][2]) / detJ;
+    invJ[0][2] = (J[0][1] * J[1][2] - J[0][2] * J[1][1]) / detJ;
+    invJ[1][0] = (J[1][2] * J[2][0] - J[1][0] * J[2][2]) / detJ;
+    invJ[1][1] = (J[0][0] * J[2][2] - J[0][2] * J[2][0]) / detJ;
+    invJ[1][2] = (J[0][2] * J[1][0] - J[0][0] * J[1][2]) / detJ;
+    invJ[2][0] = (J[1][0] * J[2][1] - J[1][1] * J[2][0]) / detJ;
+    invJ[2][1] = (J[0][1] * J[2][0] - J[0][0] * J[2][1]) / detJ;
+    invJ[2][2] = (J[0][0] * J[1][1] - J[0][1] * J[1][0]) / detJ;
+
+    ql_vel[0] = invJ[0][0] * vx + invJ[0][1] * vy + invJ[0][2] * vz;
+    ql_vel[1] = invJ[1][0] * vx + invJ[1][1] * vy + invJ[1][2] * vz;
+    ql_vel[2] = invJ[2][0] * vx + invJ[2][1] * vy + invJ[2][2] * vz;
+  }
+
+  joint[0] = GetFilterdSignal(&LPF_motor[0], joint[0], flag_init);
+  joint[1] = GetFilterdSignal(&LPF_motor[1], joint[1], flag_init);
+  joint[2] = GetFilterdSignal(&LPF_motor[2], joint[2], flag_init);
+  ql_vel[0] = GetFilterdSignal(&LPF_cmd[0], ql_vel[0], flag_init);
+  ql_vel[1] = GetFilterdSignal(&LPF_cmd[1], ql_vel[1], flag_init);
+  ql_vel[2] = GetFilterdSignal(&LPF_cmd[2], ql_vel[2], flag_init);
+
+  motor[0] = joint[0] * Rgn1;
   motor[1] = joint[1] * Rgn2;
   motor[2] = joint[2] * Rgn3;
-  if (motorZ[0] == NULL)
-  {
-    motorZ[0] = motor[0];
-    motorZ[1] = motor[1];
-    motorZ[2] = motor[2];
+  qm_vel[0] = ql_vel[0] * Rgn1;
+  qm_vel[1] = ql_vel[1] * Rgn2;
+  qm_vel[2] = ql_vel[2] * Rgn3;
+
+  if (initialized == 1){
+    qm_first[0] = motor[0];
+    qm_first[1] = motor[1];
+    qm_first[2] = motor[2];
+    initialized = 2;
   }
-
-  wm[0] = backward_diff(motor[0], motorZ[0], dt);
-  wm[1] = backward_diff(motor[1], motorZ[1], dt);
-  wm[2] = backward_diff(motor[2], motorZ[2], dt);
-
-  motorZ[0] = motor[0];
-  motorZ[1] = motor[1];
-  motorZ[2] = motor[2];
-
+  int i = 0;
+  for (i = 0; i < 3; i++)
+  {
+    ql_cmd[i] = motor[i];
+    wl_cmd[i] = qm_vel[i];
+    ql_init[i] = qm_first[i];
+  }
   flag_init = 0;
+}
+
+float backward_diff(float x, float xZ, float dt)
+{
+  return ((x - xZ) / dt);
 }
 
 float GeneratorCircle1st(float t_wait, float start)
@@ -4374,7 +4705,8 @@ float ManyRampGenerator1stAxis(float a_ramp, float vel, float t_wait, float t_ra
   }
   WAVE_AccCmd1 = a;
   WAVE_VelCmd1 = w;
-  return z;
+  // return z;
+  return w; // D-PD
 }
 
 float ManyRampGenerator2ndAxis(float a_ramp, float vel, float t_wait, float t_ramp, float t_const, float a_ramp_back, float t_ramp_back)
@@ -4454,7 +4786,8 @@ float ManyRampGenerator2ndAxis(float a_ramp, float vel, float t_wait, float t_ra
   }
   WAVE_AccCmd2 = a;
   WAVE_VelCmd2 = w;
-  return z;
+  // return z;
+  return w; // D-PD
 }
 
 float ManyRampGenerator3rdAxis(float a_ramp, float vel, float t_wait, float t_ramp, float t_const, float a_ramp_back, float t_ramp_back)
@@ -4534,7 +4867,8 @@ float ManyRampGenerator3rdAxis(float a_ramp, float vel, float t_wait, float t_ra
   }
   WAVE_AccCmd3 = a;
   WAVE_VelCmd3 = w;
-  return z;
+  // return z;
+  return w; // D-PD
 }
 
 float TriangularAccelerationCommandGenerator(int BDN)
@@ -4962,13 +5296,6 @@ void CalcFDTDWr_QmrefInputType(Robot *robo)
     ql_Z[1] = Wr_sub[1].a51cf * wm_Z1[1] + Wr_sub[1].a52cf * qm_Z1[1] + Wr_sub[1].a53cf / axis2.Jl_calc * qs_Z1[1] + (Wr_sub[1].a54cf1 + Wr_sub[1].a54cf2 / axis2.Jl_calc) * wl_Z1[1] + Wr_sub[1].a55cf * ql_Z1[1] + Wr_sub[1].a56cf * z_Z1[1] + Wr_sub[1].b5cf * axis2.qm_ref;
     z_Z[1] = Wr_sub[1].a61cf * wm_Z1[1] + Wr_sub[1].a62cf * qm_Z1[1] + Wr_sub[1].a63cf * qs_Z1[1] + Wr_sub[1].a64cf * wl_Z1[1] + Wr_sub[1].a65cf * ql_Z1[1] + Wr_sub[1].a66cf * z_Z1[1] + Wr_sub[1].b6cf * axis2.qm_ref;
 
-    // wm_Z[1] = Wr_sub[1].a11cf*wm_Z1[1] + Wr_sub[1].a12cf*qm_Z1[1] + Wr_sub[1].a13cf*qs_Z1[1] +                                    Wr_sub[1].a14cf*wl_Z1[1] +                                    Wr_sub[1].a15cf*ql_Z1[1] + Wr_sub[1].a16cf*z_Z1[1] + Wr_sub[1].b1cf*axis2.qm_ref;
-    // qm_Z[1] = Wr_sub[1].a21cf*wm_Z1[1] + Wr_sub[1].a22cf*qm_Z1[1] + Wr_sub[1].a23cf*qs_Z1[1] +                                    Wr_sub[1].a24cf*wl_Z1[1] +                                    Wr_sub[1].a25cf*ql_Z1[1] + Wr_sub[1].a26cf*z_Z1[1] + Wr_sub[1].b2cf*axis2.qm_ref;
-    // qs_Z[1] = Wr_sub[1].a31cf*wm_Z1[1] + Wr_sub[1].a32cf*qm_Z1[1] +(Wr_sub[1].a33cf1 + Wr_sub[1].a33cf2/32.168)*qs_Z1[1] +(Wr_sub[1].a34cf1 + Wr_sub[1].a34cf2/32.168)*wl_Z1[1] + Wr_sub[1].a35cf*ql_Z1[1] + Wr_sub[1].a36cf*z_Z1[1] + Wr_sub[1].b3cf*axis2.qm_ref;
-    // wl_Z[1] = Wr_sub[1].a41cf*wm_Z1[1] + Wr_sub[1].a42cf*qm_Z1[1] + Wr_sub[1].a43cf/32.168*qs_Z1[1] +                     (Wr_sub[1].a44cf1 + Wr_sub[1].a44cf2/32.168)*wl_Z1[1] + Wr_sub[1].a45cf*ql_Z1[1] + Wr_sub[1].a46cf*z_Z1[1] + Wr_sub[1].b4cf*axis2.qm_ref;
-    // ql_Z[1] = Wr_sub[1].a51cf*wm_Z1[1] + Wr_sub[1].a52cf*qm_Z1[1] + Wr_sub[1].a53cf/32.168*qs_Z1[1] +                     (Wr_sub[1].a54cf1 + Wr_sub[1].a54cf2/32.168)*wl_Z1[1] + Wr_sub[1].a55cf*ql_Z1[1] + Wr_sub[1].a56cf*z_Z1[1] + Wr_sub[1].b5cf*axis2.qm_ref;
-    // z_Z[1]  = Wr_sub[1].a61cf*wm_Z1[1] + Wr_sub[1].a62cf*qm_Z1[1] + Wr_sub[1].a63cf*qs_Z1[1] +                                    Wr_sub[1].a64cf*wl_Z1[1] +                                    Wr_sub[1].a65cf*ql_Z1[1] + Wr_sub[1].a66cf*z_Z1[1] + Wr_sub[1].b6cf*axis2.qm_ref;
-
     // 状態量の更新
     wm_Z1[1] = wm_Z[1];
     qm_Z1[1] = qm_Z[1];
@@ -4981,7 +5308,6 @@ void CalcFDTDWr_QmrefInputType(Robot *robo)
     axis2.ql_calc = axis2.theta_rl_init + ql_Z[1];
     axis2.wl_calc = wl_Z[1];
     axis2.al_calc = (axis2.Ksn * qs_Z[1] - axis2.Dln * wl_Z[1]) / axis2.Jl_calc;
-    // axis2.al_calc = (axis2.Ksn*qs_Z[1] - axis2.Dln*wl_Z[1])/32.168;
     axis2.wm_calc = wm_Z[1];
   }
   else if (robo->BDN == BDN2)
@@ -5030,12 +5356,6 @@ void CalcFDTDWrInit_QmrefInputType(void)
   Wr_sub[0].a24cf = 0.0;
   Wr_sub[0].a25cf = 0.0;
   Wr_sub[0].a26cf = 0.0;
-  // Wr_sub[0].a21cf = Tp * Wr_sub[0].a11cf;
-  // Wr_sub[0].a22cf = Tp * Wr_sub[0].a12cf + 1.0;
-  // Wr_sub[0].a23cf = Tp * Wr_sub[0].a13cf;
-  // Wr_sub[0].a24cf = Tp * Wr_sub[0].a14cf;
-  // Wr_sub[0].a25cf = Tp * Wr_sub[0].a15cf;
-  // Wr_sub[0].a26cf = Tp * Wr_sub[0].a16cf;
   Wr_sub[0].a31cf = (-axis1.Ktn * axis1.Kvp * powf(Tp, 2) - axis1.Ktn * axis1.fwm * powf(Tp, 2) - axis1.Dmn * powf(Tp, 2) + axis1.Jmn * Tp) / (axis1.Jmn * axis1.Rgn);
   Wr_sub[0].a32cf = -axis1.Ktn * axis1.Kvp * axis1.Kpp * powf(Tp, 2) / (axis1.Jmn * axis1.Rgn);
   Wr_sub[0].a33cf1 = 1.0 + (-axis1.Ktn * axis1.fqs * powf(Tp, 2) - axis1.Ksn * powf(Tp, 2) / axis1.Rgn) / (axis1.Jmn * axis1.Rgn);
@@ -5056,9 +5376,6 @@ void CalcFDTDWrInit_QmrefInputType(void)
   Wr_sub[0].a53cf = 0.0;
   Wr_sub[0].a54cf1 = Tp;
   Wr_sub[0].a54cf2 = 0.0;
-  // Wr_sub[0].a53cf  = Tp * Wr_sub[0].a43cf;
-  // Wr_sub[0].a54cf1 = Tp * Wr_sub[0].a44cf1;
-  // Wr_sub[0].a54cf2 = Tp * Wr_sub[0].a44cf2;
   Wr_sub[0].a55cf = 1.0;
   Wr_sub[0].a56cf = 0.0;
   Wr_sub[0].a61cf = (axis1.Ktn * axis1.Kvp * axis1.Kvi * powf(Tp, 2) + axis1.Ktn * axis1.fwm * axis1.Kvi * powf(Tp, 2) + axis1.Dmn * axis1.Kvi * powf(Tp, 2) - axis1.Jmn * axis1.Kvi * Tp) / axis1.Jmn - axis1.Kvi * axis1.Kpp * powf(Tp, 2);
@@ -5081,12 +5398,6 @@ void CalcFDTDWrInit_QmrefInputType(void)
   Wr_sub[1].a14cf = -axis2.Ktn * axis2.fwl * Tp / axis2.Jmn;
   Wr_sub[1].a15cf = 0.0;
   Wr_sub[1].a16cf = axis2.Ktn * Tp / axis2.Jmn;
-  // Wr_sub[1].a21cf = Tp;
-  // Wr_sub[1].a22cf = 1.0;
-  // Wr_sub[1].a23cf = 0.0;
-  // Wr_sub[1].a24cf = 0.0;
-  // Wr_sub[1].a25cf = 0.0;
-  // Wr_sub[1].a26cf = 0.0;
   Wr_sub[1].a21cf = Tp * Wr_sub[1].a11cf;
   Wr_sub[1].a22cf = Tp * Wr_sub[1].a12cf + 1.0;
   Wr_sub[1].a23cf = Tp * Wr_sub[1].a13cf;
@@ -5110,9 +5421,6 @@ void CalcFDTDWrInit_QmrefInputType(void)
   Wr_sub[1].a46cf = 0.0;
   Wr_sub[1].a51cf = 0.0;
   Wr_sub[1].a52cf = 0.0;
-  // Wr_sub[1].a53cf  = 0.0;
-  // Wr_sub[1].a54cf1 = Tp;
-  // Wr_sub[1].a54cf2 = 0.0;
   Wr_sub[1].a53cf = Tp * Wr_sub[1].a43cf;
   Wr_sub[1].a54cf1 = Tp * Wr_sub[1].a44cf1;
   Wr_sub[1].a54cf2 = Tp * Wr_sub[1].a44cf2;
@@ -5138,12 +5446,6 @@ void CalcFDTDWrInit_QmrefInputType(void)
   Wr_sub[2].a14cf = -axis3.Ktn * axis3.fwl * Tp / axis3.Jmn;
   Wr_sub[2].a15cf = 0.0;
   Wr_sub[2].a16cf = axis3.Ktn * Tp / axis3.Jmn;
-  // Wr_sub[2].a21cf = Tp;
-  // Wr_sub[2].a22cf = 1.0;
-  // Wr_sub[2].a23cf = 0.0;
-  // Wr_sub[2].a24cf = 0.0;
-  // Wr_sub[2].a25cf = 0.0;
-  // Wr_sub[2].a26cf = 0.0;
   Wr_sub[2].a21cf = Tp * Wr_sub[2].a11cf;
   Wr_sub[2].a22cf = Tp * Wr_sub[2].a12cf + 1.0;
   Wr_sub[2].a23cf = Tp * Wr_sub[2].a13cf;
@@ -5167,9 +5469,6 @@ void CalcFDTDWrInit_QmrefInputType(void)
   Wr_sub[2].a46cf = 0.0;
   Wr_sub[2].a51cf = 0.0;
   Wr_sub[2].a52cf = 0.0;
-  //  Wr_sub[2].a53cf  = 0.0;
-  //  Wr_sub[2].a54cf1 = Tp;
-  //  Wr_sub[2].a54cf2 = 0.0;
   Wr_sub[2].a53cf = Tp * Wr_sub[2].a43cf;
   Wr_sub[2].a54cf1 = Tp * Wr_sub[2].a44cf1;
   Wr_sub[2].a54cf2 = Tp * Wr_sub[2].a44cf2;
@@ -5182,7 +5481,6 @@ void CalcFDTDWrInit_QmrefInputType(void)
   Wr_sub[2].a65cf = 0.0;
   Wr_sub[2].a66cf = 1.0 - axis3.Ktn * axis3.Kvi * powf(Tp, 2) / axis3.Jmn;
   Wr_sub[2].b1cf = axis3.Kpp * axis3.Kvp * axis3.Ktn * Tp / axis3.Jmn;
-  // Wr_sub[2].b2cf = 0.0;
   Wr_sub[2].b2cf = Tp * Wr_sub[2].b1cf;
   Wr_sub[2].b3cf = axis3.Kpp * axis3.Kvp * axis3.Ktn * powf(Tp, 2) / (axis3.Jmn * axis3.Rgn);
   Wr_sub[2].b4cf = 0.0;
@@ -5190,7 +5488,7 @@ void CalcFDTDWrInit_QmrefInputType(void)
   Wr_sub[2].b6cf = -axis3.Kpp * axis3.Kvp * axis3.Kvi * axis3.Ktn * powf(Tp, 2) / axis3.Jmn + Tp * axis3.Kpp * axis3.Kvi;
 }
 
-void CalcFDTDWrInit_QmrefInputType_1st2nd(void)
+void CalcFDTDWrUpdate_QmrefInputType_1st2nd(void)
 { // 20220408 FDTD法適用見直し
   // qm^ref入力型FDTDWrのJlの係数の計算
   // 1軸目
@@ -5199,6 +5497,11 @@ void CalcFDTDWrInit_QmrefInputType_1st2nd(void)
   Wr_sub[0].a12cf = -axis1.Ktn * axis1.Kvp * axis1.Kpp * Tp / axis1.Jmn;
   Wr_sub[0].a13cf = (-axis1.Ktn * axis1.fqs * Tp - axis1.Ksn * Tp / axis1.Rgn) / axis1.Jmn;
   Wr_sub[0].a14cf = -axis1.Ktn * axis1.fwl * Tp / axis1.Jmn;
+
+  Wr_sub[1].a21cf = Tp * Wr_sub[1].a11cf;
+  Wr_sub[1].a22cf = Tp * Wr_sub[1].a12cf + 1.0;
+  Wr_sub[1].a23cf = Tp * Wr_sub[1].a13cf;
+  Wr_sub[1].a24cf = Tp * Wr_sub[1].a14cf;
 
   Wr_sub[0].a31cf = (-axis1.Ktn * axis1.Kvp * Tp_2 - axis1.Ktn * axis1.fwm * Tp_2 - axis1.Dmn * Tp_2 + axis1.Jmn * Tp) / (axis1.Jmn * axis1.Rgn);
   Wr_sub[0].a32cf = -axis1.Ktn * axis1.Kvp * axis1.Kpp * Tp_2 / (axis1.Jmn * axis1.Rgn);
@@ -5243,7 +5546,7 @@ void CalcFDTDWrInit_QmrefInputType_1st2nd(void)
   Wr_sub[1].b6cf = -axis2.Kpp * axis2.Kvp * axis2.Kvi * axis2.Ktn * Tp_2 / axis2.Jmn + Tp * axis2.Kpp * axis2.Kvi;
 }
 
-void CalcFDTDWrInit_QmrefInputType_2nd(void)
+void CalcFDTDWrUpdate_QmrefInputType_2nd(void)
 { // 20220408 FDTD法適用見直し
   // qm^ref入力型FDTDWrのJlの係数の計算
   float Tp_2 = Tp * Tp;
@@ -5273,6 +5576,422 @@ void CalcFDTDWrInit_QmrefInputType_2nd(void)
   Wr_sub[1].b2cf = axis2.Kpp * axis2.Kvp * axis2.Ktn * Tp_2 / axis2.Jmn;
   Wr_sub[1].b3cf = axis2.Kpp * axis2.Kvp * axis2.Ktn * Tp_2 / (axis2.Jmn * axis2.Rgn);
   Wr_sub[1].b6cf = -axis2.Kpp * axis2.Kvp * axis2.Kvi * axis2.Ktn * Tp_2 / axis2.Jmn + Tp * axis2.Kpp * axis2.Kvi;
+}
+
+volatile int Wr_Throth_check = 0;
+void CalcFDTDWr_WmcmdInputType(Robot *robo)
+{
+  // 状態変数の定義
+  static float wm_Z[3] = {0}, qm_Z[3] = {0}, qs_Z[3] = {0}, wl_Z[3] = {0}, ql_Z[3] = {0}, n_Z[3] = {0}, m_Z[3] = {0};
+  static float wm_Z1[3] = {0}, qm_Z1[3] = {0}, qs_Z1[3] = {0}, wl_Z1[3] = {0}, ql_Z1[3] = {0}, n_Z1[3] = {0}, m_Z1[3] = {0};
+
+  if (robo->BDN == BDN0)
+  {
+    // 状態量の計算
+    wm_Z[0] = Wr_DPD[0].a11cf * wm_Z1[0] + Wr_DPD[0].a12cf * qm_Z1[0] + Wr_DPD[0].a13cf * qs_Z1[0] + Wr_DPD[0].a14cf * wl_Z1[0] + Wr_DPD[0].a15cf * ql_Z1[0] + Wr_DPD[0].a16cf * n_Z1[0] + Wr_DPD[0].a17cf * m_Z1[0] + Wr_DPD[0].b1cf * robo->wm_cmd;
+    qm_Z[0] = Wr_DPD[0].a21cf * wm_Z1[0] + Wr_DPD[0].a22cf * qm_Z1[0] + Wr_DPD[0].a23cf * qs_Z1[0] + Wr_DPD[0].a24cf * wl_Z1[0] + Wr_DPD[0].a25cf * ql_Z1[0] + Wr_DPD[0].a26cf * n_Z1[0] + Wr_DPD[0].a27cf * m_Z1[0] + Wr_DPD[0].b2cf * robo->wm_cmd;
+    qs_Z[0] = Wr_DPD[0].a31cf * wm_Z1[0] + Wr_DPD[0].a32cf * qm_Z1[0] + (Wr_DPD[0].a33cf1 + Wr_DPD[0].a33cf2 / robo->Jl_calc) * qs_Z1[0] + (Wr_DPD[0].a34cf1 + Wr_DPD[0].a34cf2 / robo->Jl_calc) * wl_Z1[0] + Wr_DPD[0].a35cf * ql_Z1[0] + Wr_DPD[0].a36cf * n_Z1[0] + Wr_DPD[0].a37cf * m_Z1[0] + Wr_DPD[0].b3cf * robo->wm_cmd;
+    wl_Z[0] = Wr_DPD[0].a41cf * wm_Z1[0] + Wr_DPD[0].a42cf * qm_Z1[0] + Wr_DPD[0].a43cf / robo->Jl_calc * qs_Z1[0] + (Wr_DPD[0].a44cf1 + Wr_DPD[0].a44cf2 / robo->Jl_calc) * wl_Z1[0] + Wr_DPD[0].a45cf * ql_Z1[0] + Wr_DPD[0].a46cf * n_Z1[0] + Wr_DPD[0].a47cf * m_Z1[0] + Wr_DPD[0].b4cf * robo->wm_cmd;
+    ql_Z[0] = Wr_DPD[0].a51cf * wm_Z1[0] + Wr_DPD[0].a52cf * qm_Z1[0] + Wr_DPD[0].a53cf / robo->Jl_calc * qs_Z1[0] + (Wr_DPD[0].a54cf1 + Wr_DPD[0].a54cf2 / robo->Jl_calc) * wl_Z1[0] + Wr_DPD[0].a55cf * ql_Z1[0] + Wr_DPD[0].a56cf * n_Z1[0] + Wr_DPD[0].a57cf * m_Z1[0] + Wr_DPD[0].b5cf * robo->wm_cmd;
+    n_Z[0] = Wr_DPD[0].a61cf * wm_Z1[0] + Wr_DPD[0].a62cf * qm_Z1[0] + Wr_DPD[0].a63cf * qs_Z1[0] + Wr_DPD[0].a64cf * wl_Z1[0] + Wr_DPD[0].a65cf * ql_Z1[0] + Wr_DPD[0].a66cf * n_Z1[0] + Wr_DPD[0].a67cf * m_Z1[0] + Wr_DPD[0].b6cf * robo->wm_cmd;
+    m_Z[0] = Wr_DPD[0].a71cf * wm_Z1[0] + Wr_DPD[0].a72cf * qm_Z1[0] + Wr_DPD[0].a73cf * qs_Z1[0] + Wr_DPD[0].a74cf * wl_Z1[0] + Wr_DPD[0].a75cf * ql_Z1[0] + Wr_DPD[0].a76cf * n_Z1[0] + Wr_DPD[0].a77cf * m_Z1[0] + Wr_DPD[0].b7cf * robo->wm_cmd;
+
+    // 状態量の更新axis1.
+    wm_Z1[0] = wm_Z[0];
+    qm_Z1[0] = qm_Z[0];
+    qs_Z1[0] = qs_Z[0];
+    wl_Z1[0] = wl_Z[0];
+    ql_Z1[0] = ql_Z[0];
+    n_Z1[0] = n_Z[0];
+    m_Z1[0] = m_Z[0];
+
+    // 計算結果の代入
+    robo->ql_calc = robo->theta_rl_init + ql_Z[0];
+    robo->wl_calc = wl_Z[0];
+    robo->al_calc = (robo->Ksn * qs_Z[0] - robo->Dln * wl_Z[0]) / robo->Jl_calc;
+    robo->wm_calc = wm_Z[0];
+  }
+  else if (robo->BDN == BDN1)
+  {
+    // 状態量の計算
+    wm_Z[1] = Wr_DPD[1].a11cf * wm_Z1[1] + Wr_DPD[1].a12cf * qm_Z1[1] + Wr_DPD[1].a13cf * qs_Z1[1] + Wr_DPD[1].a14cf * wl_Z1[1] + Wr_DPD[1].a15cf * ql_Z1[1] + Wr_DPD[1].a16cf * n_Z1[1] + Wr_DPD[1].a17cf * m_Z1[1] + Wr_DPD[1].b1cf * robo->wm_cmd;
+    qm_Z[1] = Wr_DPD[1].a21cf * wm_Z1[1] + Wr_DPD[1].a22cf * qm_Z1[1] + Wr_DPD[1].a23cf * qs_Z1[1] + Wr_DPD[1].a24cf * wl_Z1[1] + Wr_DPD[1].a25cf * ql_Z1[1] + Wr_DPD[1].a26cf * n_Z1[1] + Wr_DPD[1].a27cf * m_Z1[1] + Wr_DPD[1].b2cf * robo->wm_cmd;
+    qs_Z[1] = Wr_DPD[1].a31cf * wm_Z1[1] + Wr_DPD[1].a32cf * qm_Z1[1] + (Wr_DPD[1].a33cf1 + Wr_DPD[1].a33cf2 / robo->Jl_calc) * qs_Z1[1] + (Wr_DPD[1].a34cf1 + Wr_DPD[1].a34cf2 / robo->Jl_calc) * wl_Z1[1] + Wr_DPD[1].a35cf * ql_Z1[1] + Wr_DPD[1].a36cf * n_Z1[1] + Wr_DPD[1].a37cf * m_Z1[1] + Wr_DPD[1].b3cf * robo->wm_cmd;
+    wl_Z[1] = Wr_DPD[1].a41cf * wm_Z1[1] + Wr_DPD[1].a42cf * qm_Z1[1] + Wr_DPD[1].a43cf / robo->Jl_calc * qs_Z1[1] + (Wr_DPD[1].a44cf1 + Wr_DPD[1].a44cf2 / robo->Jl_calc) * wl_Z1[1] + Wr_DPD[1].a45cf * ql_Z1[1] + Wr_DPD[1].a46cf * n_Z1[1] + Wr_DPD[1].a47cf * m_Z1[1] + Wr_DPD[1].b4cf * robo->wm_cmd;
+    ql_Z[1] = Wr_DPD[1].a51cf * wm_Z1[1] + Wr_DPD[1].a52cf * qm_Z1[1] + Wr_DPD[1].a53cf / robo->Jl_calc * qs_Z1[1] + (Wr_DPD[1].a54cf1 + Wr_DPD[1].a54cf2 / robo->Jl_calc) * wl_Z1[1] + Wr_DPD[1].a55cf * ql_Z1[1] + Wr_DPD[1].a56cf * n_Z1[1] + Wr_DPD[1].a57cf * m_Z1[1] + Wr_DPD[1].b5cf * robo->wm_cmd;
+    n_Z[1] = Wr_DPD[1].a61cf * wm_Z1[1] + Wr_DPD[1].a62cf * qm_Z1[1] + Wr_DPD[1].a63cf * qs_Z1[1] + Wr_DPD[1].a64cf * wl_Z1[1] + Wr_DPD[1].a65cf * ql_Z1[1] + Wr_DPD[1].a66cf * n_Z1[1] + Wr_DPD[1].a67cf * m_Z1[1] + Wr_DPD[1].b6cf * robo->wm_cmd;
+    m_Z[1] = Wr_DPD[1].a71cf * wm_Z1[1] + Wr_DPD[1].a72cf * qm_Z1[1] + Wr_DPD[1].a73cf * qs_Z1[1] + Wr_DPD[1].a74cf * wl_Z1[1] + Wr_DPD[1].a75cf * ql_Z1[1] + Wr_DPD[1].a76cf * n_Z1[1] + Wr_DPD[1].a77cf * m_Z1[1] + Wr_DPD[1].b7cf * robo->wm_cmd;
+
+    // 状態量の更新
+    wm_Z1[1] = wm_Z[1];
+    qm_Z1[1] = qm_Z[1];
+    qs_Z1[1] = qs_Z[1];
+    wl_Z1[1] = wl_Z[1];
+    ql_Z1[1] = ql_Z[1];
+    n_Z1[1] = n_Z[1];
+    m_Z1[1] = m_Z[1];
+
+    // 計算結果の代入
+    robo->ql_calc = robo->theta_rl_init + ql_Z[1];
+    robo->wl_calc = wl_Z[1];
+    robo->al_calc = (robo->Ksn * qs_Z[1] - robo->Dln * wl_Z[1]) / robo->Jl_calc;
+    robo->wm_calc = wm_Z[1];
+  }
+  else if (robo->BDN == BDN2)
+  {
+    // 状態量の計算
+    wm_Z[2] = Wr_DPD[2].a11cf * wm_Z1[2] + Wr_DPD[2].a12cf * qm_Z1[2] + Wr_DPD[2].a13cf * qs_Z1[2] + Wr_DPD[2].a14cf * wl_Z1[2] + Wr_DPD[2].a15cf * ql_Z1[2] + Wr_DPD[2].a16cf * n_Z1[2] + Wr_DPD[2].a17cf * m_Z1[2] + Wr_DPD[2].b1cf * robo->wm_cmd;
+    qm_Z[2] = Wr_DPD[2].a21cf * wm_Z1[2] + Wr_DPD[2].a22cf * qm_Z1[2] + Wr_DPD[2].a23cf * qs_Z1[2] + Wr_DPD[2].a24cf * wl_Z1[2] + Wr_DPD[2].a25cf * ql_Z1[2] + Wr_DPD[2].a26cf * n_Z1[2] + Wr_DPD[2].a27cf * m_Z1[2] + Wr_DPD[2].b2cf * robo->wm_cmd;
+    qs_Z[2] = Wr_DPD[2].a31cf * wm_Z1[2] + Wr_DPD[2].a32cf * qm_Z1[2] + (Wr_DPD[2].a33cf1 + Wr_DPD[2].a33cf2 / robo->Jl_calc) * qs_Z1[2] + (Wr_DPD[2].a34cf1 + Wr_DPD[2].a34cf2 / robo->Jl_calc) * wl_Z1[2] + Wr_DPD[2].a35cf * ql_Z1[2] + Wr_DPD[2].a36cf * n_Z1[2] + Wr_DPD[2].a37cf * m_Z1[2] + Wr_DPD[2].b3cf * robo->wm_cmd;
+    wl_Z[2] = Wr_DPD[2].a41cf * wm_Z1[2] + Wr_DPD[2].a42cf * qm_Z1[2] + Wr_DPD[2].a43cf / robo->Jl_calc * qs_Z1[2] + (Wr_DPD[2].a44cf1 + Wr_DPD[2].a44cf2 / robo->Jl_calc) * wl_Z1[2] + Wr_DPD[2].a45cf * ql_Z1[2] + Wr_DPD[2].a46cf * n_Z1[2] + Wr_DPD[2].a47cf * m_Z1[2] + Wr_DPD[2].b4cf * robo->wm_cmd;
+    ql_Z[2] = Wr_DPD[2].a51cf * wm_Z1[2] + Wr_DPD[2].a52cf * qm_Z1[2] + Wr_DPD[2].a53cf / robo->Jl_calc * qs_Z1[2] + (Wr_DPD[2].a54cf1 + Wr_DPD[2].a54cf2 / robo->Jl_calc) * wl_Z1[2] + Wr_DPD[2].a55cf * ql_Z1[2] + Wr_DPD[2].a56cf * n_Z1[2] + Wr_DPD[2].a57cf * m_Z1[2] + Wr_DPD[2].b5cf * robo->wm_cmd;
+    n_Z[2] = Wr_DPD[2].a61cf * wm_Z1[2] + Wr_DPD[2].a62cf * qm_Z1[2] + Wr_DPD[2].a63cf * qs_Z1[2] + Wr_DPD[2].a64cf * wl_Z1[2] + Wr_DPD[2].a65cf * ql_Z1[2] + Wr_DPD[2].a66cf * n_Z1[2] + Wr_DPD[2].a67cf * m_Z1[2] + Wr_DPD[2].b6cf * robo->wm_cmd;
+    m_Z[2] = Wr_DPD[2].a71cf * wm_Z1[2] + Wr_DPD[2].a72cf * qm_Z1[2] + Wr_DPD[2].a73cf * qs_Z1[2] + Wr_DPD[2].a74cf * wl_Z1[2] + Wr_DPD[2].a75cf * ql_Z1[2] + Wr_DPD[2].a76cf * n_Z1[2] + Wr_DPD[2].a77cf * m_Z1[2] + Wr_DPD[2].b7cf * robo->wm_cmd;
+
+    // 状態量の更新
+    wm_Z1[2] = wm_Z[2];
+    qm_Z1[2] = qm_Z[2];
+    qs_Z1[2] = qs_Z[2];
+    wl_Z1[2] = wl_Z[2];
+    ql_Z1[2] = ql_Z[2];
+    n_Z1[2] = n_Z[2];
+    m_Z1[2] = m_Z[2];
+
+    // 計算結果の代入
+    robo->ql_calc = robo->theta_rl_init + ql_Z[2];
+    robo->wl_calc = wl_Z[2];
+    robo->al_calc = (robo->Ksn * qs_Z[2] - robo->Dln * wl_Z[2]) / robo->Jl_calc;
+    robo->wm_calc = wm_Z[2];
+  }
+  else
+  {
+    // ボード番号認識できない場合
+    Wr_Throth_check++;
+  }
+}
+
+void CalcFDTDWrInit_WmcmdInputType(Robot *robo)
+{
+  float Tp2 = powf(Tp, 2);
+
+  if (robo->BDN == BDN0)
+  {
+    // 20220408 FDTD法適用見直し
+    // wm_cmd入力型FDTDWrのJlの係数の計算
+    // 1軸目
+    Wr_DPD[0].a11cf  = ((robo->Jmn) - Tp * (robo->Dmn + robo->Ktn * (robo->fwm + robo->Kvp + robo->Kfb * robo->Kvp))) / robo->Jmn;
+    Wr_DPD[0].a12cf  = -robo->Ktn * robo->Kvp * robo->Kpp * Tp / robo->Jmn;
+    Wr_DPD[0].a13cf  = (-robo->Ktn * robo->fqs * Tp - robo->Ksn * Tp / robo->Rgn) / robo->Jmn;
+    Wr_DPD[0].a14cf  = -robo->Ktn * robo->fwl * Tp / robo->Jmn;
+    Wr_DPD[0].a15cf  = 0.0;
+    Wr_DPD[0].a16cf  = robo->Ktn * Tp / robo->Jmn;
+    Wr_DPD[0].a17cf  = Tp * robo->Ktn * robo->Kvp * robo->Kpp / robo->Jmn;
+    Wr_DPD[0].a21cf  = (Tp * ((robo->Jmn) - Tp * (robo->Dmn + robo->Ktn * (robo->fwm + robo->Kvp + robo->Kfb * robo->Kvp)))) / robo->Jmn;
+    Wr_DPD[0].a22cf  = 1 - (robo->Ktn * robo->Kvp * robo->Kpp * Tp2) / robo->Jmn;
+    Wr_DPD[0].a23cf  = -((robo->Ktn * robo->fqs * robo->Rgn + robo->Ksn) * Tp2) / (robo->Jmn * robo->Rgn);
+    Wr_DPD[0].a24cf  = -robo->Ktn * robo->fwl * Tp2 / robo->Jmn;
+    Wr_DPD[0].a25cf  = 0.0;
+    Wr_DPD[0].a26cf  = robo->Ktn * Tp2 / robo->Jmn;
+    Wr_DPD[0].a27cf  = Tp2 * robo->Ktn * robo->Kvp * robo->Kpp / robo->Jmn;
+    Wr_DPD[0].a31cf  = (Tp / robo->Rgn) * ((robo->Jmn) - Tp * (robo->Dmn + robo->Ktn * (robo->fwm + robo->Kvp + robo->Kfb * robo->Kvp))) / robo->Jmn;
+    Wr_DPD[0].a32cf  = -robo->Ktn * robo->Kvp * robo->Kpp * Tp2 / (robo->Jmn * robo->Rgn);
+    Wr_DPD[0].a33cf1 = 1.0 + (Tp2 * (robo->Ksn / robo->Rgn + robo->fqs * robo->Ktn)) / (robo->Jmn * robo->Rgn);
+    Wr_DPD[0].a33cf2 = -Tp2 * robo->Ksn;
+    Wr_DPD[0].a34cf1 = -Tp - robo->Ktn * robo->fwl * Tp2 / (robo->Jmn * robo->Rgn);
+    Wr_DPD[0].a34cf2 = Tp2 * robo->Dln;
+    Wr_DPD[0].a35cf  = 0.0;
+    Wr_DPD[0].a36cf  = robo->Ktn * Tp2 / (robo->Jmn * robo->Rgn);
+    Wr_DPD[0].a37cf  = robo->Kvp * robo->Kpp * robo->Ktn * Tp2 / (robo->Jmn * robo->Rgn);
+    Wr_DPD[0].a41cf  = 0.0;
+    Wr_DPD[0].a42cf  = 0.0;
+    Wr_DPD[0].a43cf  = Tp * robo->Ksn;
+    Wr_DPD[0].a44cf1 = 1.0;
+    Wr_DPD[0].a44cf2 = -Tp * robo->Dln;
+    Wr_DPD[0].a45cf  = 0.0;
+    Wr_DPD[0].a46cf  = 0.0;
+    Wr_DPD[0].a47cf  = 0.0;
+    Wr_DPD[0].a51cf  = 0.0;
+    Wr_DPD[0].a52cf  = 0.0;
+    Wr_DPD[0].a53cf  = Tp2 * robo->Ksn;
+    Wr_DPD[0].a54cf1 = Tp;
+    Wr_DPD[0].a54cf2 = -Tp2 * robo->Dln;
+    Wr_DPD[0].a55cf  = 1.0;
+    Wr_DPD[0].a56cf  = 0.0;
+    Wr_DPD[0].a57cf  = 0.0;
+    Wr_DPD[0].a61cf  = ((1 + robo->Kfb) * robo->Kvi * Tp * (-robo->Jmn + (robo->Dmn + robo->Ktn * (robo->fwm + robo->Kvp + robo->Kfb * robo->Kvp)) * Tp)) / robo->Jmn;
+    Wr_DPD[0].a62cf  = (robo->Kpp * robo->Kvi * Tp * (-robo->Jmn + (1 + robo->Kfb) * robo->Ktn * robo->Kvp * Tp)) / robo->Jmn;
+    Wr_DPD[0].a63cf  = (Tp2 * (1 + robo->Kfb) * robo->Kvi * (robo->Ksn + robo->fqs * robo->Ktn * robo->Rgn)) / (robo->Jmn * robo->Rgn);
+    Wr_DPD[0].a64cf  = (robo->fwl * (1 + robo->Kfb) * robo->Ktn * robo->Kvi * Tp2) / robo->Jmn;
+    Wr_DPD[0].a65cf  = 0;
+    Wr_DPD[0].a66cf  = 1 - ((1 + robo->Kfb) * robo->Ktn * robo->Kvi * Tp2) / robo->Jmn;
+    Wr_DPD[0].a67cf  = (robo->Kpp * robo->Kvi * Tp * (robo->Jmn - (1 + robo->Kfb) * robo->Ktn * robo->Kvp * Tp)) / robo->Jmn;
+    Wr_DPD[0].a71cf  = 0;
+    Wr_DPD[0].a72cf  = 0;
+    Wr_DPD[0].a73cf  = 0;
+    Wr_DPD[0].a74cf  = 0;
+    Wr_DPD[0].a75cf  = 0;
+    Wr_DPD[0].a76cf  = 0;
+    Wr_DPD[0].a77cf  = 1;
+    Wr_DPD[0].b1cf   = robo->Kff * robo->Kvp * robo->Ktn * Tp / robo->Jmn;
+    Wr_DPD[0].b2cf   = robo->Kff * robo->Kvp * robo->Ktn * Tp2 / robo->Jmn;
+    Wr_DPD[0].b3cf   = robo->Kff * robo->Kvp * robo->Ktn * Tp2 / (robo->Jmn * robo->Rgn);
+    Wr_DPD[0].b4cf   = 0.0;
+    Wr_DPD[0].b5cf   = 0.0;
+    Wr_DPD[0].b6cf   = (robo->Kff * robo->Kvi * Tp * (robo->Jmn - (1 + robo->Kfb) * robo->Ktn * robo->Kfb * Tp)) / robo->Jmn;
+    Wr_DPD[0].b7cf   = Tp;
+  }
+  else if (robo->BDN == BDN1)
+  {
+    // 2軸目
+    Wr_DPD[1].a11cf  = ((robo->Jmn) - Tp * (robo->Dmn + robo->Ktn * (robo->fwm + robo->Kvp + robo->Kfb * robo->Kvp))) / robo->Jmn;
+    Wr_DPD[1].a12cf  = -robo->Ktn * robo->Kvp * robo->Kpp * Tp / robo->Jmn;
+    Wr_DPD[1].a13cf  = (-robo->Ktn * robo->fqs * Tp - robo->Ksn * Tp / robo->Rgn) / robo->Jmn;
+    Wr_DPD[1].a14cf  = -robo->Ktn * robo->fwl * Tp / robo->Jmn;
+    Wr_DPD[1].a15cf  = 0.0;
+    Wr_DPD[1].a16cf  = robo->Ktn * Tp / robo->Jmn;
+    Wr_DPD[1].a17cf  = Tp * robo->Ktn * robo->Kvp * robo->Kpp / robo->Jmn;
+    Wr_DPD[1].a21cf  = (Tp * ((robo->Jmn) - Tp * (robo->Dmn + robo->Ktn * (robo->fwm + robo->Kvp + robo->Kfb * robo->Kvp)))) / robo->Jmn;
+    Wr_DPD[1].a22cf  = 1 - (robo->Ktn * robo->Kvp * robo->Kpp * Tp2) / robo->Jmn;
+    Wr_DPD[1].a23cf  = -((robo->Ktn * robo->fqs * robo->Rgn + robo->Ksn) * Tp2) / (robo->Jmn * robo->Rgn);
+    Wr_DPD[1].a24cf  = -robo->Ktn * robo->fwl * Tp2 / robo->Jmn;
+    Wr_DPD[1].a25cf  = 0.0;
+    Wr_DPD[1].a26cf  = robo->Ktn * Tp2 / robo->Jmn;
+    Wr_DPD[1].a27cf  = Tp2 * robo->Ktn * robo->Kvp * robo->Kpp / robo->Jmn;
+    Wr_DPD[1].a31cf  = (Tp / robo->Rgn) * ((robo->Jmn) - Tp * (robo->Dmn + robo->Ktn * (robo->fwm + robo->Kvp + robo->Kfb * robo->Kvp))) / robo->Jmn;
+    Wr_DPD[1].a32cf  = -robo->Ktn * robo->Kvp * robo->Kpp * Tp2 / (robo->Jmn * robo->Rgn);
+    Wr_DPD[1].a33cf1 = 1.0 + (Tp2 * (robo->Ksn / robo->Rgn + robo->fqs * robo->Ktn)) / (robo->Jmn * robo->Rgn);
+    Wr_DPD[1].a33cf2 = -Tp2 * robo->Ksn;
+    Wr_DPD[1].a34cf1 = -Tp - robo->Ktn * robo->fwl * Tp2 / (robo->Jmn * robo->Rgn);
+    Wr_DPD[1].a34cf2 = Tp2 * robo->Dln;
+    Wr_DPD[1].a35cf  = 0.0;
+    Wr_DPD[1].a36cf  = robo->Ktn * Tp2 / (robo->Jmn * robo->Rgn);
+    Wr_DPD[1].a37cf  = robo->Kvp * robo->Kpp * robo->Ktn * Tp2 / (robo->Jmn * robo->Rgn);
+    Wr_DPD[1].a41cf  = 0.0;
+    Wr_DPD[1].a42cf  = 0.0;
+    Wr_DPD[1].a43cf  = Tp * robo->Ksn;
+    Wr_DPD[1].a44cf1 = 1.0;
+    Wr_DPD[1].a44cf2 = -Tp * robo->Dln;
+    Wr_DPD[1].a45cf  = 0.0;
+    Wr_DPD[1].a46cf  = 0.0;
+    Wr_DPD[1].a47cf  = 0.0;
+    Wr_DPD[1].a51cf  = 0.0;
+    Wr_DPD[1].a52cf  = 0.0;
+    Wr_DPD[1].a53cf  = Tp2 * robo->Ksn;
+    Wr_DPD[1].a54cf1 = Tp;
+    Wr_DPD[1].a54cf2 = -Tp2 * robo->Dln;
+    Wr_DPD[1].a55cf  = 1.0;
+    Wr_DPD[1].a56cf  = 0.0;
+    Wr_DPD[1].a57cf  = 0.0;
+    Wr_DPD[1].a61cf  = ((1 + robo->Kfb) * robo->Kvi * Tp * (-robo->Jmn + (robo->Dmn + robo->Ktn * (robo->fwm + robo->Kvp + robo->Kfb * robo->Kvp)) * Tp)) / robo->Jmn;
+    Wr_DPD[1].a62cf  = (robo->Kpp * robo->Kvi * Tp * (-robo->Jmn + (1 + robo->Kfb) * robo->Ktn * robo->Kvp * Tp)) / robo->Jmn;
+    Wr_DPD[1].a63cf  = (Tp2 * (1 + robo->Kfb) * robo->Kvi * (robo->Ksn + robo->fqs * robo->Ktn * robo->Rgn)) / (robo->Jmn * robo->Rgn);
+    Wr_DPD[1].a64cf  = (robo->fwl * (1 + robo->Kfb) * robo->Ktn * robo->Kvi * Tp2) / robo->Jmn;
+    Wr_DPD[1].a65cf  = 0;
+    Wr_DPD[1].a66cf  = 1 - ((1 + robo->Kfb) * robo->Ktn * robo->Kvi * Tp2) / robo->Jmn;
+    Wr_DPD[1].a67cf  = (robo->Kpp * robo->Kvi * Tp * (robo->Jmn - (1 + robo->Kfb) * robo->Ktn * robo->Kvp * Tp)) / robo->Jmn;
+    Wr_DPD[1].a71cf  = 0;
+    Wr_DPD[1].a72cf  = 0;
+    Wr_DPD[1].a73cf  = 0;
+    Wr_DPD[1].a74cf  = 0;
+    Wr_DPD[1].a75cf  = 0;
+    Wr_DPD[1].a76cf  = 0;
+    Wr_DPD[1].a77cf  = 1;
+    Wr_DPD[1].b1cf   = robo->Kff * robo->Kvp * robo->Ktn * Tp / robo->Jmn;
+    Wr_DPD[1].b2cf   = robo->Kff * robo->Kvp * robo->Ktn * Tp2 / robo->Jmn;
+    Wr_DPD[1].b3cf   = robo->Kff * robo->Kvp * robo->Ktn * Tp2 / (robo->Jmn * robo->Rgn);
+    Wr_DPD[1].b4cf   = 0.0;
+    Wr_DPD[1].b5cf   = 0.0;
+    Wr_DPD[1].b6cf   = (robo->Kff * robo->Kvi * Tp * (robo->Jmn - (1 + robo->Kfb) * robo->Ktn * robo->Kfb * Tp)) / robo->Jmn;
+    Wr_DPD[1].b7cf   = Tp;
+  }
+  else if (robo->BDN == BDN2)
+  {
+    // 3軸目
+    Wr_DPD[2].a11cf  = ((robo->Jmn) - Tp * (robo->Dmn + robo->Ktn * (robo->fwm + robo->Kvp + robo->Kfb * robo->Kvp))) / robo->Jmn;
+    Wr_DPD[2].a12cf  = -robo->Ktn * robo->Kvp * robo->Kpp * Tp / robo->Jmn;
+    Wr_DPD[2].a13cf  = (-robo->Ktn * robo->fqs * Tp - robo->Ksn * Tp / robo->Rgn) / robo->Jmn;
+    Wr_DPD[2].a14cf  = -robo->Ktn * robo->fwl * Tp / robo->Jmn;
+    Wr_DPD[2].a15cf  = 0.0;
+    Wr_DPD[2].a16cf  = robo->Ktn * Tp / robo->Jmn;
+    Wr_DPD[2].a17cf  = Tp * robo->Ktn * robo->Kvp * robo->Kpp / robo->Jmn;
+    Wr_DPD[2].a21cf  = (Tp * ((robo->Jmn) - Tp * (robo->Dmn + robo->Ktn * (robo->fwm + robo->Kvp + robo->Kfb * robo->Kvp)))) / robo->Jmn;
+    Wr_DPD[2].a22cf  = 1 - (robo->Ktn * robo->Kvp * robo->Kpp * Tp2) / robo->Jmn;
+    Wr_DPD[2].a23cf  = -((robo->Ktn * robo->fqs * robo->Rgn + robo->Ksn) * Tp2) / (robo->Jmn * robo->Rgn);
+    Wr_DPD[2].a24cf  = -robo->Ktn * robo->fwl * Tp2 / robo->Jmn;
+    Wr_DPD[2].a25cf  = 0.0;
+    Wr_DPD[2].a26cf  = robo->Ktn * Tp2 / robo->Jmn;
+    Wr_DPD[2].a27cf  = Tp2 * robo->Ktn * robo->Kvp * robo->Kpp / robo->Jmn;
+    Wr_DPD[2].a31cf  = (Tp / robo->Rgn) * ((robo->Jmn) - Tp * (robo->Dmn + robo->Ktn * (robo->fwm + robo->Kvp + robo->Kfb * robo->Kvp))) / robo->Jmn;
+    Wr_DPD[2].a32cf  = -robo->Ktn * robo->Kvp * robo->Kpp * Tp2 / (robo->Jmn * robo->Rgn);
+    Wr_DPD[2].a33cf1 = 1.0 + (Tp2 * (robo->Ksn / robo->Rgn + robo->fqs * robo->Ktn)) / (robo->Jmn * robo->Rgn);
+    Wr_DPD[2].a33cf2 = -Tp2 * robo->Ksn;
+    Wr_DPD[2].a34cf1 = -Tp - robo->Ktn * robo->fwl * Tp2 / (robo->Jmn * robo->Rgn);
+    Wr_DPD[2].a34cf2 = Tp2 * robo->Dln;
+    Wr_DPD[2].a35cf  = 0.0;
+    Wr_DPD[2].a36cf  = robo->Ktn * Tp2 / (robo->Jmn * robo->Rgn);
+    Wr_DPD[2].a37cf  = robo->Kvp * robo->Kpp * robo->Ktn * Tp2 / (robo->Jmn * robo->Rgn);
+    Wr_DPD[2].a41cf  = 0.0;
+    Wr_DPD[2].a42cf  = 0.0;
+    Wr_DPD[2].a43cf  = Tp * robo->Ksn;
+    Wr_DPD[2].a44cf1 = 1.0;
+    Wr_DPD[2].a44cf2 = -Tp * robo->Dln;
+    Wr_DPD[2].a45cf  = 0.0;
+    Wr_DPD[2].a46cf  = 0.0;
+    Wr_DPD[2].a47cf  = 0.0;
+    Wr_DPD[2].a51cf  = 0.0;
+    Wr_DPD[2].a52cf  = 0.0;
+    Wr_DPD[2].a53cf  = Tp2 * robo->Ksn;
+    Wr_DPD[2].a54cf1 = Tp;
+    Wr_DPD[2].a54cf2 = -Tp2 * robo->Dln;
+    Wr_DPD[2].a55cf  = 1.0;
+    Wr_DPD[2].a56cf  = 0.0;
+    Wr_DPD[2].a57cf  = 0.0;
+    Wr_DPD[2].a61cf  = ((1 + robo->Kfb) * robo->Kvi * Tp * (-robo->Jmn + (robo->Dmn + robo->Ktn * (robo->fwm + robo->Kvp + robo->Kfb * robo->Kvp)) * Tp)) / robo->Jmn;
+    Wr_DPD[2].a62cf  = (robo->Kpp * robo->Kvi * Tp * (-robo->Jmn + (1 + robo->Kfb) * robo->Ktn * robo->Kvp * Tp)) / robo->Jmn;
+    Wr_DPD[2].a63cf  = (Tp2 * (1 + robo->Kfb) * robo->Kvi * (robo->Ksn + robo->fqs * robo->Ktn * robo->Rgn)) / (robo->Jmn * robo->Rgn);
+    Wr_DPD[2].a64cf  = (robo->fwl * (1 + robo->Kfb) * robo->Ktn * robo->Kvi * Tp2) / robo->Jmn;
+    Wr_DPD[2].a65cf  = 0;
+    Wr_DPD[2].a66cf  = 1 - ((1 + robo->Kfb) * robo->Ktn * robo->Kvi * Tp2) / robo->Jmn;
+    Wr_DPD[2].a67cf  = (robo->Kpp * robo->Kvi * Tp * (robo->Jmn - (1 + robo->Kfb) * robo->Ktn * robo->Kvp * Tp)) / robo->Jmn;
+    Wr_DPD[2].a71cf  = 0;
+    Wr_DPD[2].a72cf  = 0;
+    Wr_DPD[2].a73cf  = 0;
+    Wr_DPD[2].a74cf  = 0;
+    Wr_DPD[2].a75cf  = 0;
+    Wr_DPD[2].a76cf  = 0;
+    Wr_DPD[2].a77cf  = 1;
+    Wr_DPD[2].b1cf   = robo->Kff * robo->Kvp * robo->Ktn * Tp / robo->Jmn;
+    Wr_DPD[2].b2cf   = robo->Kff * robo->Kvp * robo->Ktn * Tp2 / robo->Jmn;
+    Wr_DPD[2].b3cf   = robo->Kff * robo->Kvp * robo->Ktn * Tp2 / (robo->Jmn * robo->Rgn);
+    Wr_DPD[2].b4cf   = 0.0;
+    Wr_DPD[2].b5cf   = 0.0;
+    Wr_DPD[2].b6cf   = (robo->Kff * robo->Kvi * Tp * (robo->Jmn - (1 + robo->Kfb) * robo->Ktn * robo->Kfb * Tp)) / robo->Jmn;
+    Wr_DPD[2].b7cf   = Tp;
+  }
+  else
+  {
+    // ボード番号認識できない場合
+    Wr_Throth_check++;
+  }
+  }
+
+void CalcFDTDWrUpdate_WmcmdInputType_1st2nd(Robot *robo)
+{
+  float Tp2 = Tp * Tp;
+  if (robo->BDN == BDN0)
+  {
+    // 1軸目
+    Wr_DPD[0].a11cf  = ((robo->Jmn) - Tp * (robo->Dmn + robo->Ktn * (robo->fwm + robo->Kvp + robo->Kfb * robo->Kvp))) / robo->Jmn;
+    Wr_DPD[0].a12cf  = -robo->Ktn * robo->Kvp * robo->Kpp * Tp / robo->Jmn;
+    Wr_DPD[0].a13cf  = (-robo->Ktn * robo->fqs * Tp - robo->Ksn * Tp / robo->Rgn) / robo->Jmn;
+    Wr_DPD[0].a14cf  = -robo->Ktn * robo->fwl * Tp / robo->Jmn;
+    Wr_DPD[0].a17cf  = Tp * robo->Ktn * robo->Kvp * robo->Kpp / robo->Jmn;
+    Wr_DPD[0].a21cf  = (Tp * ((robo->Jmn) - Tp * (robo->Dmn + robo->Ktn * (robo->fwm + robo->Kvp + robo->Kfb * robo->Kvp)))) / robo->Jmn;
+    Wr_DPD[0].a22cf  = 1 - (robo->Ktn * robo->Kvp * robo->Kpp * Tp2) / robo->Jmn;
+    Wr_DPD[0].a23cf  = -((robo->Ktn * robo->fqs * robo->Rgn + robo->Ksn) * Tp2) / (robo->Jmn * robo->Rgn);
+    Wr_DPD[0].a24cf  = -robo->Ktn * robo->fwl * Tp2 / robo->Jmn;
+    Wr_DPD[0].a27cf  = Tp2 * robo->Ktn * robo->Kvp * robo->Kpp / robo->Jmn;
+    Wr_DPD[0].a31cf  = (Tp / robo->Rgn) * ((robo->Jmn) - Tp * (robo->Dmn + robo->Ktn * (robo->fwm + robo->Kvp + robo->Kfb * robo->Kvp))) / robo->Jmn;
+    Wr_DPD[0].a32cf  = -robo->Ktn * robo->Kvp * robo->Kpp * Tp2 / (robo->Jmn * robo->Rgn);
+    Wr_DPD[0].a33cf1 = 1.0 + (Tp2 * (robo->Ksn / robo->Rgn + robo->fqs * robo->Ktn)) / (robo->Jmn * robo->Rgn);
+    Wr_DPD[0].a34cf1 = -Tp - robo->Ktn * robo->fwl * Tp2 / (robo->Jmn * robo->Rgn);
+    Wr_DPD[0].a37cf  = robo->Kvp * robo->Kpp * robo->Ktn * Tp2 / (robo->Jmn * robo->Rgn);
+    Wr_DPD[0].a61cf  = ((1 + robo->Kfb) * robo->Kvi * Tp * (-robo->Jmn + (robo->Dmn + robo->Ktn * (robo->fwm + robo->Kvp + robo->Kfb * robo->Kvp)) * Tp)) / robo->Jmn;
+    Wr_DPD[0].a62cf  = (robo->Kpp * robo->Kvi * Tp * (-robo->Jmn + (1 + robo->Kfb) * robo->Ktn * robo->Kvp * Tp)) / robo->Jmn;
+    Wr_DPD[0].a63cf  = (Tp2 * (1 + robo->Kfb) * robo->Kvi * (robo->Ksn + robo->fqs * robo->Ktn * robo->Rgn)) / (robo->Jmn * robo->Rgn);
+    Wr_DPD[0].a64cf  = (robo->fwl * (1 + robo->Kfb) * robo->Ktn * robo->Kvi * Tp2) / robo->Jmn;
+    Wr_DPD[0].a66cf  = 1 - ((1 + robo->Kfb) * robo->Ktn * robo->Kvi * Tp2) / robo->Jmn;
+    Wr_DPD[0].a67cf  = (robo->Kpp * robo->Kvi * Tp * (robo->Jmn - (1 + robo->Kfb) * robo->Ktn * robo->Kvp * Tp)) / robo->Jmn;
+    Wr_DPD[0].b1cf   = robo->Kff * robo->Kvp * robo->Ktn * Tp / robo->Jmn;
+    Wr_DPD[0].b2cf   = robo->Kff * robo->Kvp * robo->Ktn * Tp2 / robo->Jmn;
+    Wr_DPD[0].b3cf   = robo->Kff * robo->Kvp * robo->Ktn * Tp2 / (robo->Jmn * robo->Rgn);
+    Wr_DPD[0].b6cf   = (robo->Kff * robo->Kvi * Tp * (robo->Jmn - (1 + robo->Kfb) * robo->Ktn * robo->Kfb * Tp)) / robo->Jmn;
+  }
+  else if (robo->BDN == BDN1)
+  {
+    // 2軸目
+    Wr_DPD[1].a11cf  = ((robo->Jmn) - Tp * (robo->Dmn + robo->Ktn * (robo->fwm + robo->Kvp + robo->Kfb * robo->Kvp))) / robo->Jmn;
+    Wr_DPD[1].a12cf  = -robo->Ktn * robo->Kvp * robo->Kpp * Tp / robo->Jmn;
+    Wr_DPD[1].a13cf  = (-robo->Ktn * robo->fqs * Tp - robo->Ksn * Tp / robo->Rgn) / robo->Jmn;
+    Wr_DPD[1].a14cf  = -robo->Ktn * robo->fwl * Tp / robo->Jmn;
+    Wr_DPD[1].a17cf  = Tp * robo->Ktn * robo->Kvp * robo->Kpp / robo->Jmn;
+    Wr_DPD[1].a21cf  = (Tp * ((robo->Jmn) - Tp * (robo->Dmn + robo->Ktn * (robo->fwm + robo->Kvp + robo->Kfb * robo->Kvp)))) / robo->Jmn;
+    Wr_DPD[1].a22cf  = 1 - (robo->Ktn * robo->Kvp * robo->Kpp * Tp2) / robo->Jmn;
+    Wr_DPD[1].a23cf  = -((robo->Ktn * robo->fqs * robo->Rgn + robo->Ksn) * Tp2) / (robo->Jmn * robo->Rgn);
+    Wr_DPD[1].a24cf  = -robo->Ktn * robo->fwl * Tp2 / robo->Jmn;
+    Wr_DPD[1].a27cf  = Tp2 * robo->Ktn * robo->Kvp * robo->Kpp / robo->Jmn;
+    Wr_DPD[1].a31cf  = (Tp / robo->Rgn) * ((robo->Jmn) - Tp * (robo->Dmn + robo->Ktn * (robo->fwm + robo->Kvp + robo->Kfb * robo->Kvp))) / robo->Jmn;
+    Wr_DPD[1].a32cf  = -robo->Ktn * robo->Kvp * robo->Kpp * Tp2 / (robo->Jmn * robo->Rgn);
+    Wr_DPD[1].a33cf1 = 1.0 + (Tp2 * (robo->Ksn / robo->Rgn + robo->fqs * robo->Ktn)) / (robo->Jmn * robo->Rgn);
+    Wr_DPD[1].a34cf1 = -Tp - robo->Ktn * robo->fwl * Tp2 / (robo->Jmn * robo->Rgn);
+    Wr_DPD[1].a37cf  = robo->Kvp * robo->Kpp * robo->Ktn * Tp2 / (robo->Jmn * robo->Rgn);
+    Wr_DPD[1].a61cf  = ((1 + robo->Kfb) * robo->Kvi * Tp * (-robo->Jmn + (robo->Dmn + robo->Ktn * (robo->fwm + robo->Kvp + robo->Kfb * robo->Kvp)) * Tp)) / robo->Jmn;
+    Wr_DPD[1].a62cf  = (robo->Kpp * robo->Kvi * Tp * (-robo->Jmn + (1 + robo->Kfb) * robo->Ktn * robo->Kvp * Tp)) / robo->Jmn;
+    Wr_DPD[1].a63cf  = (Tp2 * (1 + robo->Kfb) * robo->Kvi * (robo->Ksn + robo->fqs * robo->Ktn * robo->Rgn)) / (robo->Jmn * robo->Rgn);
+    Wr_DPD[1].a64cf  = (robo->fwl * (1 + robo->Kfb) * robo->Ktn * robo->Kvi * Tp2) / robo->Jmn;
+    Wr_DPD[1].a66cf  = 1 - ((1 + robo->Kfb) * robo->Ktn * robo->Kvi * Tp2) / robo->Jmn;
+    Wr_DPD[1].a67cf  = (robo->Kpp * robo->Kvi * Tp * (robo->Jmn - (1 + robo->Kfb) * robo->Ktn * robo->Kvp * Tp)) / robo->Jmn;
+    Wr_DPD[1].b1cf   = robo->Kff * robo->Kvp * robo->Ktn * Tp / robo->Jmn;
+    Wr_DPD[1].b2cf   = robo->Kff * robo->Kvp * robo->Ktn * Tp2 / robo->Jmn;
+    Wr_DPD[1].b3cf   = robo->Kff * robo->Kvp * robo->Ktn * Tp2 / (robo->Jmn * robo->Rgn);
+    Wr_DPD[1].b6cf   = (robo->Kff * robo->Kvi * Tp * (robo->Jmn - (1 + robo->Kfb) * robo->Ktn * robo->Kfb * Tp)) / robo->Jmn;
+  }
+  else if (robo->BDN == BDN2)
+  {
+    // BDN2を代えることは、ないんですね
+  }
+  else
+  {
+    // ボード番号認識できない場合
+    Wr_Throth_check++;
+  }
+}
+
+void CalcFDTDWrUpdate_WmcmdInputType_2nd(Robot *robo)
+{
+  float Tp2 = powf(Tp, 2);
+  if (robo->BDN == BDN0)
+  {
+    // この時は、2軸だけを変えたい
+  }
+  else if (robo->BDN == BDN1)
+  {
+    // 2軸目
+    Wr_DPD[1].a11cf = ((robo->Jmn) - Tp * (robo->Dmn + robo->Ktn * (robo->fwm + robo->Kvp + robo->Kfb * robo->Kvp))) / robo->Jmn;
+    Wr_DPD[1].a12cf = -robo->Ktn * robo->Kvp * robo->Kpp * Tp / robo->Jmn;
+    Wr_DPD[1].a13cf = (-robo->Ktn * robo->fqs * Tp - robo->Ksn * Tp / robo->Rgn) / robo->Jmn;
+    Wr_DPD[1].a14cf = -robo->Ktn * robo->fwl * Tp / robo->Jmn;
+    Wr_DPD[1].a17cf = Tp * robo->Ktn * robo->Kvp * robo->Kpp / robo->Jmn;
+    Wr_DPD[1].a21cf = (Tp * ((robo->Jmn) - Tp * (robo->Dmn + robo->Ktn * (robo->fwm + robo->Kvp + robo->Kfb * robo->Kvp)))) / robo->Jmn;
+    Wr_DPD[1].a22cf = 1 - (robo->Ktn * robo->Kvp * robo->Kpp * Tp2) / robo->Jmn;
+    Wr_DPD[1].a23cf = -((robo->Ktn * robo->fqs * robo->Rgn + robo->Ksn) * Tp2) / (robo->Jmn * robo->Rgn);
+    Wr_DPD[1].a24cf = -robo->Ktn * robo->fwl * Tp2 / robo->Jmn;
+    Wr_DPD[1].a27cf = Tp2 * robo->Ktn * robo->Kvp * robo->Kpp / robo->Jmn;
+    Wr_DPD[1].a31cf = (Tp / robo->Rgn) * ((robo->Jmn) - Tp * (robo->Dmn + robo->Ktn * (robo->fwm + robo->Kvp + robo->Kfb * robo->Kvp))) / robo->Jmn;
+    Wr_DPD[1].a32cf = -robo->Ktn * robo->Kvp * robo->Kpp * Tp2 / (robo->Jmn * robo->Rgn);
+    Wr_DPD[1].a33cf1 = 1.0 + (Tp2 * (robo->Ksn / robo->Rgn + robo->fqs * robo->Ktn)) / (robo->Jmn * robo->Rgn);
+    Wr_DPD[1].a34cf1 = -Tp - robo->Ktn * robo->fwl * Tp2 / (robo->Jmn * robo->Rgn);
+    Wr_DPD[1].a37cf = robo->Kvp * robo->Kpp * robo->Ktn * Tp2 / (robo->Jmn * robo->Rgn);
+    Wr_DPD[1].a61cf = ((1 + robo->Kfb) * robo->Kvi * Tp * (-robo->Jmn + (robo->Dmn + robo->Ktn * (robo->fwm + robo->Kvp + robo->Kfb * robo->Kvp)) * Tp)) / robo->Jmn;
+    Wr_DPD[1].a62cf = (robo->Kpp * robo->Kvi * Tp * (-robo->Jmn + (1 + robo->Kfb) * robo->Ktn * robo->Kvp * Tp)) / robo->Jmn;
+    Wr_DPD[1].a63cf = (Tp2 * (1 + robo->Kfb) * robo->Kvi * (robo->Ksn + robo->fqs * robo->Ktn * robo->Rgn)) / (robo->Jmn * robo->Rgn);
+    Wr_DPD[1].a64cf = (robo->fwl * (1 + robo->Kfb) * robo->Ktn * robo->Kvi * Tp2) / robo->Jmn;
+    Wr_DPD[1].a66cf = 1 - ((1 + robo->Kfb) * robo->Ktn * robo->Kvi * Tp2) / robo->Jmn;
+    Wr_DPD[1].a67cf = (robo->Kpp * robo->Kvi * Tp * (robo->Jmn - (1 + robo->Kfb) * robo->Ktn * robo->Kvp * Tp)) / robo->Jmn;
+    Wr_DPD[1].b1cf = robo->Kff * robo->Kvp * robo->Ktn * Tp / robo->Jmn;
+    Wr_DPD[1].b2cf = robo->Kff * robo->Kvp * robo->Ktn * Tp2 / robo->Jmn;
+    Wr_DPD[1].b3cf = robo->Kff * robo->Kvp * robo->Ktn * Tp2 / (robo->Jmn * robo->Rgn);
+    Wr_DPD[1].b6cf = (robo->Kff * robo->Kvi * Tp * (robo->Jmn - (1 + robo->Kfb) * robo->Ktn * robo->Kfb * Tp)) / robo->Jmn;
+  }
+  else if (robo->BDN == BDN2)
+  {
+    // BDN2を代えることは、ないんですね
+  }
+  else
+  {
+    // ボード番号認識できない場合
+    Wr_Throth_check++;
+  }
 }
 
 // 位置・速度制御系可変ゲイン演算関数
@@ -5511,7 +6230,6 @@ float CalcPrefRep3axis(float t_lim_up, float ql_deg_tilt_up, float t_lim_down, f
 
 void CalcTauLDyn(Robot axis[])
 {
-
   // 三角関数の定義
   float C1 = 0.0;
   float C2 = 0.0;
@@ -6009,6 +6727,8 @@ void SetGain(Robot *robo)
 
   // パナゲイン1軸目(適用値100%)
   robo[0].Kpp = 15;
+  robo[0].Kff = 1.400;
+  robo[0].Kfb = 0.400;
   robo[0].Kvp = 0.6071;
   robo[0].Kvi = 16.8644;
   // 倍率　
@@ -6048,6 +6768,8 @@ void SetGain(Robot *robo)
 
   // 設計ゲイン 標準形 等価時定数 速度:0.05, 位置0.1
   robo[1].Kpp = 15.4593;
+  robo[1].Kff = 1.400;
+  robo[1].Kfb = 0.400;
   robo[1].Kvp = 0.1265;
   robo[1].Kvi = 3.7963;
   robo[1].fwm = 0.1628;
@@ -6096,6 +6818,8 @@ void SetGain(Robot *robo)
 
   // 設計ゲイン
   robo[2].Kpp = 16.2426;
+  robo[2].Kff = 1.400;
+  robo[2].Kfb = 0.400;
   robo[2].Kvp = 0.1711;
   robo[2].Kvi = 5.1332;
   robo[2].fwm = -0.0134;
