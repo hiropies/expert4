@@ -1000,8 +1000,7 @@ int CalcHandCmdDiamond(float goal[3], float t_wait, float speed, float start_han
 void LimitPosCmd(Robot *robo);
 // void CalcInverseCmd(float goal[3], float joint[3], float motor[3], float wm[3], int flag_filter, int flag_reset, float dt);
 void CalcInverseCmd_vel(float goal[3], float vel_hand[3], float ql_cmd[3], float wl_cmd[3], float ql_init[3], int flag_reset);
-// 疑似微分なんやで
-float backward_diff(float x, float xZ, float dt);
+
 float GeneratorCircle1st(float t_wait, float start);
 float GeneratorCircle2nd(float t_wait, float start);
 float GeneratorCircle3rd(float t_wait, float start);
@@ -1588,6 +1587,7 @@ interrupt void ControlFunction(void)
 
             ＊軸によって違うので注意！！！（ギアとかによる）
           ***************************************************************************** */
+<<<<<<< Updated upstream
           static float time_wait = 3.0;
           // static float speed_hand = 10.0; // [m/min] = 60 [m/s]
           static int flag_loop = 1;
@@ -1595,39 +1595,68 @@ interrupt void ControlFunction(void)
           static int inverse_reset = 1;
           
           float start_cmd = (float)C6657_timer0_read() * 4.8e-9 * 1e6;
+=======
+          // 軌跡指令生成
+          // static float time_wait = 2.0;
+          // static float speed_hand = 10.0; // [m/min] = 60 [m/s]
+          // static int flag_loop = 1;
+          // static int inverse_reset = 1;
 
-          // int flag_filter_on = CalcHandCmdCenter(flag_CalcHandCmd ,hand_cmd, time_wait, speed_hand, start_hand, flag_loop);
-          int flag_filter_on = CalcHandCmdCircle(hand_cmd, hand_vel, time_wait, speed_hand, start_hand, flag_loop);
-          WAVE_TimeCalcCmd = (float)C6657_timer0_read() * 4.8e-9 * 1e6 - start_cmd;
+          // float start_cmd = (float)C6657_timer0_read() * 4.8e-9 * 1e6;
+>>>>>>> Stashed changes
 
-          start_cmd = (float)C6657_timer0_read() * 4.8e-9 * 1e6;
-          // CalcInverseCmd(hand_cmd, joint_cmd, motor_cmd, motor_vel_cmd, flag_filter_on, filter_reset, Tp);
-          CalcInverseCmd_vel(hand_cmd, hand_vel, motor_cmd, motor_vel_cmd, motor_cmd_init, inverse_reset);
-          inverse_reset = 0;
-          WAVE_TimeCalcInvCmd = (float)C6657_timer0_read() * 4.8e-9 * 1e6 - start_cmd;
+          // int flag_filter_on = CalcHandCmdCircle(hand_cmd, hand_vel, time_wait, speed_hand, start_hand, flag_loop);
+          // WAVE_TimeCalcCmd = (float)C6657_timer0_read() * 4.8e-9 * 1e6 - start_cmd;
+
+          // start_cmd = (float)C6657_timer0_read() * 4.8e-9 * 1e6;
+          // CalcInverseCmd_vel(hand_cmd, hand_vel, motor_cmd, motor_vel_cmd, motor_cmd_init, inverse_reset);
+          // inverse_reset = 0;
+          // WAVE_TimeCalcInvCmd = (float)C6657_timer0_read() * 4.8e-9 * 1e6 - start_cmd;
+          static float Time_mode3 = 0;
+          Time_mode3 += Tp;
+          if(Time_mode3 > 2.0)
+          {
+            motor_vel_cmd[0] = 0.0;
+            motor_vel_cmd[1] = 0.0;
+            motor_vel_cmd[2] = 0.0;
+          }
+          else if(Time_mode3 > 2.5)
+          {
+            motor_vel_cmd[0] = 15.0;
+            motor_vel_cmd[1] = 15.0;
+            motor_vel_cmd[2] = 15.0;
+          }
+          else if(Time_mode3 > 3.0)
+          {
+            motor_vel_cmd[0] = 25.0;
+            motor_vel_cmd[1] = 25.0;
+            motor_vel_cmd[2] = 25.0;
+          }
+          else if (Time_mode3 > 3.5)
+          {
+            motor_vel_cmd[0] = 0.0;
+            motor_vel_cmd[1] = 0.0;
+            motor_vel_cmd[2] = 0.0;
+          }
 
           // 1軸目 位置指令
           // ランプ関数生成関数で位置指令を決定
           // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
-          axis1.wm_cmd = motor_vel_cmd[0];
-          axis1.qm_ref_z2 = axis1.qm_ref_z1;
-          axis1.qm_ref_z1 = axis1.qm_ref;
+          // axis1.wm_cmd = motor_vel_cmd[0];
+          // axis1.qm_ref_z2 = axis1.qm_ref_z1;
+          // axis1.qm_ref_z1 = axis1.qm_ref;
 
-          // P制御用
-          // axis1.qm_ref = motor_cmd[0];
+          // axis1.qm_ref = axis1.wm_cmd * Tp + axis1.qm_ref_z1;
           // LimitPosCmd(&axis1);
-          // axis1.wm_ref = (axis1.qm_ref_z2 - axis1.qm) * axis1.Kpp;
+          // if(flag_PPgain == 2){
+          //   axis1.wm_ref = (axis1.qm_ref_z2 - axis1.qm) * axis1.Kpp + axis1.Kff * axis1.wm_cmd - axis1.Kfb * axis1.wm;
+          // }else{
+          //   axis1.wm_ref = (axis1.qm_ref_z2 - axis1.qm) * axis1.Kpp;
+          // }
 
-          // D-PD制御用
-          // axis1.qm_ref = motor_cmd[0];
-          axis1.qm_ref = axis1.wm_cmd * Tp + axis1.qm_ref_z1;
-          LimitPosCmd(&axis1);
-          if(flag_PPgain == 2){
-            axis1.wm_ref = (axis1.qm_ref_z2 - axis1.qm) * axis1.Kpp + axis1.Kff * axis1.wm_cmd - axis1.Kfb * axis1.wm;
-          }else{
-            axis1.wm_ref = (axis1.qm_ref_z2 - axis1.qm) * axis1.Kpp;
-          }
-
+          //速度ステップ指令
+          axis1.wm_cmd = motor_vel_cmd[0];
+          axis1.wm_ref = axis1.wm_cmd;
           if (flag_FF == 1)
           {
             // 1軸目 速度PI制御＋SFB＋FF
@@ -1653,26 +1682,23 @@ interrupt void ControlFunction(void)
           // 2軸目 位置指令
           // ランプ関数生成関数で位置指令を決定
           // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
-          axis2.wm_cmd = motor_vel_cmd[1];
-          axis2.qm_ref_z2 = axis2.qm_ref_z1;
-          axis2.qm_ref_z1 = axis2.qm_ref;
-          // P制御用
-          // axis2.qm_ref = motor_cmd[1];
+          // axis2.wm_cmd = motor_vel_cmd[1];
+          // axis2.qm_ref_z2 = axis2.qm_ref_z1;
+          // axis2.qm_ref_z1 = axis2.qm_ref;
+          // axis2.qm_ref = axis2.wm_cmd * Tp + axis2.qm_ref_z1;
           // LimitPosCmd(&axis2);
-          // axis2.wm_ref = (axis2.qm_ref_z2 - axis2.qm) * axis2.Kpp;
-          // D-PD制御用
-          // axis2.qm_ref = motor_cmd[1];
-          axis2.qm_ref = axis2.wm_cmd * Tp + axis2.qm_ref_z1;
-          LimitPosCmd(&axis2);
-          if (flag_PPgain == 2)
-          {
-            axis2.wm_ref = (axis2.qm_ref_z2 - axis2.qm) * axis2.Kpp + axis2.Kff * axis2.wm_cmd - axis2.Kfb * axis2.wm;
-          }
-          else
-          {
-            axis2.wm_ref = (axis2.qm_ref_z2 - axis2.qm) * axis2.Kpp;
-          }
+          // if (flag_PPgain == 2)
+          // {
+          //   axis2.wm_ref = (axis2.qm_ref_z2 - axis2.qm) * axis2.Kpp + axis2.Kff * axis2.wm_cmd - axis2.Kfb * axis2.wm;
+          // }
+          // else
+          // {
+          //   axis2.wm_ref = (axis2.qm_ref_z2 - axis2.qm) * axis2.Kpp;
+          // }
 
+          // 速度ステップ指令
+          axis2.wm_cmd = motor_vel_cmd[1];
+          axis2.wm_ref = axis2.wm_cmd;
           if (flag_FF == 1)
           {
             // 2軸目 速度PI制御＋SFB＋FF
@@ -1698,25 +1724,23 @@ interrupt void ControlFunction(void)
           // 3軸目 位置指令
           // ランプ関数生成関数で位置指令を決定
           // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
-          axis3.wm_cmd = motor_vel_cmd[2];
-          axis3.qm_ref_z2 = axis3.qm_ref_z1;
-          axis3.qm_ref_z1 = axis3.qm_ref;
-          // P制御用
-          // axis3.qm_ref = motor_cmd[2];
+          // axis3.wm_cmd = motor_vel_cmd[2];
+          // axis3.qm_ref_z2 = axis3.qm_ref_z1;
+          // axis3.qm_ref_z1 = axis3.qm_ref;
+          // axis3.qm_ref = axis3.wm_cmd * Tp + axis3.qm_ref_z1;
           // LimitPosCmd(&axis3);
-          // axis3.wm_ref = (axis3.qm_ref_z2 - axis3.qm) * axis3.Kpp;
-          // D-PD制御用
-          // axis3.qm_ref = motor_cmd[2];
-          axis3.qm_ref = axis3.wm_cmd * Tp + axis3.qm_ref_z1;
-          LimitPosCmd(&axis3);
-          if (flag_PPgain == 2)
-          {
-            axis3.wm_ref = (axis3.qm_ref_z2 - axis3.qm) * axis3.Kpp + axis3.Kff * axis3.wm_cmd - axis3.Kfb * axis3.wm;
-          }
-          else
-          {
-            axis3.wm_ref = (axis3.qm_ref_z2 - axis3.qm) * axis3.Kpp;
-          }
+          // if (flag_PPgain == 2)
+          // {
+          //   axis3.wm_ref = (axis3.qm_ref_z2 - axis3.qm) * axis3.Kpp + axis3.Kff * axis3.wm_cmd - axis3.Kfb * axis3.wm;
+          // }
+          // else
+          // {
+          //   axis3.wm_ref = (axis3.qm_ref_z2 - axis3.qm) * axis3.Kpp;
+          // }
+
+          // 速度ステップ指令
+          axis3.wm_cmd = motor_vel_cmd[2];
+          axis3.wm_ref = axis3.wm_cmd;
 
           // 3軸目 速度PI制御＋SFB
           if (flag_FF == 1)
@@ -4246,10 +4270,6 @@ void LimitPosCmd(Robot *robo)
 //     motorZ[1] = motor[1];
 //     motorZ[2] = motor[2];
 //   }
-
-//   wm[0] = backward_diff(motor[0], motorZ[0], dt);
-//   wm[1] = backward_diff(motor[1], motorZ[1], dt);
-//   wm[2] = backward_diff(motor[2], motorZ[2], dt);
 //   wm[0] = GetFilterdSignal(&LPF_cmd[0], wm[0], flag_init);
 //   wm[1] = GetFilterdSignal(&LPF_cmd[1], wm[1], flag_init);
 //   wm[2] = GetFilterdSignal(&LPF_cmd[2], wm[2], flag_init);
@@ -4396,11 +4416,6 @@ void CalcInverseCmd_vel(float goal[3], float vel_hand[3], float ql_cmd[3], float
     ql_init[i] = qm_first[i];
   }
   flag_init = 0;
-}
-
-float backward_diff(float x, float xZ, float dt)
-{
-  return ((x - xZ) / dt);
 }
 
 float GeneratorCircle1st(float t_wait, float start)
