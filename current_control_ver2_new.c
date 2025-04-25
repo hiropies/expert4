@@ -192,6 +192,7 @@ volatile int down_rotation_flag3 = 1;       // 3軸 ロボットから見て下�
 volatile int up_rotation_flag3 = 0;         // 3軸 ロボットから見て上方向に回転させるフラグ
 volatile int down_rotation_flag5 = 1;       // 5軸 ロボットから見て下方向に回転させるフラグ
 volatile int up_rotation_flag5 = 0;         // 5軸 ロボットから見て上方向に回転させるフラグ
+static int flag_reset_mode3 = 0; // mode3を繰り返し使うためのフラグ
 
 // 変調率
 volatile float WAVE_MRU1;
@@ -1587,15 +1588,6 @@ interrupt void ControlFunction(void)
 
             ＊軸によって違うので注意！！！（ギアとかによる）
           ***************************************************************************** */
-<<<<<<< Updated upstream
-          static float time_wait = 3.0;
-          // static float speed_hand = 10.0; // [m/min] = 60 [m/s]
-          static int flag_loop = 1;
-          static int filter_reset = 0;
-          static int inverse_reset = 1;
-          
-          float start_cmd = (float)C6657_timer0_read() * 4.8e-9 * 1e6;
-=======
           // 軌跡指令生成
           // static float time_wait = 2.0;
           // static float speed_hand = 10.0; // [m/min] = 60 [m/s]
@@ -1603,8 +1595,6 @@ interrupt void ControlFunction(void)
           // static int inverse_reset = 1;
 
           // float start_cmd = (float)C6657_timer0_read() * 4.8e-9 * 1e6;
->>>>>>> Stashed changes
-
           // int flag_filter_on = CalcHandCmdCircle(hand_cmd, hand_vel, time_wait, speed_hand, start_hand, flag_loop);
           // WAVE_TimeCalcCmd = (float)C6657_timer0_read() * 4.8e-9 * 1e6 - start_cmd;
 
@@ -1614,26 +1604,34 @@ interrupt void ControlFunction(void)
           // WAVE_TimeCalcInvCmd = (float)C6657_timer0_read() * 4.8e-9 * 1e6 - start_cmd;
           static float Time_mode3 = 0;
           Time_mode3 += Tp;
-          if(Time_mode3 > 2.0)
-          {
-            motor_vel_cmd[0] = 0.0;
-            motor_vel_cmd[1] = 0.0;
-            motor_vel_cmd[2] = 0.0;
-          }
-          else if(Time_mode3 > 2.5)
-          {
-            motor_vel_cmd[0] = 15.0;
-            motor_vel_cmd[1] = 15.0;
-            motor_vel_cmd[2] = 15.0;
-          }
-          else if(Time_mode3 > 3.0)
-          {
-            motor_vel_cmd[0] = 25.0;
-            motor_vel_cmd[1] = 25.0;
-            motor_vel_cmd[2] = 25.0;
-          }
-          else if (Time_mode3 > 3.5)
-          {
+          if(flag_reset_mode3 == 0){
+            if(Time_mode3 > 2.0)
+            {
+              motor_vel_cmd[0] = 0.0;
+              motor_vel_cmd[1] = 0.0;
+              motor_vel_cmd[2] = 0.0;
+            }
+            else if(Time_mode3 > 2.5)
+            {
+              motor_vel_cmd[0] = 15.0;
+              motor_vel_cmd[1] = 15.0;
+              motor_vel_cmd[2] = 15.0;
+            }
+            else if(Time_mode3 > 3.0)
+            {
+              motor_vel_cmd[0] = 25.0;
+              motor_vel_cmd[1] = 25.0;
+              motor_vel_cmd[2] = 25.0;
+            }
+            else if (Time_mode3 > 3.5)
+            {
+              motor_vel_cmd[0] = 0.0;
+              motor_vel_cmd[1] = 0.0;
+              motor_vel_cmd[2] = 0.0;
+              flag_reset_mode3 = 1;
+            }  
+          }else{
+            Time_mode3 = 0.0;
             motor_vel_cmd[0] = 0.0;
             motor_vel_cmd[1] = 0.0;
             motor_vel_cmd[2] = 0.0;
@@ -1767,6 +1765,7 @@ interrupt void ControlFunction(void)
         else if (4 == flag_cont_start)
         {
           static int flag_fin = 0;
+          flag_reset_mode3 = 0;
           //-------------------------- 実験 -----------------------------
           // 実験終端姿勢からの戻り
           // ランプ指令用変数の設定

@@ -872,8 +872,8 @@
   <bRecordLength>100000</bRecordLength>
   <bNumberOfData>100000</bNumberOfData>
   <bCurRangeValue>100</bCurRangeValue>
-  <bHorValue>0.1</bHorValue>
-  <bHorValue_rough>0.1</bHorValue_rough>
+  <bHorValue>2</bHorValue>
+  <bHorValue_rough>2</bHorValue_rough>
   <bCurPosValue>0</bCurPosValue>
   <bIndex_TrgNo>0</bIndex_TrgNo>
   <bTrgPosValue>0</bTrgPosValue>
