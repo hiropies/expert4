@@ -627,7 +627,10 @@ typedef volatile struct Robot
   float qm_ref_z2;
   float qm_ref_z3;
   float wm_cmd;
-
+  float wm_cmd_z1; // FF制御用
+  float wm_cmd_z2;
+  float wm_cmd_z3;
+  
   // 負荷側位置リミット
   float ql_max;
   float ql_min;
@@ -1428,20 +1431,21 @@ interrupt void ControlFunction(void)
           // 1軸目 位置指令
           // ランプ関数生成関数で位置指令を決定
           // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
-          axis1.qm_ref_z2 = axis1.qm_ref_z1;
-          axis1.qm_ref_z1 = axis1.qm_ref;
+          axis1.wm_cmd_z2 = axis1.wm_cmd_z1;
+          axis1.wm_cmd_z1 = axis1.wm_cmd;
           axis1.wm_cmd = 1.0 * ManyRampGenerator1stAxis(axis1.a_ramp, axis1.vel, axis1.t_start, axis1.t_ramp, axis1.t_const, axis1.a_ramp_back, axis1.t_ramp_back);
+          axis1.qm_ref_z1 = axis1.qm_ref;
           // axis1.qm_ref = 1.0 * ManyRampGenerator1stAxis(axis1.a_ramp, axis1.vel, axis1.t_start, axis1.t_ramp, axis1.t_const, axis1.a_ramp_back, axis1.t_ramp_back);
-          axis1.qm_ref = axis1.wm_cmd * Tp + axis1.qm_ref_z1;
+          axis1.qm_ref = axis1.wm_cmd_z2 * Tp + axis1.qm_ref_z1;
           LimitPosCmd(&axis1);
           // axis1.qm_ref = 0.0;
           // 1軸目 位置P制御
           // axis1.wm_ref = (axis1.qm_ref_z2 - axis1.qm) * axis1.Kpp;
           // axis1.wm_ref = (axis1.qm_ref_z2 - axis1.qm) * axis1.Kpp + axis1.Kff * axis1.wm_cmd - axis1.Kfb * axis1.wm;
           if(flag_PPgain == 2){
-            axis1.wm_ref = (axis1.qm_ref_z2 - axis1.qm) * axis1.Kpp + axis1.Kff * axis1.wm_cmd - axis1.Kfb * axis1.wm;
+            axis1.wm_ref = (axis1.qm_ref - axis1.qm) * axis1.Kpp + axis1.Kff * axis1.wm_cmd_z2 - axis1.Kfb * axis1.wm;
           }else{
-            axis1.wm_ref = (axis1.qm_ref_z2 - axis1.qm) * axis1.Kpp;
+            axis1.wm_ref = (axis1.qm_ref - axis1.qm) * axis1.Kpp;
           }
 
           if (flag_FF == 1)
@@ -1469,20 +1473,21 @@ interrupt void ControlFunction(void)
           // 2軸目 位置指令
           // ランプ関数生成関数で位置指令を決定
           // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
-          axis2.qm_ref_z2 = axis2.qm_ref_z1;
-          axis2.qm_ref_z1 = axis2.qm_ref;
+          axis2.wm_cmd_z2 = axis2.wm_cmd_z1;
+          axis2.wm_cmd_z1 = axis2.wm_cmd;
           axis2.wm_cmd = 1.0 * ManyRampGenerator2ndAxis(axis2.a_ramp, axis2.vel, axis2.t_start, axis2.t_ramp, axis2.t_const, axis2.a_ramp_back, axis2.t_ramp_back);
-          // axis2.qm_ref = 1.0 * ManyRampGenerator2ndAxis(axis2.a_ramp, axis2.vel, axis2.t_start, axis2.t_ramp, axis2.t_const, axis2.a_ramp_back, axis2.t_ramp_back);
-          axis2.qm_ref = axis2.wm_cmd * Tp + axis2.qm_ref_z1;
+          axis2.qm_ref_z1 = axis2.qm_ref;
+          // axis1.qm_ref = 1.0 * ManyRampGenerator1stAxis(axis1.a_ramp, axis1.vel, axis1.t_start, axis1.t_ramp, axis1.t_const, axis1.a_ramp_back, axis1.t_ramp_back);
+          axis2.qm_ref = axis2.wm_cmd_z2 * Tp + axis2.qm_ref_z1;
           LimitPosCmd(&axis2);
           // axis2.qm_ref = 0.0;
           // 2軸目 位置P制御
           // axis2.wm_ref = (axis2.qm_ref_z2 - axis2.qm) * axis2.Kpp;
           // axis2.wm_ref = (axis2.qm_ref_z2 - axis2.qm) * axis2.Kpp + axis2.Kff * axis2.wm_cmd - axis2.Kfb * axis2.wm;
           if(flag_PPgain == 2){
-            axis2.wm_ref = (axis2.qm_ref_z2 - axis2.qm) * axis2.Kpp + axis2.Kff * axis2.wm_cmd - axis2.Kfb * axis2.wm;
+            axis2.wm_ref = (axis2.qm_ref - axis2.qm) * axis2.Kpp + axis2.Kff * axis2.wm_cmd_z2 - axis2.Kfb * axis2.wm;
           }else{
-            axis2.wm_ref = (axis2.qm_ref_z2 - axis2.qm) * axis2.Kpp;
+            axis2.wm_ref = (axis2.qm_ref - axis2.qm) * axis2.Kpp;
           }
 
           if (flag_FF == 1)
@@ -1510,20 +1515,21 @@ interrupt void ControlFunction(void)
           // 3軸目 位置指令
           // ランプ関数生成関数で位置指令を決定
           // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
-          axis3.qm_ref_z2 = axis3.qm_ref_z1;
-          axis3.qm_ref_z1 = axis3.qm_ref;
+          axis3.wm_cmd_z2 = axis3.wm_cmd_z1;
+          axis3.wm_cmd_z1 = axis3.wm_cmd;
           axis3.wm_cmd = 1.0 * ManyRampGenerator3rdAxis(axis3.a_ramp, axis3.vel, axis3.t_start, axis3.t_ramp, axis3.t_const, axis3.a_ramp_back, axis3.t_ramp_back);
-          // axis3.qm_ref = 1.0 * ManyRampGenerator3rdAxis(axis3.a_ramp, axis3.vel, axis3.t_start, axis3.t_ramp, axis3.t_const, axis3.a_ramp_back, axis3.t_ramp_back);
-          axis3.qm_ref = axis3.wm_cmd * Tp + axis3.qm_ref_z1;
+          axis3.qm_ref_z1 = axis3.qm_ref;
+          // axis3.qm_ref = 1.0 * ManyRampGenerator1stAxis(axis1.a_ramp, axis1.vel, axis1.t_start, axis1.t_ramp, axis1.t_const, axis1.a_ramp_back, axis1.t_ramp_back);
+          axis3.qm_ref = axis3.wm_cmd_z2 * Tp + axis3.qm_ref_z1;
           LimitPosCmd(&axis3);
           // axis3.qm_ref = 0.0;
           // 3軸目 位置P制御
           // axis3.wm_ref = (axis3.qm_ref_z2 - axis3.qm) * axis3.Kpp;
           // axis3.wm_ref = (axis3.qm_ref_z2 - axis3.qm) * axis3.Kpp + axis3.Kff * axis3.wm_cmd - axis3.Kfb * axis3.wm;
           if(flag_PPgain == 2){
-            axis3.wm_ref = (axis3.qm_ref_z2 - axis3.qm) * axis3.Kpp + axis3.Kff * axis3.wm_cmd - axis3.Kfb * axis3.wm;
+            axis3.wm_ref = (axis3.qm_ref - axis3.qm) * axis3.Kpp + axis3.Kff * axis3.wm_cmd_z2 - axis3.Kfb * axis3.wm;
           }else{
-            axis3.wm_ref = (axis3.qm_ref_z2 - axis3.qm) * axis3.Kpp;
+            axis3.wm_ref = (axis3.qm_ref - axis3.qm) * axis3.Kpp;
           }
 
           // 3軸目 速度PI制御＋SFB
@@ -1609,10 +1615,12 @@ interrupt void ControlFunction(void)
           // 1軸目 位置指令
           // ランプ関数生成関数で位置指令を決定
           // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
+          axis1.wm_cmd_z2 = axis1.wm_cmd_z1;
+          axis1.wm_cmd_z1 = axis1.wm_cmd;
           axis1.wm_cmd = motor_vel_cmd[0];
-          axis1.qm_ref_z2 = axis1.qm_ref_z1;
           axis1.qm_ref_z1 = axis1.qm_ref;
-
+          axis1.qm_ref = axis1.wm_cmd_z2 * Tp + axis1.qm_ref_z1;
+          
           // P制御用
           // axis1.qm_ref = motor_cmd[0];
           // LimitPosCmd(&axis1);
@@ -1620,12 +1628,11 @@ interrupt void ControlFunction(void)
 
           // D-PD制御用
           // axis1.qm_ref = motor_cmd[0];
-          axis1.qm_ref = axis1.wm_cmd * Tp + axis1.qm_ref_z1;
           LimitPosCmd(&axis1);
           if(flag_PPgain == 2){
-            axis1.wm_ref = (axis1.qm_ref_z2 - axis1.qm) * axis1.Kpp + axis1.Kff * axis1.wm_cmd - axis1.Kfb * axis1.wm;
+            axis1.wm_ref = (axis1.qm_ref - axis1.qm) * axis1.Kpp + axis1.Kff * axis1.wm_cmd_z2 - axis1.Kfb * axis1.wm;
           }else{
-            axis1.wm_ref = (axis1.qm_ref_z2 - axis1.qm) * axis1.Kpp;
+            axis1.wm_ref = (axis1.qm_ref - axis1.qm) * axis1.Kpp;
           }
 
           if (flag_FF == 1)
@@ -1653,8 +1660,9 @@ interrupt void ControlFunction(void)
           // 2軸目 位置指令
           // ランプ関数生成関数で位置指令を決定
           // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
+          axis2.wm_cmd_z2 = axis2.wm_cmd_z1;
+          axis2.wm_cmd_z1 = axis2.wm_cmd;
           axis2.wm_cmd = motor_vel_cmd[1];
-          axis2.qm_ref_z2 = axis2.qm_ref_z1;
           axis2.qm_ref_z1 = axis2.qm_ref;
           // P制御用
           // axis2.qm_ref = motor_cmd[1];
@@ -1662,15 +1670,15 @@ interrupt void ControlFunction(void)
           // axis2.wm_ref = (axis2.qm_ref_z2 - axis2.qm) * axis2.Kpp;
           // D-PD制御用
           // axis2.qm_ref = motor_cmd[1];
-          axis2.qm_ref = axis2.wm_cmd * Tp + axis2.qm_ref_z1;
+          axis2.qm_ref = axis2.wm_cmd_z2 * Tp + axis2.qm_ref_z1;
           LimitPosCmd(&axis2);
           if (flag_PPgain == 2)
           {
-            axis2.wm_ref = (axis2.qm_ref_z2 - axis2.qm) * axis2.Kpp + axis2.Kff * axis2.wm_cmd - axis2.Kfb * axis2.wm;
+            axis2.wm_ref = (axis2.qm_ref - axis2.qm) * axis2.Kpp + axis2.Kff * axis2.wm_cmd_z2 - axis2.Kfb * axis2.wm;
           }
           else
           {
-            axis2.wm_ref = (axis2.qm_ref_z2 - axis2.qm) * axis2.Kpp;
+            axis2.wm_ref = (axis2.qm_ref - axis2.qm) * axis2.Kpp;
           }
 
           if (flag_FF == 1)
@@ -1698,8 +1706,9 @@ interrupt void ControlFunction(void)
           // 3軸目 位置指令
           // ランプ関数生成関数で位置指令を決定
           // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
+          axis3.wm_cmd_z2 = axis3.wm_cmd_z1;
+          axis3.wm_cmd_z1 = axis3.wm_cmd;
           axis3.wm_cmd = motor_vel_cmd[2];
-          axis3.qm_ref_z2 = axis3.qm_ref_z1;
           axis3.qm_ref_z1 = axis3.qm_ref;
           // P制御用
           // axis3.qm_ref = motor_cmd[2];
@@ -1707,15 +1716,15 @@ interrupt void ControlFunction(void)
           // axis3.wm_ref = (axis3.qm_ref_z2 - axis3.qm) * axis3.Kpp;
           // D-PD制御用
           // axis3.qm_ref = motor_cmd[2];
-          axis3.qm_ref = axis3.wm_cmd * Tp + axis3.qm_ref_z1;
+          axis3.qm_ref = axis3.wm_cmd_z2 * Tp + axis3.qm_ref_z1;
           LimitPosCmd(&axis3);
           if (flag_PPgain == 2)
           {
-            axis3.wm_ref = (axis3.qm_ref_z2 - axis3.qm) * axis3.Kpp + axis3.Kff * axis3.wm_cmd - axis3.Kfb * axis3.wm;
+            axis3.wm_ref = (axis3.qm_ref - axis3.qm) * axis3.Kpp + axis3.Kff * axis3.wm_cmd_z2 - axis3.Kfb * axis3.wm;
           }
           else
           {
-            axis3.wm_ref = (axis3.qm_ref_z2 - axis3.qm) * axis3.Kpp;
+            axis3.wm_ref = (axis3.qm_ref - axis3.qm) * axis3.Kpp;
           }
 
           // 3軸目 速度PI制御＋SFB
@@ -1781,23 +1790,27 @@ interrupt void ControlFunction(void)
           // 1軸目 位置指令
           // ランプ関数生成関数で位置指令を決定
           // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
-          axis1.qm_ref_z2 = axis1.qm_ref_z1;
+          // axis1.qm_ref_z2 = axis1.qm_ref_z1;
+          // axis1.qm_ref_z1 = axis1.qm_ref;
+          axis1.wm_cmd_z2 = axis1.wm_cmd_z1;
+          axis1.wm_cmd_z1 = axis1.wm_cmd;
           axis1.qm_ref_z1 = axis1.qm_ref;
+          
           if (flag_end3 == 1)
           {            
             axis1.wm_cmd = 1.0 * ManyRampGenerator1stAxis(axis1.a_ramp, axis1.vel, axis1.t_start, axis1.t_ramp, axis1.t_const, axis1.a_ramp_back, axis1.t_ramp_back);
-            // axis1.qm_ref = 1.0 * ManyRampGenerator1stAxis(axis1.a_ramp, axis1.vel, axis1.t_start, axis1.t_ramp, axis1.t_const, axis1.a_ramp_back, axis1.t_ramp_back) + start_back1;
-            axis1.qm_ref = axis1.wm_cmd * Tp + axis1.qm_ref_z1;
+            axis1.qm_ref = axis1.wm_cmd_z2 * Tp + axis1.qm_ref_z1;
+            // // axis1.qm_ref = 1.0 * ManyRampGenerator1stAxis(axis1.a_ramp, axis1.vel, axis1.t_start, axis1.t_ramp, axis1.t_const, axis1.a_ramp_back, axis1.t_ramp_back) + start_back1;
+            // axis1.qm_ref = axis1.wm_cmd * Tp + axis1.qm_ref_z1;
           }
           else
           {
             axis1.wm_cmd = 0.0;
-            // axis1.qm_ref = start_back1;
             axis1.qm_ref =  axis1.qm_ref_z1;
           }
 
-          // 1軸目 速度P制御
-          axis1.wm_ref = (axis1.qm_ref_z2 - axis1.qm) * axis1.Kpp;
+          // 1軸目 位置P制御
+          axis1.wm_ref = (axis1.qm_ref - axis1.qm) * axis1.Kpp;
 
           if (flag_FF == 1)
           {
@@ -1824,12 +1837,17 @@ interrupt void ControlFunction(void)
           // 2軸目 位置指令
           // ランプ関数生成関数で位置指令を決定
           // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
-          axis2.qm_ref_z2 = axis2.qm_ref_z1;
+          // axis2.qm_ref_z2 = axis2.qm_ref_z1;
+          // axis2.qm_ref_z1 = axis2.qm_ref;
+          
+          axis2.wm_cmd_z2 = axis2.wm_cmd_z1;
+          axis2.wm_cmd_z1 = axis2.wm_cmd;
           axis2.qm_ref_z1 = axis2.qm_ref;
+
           if (flag_end3 == 1 && flag_end1 == 1)
           {
             axis2.wm_cmd = 1.0 * ManyRampGenerator2ndAxis(axis2.a_ramp, axis2.vel, axis2.t_start, axis2.t_ramp, axis2.t_const, axis2.a_ramp_back, axis2.t_ramp_back);
-            axis2.qm_ref = axis2.wm_cmd * Tp + axis2.qm_ref_z1;
+            axis2.qm_ref = axis2.wm_cmd_z2 * Tp + axis2.qm_ref_z1;
           }
           else
           {
@@ -1838,8 +1856,8 @@ interrupt void ControlFunction(void)
             axis2.qm_ref = axis2.qm_ref_z1;
           }
 
-          // 2軸目 速度P制御
-          axis2.wm_ref = (axis2.qm_ref_z2 - axis2.qm) * axis2.Kpp;
+          // 2軸目 位置P制御
+          axis2.wm_ref = (axis2.qm_ref - axis2.qm) * axis2.Kpp;
 
           if (flag_FF == 1)
           {
@@ -1866,14 +1884,17 @@ interrupt void ControlFunction(void)
           // 3軸目 位置指令
           // ランプ関数生成関数で位置指令を決定
           // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
-          axis3.qm_ref_z2 = axis3.qm_ref_z1;
+          // axis3.qm_ref_z2 = axis3.qm_ref_z1;
+          // axis3.qm_ref_z1 = axis3.qm_ref;
+          axis3.wm_cmd_z2 = axis3.wm_cmd_z1;
+          axis3.wm_cmd_z1 = axis3.wm_cmd;
           axis3.qm_ref_z1 = axis3.qm_ref;
           axis3.wm_cmd = 1.0 * ManyRampGenerator3rdAxis(axis3.a_ramp, axis3.vel, axis3.t_start, axis3.t_ramp, axis3.t_const, axis3.a_ramp_back, axis3.t_ramp_back);
           // axis3.qm_ref = 1.0 * ManyRampGenerator3rdAxis(axis3.a_ramp, axis3.vel, axis3.t_start, axis3.t_ramp, axis3.t_const, axis3.a_ramp_back, axis3.t_ramp_back) + start_back3;
-          axis3.qm_ref = axis3.wm_cmd * Tp + axis3.qm_ref_z1;
+          axis3.qm_ref = axis3.wm_cmd_z2 * Tp + axis3.qm_ref_z1;
 
-          // 3軸目 速度P制御
-          axis3.wm_ref = (axis3.qm_ref_z2 - axis3.qm) * axis3.Kpp;
+          // 3軸目 位置P制御
+          axis3.wm_ref = (axis3.qm_ref - axis3.qm) * axis3.Kpp;
 
           // 3軸目 速度PI制御＋SFB
           if (flag_FF == 1)
