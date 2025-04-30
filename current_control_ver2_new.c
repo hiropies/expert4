@@ -2486,30 +2486,30 @@ void SetRampParams(float cmd1, float cmd2, float cmd3)
   // 指令値の設定値
   // 1軸目指令
   axis1.posi_trg_rad = cmd1; // 　モータ側目標位置
-  axis1.t_const = 4.0;       // 定常値の時間　三角波なら0
+  axis1.t_const = 3.0;       // 定常値の時間　三角波なら0
   axis1.t_ramp = 2.0;        // ランプアップ時間
   axis1.t_ramp_back = axis1.t_ramp;
-  axis1.t_start = 2.0; // 待機時間
+  axis1.t_start = 1.0; // 待機時間
   axis1.vel = axis1.posi_trg_rad / (axis1.t_const + axis1.t_ramp);
   axis1.a_ramp = axis1.vel / axis1.t_ramp; // 傾き
   axis1.a_ramp_back = -axis1.a_ramp_back;
 
   // 2軸目指令
   axis2.posi_trg_rad = cmd2; // 　モータ側目標位置
-  axis2.t_const = 4.0;       // 定常値の時間　三角波なら0
+  axis2.t_const = 3.0;       // 定常値の時間　三角波なら0
   axis2.t_ramp = 2.0;        // ランプアップ時間
   axis2.t_ramp_back = axis2.t_ramp;
-  axis2.t_start = 2.0; // 待機時間
+  axis2.t_start = 1.0; // 待機時間
   axis2.vel = axis2.posi_trg_rad / (axis2.t_const + axis2.t_ramp);
   axis2.a_ramp = axis2.vel / axis2.t_ramp; // 傾き
   axis2.a_ramp_back = -axis2.a_ramp_back;
 
   // 3軸目指令
   axis3.posi_trg_rad = cmd3; // 　モータ側目標位置
-  axis3.t_const = 4.0;       // 定常値の時間　三角波なら0
+  axis3.t_const = 3.0;       // 定常値の時間　三角波なら0
   axis3.t_ramp = 2.0;        // ランプアップ時間
   axis3.t_ramp_back = axis3.t_ramp;
-  axis3.t_start = 2.0; // 待機時間
+  axis3.t_start = 1.0; // 待機時間
   axis3.vel = axis3.posi_trg_rad / (axis3.t_const + axis3.t_ramp);
   axis3.a_ramp = axis3.vel / axis3.t_ramp; // 傾き
   axis3.a_ramp_back = -axis3.a_ramp_back;
