@@ -211,6 +211,8 @@ volatile float WAVE_MRBR3;
 
 /// ゲイン
 // 1軸目
+volatile float WAVE_Kff1 = 0.0;
+volatile float WAVE_Kfb1 = 0.0;
 volatile float WAVE_Kpp1 = 0.0;
 volatile float WAVE_Kff1 = 0.0;
 volatile float WAVE_Kfb1 = 0.0;
@@ -220,6 +222,8 @@ volatile float WAVE_fwm1 = 0.0;
 volatile float WAVE_fqs1 = 0.0;
 volatile float WAVE_fwl1 = 0.0;
 // 2軸目
+volatile float WAVE_Kff2 = 0.0;
+volatile float WAVE_Kfb2 = 0.0;
 volatile float WAVE_Kpp2 = 0.0;
 volatile float WAVE_Kff2 = 0.0;
 volatile float WAVE_Kfb2 = 0.0;
@@ -229,6 +233,8 @@ volatile float WAVE_fwm2 = 0.0;
 volatile float WAVE_fqs2 = 0.0;
 volatile float WAVE_fwl2 = 0.0;
 // 3軸目
+volatile float WAVE_Kff3 = 0.0;
+volatile float WAVE_Kfb3 = 0.0;
 volatile float WAVE_Kpp3 = 0.0;
 volatile float WAVE_Kff3 = 0.0;
 volatile float WAVE_Kfb3 = 0.0;
@@ -2192,6 +2198,8 @@ interrupt void ControlFunction(void)
   WAVE_est_ISOB_qs3 = axis3.est_ISOB_qs;
   WAVE_est_ISOB_wl3 = axis3.est_ISOB_wl;
 
+  WAVE_Kff1 = axis1.Kff;
+  WAVE_Kfb1 = axis1.Kfb;
   WAVE_Kpp1 = axis1.Kpp;
   WAVE_Kff1 = axis1.Kff;
   WAVE_Kfb1 = axis1.Kfb;
@@ -2201,6 +2209,8 @@ interrupt void ControlFunction(void)
   WAVE_fqs1 = axis1.fqs;
   WAVE_fwl1 = axis1.fwl;
 
+  WAVE_Kff2 = axis2.Kff;
+  WAVE_Kfb2 = axis2.Kfb;
   WAVE_Kpp2 = axis2.Kpp;
   WAVE_Kff2 = axis2.Kff;
   WAVE_Kfb2 = axis2.Kfb;
@@ -2210,6 +2220,8 @@ interrupt void ControlFunction(void)
   WAVE_fqs2 = axis2.fqs;
   WAVE_fwl2 = axis2.fwl;
 
+  WAVE_Kff3 = axis3.Kff;
+  WAVE_Kfb3 = axis3.Kfb;
   WAVE_Kpp3 = axis3.Kpp;
   WAVE_Kff3 = axis3.Kff;
   WAVE_Kfb3 = axis3.Kfb;
@@ -2277,7 +2289,7 @@ void MW_main(void)
   SetBDN(&axis3, BDN2);       /// Robot構造体変数jointにボード番号をセット
   SetENC_CH(&axis3, ENC_CH2); /// Robot構造体変数jointにエンコーダchをセット
 
-  float fs = 10.0;
+  float fs = 7.0;
   float Q = 1.0 / sqrt(2.0);
   SetLPF(LPF_motor, Tp, fs, Q);
   SetLPF(LPF_cmd, Tp, fs, Q);
