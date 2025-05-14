@@ -3,7 +3,7 @@
 [VARIABLE]
 "" "flag_cont_start" "true" "" "false" "" "" "1" "" "4" 
 "" "flag_Vdc_setted" "true" "" "false" "" "" "1" "" "1" 
-"" "speed_hand" "true" "" "false" "" "" "1" "" "2" 
+"" "speed_hand" "true" "" "false" "" "" "1" "" "0.5" 
 "" "flag_FF" "true" "" "false" "" "" "1" "" "1" 
 "" "flag_PPgain" "true" "" "false" "" "" "1" "" "" 
 "" "flag_dyn_payload" "true" "" "false" "" "" "1" "" "" 
