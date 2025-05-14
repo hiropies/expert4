@@ -211,8 +211,6 @@ volatile float WAVE_MRBR3;
 
 /// ゲイン
 // 1軸目
-volatile float WAVE_Kff1 = 0.0;
-volatile float WAVE_Kfb1 = 0.0;
 volatile float WAVE_Kpp1 = 0.0;
 volatile float WAVE_Kff1 = 0.0;
 volatile float WAVE_Kfb1 = 0.0;
@@ -222,8 +220,6 @@ volatile float WAVE_fwm1 = 0.0;
 volatile float WAVE_fqs1 = 0.0;
 volatile float WAVE_fwl1 = 0.0;
 // 2軸目
-volatile float WAVE_Kff2 = 0.0;
-volatile float WAVE_Kfb2 = 0.0;
 volatile float WAVE_Kpp2 = 0.0;
 volatile float WAVE_Kff2 = 0.0;
 volatile float WAVE_Kfb2 = 0.0;
@@ -233,8 +229,6 @@ volatile float WAVE_fwm2 = 0.0;
 volatile float WAVE_fqs2 = 0.0;
 volatile float WAVE_fwl2 = 0.0;
 // 3軸目
-volatile float WAVE_Kff3 = 0.0;
-volatile float WAVE_Kfb3 = 0.0;
 volatile float WAVE_Kpp3 = 0.0;
 volatile float WAVE_Kff3 = 0.0;
 volatile float WAVE_Kfb3 = 0.0;
@@ -1149,23 +1143,23 @@ interrupt void ControlFunction(void)
         axis1.Kff = 0.00;
         axis1.Kfb = 0.00;
         axis2.Kpp = 20;
-        axis1.Kff = 0.00;
+        axis2.Kff = 0.00;
         axis2.Kfb = 0.00;
         axis3.Kpp = 20;
-        axis1.Kff = 0.00;
+        axis3.Kff = 0.00;
         axis3.Kfb = 0.00;
       }
       else if (flag_PPgain == 2)
       {
         axis1.Kpp = 20;
-        axis1.Kff = 1.400;
-        axis1.Kfb = 0.400;
+        // axis1.Kff = 1.400;
+        // axis1.Kfb = 0.400;
         axis2.Kpp = 20;
-        axis1.Kff = 1.400;
-        axis2.Kfb = 0.400;
+        // axis2.Kff = 1.400;
+        // axis2.Kfb = 0.400;
         axis3.Kpp = 20;
-        axis3.Kff = 1.400;
-        axis3.Kfb = 0.400;
+        // axis3.Kff = 1.400;
+        // axis3.Kfb = 0.400;
       }
 
       // 負荷側情報計算
@@ -1235,23 +1229,23 @@ interrupt void ControlFunction(void)
           axis1.Kff = 0.00;
           axis1.Kfb = 0.00;
           axis2.Kpp = 20;
-          axis1.Kff = 0.00;
+          axis2.Kff = 0.00;
           axis2.Kfb = 0.00;
           axis3.Kpp = 20;
-          axis1.Kff = 0.00;
+          axis3.Kff = 0.00;
           axis3.Kfb = 0.00;
         }
         else if (flag_PPgain == 2)
         {
           axis1.Kpp = 20;
-          axis1.Kff = 1.400;
-          axis1.Kfb = 0.400;
+          // axis1.Kff = 1.400;
+          // axis1.Kfb = 0.400;
           axis2.Kpp = 20;
-          axis1.Kff = 1.400;
-          axis2.Kfb = 0.400;
+          // axis2.Kff = 1.400;
+          // axis2.Kfb = 0.400;
           axis3.Kpp = 20;
-          axis3.Kff = 1.400;
-          axis3.Kfb = 0.400;
+          // axis3.Kff = 1.400;
+          // axis3.Kfb = 0.400;
         }
 
         float start2 = (float)C6657_timer0_read() * 4.8e-9 * 1e6;
@@ -2290,6 +2284,7 @@ void MW_main(void)
   SetENC_CH(&axis3, ENC_CH2); /// Robot構造体変数jointにエンコーダchをセット
 
   float fs = 7.0;
+  // float fs = 10.0;
   float Q = 1.0 / sqrt(2.0);
   SetLPF(LPF_motor, Tp, fs, Q);
   SetLPF(LPF_cmd, Tp, fs, Q);
@@ -3753,7 +3748,7 @@ float GetFilterdSignal(LPF_param *Filter, float u, int flag_init)
 // 手先軌跡(円)
 int CalcHandCmdCircle(float goal[3], float vel_hand[3], float t_wait, float speed, float start_hand[3], int flag_loop)
 {
-  float D = 0.010;
+  float D = 0.005;
   float path = (PI * D);
   float freq = 1 / (path / (speed/60.0));
   float t_task = (1.0 / freq) * 1.5;
@@ -5978,8 +5973,8 @@ void CalcPVGain(void)
   axis1.fwm = gsub[0].fwm_cf0 + gsub[0].fwm_cfp1 * axis1.Jl_calc + gsub[0].fwm_cfn1 / axis1.Jl_calc;
   axis1.fqs = gsub[0].fqs_cf0 + gsub[0].fqs_cfp1 * axis1.Jl_calc + gsub[0].fqs_cfn1 / axis1.Jl_calc + gsub[0].fqs_cfn2 / powf(axis1.Jl_calc, 2);
   axis1.fwl = gsub[0].fwl_cf0 + gsub[0].fwl_cfp1 * axis1.Jl_calc + gsub[0].fwl_cfn1 / axis1.Jl_calc + gsub[0].fwl_cfn2 / powf(axis1.Jl_calc, 2);
-  axis1.Kpp = -axis1.Ksn * axis1.Kvi / (axis1.Dln * axis1.Kvi + (-gsub[0].tau_pole * axis1.Kvi + axis1.Kvp) * axis1.Ksn);
-  WAVE_Kpp1 = axis1.Kpp;
+  // axis1.Kpp = -axis1.Ksn * axis1.Kvi / (axis1.Dln * axis1.Kvi + (-gsub[0].tau_pole * axis1.Kvi + axis1.Kvp) * axis1.Ksn);
+  // WAVE_Kpp1 = axis1.Kpp;
   WAVE_Kvp1 = axis1.Kvp;
   WAVE_Kvi1 = axis1.Kvi;
   WAVE_fwm1 = axis1.fwm;
@@ -5993,7 +5988,7 @@ void CalcPVGain(void)
     axis2.fwm = gsub[1].fwm_cf0 + gsub[1].fwm_cfp1 * 23.97 + gsub[1].fwm_cfn1 / 23.97;
     axis2.fqs = gsub[1].fqs_cf0 + gsub[1].fqs_cfp1 * 23.97 + gsub[1].fqs_cfn1 / 23.97 + gsub[1].fqs_cfn2 / powf(23.97, 2);
     axis2.fwl = gsub[1].fwl_cf0 + gsub[1].fwl_cfp1 * 23.97 + gsub[1].fwl_cfn1 / 23.97 + gsub[1].fwl_cfn2 / powf(23.97, 2);
-    axis2.Kpp = -axis2.Ksn * axis2.Kvi / (axis2.Dln * axis2.Kvi + (-gsub[1].tau_pole * axis2.Kvi + axis2.Kvp) * axis2.Ksn);
+    // axis2.Kpp = -axis2.Ksn * axis2.Kvi / (axis2.Dln * axis2.Kvi + (-gsub[1].tau_pole * axis2.Kvi + axis2.Kvp) * axis2.Ksn);
   }
   else
   {
@@ -6002,9 +5997,9 @@ void CalcPVGain(void)
     axis2.fwm = gsub[1].fwm_cf0 + gsub[1].fwm_cfp1 * axis2.Jl_calc + gsub[1].fwm_cfn1 / axis2.Jl_calc;
     axis2.fqs = gsub[1].fqs_cf0 + gsub[1].fqs_cfp1 * axis2.Jl_calc + gsub[1].fqs_cfn1 / axis2.Jl_calc + gsub[1].fqs_cfn2 / powf(axis2.Jl_calc, 2);
     axis2.fwl = gsub[1].fwl_cf0 + gsub[1].fwl_cfp1 * axis2.Jl_calc + gsub[1].fwl_cfn1 / axis2.Jl_calc + gsub[1].fwl_cfn2 / powf(axis2.Jl_calc, 2);
-    axis2.Kpp = -axis2.Ksn * axis2.Kvi / (axis2.Dln * axis2.Kvi + (-gsub[1].tau_pole * axis2.Kvi + axis2.Kvp) * axis2.Ksn);
+    // axis2.Kpp = -axis2.Ksn * axis2.Kvi / (axis2.Dln * axis2.Kvi + (-gsub[1].tau_pole * axis2.Kvi + axis2.Kvp) * axis2.Ksn);
   }
-  WAVE_Kpp2 = axis2.Kpp;
+  // WAVE_Kpp2 = axis2.Kpp;
   WAVE_Kvp2 = axis2.Kvp;
   WAVE_Kvi2 = axis2.Kvi;
   WAVE_fwm2 = axis2.fwm;
@@ -6016,8 +6011,8 @@ void CalcPVGain(void)
   axis3.fwm = gsub[2].fwm_cf0 + gsub[2].fwm_cfp1 * axis3.Jl_calc + gsub[2].fwm_cfn1 / axis3.Jl_calc;
   axis3.fqs = gsub[2].fqs_cf0 + gsub[2].fqs_cfp1 * axis3.Jl_calc + gsub[2].fqs_cfn1 / axis3.Jl_calc + gsub[2].fqs_cfn2 / powf(axis3.Jl_calc, 2);
   axis3.fwl = gsub[2].fwl_cf0 + gsub[2].fwl_cfp1 * axis3.Jl_calc + gsub[2].fwl_cfn1 / axis3.Jl_calc + gsub[2].fwl_cfn2 / powf(axis3.Jl_calc, 2);
-  axis3.Kpp = -axis3.Ksn * axis3.Kvi / (axis3.Dln * axis3.Kvi + (-gsub[2].tau_pole * axis3.Kvi + axis3.Kvp) * axis3.Ksn);
-  WAVE_Kpp3 = axis3.Kpp;
+  // axis3.Kpp = -axis3.Ksn * axis3.Kvi / (axis3.Dln * axis3.Kvi + (-gsub[2].tau_pole * axis3.Kvi + axis3.Kvp) * axis3.Ksn);
+  // WAVE_Kpp3 = axis3.Kpp;
   WAVE_Kvp3 = axis3.Kvp;
   WAVE_Kvi3 = axis3.Kvi;
   WAVE_fwm3 = axis3.fwm;
