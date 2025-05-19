@@ -101,7 +101,7 @@ volatile int flag_pv = 0;         // 位置/速度制御切り替えフラグ
 volatile int flag_delay = 0;      // FF用　1/z^2 遅延フラグ
 volatile int flag_Vdc_setted = 0; // 位置/速度制御切り替えフラグ
 volatile int flag_FBgain = 1;     // パナ指定FBゲイン倍率
-volatile int flag_PPgain = 2;     // 位置Pゲイン
+volatile int flag_PPgain = 1;     // 位置Pゲイン
 volatile int flag_FF = 0;         // FF制御フラグ
 volatile int flag_SOB = 2;        // 状態オブザーバフラグ
 volatile int counter_2 = 0;       // 指令値Z^=2用カウンタ
@@ -504,6 +504,10 @@ volatile float WAVE_Iff_1;
 volatile float WAVE_Iff_2;
 volatile float WAVE_Iff_3;
 
+volatile float WAVE_Ipi_1;
+volatile float WAVE_Ipi_2;
+volatile float WAVE_Ipi_3;
+
 volatile float WAVE_tauL_dyn_2nd;
 
 volatile float WAVE_VWX;
@@ -649,6 +653,7 @@ typedef volatile struct Robot
   float est_prop_wm, est_prop_qs, est_prop_wl; //!< 提案法状態オブザーバの推定値
   float est_ISOB_wm, est_ISOB_qs, est_ISOB_wl; //!< ISOB推定値
   float Isfb;                                  //!< [A] 状態オブザーバによる推定補償電流
+  float Ipi;
   float obp;
   float obpz;
   float Icmd;
@@ -1163,13 +1168,13 @@ interrupt void ControlFunction(void)
       }
 
       // 負荷側情報計算
-      // CalcFDTDWr_QmrefInputType(&axis1);
-      // CalcFDTDWr_QmrefInputType(&axis2);
-      // CalcFDTDWr_QmrefInputType(&axis3);
+      CalcFDTDWr_QmrefInputType(&axis1);
+      CalcFDTDWr_QmrefInputType(&axis2);
+      CalcFDTDWr_QmrefInputType(&axis3);
 
-      CalcFDTDWr_WmcmdInputType(&axis1);
-      CalcFDTDWr_WmcmdInputType(&axis2);
-      CalcFDTDWr_WmcmdInputType(&axis3);
+      // CalcFDTDWr_WmcmdInputType(&axis1);
+      // CalcFDTDWr_WmcmdInputType(&axis2);
+      // CalcFDTDWr_WmcmdInputType(&axis3);
 
       // 動力学トルクを計算
       CalcTauLDyn(joint);
@@ -1253,19 +1258,19 @@ interrupt void ControlFunction(void)
         if (flag_FF_triple == 1)
         {
           // 1,2軸動力学モデル更新
-          // CalcFDTDWrUpdate_QmrefInputType_1st2nd();
-          CalcFDTDWrUpdate_WmcmdInputType_1st2nd(&axis1);
-          CalcFDTDWrUpdate_WmcmdInputType_1st2nd(&axis2);
-          CalcFDTDWrUpdate_WmcmdInputType_1st2nd(&axis3);
+          CalcFDTDWrUpdate_QmrefInputType_1st2nd();
+          // CalcFDTDWrUpdate_WmcmdInputType_1st2nd(&axis1);
+          // CalcFDTDWrUpdate_WmcmdInputType_1st2nd(&axis2);
+          // CalcFDTDWrUpdate_WmcmdInputType_1st2nd(&axis3);
           WAVE_TimeWrInit = (float)C6657_timer0_read() * 4.8e-9 * 1e6 - start2;
         }
         else
         {
           // 2軸のみモデル更新
-          // CalcFDTDWrUpdate_QmrefInputType_2nd();
-          CalcFDTDWrUpdate_WmcmdInputType_2nd(&axis1);
-          CalcFDTDWrUpdate_WmcmdInputType_2nd(&axis2);
-          CalcFDTDWrUpdate_WmcmdInputType_2nd(&axis3);
+          CalcFDTDWrUpdate_QmrefInputType_2nd();
+          // CalcFDTDWrUpdate_WmcmdInputType_2nd(&axis1);
+          // CalcFDTDWrUpdate_WmcmdInputType_2nd(&axis2);
+          // CalcFDTDWrUpdate_WmcmdInputType_2nd(&axis3);
           WAVE_TimeWrInit = (float)C6657_timer0_read() * 4.8e-9 * 1e6 - start2;
         }
 
@@ -1286,22 +1291,22 @@ interrupt void ControlFunction(void)
         // FF制御　FDTDで離散化した負荷側情報計算関数(qmref入力)
         if (flag_FF_triple == 1)
         {
-          // CalcFDTDWr_QmrefInputType(&axis1); // 1軸目は動力学外乱入力なし
-          // CalcFDTDWr_QmrefInputType(&axis2);
-          // CalcFDTDWr_QmrefInputType(&axis3);
+          CalcFDTDWr_QmrefInputType(&axis1); // 1軸目は動力学外乱入力なし
+          CalcFDTDWr_QmrefInputType(&axis2);
+          CalcFDTDWr_QmrefInputType(&axis3);
 
-          CalcFDTDWr_WmcmdInputType(&axis1);
-          CalcFDTDWr_WmcmdInputType(&axis2);
-          CalcFDTDWr_WmcmdInputType(&axis3);
+          // CalcFDTDWr_WmcmdInputType(&axis1);
+          // CalcFDTDWr_WmcmdInputType(&axis2);
+          // CalcFDTDWr_WmcmdInputType(&axis3);
           WAVE_TimeWr = (float)C6657_timer1_read() * 4.8e-9 * 1e6 - start3;
         }
         else
         {
-          // CalcFDTDWr_QmrefInputType(&axis2);
-          // CalcFDTDWr_QmrefInputType(&axis3);
+          CalcFDTDWr_QmrefInputType(&axis2);
+          CalcFDTDWr_QmrefInputType(&axis3);
 
-          CalcFDTDWr_WmcmdInputType(&axis2);
-          CalcFDTDWr_WmcmdInputType(&axis3);
+          // CalcFDTDWr_WmcmdInputType(&axis2);
+          // CalcFDTDWr_WmcmdInputType(&axis3);
           WAVE_TimeWr = (float)C6657_timer1_read() * 4.8e-9 * 1e6 - start3;
         }
 
@@ -1440,11 +1445,11 @@ interrupt void ControlFunction(void)
           LimitPosCmd(&axis1);
 
           axis1.wm_ref = (axis1.qm_ref - axis1.qm) * axis1.Kpp + axis1.Kff * axis1.wm_cmd_z2 - axis1.Kfb * axis1.wm;
-          
+          axis1.Ipi = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1)
           if (flag_FF == 1)
           {
             // 1軸目 速度PI制御＋SFB＋FF
-            axis1.IrefQ = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1) - axis1.Isfb + axis1.Iff;
+            axis1.IrefQ = axis1.Ipi - axis1.Isfb + axis1.Iff;
             axis1.I_SOBinput = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1) - axis1.Isfb;
 
             if (flag_SOB == 1)
@@ -1459,7 +1464,7 @@ interrupt void ControlFunction(void)
           else if (flag_FF == 0)
           {
             // 1軸目 速度PI制御＋SFB
-            axis1.IrefQ = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1) - axis1.Isfb;
+            axis1.IrefQ = axis1.Ipi - axis1.Isfb;
             axis1.I_SOBinput = axis1.IrefQ;
           }
 
@@ -1473,13 +1478,12 @@ interrupt void ControlFunction(void)
 
           axis2.qm_ref = axis2.wm_cmd_z2 * Tp + axis2.qm_ref_z1;
           LimitPosCmd(&axis2);
-          
           axis2.wm_ref = (axis2.qm_ref - axis2.qm) * axis2.Kpp + axis2.Kff * axis2.wm_cmd_z2 - axis2.Kfb * axis2.wm;          
-          
+          axis2.Ipi = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1)
           if (flag_FF == 1)
           {
             // 2軸目 速度PI制御＋SFB＋FF
-            axis2.IrefQ = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb + axis2.Iff;
+            axis2.IrefQ = axis2.Ipi - axis2.Isfb + axis2.Iff;
             axis2.I_SOBinput = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb;
 
             if (flag_SOB == 1)
@@ -1494,7 +1498,7 @@ interrupt void ControlFunction(void)
           else if (flag_FF == 0)
           {
             // 2軸目 速度PI制御＋SFB
-            axis2.IrefQ = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb;
+            axis2.IrefQ = axis2.Ipi - axis2.Isfb;
             axis2.I_SOBinput = axis2.IrefQ;
           }
 
@@ -1510,12 +1514,12 @@ interrupt void ControlFunction(void)
           LimitPosCmd(&axis3);
           
           axis3.wm_ref = (axis3.qm_ref - axis3.qm) * axis3.Kpp + axis3.Kff * axis3.wm_cmd_z2 - axis3.Kfb * axis3.wm;
-
+          axis3.Ipi = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1);
           // 3軸目 速度PI制御＋SFB
           if (flag_FF == 1)
           {
             // 3軸目 速度PI制御＋SFB＋FF
-            axis3.IrefQ = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb + axis3.Iff;
+            axis3.IrefQ = axis3.Ipi - axis3.Isfb + axis3.Iff;
             axis3.I_SOBinput = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb;
 
             if (flag_SOB == 1)
@@ -1529,7 +1533,7 @@ interrupt void ControlFunction(void)
           }
           else if (flag_FF == 0)
           {
-            axis3.IrefQ = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb;
+            axis3.IrefQ = axis3.Ipi - axis3.Isfb;
             axis3.I_SOBinput = axis3.IrefQ;
           }
 
@@ -1603,11 +1607,11 @@ interrupt void ControlFunction(void)
           LimitPosCmd(&axis1);
 
           axis1.wm_ref = (axis1.qm_ref - axis1.qm) * axis1.Kpp + axis1.Kff * axis1.wm_cmd_z2 - axis1.Kfb * axis1.wm;
-          
+          axis1.I_pi = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1);
           if (flag_FF == 1)
           {
             // 1軸目 速度PI制御＋SFB＋FF
-            axis1.IrefQ = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1) - axis1.Isfb + axis1.Iff;
+            axis1.IrefQ = axis1.Ipi - axis1.Isfb + axis1.Iff;
             axis1.I_SOBinput = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1) - axis1.Isfb;
 
             if (flag_SOB == 1)
@@ -1622,7 +1626,7 @@ interrupt void ControlFunction(void)
           else if (flag_FF == 0)
           {
             // 1軸目 速度PI制御＋SFB
-            axis1.IrefQ = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1) - axis1.Isfb;
+            axis1.IrefQ = axis1.Ipi - axis1.Isfb;
             axis1.I_SOBinput = axis1.IrefQ;
           }
 
@@ -1638,11 +1642,11 @@ interrupt void ControlFunction(void)
           LimitPosCmd(&axis2);
           
           axis2.wm_ref = (axis2.qm_ref - axis2.qm) * axis2.Kpp + axis2.Kff * axis2.wm_cmd_z2 - axis2.Kfb * axis2.wm;
-          
+          axis2.Ipi = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1);
           if (flag_FF == 1)
           {
             // 2軸目 速度PI制御＋SFB＋FF
-            axis2.IrefQ = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb + axis2.Iff;
+            axis2.IrefQ = axis2.Ipi - axis2.Isfb + axis2.Iff;
             axis2.I_SOBinput = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb;
 
             if (flag_SOB == 1)
@@ -1657,7 +1661,7 @@ interrupt void ControlFunction(void)
           else if (flag_FF == 0)
           {
             // 2軸目 速度PI制御＋SFB
-            axis2.IrefQ = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb;
+            axis2.IrefQ = axis2.Ipi - axis2.Isfb;
             axis2.I_SOBinput = axis2.IrefQ;
           }
 
@@ -1673,13 +1677,12 @@ interrupt void ControlFunction(void)
           LimitPosCmd(&axis3);
           
           axis3.wm_ref = (axis3.qm_ref - axis3.qm) * axis3.Kpp + axis3.Kff * axis3.wm_cmd_z2 - axis3.Kfb * axis3.wm;
-          
-
+          axis3.Ipi = [2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1);
           // 3軸目 速度PI制御＋SFB
           if (flag_FF == 1)
           {
             // 3軸目 速度PI制御＋SFB＋FF
-            axis3.IrefQ = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb + axis3.Iff;
+            axis3.IrefQ = axis3.Ipi - axis3.Isfb + axis3.Iff;
             axis3.I_SOBinput = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb;
 
             if (flag_SOB == 1)
@@ -1693,7 +1696,7 @@ interrupt void ControlFunction(void)
           }
           else if (flag_FF == 0)
           {
-            axis3.IrefQ = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb;
+            axis3.IrefQ = axis3.Ipi - axis3.Isfb;
             axis3.I_SOBinput = axis3.IrefQ;
           }
         }
@@ -1755,11 +1758,11 @@ interrupt void ControlFunction(void)
 
           // 1軸目 位置P制御
           axis1.wm_ref = (axis1.qm_ref - axis1.qm) * axis1.Kpp;
-
+          axis1.Ipi = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1);
           if (flag_FF == 1)
           {
             // 1軸目 速度PI制御＋SFB＋FF
-            axis1.IrefQ = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1) - axis1.Isfb + axis1.Iff;
+            axis1.IrefQ = axis1.Ipi - axis1.Isfb + axis1.Iff;
             axis1.I_SOBinput = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1) - axis1.Isfb;
 
             if (flag_SOB == 1)
@@ -1774,7 +1777,7 @@ interrupt void ControlFunction(void)
           else if (flag_FF == 0)
           {
             // 1軸目 速度PI制御＋SFB
-            axis1.IrefQ = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1) - axis1.Isfb;
+            axis1.IrefQ = axis1.Ipi - axis1.Isfb;
             axis1.I_SOBinput = axis1.IrefQ;
           }
 
@@ -1799,11 +1802,11 @@ interrupt void ControlFunction(void)
 
           // 2軸目 位置P制御
           axis2.wm_ref = (axis2.qm_ref - axis2.qm) * axis2.Kpp;
-
+          axis2.Ipi = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1);
           if (flag_FF == 1)
           {
             // 2軸目 速度PI制御＋SFB＋FF
-            axis2.IrefQ = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb + axis2.Iff;
+            axis2.IrefQ = axis2.Ipi - axis2.Isfb + axis2.Iff;
             axis2.I_SOBinput = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb;
 
             if (flag_SOB == 1)
@@ -1818,7 +1821,7 @@ interrupt void ControlFunction(void)
           else if (flag_FF == 0)
           {
             // 2軸目 速度PI制御＋SFB
-            axis2.IrefQ = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb;
+            axis2.IrefQ = axis2.Ipi - axis2.Isfb;
             axis2.I_SOBinput = axis2.IrefQ;
           }
 
@@ -1836,12 +1839,12 @@ interrupt void ControlFunction(void)
 
           // 3軸目 位置P制御
           axis3.wm_ref = (axis3.qm_ref - axis3.qm) * axis3.Kpp;
-
+          axis3.Ipi = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1);
           // 3軸目 速度PI制御＋SFB
           if (flag_FF == 1)
           {
             // 3軸目 速度PI制御＋SFB＋FF
-            axis3.IrefQ = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb + axis3.Iff;
+            axis3.IrefQ = axis3.Ipi - axis3.Isfb + axis3.Iff;
             axis3.I_SOBinput = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb;
 
             if (flag_SOB == 1)
@@ -1855,7 +1858,7 @@ interrupt void ControlFunction(void)
           }
           else if (flag_FF == 0)
           {
-            axis3.IrefQ = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb;
+            axis3.IrefQ = axis3.Ipi - axis3.Isfb;
             axis3.I_SOBinput = axis3.IrefQ;
           }
           if (flag_end1 == 1 && flag_end2 == 1 && flag_end3 == 1)
@@ -2022,6 +2025,10 @@ interrupt void ControlFunction(void)
   WAVE_Iff_1 = axis1.Iff;
   WAVE_Iff_2 = axis2.Iff;
   WAVE_Iff_3 = axis3.Iff;
+
+  WAVE_Ipi_1 = axis1.Ipi;
+  WAVE_Ipi_2 = axis2.Ipi;
+  WAVE_Ipi_3 = axis3.Ipi;
 
   WAVE_wm_ref1 = axis1.wm_ref;
   WAVE_wm_ref2 = axis2.wm_ref;
@@ -2192,6 +2199,8 @@ interrupt void ControlFunction(void)
   WAVE_est_ISOB_qs3 = axis3.est_ISOB_qs;
   WAVE_est_ISOB_wl3 = axis3.est_ISOB_wl;
 
+  WAVE_Kff1 = axis1.Kff;
+  WAVE_Kfb1 = axis1.Kfb;
   WAVE_Kpp1 = axis1.Kpp;
   WAVE_Kff1 = axis1.Kff;
   WAVE_Kfb1 = axis1.Kfb;
@@ -2201,6 +2210,8 @@ interrupt void ControlFunction(void)
   WAVE_fqs1 = axis1.fqs;
   WAVE_fwl1 = axis1.fwl;
 
+  WAVE_Kff2 = axis2.Kff;
+  WAVE_Kfb2 = axis2.Kfb;
   WAVE_Kpp2 = axis2.Kpp;
   WAVE_Kff2 = axis2.Kff;
   WAVE_Kfb2 = axis2.Kfb;
@@ -2210,6 +2221,8 @@ interrupt void ControlFunction(void)
   WAVE_fqs2 = axis2.fqs;
   WAVE_fwl2 = axis2.fwl;
 
+  WAVE_Kff3 = axis3.Kff;
+  WAVE_Kfb3 = axis3.Kfb;
   WAVE_Kpp3 = axis3.Kpp;
   WAVE_Kff3 = axis3.Kff;
   WAVE_Kfb3 = axis3.Kfb;
@@ -2320,9 +2333,9 @@ void MW_main(void)
   // 負荷側情報計算関数の定数計算関数
   // CalcFDTDWrInit_QmrefInputType();
   
-  CalcFDTDWrInit_WmcmdInputType(&axis1);
-  CalcFDTDWrInit_WmcmdInputType(&axis2);
-  CalcFDTDWrInit_WmcmdInputType(&axis3);
+  // CalcFDTDWrInit_WmcmdInputType(&axis1);
+  // CalcFDTDWrInit_WmcmdInputType(&axis2);
+  // CalcFDTDWrInit_WmcmdInputType(&axis3);
 
   // FDTD状態オブザーバの定数計算関数
   CalcFDTDTSOBInit();
@@ -6730,7 +6743,7 @@ void SetGain(Robot *robo)
   robo[1].Jln = 23.9666; // (7.2kg負荷)
 
   // 設計ゲイン 標準形 等価時定数 速度:0.05, 位置0.1
-  robo[1].Kpp = 15.4593;
+  robo[1].Kpp = 20.0;
   robo[1].Kff = 1.400;
   robo[1].Kfb = 0.400;
   robo[1].Kvp = 0.1265;
