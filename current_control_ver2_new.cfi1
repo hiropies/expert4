@@ -9,7 +9,7 @@
 "" "flag_PPgain" "true" "" "false" "" "" "1" "" "" 
 "" "flag_PPgain" "true" "" "false" "" "" "1" "" "" 
 "" "flag_dyn_payload" "true" "" "false" "" "" "1" "" "" 
-"" "" "false" "" "false" "" "" "0" "" "" 
+"" "flag_SOB" "true" "" "false" "" "" "1" "" "" 
 "" "WAVE_Vdc1" "true" "" "false" "" "" "1" "" "" 
 "" "WAVE_Vdc2" "true" "" "false" "" "" "1" "" "" 
 "" "WAVE_Vdc3" "true" "" "false" "" "" "1" "" "" 

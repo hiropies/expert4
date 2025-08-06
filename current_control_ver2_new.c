@@ -2347,7 +2347,7 @@ void MW_main(void)
   // 1軸目
   gsub[0].tau_pole = 0.1;
   gsub[0].tau_cdm = 0.05;
-  gsub[0].zw = 30.0;
+  gsub[0].zw = 50.0;
   gsub[0].r_cdm1 = 2.5;
   gsub[0].r_cdm2 = 2.0;
   gsub[0].r_cdm3 = 2.0;
