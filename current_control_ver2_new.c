@@ -1396,9 +1396,9 @@ interrupt void ControlFunction(void)
           }
           if (flag_reposition == 1)
           {
-            start_go1 = axis1.qm;
-            start_go2 = axis2.qm;
-            start_go3 = axis3.qm;
+            start_go1 = axis1.qm_ref;
+            start_go2 = axis2.qm_ref;
+            start_go3 = axis3.qm_ref;
             flag_reposition = 0;
             // 指令値の設定値
             SetRampParams((cmd_1[PointCount] - start_go1), (cmd_2[PointCount] - start_go2), (cmd_3[PointCount] - start_go3));
@@ -1561,9 +1561,9 @@ interrupt void ControlFunction(void)
           }
           if (flag_reposition == 1)
           {
-            start_back1 = axis1.qm;
-            start_back2 = axis2.qm;
-            start_back3 = axis3.qm;
+            start_back1 = axis1.qm_ref;
+            start_back2 = axis2.qm_ref;
+            start_back3 = axis3.qm_ref;
             flag_reposition = 0;
             // flag_reposition = 0;
             // 指令値の設定値
