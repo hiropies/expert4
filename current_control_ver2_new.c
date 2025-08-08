@@ -1421,7 +1421,7 @@ interrupt void ControlFunction(void)
           axis1.qm_ref_z1 = axis1.qm_ref;
           if (flag_end3 == 1)
           {
-            axis1.qm_ref = 1.0 * ManyRampGenerator1stAxis(axis1.a_ramp, axis1.vel, axis1.t_start, axis1.t_ramp, axis1.t_const, axis1.a_ramp_back, axis1.t_ramp_back) + start_go1;
+            axis1.qm_ref = 1.0 * ManyRampGenerator1stAxis(axis1.a_ramp, axis1.vel, axis1.t_start, axis1.t_ramp, axis1.t_const, axis1.a_ramp_back, axis1.t_ramp_back);
           }
           else
           {
@@ -1459,7 +1459,7 @@ interrupt void ControlFunction(void)
           axis2.qm_ref_z1 = axis2.qm_ref;
           if (flag_end3 == 1 && flag_end1 == 1)
           {
-            axis2.qm_ref = 1.0 * ManyRampGenerator2ndAxis(axis2.a_ramp, axis2.vel, axis2.t_start, axis2.t_ramp, axis2.t_const, axis2.a_ramp_back, axis2.t_ramp_back) + start_go2;
+            axis2.qm_ref = 1.0 * ManyRampGenerator2ndAxis(axis2.a_ramp, axis2.vel, axis2.t_start, axis2.t_ramp, axis2.t_const, axis2.a_ramp_back, axis2.t_ramp_back);
           }
           else
           {
@@ -1496,7 +1496,7 @@ interrupt void ControlFunction(void)
           // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
           axis3.qm_ref_z2 = axis3.qm_ref_z1;
           axis3.qm_ref_z1 = axis3.qm_ref;
-          axis3.qm_ref = 1.0 * ManyRampGenerator3rdAxis(axis3.a_ramp, axis3.vel, axis3.t_start, axis3.t_ramp, axis3.t_const, axis3.a_ramp_back, axis3.t_ramp_back) + start_go3;
+          axis3.qm_ref = 1.0 * ManyRampGenerator3rdAxis(axis3.a_ramp, axis3.vel, axis3.t_start, axis3.t_ramp, axis3.t_const, axis3.a_ramp_back, axis3.t_ramp_back);
 
           // 3軸目 位置P制御
           axis3.wm_ref = (axis3.qm_ref_z2 - axis3.qm) * axis3.Kpp;
@@ -1587,7 +1587,7 @@ interrupt void ControlFunction(void)
           axis1.qm_ref_z1 = axis1.qm_ref;
           if (flag_end3 == 1)
           {
-            axis1.qm_ref = 1.0 * ManyRampGenerator1stAxis(axis1.a_ramp, axis1.vel, axis1.t_start, axis1.t_ramp, axis1.t_const, axis1.a_ramp_back, axis1.t_ramp_back) + start_back1;
+            axis1.qm_ref = 1.0 * ManyRampGenerator1stAxis(axis1.a_ramp, axis1.vel, axis1.t_start, axis1.t_ramp, axis1.t_const, axis1.a_ramp_back, axis1.t_ramp_back);
           }
           else
           {
@@ -1626,7 +1626,7 @@ interrupt void ControlFunction(void)
           axis2.qm_ref_z1 = axis2.qm_ref;
           if (flag_end3 == 1 && flag_end1 == 1)
           {
-            axis2.qm_ref = 1.0 * ManyRampGenerator2ndAxis(axis2.a_ramp, axis2.vel, axis2.t_start, axis2.t_ramp, axis2.t_const, axis2.a_ramp_back, axis2.t_ramp_back) + start_back2;
+            axis2.qm_ref = 1.0 * ManyRampGenerator2ndAxis(axis2.a_ramp, axis2.vel, axis2.t_start, axis2.t_ramp, axis2.t_const, axis2.a_ramp_back, axis2.t_ramp_back);
           }
           else
           {
@@ -1663,7 +1663,7 @@ interrupt void ControlFunction(void)
           // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
           axis3.qm_ref_z2 = axis3.qm_ref_z1;
           axis3.qm_ref_z1 = axis3.qm_ref;
-          axis3.qm_ref = 1.0 * ManyRampGenerator3rdAxis(axis3.a_ramp, axis3.vel, axis3.t_start, axis3.t_ramp, axis3.t_const, axis3.a_ramp_back, axis3.t_ramp_back) + start_back3;
+          axis3.qm_ref = 1.0 * ManyRampGenerator3rdAxis(axis3.a_ramp, axis3.vel, axis3.t_start, axis3.t_ramp, axis3.t_const, axis3.a_ramp_back, axis3.t_ramp_back);
           // axis3.qm_ref = start_back3;
 
           // 3軸目 速度P制御
