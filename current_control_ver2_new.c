@@ -959,6 +959,8 @@ Controller force[3] = {0}; //!< 力コントローラー(未実装)
  * 詳細は下記URL
  * https://www.aps-web.jp/academy/rtos/10/
  **/
+
+volatile int flag_fin = 0;
 interrupt void ControlFunction(void)
 {
   C6657_timer2_stop();  /*!< 制御周期測定用タイマの停止 */
@@ -1236,11 +1238,12 @@ interrupt void ControlFunction(void)
 
         if (2 == flag_cont_start)
         {
-          static int flag_fin = 0;
+          // static int flag_fin = 0;
           // 初期姿勢から実験姿勢へ遷移
           // ランプ指令用変数の設定
           if (flag_reposition == 0 && flag_first_go == 0)
           {
+            flag_fin = 0;
             flag_reposition = 1;
             flag_first_go = 1;
             flag_first_back = 0;
@@ -1384,10 +1387,10 @@ interrupt void ControlFunction(void)
           // y = -45°平面でのPtoP移動。反射板とのキャリブレーションを行う。
           static int flag_loop = 0;
           static int PointNum = 9;
-          static int flag_fin = 0;
           // ランプ指令用変数の設定
           if (flag_reposition == 0 && flag_loop == 0)
           {
+            flag_fin = 0;
             flag_reposition = 1;
             flag_loop = 1;
             flag_end1 = 0;
@@ -1421,7 +1424,7 @@ interrupt void ControlFunction(void)
           axis1.qm_ref_z1 = axis1.qm_ref;
           if (flag_end3 == 1)
           {
-            axis1.qm_ref = 1.0 * ManyRampGenerator1stAxis(axis1.a_ramp, axis1.vel, axis1.t_start, axis1.t_ramp, axis1.t_const, axis1.a_ramp_back, axis1.t_ramp_back);
+            axis1.qm_ref = 1.0 * ManyRampGenerator1stAxis(axis1.a_ramp, axis1.vel, axis1.t_start, axis1.t_ramp, axis1.t_const, axis1.a_ramp_back, axis1.t_ramp_back) + start_go1;
           }
           else
           {
@@ -1459,7 +1462,7 @@ interrupt void ControlFunction(void)
           axis2.qm_ref_z1 = axis2.qm_ref;
           if (flag_end3 == 1 && flag_end1 == 1)
           {
-            axis2.qm_ref = 1.0 * ManyRampGenerator2ndAxis(axis2.a_ramp, axis2.vel, axis2.t_start, axis2.t_ramp, axis2.t_const, axis2.a_ramp_back, axis2.t_ramp_back);
+            axis2.qm_ref = 1.0 * ManyRampGenerator2ndAxis(axis2.a_ramp, axis2.vel, axis2.t_start, axis2.t_ramp, axis2.t_const, axis2.a_ramp_back, axis2.t_ramp_back) + start_go2;
           }
           else
           {
@@ -1496,7 +1499,7 @@ interrupt void ControlFunction(void)
           // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
           axis3.qm_ref_z2 = axis3.qm_ref_z1;
           axis3.qm_ref_z1 = axis3.qm_ref;
-          axis3.qm_ref = 1.0 * ManyRampGenerator3rdAxis(axis3.a_ramp, axis3.vel, axis3.t_start, axis3.t_ramp, axis3.t_const, axis3.a_ramp_back, axis3.t_ramp_back);
+          axis3.qm_ref = 1.0 * ManyRampGenerator3rdAxis(axis3.a_ramp, axis3.vel, axis3.t_start, axis3.t_ramp, axis3.t_const, axis3.a_ramp_back, axis3.t_ramp_back) + start_go3;
 
           // 3軸目 位置P制御
           axis3.wm_ref = (axis3.qm_ref_z2 - axis3.qm) * axis3.Kpp;
@@ -1546,12 +1549,13 @@ interrupt void ControlFunction(void)
         }
         else if (4 == flag_cont_start)
         {
-          static int flag_fin = 0;
+          // static int flag_fin = 0;
           //-------------------------- 実験 -----------------------------
           // 実験終端姿勢からの戻り
           // ランプ指令用変数の設定
           if (flag_reposition == 0 && flag_first_back == 0)
           {
+            flag_fin = 0;
             flag_reposition = 1;
             flag_first_back = 1;
             flag_first_go = 0;
@@ -1561,9 +1565,9 @@ interrupt void ControlFunction(void)
           }
           if (flag_reposition == 1)
           {
-            start_back1 = axis1.qm_ref;
-            start_back2 = axis2.qm_ref;
-            start_back3 = axis3.qm_ref;
+            start_back1 = axis1.qm;
+            start_back2 = axis2.qm;
+            start_back3 = axis3.qm;
             flag_reposition = 0;
             // flag_reposition = 0;
             // 指令値の設定値
@@ -1587,7 +1591,7 @@ interrupt void ControlFunction(void)
           axis1.qm_ref_z1 = axis1.qm_ref;
           if (flag_end3 == 1)
           {
-            axis1.qm_ref = 1.0 * ManyRampGenerator1stAxis(axis1.a_ramp, axis1.vel, axis1.t_start, axis1.t_ramp, axis1.t_const, axis1.a_ramp_back, axis1.t_ramp_back);
+            axis1.qm_ref = 1.0 * ManyRampGenerator1stAxis(axis1.a_ramp, axis1.vel, axis1.t_start, axis1.t_ramp, axis1.t_const, axis1.a_ramp_back, axis1.t_ramp_back) + start_back1;
           }
           else
           {
@@ -1626,7 +1630,7 @@ interrupt void ControlFunction(void)
           axis2.qm_ref_z1 = axis2.qm_ref;
           if (flag_end3 == 1 && flag_end1 == 1)
           {
-            axis2.qm_ref = 1.0 * ManyRampGenerator2ndAxis(axis2.a_ramp, axis2.vel, axis2.t_start, axis2.t_ramp, axis2.t_const, axis2.a_ramp_back, axis2.t_ramp_back);
+            axis2.qm_ref = 1.0 * ManyRampGenerator2ndAxis(axis2.a_ramp, axis2.vel, axis2.t_start, axis2.t_ramp, axis2.t_const, axis2.a_ramp_back, axis2.t_ramp_back) + start_back2;
           }
           else
           {
@@ -1663,7 +1667,7 @@ interrupt void ControlFunction(void)
           // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
           axis3.qm_ref_z2 = axis3.qm_ref_z1;
           axis3.qm_ref_z1 = axis3.qm_ref;
-          axis3.qm_ref = 1.0 * ManyRampGenerator3rdAxis(axis3.a_ramp, axis3.vel, axis3.t_start, axis3.t_ramp, axis3.t_const, axis3.a_ramp_back, axis3.t_ramp_back);
+          axis3.qm_ref = 1.0 * ManyRampGenerator3rdAxis(axis3.a_ramp, axis3.vel, axis3.t_start, axis3.t_ramp, axis3.t_const, axis3.a_ramp_back, axis3.t_ramp_back) + start_back3;
           // axis3.qm_ref = start_back3;
 
           // 3軸目 速度P制御
