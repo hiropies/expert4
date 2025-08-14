@@ -113,25 +113,6 @@ volatile float WAVE_Timer0 = 0.0; // タイマー記録変数
 volatile float WAVE_Timer1 = 0.0; // タイマー記録変数
 volatile float WAVE_Timer2 = 0.0; // タイマー記録変数
 
-volatile float WAVE_TimeGetEnc = 0.0;
-volatile float WAVE_TimeSetWm = 0.0;
-volatile float WAVE_TimeConv2dq = 0.0;
-volatile float WAVE_TimeResRatch = 0.0;
-volatile float WAVE_TimeJl = 0.0;
-volatile float WAVE_TimeGain = 0.0;
-volatile float WAVE_TimeWrInit = 0.0;
-volatile float WAVE_TimeWr = 0.0;
-volatile float WAVE_TimeTauLdyn = 0.0;
-volatile float WAVE_TimeTm = 0.0;
-volatile float WAVE_TimeGrav = 0.0;
-volatile float WAVE_TimeSOB = 0.0;
-volatile float WAVE_TimeP_PI = 0.0;
-volatile float WAVE_TimeACC = 0.0;
-volatile float WAVE_TimeConv2uvw = 0.0;
-volatile float WAVE_TimeInsert = 0.0;
-volatile float WAVE_TimeCalcCmd = 0.0;
-volatile float WAVE_TimeCalcInvCmd = 0.0;
-
 volatile float WAVE_Joint1 = 0.0;
 volatile float WAVE_Joint2 = 0.0;
 volatile float WAVE_Joint3 = 0.0;
@@ -1069,10 +1050,10 @@ float ManyRampGenerator3rdAxis(float a_ramp, float vel, float t_wait, float t_ra
 float TriangularAccelerationCommandGenerator(int BDN);
 void TriangularAccelerationCommandGeneratorInit(float ql_const_deg, float q_time_full, float w_time_full, float Rg, int BDN);
 /// SET,GET
-void SetRampParams(float cmd1, float cmd2, float cmd3);
-void SetBDN(Robot *robo, int Bnum);   //!< ロボット構造体のボード番号設定
-void SetENC_CH(Robot *robo, int Ech); //!< エンコーダボードch番号
-void SetGain(Robot robo[]);           ///!< 電流,速度,位置のゲインの挿入
+void SetRampParams(float cmd1, float cmd2, float cmd3); //!< 台形速度軌跡のパラメータ設定
+void SetBDN(Robot *robo, int Bnum);                     //!< ロボット構造体のボード番号設定
+void SetENC_CH(Robot *robo, int Ech);                   //!< エンコーダボードch番号
+void SetGain(Robot robo[]);                             ///!< 電流,速度,位置のゲインの挿入
 
 float Integrator_acc_ref(float u, const float Ts);  // 加速度指令==>速度指令　1軸用
 float Integrator_w_ref(float u, const float Ts);    // 速度指令==>位置指令　　1軸用
@@ -1191,30 +1172,6 @@ interrupt void ControlFunction(void)
 
       // // 可変ゲイン計算
       CalcPVGain();
-      // if (flag_PPgain == 1)
-      // {
-      //   axis1.Kpp = 20;
-      //   axis1.Kff = 0.00;
-      //   axis1.Kfb = 0.00;
-      //   axis2.Kpp = 20;
-      //   axis2.Kff = 0.00;
-      //   axis2.Kfb = 0.00;
-      //   axis3.Kpp = 20;
-      //   axis3.Kff = 0.00;
-      //   axis3.Kfb = 0.00;
-      // }
-      // else if (flag_PPgain == 2)
-      // {
-      //   axis1.Kpp = 20;
-      //   axis1.Kff = 1.400;
-      //   axis1.Kfb = 0.400;
-      //   axis2.Kpp = 20;
-      //   axis2.Kff = 1.400;
-      //   axis2.Kfb = 0.400;
-      //   axis3.Kpp = 20;
-      //   axis3.Kff = 1.400;
-      //   axis3.Kfb = 0.400;
-      // }
 
       // 負荷側情報計算
       //P制御用Wr
@@ -1234,7 +1191,9 @@ interrupt void ControlFunction(void)
       FDTD_Tm(&axis2);
       FDTD_Tm(&axis3);
 
-      // axis1.IrefQ = Pcontroller((axis1.wm_ref - axis1.wm),Kpv);
+      // axis1.IrefQ = Ref_Iq_ref_direct;
+      // axis1.IrefQ = Ref_Iq_ref_direct*sinf(2.0*PI*t); // 正弦波指令 電流指令確認用;
+      // axis1.wm_ref = Ref_wM_direct * RectGenerator(t,ref_freq);
       // 動力学方程式より出るトルクの正負に合わせて補償電流を入れる
       // inspectorで要確認！！！！
       axis1.Icmd = 0.0;
@@ -1307,8 +1266,6 @@ interrupt void ControlFunction(void)
         //   axis3.Kfb = 0.400;
         // }
 
-        float start2 = (float)C6657_timer0_read() * 4.8e-9 * 1e6;
-
         if (flag_FF_triple == 1)
         {
           // 1,2軸動力学モデル更新
@@ -1316,7 +1273,6 @@ interrupt void ControlFunction(void)
           CalcFDTDWrUpdate_WmcmdInputType_1st2nd(&axis1);
           CalcFDTDWrUpdate_WmcmdInputType_1st2nd(&axis2);
           CalcFDTDWrUpdate_WmcmdInputType_1st2nd(&axis3);
-          WAVE_TimeWrInit = (float)C6657_timer0_read() * 4.8e-9 * 1e6 - start2;
         }
         else
         {
@@ -1325,7 +1281,6 @@ interrupt void ControlFunction(void)
           CalcFDTDWrUpdate_WmcmdInputType_2nd(&axis1);
           CalcFDTDWrUpdate_WmcmdInputType_2nd(&axis2);
           CalcFDTDWrUpdate_WmcmdInputType_2nd(&axis3);
-          WAVE_TimeWrInit = (float)C6657_timer0_read() * 4.8e-9 * 1e6 - start2;
         }
 
         // 制御周期の測定結果出力 ファンクションリファレンスp45より
@@ -1341,7 +1296,6 @@ interrupt void ControlFunction(void)
         C6657_timer1_clear();
         C6657_timer1_start();
 
-        float start3 = (float)C6657_timer1_read() * 4.8e-9 * 1e6;
         // FF制御　FDTDで離散化した負荷側情報計算関数(qmref入力)
         if (flag_FF_triple == 1)
         {
@@ -1354,7 +1308,6 @@ interrupt void ControlFunction(void)
           CalcFDTDWr_WmcmdInputType(&axis1);
           CalcFDTDWr_WmcmdInputType(&axis2);
           CalcFDTDWr_WmcmdInputType(&axis3);
-          WAVE_TimeWr = (float)C6657_timer1_read() * 4.8e-9 * 1e6 - start3;
         }
         else
         {
@@ -1365,24 +1318,17 @@ interrupt void ControlFunction(void)
           //D-PD制御用Wr
           // CalcFDTDWr_WmcmdInputType(&axis2);
           // CalcFDTDWr_WmcmdInputType(&axis3);
-          WAVE_TimeWr = (float)C6657_timer1_read() * 4.8e-9 * 1e6 - start3;
         }
 
-        start3 = (float)C6657_timer1_read() * 4.8e-9 * 1e6;
         // 動力学トルクを計算
         CalcTauLDyn(joint); // 1~3軸分を計算
-        WAVE_TimeTauLdyn = (float)C6657_timer1_read() * 4.8e-9 * 1e6 - start3;
 
-        start3 = (float)C6657_timer1_read() * 4.8e-9 * 1e6;
         // FF制御　動力学補償電流
         FDTD_Tm(&axis1);
         FDTD_Tm(&axis2);
         FDTD_Tm(&axis3);
-        WAVE_TimeTm = (float)C6657_timer1_read() * 4.8e-9 * 1e6 - start3;
 
-        start3 = (float)C6657_timer1_read() * 4.8e-9 * 1e6;
         CalcGravIcmp(joint);
-        WAVE_TimeGrav = (float)C6657_timer1_read() * 4.8e-9 * 1e6 - start3;
 
         CalcGravIcmp(joint);
 
@@ -1641,18 +1587,13 @@ interrupt void ControlFunction(void)
           static int flag_loop = 1;
           static int filter_reset = 0;
           static int inverse_reset = 1;
-          
-          float start_cmd = (float)C6657_timer0_read() * 4.8e-9 * 1e6;
 
           // int flag_filter_on = CalcHandCmdCenter(flag_CalcHandCmd ,hand_cmd, time_wait, speed_hand, start_hand, flag_loop);
           int flag_filter_on = CalcHandCmdCircle(hand_cmd, hand_vel, time_wait, speed_hand, start_hand, flag_loop);
-          WAVE_TimeCalcCmd = (float)C6657_timer0_read() * 4.8e-9 * 1e6 - start_cmd;
 
-          start_cmd = (float)C6657_timer0_read() * 4.8e-9 * 1e6;
           // CalcInverseCmd(hand_cmd, joint_cmd, motor_cmd, motor_vel_cmd, flag_filter_on, filter_reset, Tp);
           CalcInverseCmd_vel(hand_cmd, hand_vel, motor_cmd, motor_vel_cmd, motor_cmd_init, inverse_reset);
           inverse_reset = 0;
-          WAVE_TimeCalcInvCmd = (float)C6657_timer0_read() * 4.8e-9 * 1e6 - start_cmd;
 
           // 1軸目 位置指令
           // ランプ関数生成関数で位置指令を決定
@@ -1797,7 +1738,6 @@ interrupt void ControlFunction(void)
 
             ＊軸によって違うので注意！！！（ギアとかによる）
           ***************************************************************************** */
-          start3 = (float)C6657_timer1_read() * 4.8e-9 * 1e6;
           // 1軸目 位置指令
           // ランプ関数生成関数で位置指令を決定
           // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
@@ -1933,7 +1873,6 @@ interrupt void ControlFunction(void)
               flag_fin++;
             }
           }
-          WAVE_TimeP_PI = (float)C6657_timer1_read() * 4.8e-9 * 1e6 - start3;
         }
         else
         {
