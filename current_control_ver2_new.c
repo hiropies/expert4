@@ -1718,7 +1718,6 @@ interrupt void ControlFunction(void)
 
             ＊軸によって違うので注意！！！（ギアとかによる）
           ***************************************************************************** */
-          start3 = (float)C6657_timer1_read() * 4.8e-9 * 1e6;
           // 1軸目 位置指令
           // ランプ関数生成関数で位置指令を決定
           // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
@@ -2283,6 +2282,14 @@ void MW_main(void)
 
   // ロボット実験開始時姿勢
   axis1.theta_rl_init = 0.0 * PI / 180.0; // [rad]
+  axis2.theta_rl_init = 0.0 * PI / 180.0; // [rad]
+  axis3.theta_rl_init = 0.0 * PI / 180.0; // [rad]
+
+  // 指令軌跡中心点（ゲイン確認用）
+  // axis1.theta_rl_init = 0.0 * PI / 180.0; // [rad]
+  // axis2.theta_rl_init = 41.272 * PI / 180.0; // [rad]
+  // axis3.theta_rl_init = 0.756 * PI / 180.0; // [rad]
+
   // JL最大
   // axis2.theta_rl_init = 90.0 * PI/180.0; // [rad]
   // axis3.theta_rl_init = -75.0 * PI/180.0; // [rad]
@@ -2292,10 +2299,6 @@ void MW_main(void)
   // 50%
   // axis2.theta_rl_init = 6.03 * PI/180.0; // [rad]
   // axis3.theta_rl_init = 50.25 * PI/180.0; // [rad]
-
-  axis2.theta_rl_init = 0.0 * PI / 180.0; // [rad]
-  // axis2.theta_rl_init =  -axis2.theta_rl_init;
-  axis3.theta_rl_init = 0.0 * PI / 180.0; // [rad]
 
   // 指令値の設定値
   SetRampParams(cmd_1_soft[0], cmd_2_soft[0], cmd_3_soft[0]);
