@@ -1237,34 +1237,10 @@ interrupt void ControlFunction(void)
         // 可変ゲイン計算
         if(flag_cont_start != 3)
         {
-        // ラッチしたqlの情報をもとにJlを計算
-        CalcJl(joint); // JLの変動は使うので3軸分計算
+          // ラッチしたqlの情報をもとにJlを計算 
+          CalcJl(joint); // JLの変動は使うので3軸分計算
         }
-          CalcPVGain();
-        // if (flag_PPgain == 1)
-        // {
-        //   axis1.Kpp = 20;
-        //   axis1.Kff = 0.00;
-        //   axis1.Kfb = 0.00;
-        //   axis2.Kpp = 20;
-        //   axis2.Kff = 0.00;
-        //   axis2.Kfb = 0.00;
-        //   axis3.Kpp = 20;
-        //   axis3.Kff = 0.00;
-        //   axis3.Kfb = 0.00;
-        // }
-        // else if (flag_PPgain == 2)
-        // {
-        //   axis1.Kpp = 20;
-        //   axis1.Kff = 1.400;
-        //   axis1.Kfb = 0.400;
-        //   axis2.Kpp = 20;
-        //   axis2.Kff = 1.400;
-        //   axis2.Kfb = 0.400;
-        //   axis3.Kpp = 20;
-        //   axis3.Kff = 1.400;
-        //   axis3.Kfb = 0.400;
-        // }
+        CalcPVGain();
 
         if (flag_FF_triple == 1)
         {
@@ -1272,15 +1248,15 @@ interrupt void ControlFunction(void)
           // CalcFDTDWrUpdate_QmrefInputType_1st2nd();
           CalcFDTDWrUpdate_WmcmdInputType_1st2nd(&axis1);
           CalcFDTDWrUpdate_WmcmdInputType_1st2nd(&axis2);
-          CalcFDTDWrUpdate_WmcmdInputType_1st2nd(&axis3);
+          // CalcFDTDWrUpdate_WmcmdInputType_1st2nd(&axis3);
         }
         else
         {
           // 2軸のみモデル更新
           // CalcFDTDWrUpdate_QmrefInputType_2nd();
-          CalcFDTDWrUpdate_WmcmdInputType_2nd(&axis1);
+          // CalcFDTDWrUpdate_WmcmdInputType_2nd(&axis1);
           CalcFDTDWrUpdate_WmcmdInputType_2nd(&axis2);
-          CalcFDTDWrUpdate_WmcmdInputType_2nd(&axis3);
+          // CalcFDTDWrUpdate_WmcmdInputType_2nd(&axis3);
         }
 
         // 制御周期の測定結果出力 ファンクションリファレンスp45より
@@ -1312,12 +1288,12 @@ interrupt void ControlFunction(void)
         else
         {
           //P制御用Wr
-          CalcFDTDWr_QmrefInputType(&axis2);
-          CalcFDTDWr_QmrefInputType(&axis3);
+          // CalcFDTDWr_QmrefInputType(&axis2);
+          // CalcFDTDWr_QmrefInputType(&axis3);
 
           //D-PD制御用Wr
-          // CalcFDTDWr_WmcmdInputType(&axis2);
-          // CalcFDTDWr_WmcmdInputType(&axis3);
+          CalcFDTDWr_WmcmdInputType(&axis2);
+          CalcFDTDWr_WmcmdInputType(&axis3);
         }
 
         // 動力学トルクを計算
@@ -2302,6 +2278,14 @@ void MW_main(void)
 
   // ロボット実験開始時姿勢
   axis1.theta_rl_init = 0.0 * PI / 180.0; // [rad]
+  axis2.theta_rl_init = 0.0 * PI / 180.0; // [rad]
+  axis3.theta_rl_init = 0.0 * PI / 180.0; // [rad]
+
+  // 指令軌跡中心点（ゲイン確認用）
+  // axis1.theta_rl_init = 0.0 * PI / 180.0; // [rad]
+  // axis2.theta_rl_init = 41.272 * PI / 180.0; // [rad]
+  // axis3.theta_rl_init = 0.756 * PI / 180.0; // [rad]
+
   // JL最大
   // axis2.theta_rl_init = 90.0 * PI/180.0; // [rad]
   // axis3.theta_rl_init = -75.0 * PI/180.0; // [rad]
@@ -2311,10 +2295,6 @@ void MW_main(void)
   // 50%
   // axis2.theta_rl_init = 6.03 * PI/180.0; // [rad]
   // axis3.theta_rl_init = 50.25 * PI/180.0; // [rad]
-
-  axis2.theta_rl_init = 0.0 * PI / 180.0; // [rad]
-  // axis2.theta_rl_init =  -axis2.theta_rl_init;
-  axis3.theta_rl_init = 0.0 * PI / 180.0; // [rad]
 
   // 指令値の設定値
   SetRampParams(cmd_1_soft[0], cmd_2_soft[0], cmd_3_soft[0]);
