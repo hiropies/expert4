@@ -2273,12 +2273,23 @@ void MW_main(void)
 
   /// 初期位置のセット
   GetMultiPositions(joint);
+
+  /// 初期位置のセット
+  GetMultiPositions(joint);
   axis1.theta_rm_init = axis1.theta_rm;
   axis2.theta_rm_init = axis2.theta_rm;
   axis3.theta_rm_init = axis3.theta_rm;
 
   // ロボット実験開始時姿勢
   axis1.theta_rl_init = 0.0 * PI / 180.0; // [rad]
+  axis2.theta_rl_init = 0.0 * PI / 180.0; // [rad]
+  axis3.theta_rl_init = 0.0 * PI / 180.0; // [rad]
+
+  // 指令軌跡中心点（ゲイン確認用）
+  // axis1.theta_rl_init = 0.0 * PI / 180.0; // [rad]
+  // axis2.theta_rl_init = 41.272 * PI / 180.0; // [rad]
+  // axis3.theta_rl_init = 0.756 * PI / 180.0; // [rad]
+
   // JL最大
   // axis2.theta_rl_init = 90.0 * PI/180.0; // [rad]
   // axis3.theta_rl_init = -75.0 * PI/180.0; // [rad]
@@ -2288,10 +2299,6 @@ void MW_main(void)
   // 50%
   // axis2.theta_rl_init = 6.03 * PI/180.0; // [rad]
   // axis3.theta_rl_init = 50.25 * PI/180.0; // [rad]
-
-  axis2.theta_rl_init = 0.0 * PI / 180.0; // [rad]
-  // axis2.theta_rl_init =  -axis2.theta_rl_init;
-  axis3.theta_rl_init = 0.0 * PI / 180.0; // [rad]
 
   // 指令値の設定値
   SetRampParams(cmd_1_soft[0], cmd_2_soft[0], cmd_3_soft[0]);
