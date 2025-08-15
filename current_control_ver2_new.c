@@ -1078,6 +1078,8 @@ Controller force[3] = {0}; //!< 力コントローラー(未実装)
  * 詳細は下記URL
  * https://www.aps-web.jp/academy/rtos/10/
  **/
+
+volatile int flag_fin = 0;
 interrupt void ControlFunction(void)
 {
   C6657_timer2_stop();  /*!< 制御周期測定用タイマの停止 */
@@ -1309,8 +1311,6 @@ interrupt void ControlFunction(void)
 
         CalcGravIcmp(joint);
 
-        CalcGravIcmp(joint);
-
         if (flag_SOB == 0)
         {
           // 状態推定(従来法SOB)
@@ -1357,7 +1357,6 @@ interrupt void ControlFunction(void)
 
         if (2 == flag_cont_start)
         {
-          static int flag_fin = 0;
           // 初期姿勢から実験姿勢へ遷移
           // ランプ指令用変数の設定
           if (flag_reposition == 0 && flag_first_go == 0)
@@ -1365,6 +1364,7 @@ interrupt void ControlFunction(void)
             flag_reposition = 1;
             flag_first_go = 1;
             flag_first_back = 0;
+            flag_fin = 0;
             flag_end1 = 0;
             flag_end2 = 0;
             flag_end3 = 0;
@@ -1377,6 +1377,8 @@ interrupt void ControlFunction(void)
             static float wait_cmd = 3.0;
             static int flag_loop = 0;
             static int filter = 0;
+            
+            // フィルタリングの有無を返す
             filter = CalcHandCmdCircle(hand_cmd, hand_vel, wait_cmd, speed_hand, start_hand, flag_loop);
             static int flag = 0;
             static int reset = 1;
@@ -1561,13 +1563,10 @@ interrupt void ControlFunction(void)
           static int flag_loop = 1;
           static int filter_reset = 0;
           static int inverse_reset = 1;
-          
-          float start_cmd = (float)C6657_timer0_read() * 4.8e-9 * 1e6;
 
           // int flag_filter_on = CalcHandCmdCenter(flag_CalcHandCmd ,hand_cmd, time_wait, speed_hand, start_hand, flag_loop);
           int flag_filter_on = CalcHandCmdCircle(hand_cmd, hand_vel, time_wait, speed_hand, start_hand, flag_loop);
 
-          start_cmd = (float)C6657_timer0_read() * 4.8e-9 * 1e6;
           // CalcInverseCmd(hand_cmd, joint_cmd, motor_cmd, motor_vel_cmd, flag_filter_on, filter_reset, Tp);
           CalcInverseCmd_vel(hand_cmd, hand_vel, motor_cmd, motor_vel_cmd, motor_cmd_init, inverse_reset);
           inverse_reset = 0;
@@ -1680,7 +1679,6 @@ interrupt void ControlFunction(void)
         }
         else if (4 == flag_cont_start)
         {
-          static int flag_fin = 0;
           //-------------------------- 実験 -----------------------------
           // 実験終端姿勢からの戻り
           // ランプ指令用変数の設定
@@ -1689,6 +1687,7 @@ interrupt void ControlFunction(void)
             flag_reposition = 1;
             flag_first_back = 1;
             flag_first_go = 0;
+            flag_fin = 0;
             flag_end1 = 0;
             flag_end2 = 0;
             flag_end3 = 0;
@@ -2270,9 +2269,6 @@ void MW_main(void)
 
   /// ゲインのセット
   SetGain(joint);
-
-  /// 初期位置のセット
-  GetMultiPositions(joint);
 
   /// 初期位置のセット
   GetMultiPositions(joint);
@@ -4538,7 +4534,7 @@ float ManyRampGenerator1stAxis(float a_ramp, float vel, float t_wait, float t_ra
   int ramp_line = (t_ramp) / Tp + wait_line;
   int const_line = t_const / Tp + ramp_line;
   int back_line = t_ramp_back / Tp + const_line;
-  int stay_line = 4.0 / Tp + back_line;
+  int stay_line = 0.5 / Tp + back_line;
 
   static float t_all = 0.0;
   static int t = 0.0;
@@ -4619,7 +4615,7 @@ float ManyRampGenerator2ndAxis(float a_ramp, float vel, float t_wait, float t_ra
   int ramp_line = (t_ramp) / Tp + wait_line;
   int const_line = t_const / Tp + ramp_line;
   int back_line = t_ramp_back / Tp + const_line;
-  int stay_line = 4.0 / Tp + back_line;
+  int stay_line = 0.5 / Tp + back_line;
 
   static float t_all = 0.0;
   static int t = 0.0;
@@ -4700,7 +4696,7 @@ float ManyRampGenerator3rdAxis(float a_ramp, float vel, float t_wait, float t_ra
   int ramp_line = (t_ramp) / Tp + wait_line;
   int const_line = t_const / Tp + ramp_line;
   int back_line = t_ramp_back / Tp + const_line;
-  int stay_line = 4.0 / Tp + back_line;
+  int stay_line = 0.5 / Tp + back_line;
 
   static float t_all = 0.0;
   static int t = 0.0;
