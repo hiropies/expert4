@@ -641,6 +641,7 @@ typedef volatile struct Robot
   float IresD, IresQ;        //!< [A]		dq軸 電流応答
   float IrefD, IrefQ;        //!< [A]		dq軸 電流指令
   float I_SOBinput;          //!< 各状態オブザーバの入力電流
+
   // 2軸目だけモデルで考えている、電流と負荷側の動作方向が逆なので電流制御の手前で正負を入れ替える
   float IrefD_inv_2nd, IrefQ_inv_2nd;        //!< [A] 2軸目の電流制御用
   float IdifD, IdifQ;                        //!< [A]		dq軸 電流差分
@@ -1074,6 +1075,8 @@ Controller force[3] = {0}; //!< 力コントローラー(未実装)
  * 詳細は下記URL
  * https://www.aps-web.jp/academy/rtos/10/
  **/
+
+volatile int flag_fin = 0;
 interrupt void ControlFunction(void)
 {
   C6657_timer2_stop();  /*!< 制御周期測定用タイマの停止 */
@@ -1171,15 +1174,6 @@ interrupt void ControlFunction(void)
 
       // // 可変ゲイン計算
       CalcPVGain();
-      // if (flag_PPgain == 1)
-      // {
-      //   axis1.Kpp = 15;
-      // }
-      // // 従来2
-      // else if (flag_PPgain == 2)
-      // {
-      //   axis1.Kpp = 15;
-      // }
 
       // 負荷側情報計算
       //P制御用Wr
@@ -1202,7 +1196,6 @@ interrupt void ControlFunction(void)
       // axis1.IrefQ = Ref_Iq_ref_direct;
       // axis1.IrefQ = Ref_Iq_ref_direct*sinf(2.0*PI*t); // 正弦波指令 電流指令確認用;
       // axis1.wm_ref = Ref_wM_direct * RectGenerator(t,ref_freq);
-      // axis1.IrefQ = Pcontroller((axis1.wm_ref - axis1.wm),Kpv);
       // 動力学方程式より出るトルクの正負に合わせて補償電流を入れる
       // inspectorで要確認！！！！
       axis1.Icmd = 0.0;
@@ -1361,7 +1354,6 @@ interrupt void ControlFunction(void)
 
         if (2 == flag_cont_start)
         {
-          static int flag_fin = 0;
           // 初期姿勢から実験姿勢へ遷移
           // ランプ指令用変数の設定
           if (flag_reposition == 0 && flag_first_go == 0)
@@ -1369,6 +1361,7 @@ interrupt void ControlFunction(void)
             flag_reposition = 1;
             flag_first_go = 1;
             flag_first_back = 0;
+            flag_fin = 0;
             flag_end1 = 0;
             flag_end2 = 0;
             flag_end3 = 0;
@@ -1683,7 +1676,6 @@ interrupt void ControlFunction(void)
         }
         else if (4 == flag_cont_start)
         {
-          static int flag_fin = 0;
           //-------------------------- 実験 -----------------------------
           // 実験終端姿勢からの戻り
           // ランプ指令用変数の設定
@@ -1692,6 +1684,7 @@ interrupt void ControlFunction(void)
             flag_reposition = 1;
             flag_first_back = 1;
             flag_first_go = 0;
+            flag_fin = 0;
             flag_end1 = 0;
             flag_end2 = 0;
             flag_end3 = 0;
@@ -4538,7 +4531,7 @@ float ManyRampGenerator1stAxis(float a_ramp, float vel, float t_wait, float t_ra
   int ramp_line = (t_ramp) / Tp + wait_line;
   int const_line = t_const / Tp + ramp_line;
   int back_line = t_ramp_back / Tp + const_line;
-  int stay_line = 4.0 / Tp + back_line;
+  int stay_line = 0.5 / Tp + back_line;
 
   static float t_all = 0.0;
   static int t = 0.0;
@@ -4619,7 +4612,7 @@ float ManyRampGenerator2ndAxis(float a_ramp, float vel, float t_wait, float t_ra
   int ramp_line = (t_ramp) / Tp + wait_line;
   int const_line = t_const / Tp + ramp_line;
   int back_line = t_ramp_back / Tp + const_line;
-  int stay_line = 4.0 / Tp + back_line;
+  int stay_line = 0.5 / Tp + back_line;
 
   static float t_all = 0.0;
   static int t = 0.0;
@@ -4700,7 +4693,7 @@ float ManyRampGenerator3rdAxis(float a_ramp, float vel, float t_wait, float t_ra
   int ramp_line = (t_ramp) / Tp + wait_line;
   int const_line = t_const / Tp + ramp_line;
   int back_line = t_ramp_back / Tp + const_line;
-  int stay_line = 4.0 / Tp + back_line;
+  int stay_line = 0.5 / Tp + back_line;
 
   static float t_all = 0.0;
   static int t = 0.0;
