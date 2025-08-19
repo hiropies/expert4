@@ -4257,12 +4257,12 @@ void CalcInverseCmd_vel(float goal[3], float vel_hand[3], float ql_cmd[3], float
     ql_vel[2] = invJ[2][0] * vx + invJ[2][1] * vy + invJ[2][2] * vz;
   }
 
-  joint[0] = GetFilterdSignal(&LPF_motor[0], joint[0], flag_init);
-  joint[1] = GetFilterdSignal(&LPF_motor[1], joint[1], flag_init);
-  joint[2] = GetFilterdSignal(&LPF_motor[2], joint[2], flag_init);
-  ql_vel[0] = GetFilterdSignal(&LPF_cmd[0], ql_vel[0], flag_init);
-  ql_vel[1] = GetFilterdSignal(&LPF_cmd[1], ql_vel[1], flag_init);
-  ql_vel[2] = GetFilterdSignal(&LPF_cmd[2], ql_vel[2], flag_init);
+  // joint[0] = GetFilterdSignal(&LPF_motor[0], joint[0], flag_init);
+  // joint[1] = GetFilterdSignal(&LPF_motor[1], joint[1], flag_init);
+  // joint[2] = GetFilterdSignal(&LPF_motor[2], joint[2], flag_init);
+  // ql_vel[0] = GetFilterdSignal(&LPF_cmd[0], ql_vel[0], flag_init);
+  // ql_vel[1] = GetFilterdSignal(&LPF_cmd[1], ql_vel[1], flag_init);
+  // ql_vel[2] = GetFilterdSignal(&LPF_cmd[2], ql_vel[2], flag_init);
 
   motor[0] = joint[0] * Rgn1;
   motor[1] = joint[1] * Rgn2;
