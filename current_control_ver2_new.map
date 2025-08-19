@@ -1,7 +1,7 @@
 ******************************************************************************
                TMS320C6x Linker PC v7.4.24                     
 ******************************************************************************
->> Linked Fri Aug 15 16:12:59 2025
+>> Linked Tue Aug 19 14:50:41 2025
 
 OUTPUT FILE NAME:   <current_control_ver2_new.out>
 ENTRY POINT SYMBOL: "_c_int00"  address: 0c03d900
@@ -595,7 +595,7 @@ GLOBAL SYMBOLS: SORTED ALPHABETICALLY BY Name
 
 address    name
 --------   ----
-0c02ee6c   BrakeController
+0c02ee54   BrakeController
 0c03dce0   C$$EXIT
 11e01f8c   C6657_timer0_clear
 11e01f78   C6657_timer0_clear_eventflag
@@ -654,17 +654,17 @@ address    name
 0c027d14   CalcGravIcmp
 0c02db78   CalcHandCmdCircle
 0c02f984   CalcHandCmdDiamond
-0c02f444   CalcHandCmdRectangle
+0c02f434   CalcHandCmdRectangle
 0c02dfc0   CalcInverseCmd_vel
 0c027e54   CalcJl
 0c01a9f4   CalcOffset
 0c02818c   CalcPVGain
 0c0240a0   CalcPVGainInitCDM
-0c02f350   CalcPref2axis
-0c02f154   CalcPrefRep2axis
-0c02ef60   CalcPrefRep3axis
+0c02f344   CalcPref2axis
+0c02f144   CalcPrefRep2axis
+0c02ef44   CalcPrefRep3axis
 0c02b4b8   CalcTauLDyn
-0c02ed90   CalcVdcMean
+0c02ed80   CalcVdcMean
 0c0341a0   ControlFunction
 0c027c8c   DecouplingControl
 11e0252c   EMF_EnableIntr_s32
@@ -1395,12 +1395,12 @@ address    name
 0c02c680   CalcFDTDWrUpdate_WmcmdInputType_1st2nd
 0c02db78   CalcHandCmdCircle
 0c02dfc0   CalcInverseCmd_vel
-0c02ed90   CalcVdcMean
-0c02ee6c   BrakeController
-0c02ef60   CalcPrefRep3axis
-0c02f154   CalcPrefRep2axis
-0c02f350   CalcPref2axis
-0c02f444   CalcHandCmdRectangle
+0c02ed80   CalcVdcMean
+0c02ee54   BrakeController
+0c02ef44   CalcPrefRep3axis
+0c02f144   CalcPrefRep2axis
+0c02f344   CalcPref2axis
+0c02f434   CalcHandCmdRectangle
 0c02f984   CalcHandCmdDiamond
 0c02ff80   CalcFDTDWr_QmrefInputType
 0c0311e0   CalcFDTDWrUpdate_QmrefInputType_2nd
