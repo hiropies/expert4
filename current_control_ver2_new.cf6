@@ -131,7 +131,7 @@
       <i_NormWin1Win4>0</i_NormWin1Win4>
       <Button_Name>Win1</Button_Name>
       <bColorPickerIndex>9</bColorPickerIndex>
-      <bNormVariableIndex>271</bNormVariableIndex>
+      <bNormVariableIndex>274</bNormVariableIndex>
     </BindWaveNormRec>
     <BindWaveNormRec>
       <OnChipVarAddress>0</OnChipVarAddress>
@@ -144,7 +144,7 @@
       <i_NormWin1Win4>0</i_NormWin1Win4>
       <Button_Name>Win1</Button_Name>
       <bColorPickerIndex>21</bColorPickerIndex>
-      <bNormVariableIndex>272</bNormVariableIndex>
+      <bNormVariableIndex>275</bNormVariableIndex>
     </BindWaveNormRec>
     <BindWaveNormRec>
       <OnChipVarAddress>0</OnChipVarAddress>
@@ -157,7 +157,7 @@
       <i_NormWin1Win4>0</i_NormWin1Win4>
       <Button_Name>Win1</Button_Name>
       <bColorPickerIndex>11</bColorPickerIndex>
-      <bNormVariableIndex>273</bNormVariableIndex>
+      <bNormVariableIndex>276</bNormVariableIndex>
     </BindWaveNormRec>
     <BindWaveNormRec>
       <OnChipVarAddress>0</OnChipVarAddress>
@@ -241,8 +241,8 @@
       <OnChipVarAddress>0</OnChipVarAddress>
       <OnchipVarType>0</OnchipVarType>
       <bNormValDivValue>200</bNormValDivValue>
-      <bNormPosValue>0</bNormPosValue>
-      <bNormPosAngle>90</bNormPosAngle>
+      <bNormPosValue>-800</bNormPosValue>
+      <bNormPosAngle>-90</bNormPosAngle>
       <bNormOffsetValue>0</bNormOffsetValue>
       <bNormOnOff>true</bNormOnOff>
       <i_NormWin1Win4>3</i_NormWin1Win4>
@@ -254,8 +254,8 @@
       <OnChipVarAddress>0</OnChipVarAddress>
       <OnchipVarType>0</OnchipVarType>
       <bNormValDivValue>200</bNormValDivValue>
-      <bNormPosValue>0</bNormPosValue>
-      <bNormPosAngle>90</bNormPosAngle>
+      <bNormPosValue>-800</bNormPosValue>
+      <bNormPosAngle>-90</bNormPosAngle>
       <bNormOffsetValue>0</bNormOffsetValue>
       <bNormOnOff>true</bNormOnOff>
       <i_NormWin1Win4>3</i_NormWin1Win4>
@@ -267,8 +267,8 @@
       <OnChipVarAddress>0</OnChipVarAddress>
       <OnchipVarType>0</OnchipVarType>
       <bNormValDivValue>200</bNormValDivValue>
-      <bNormPosValue>0</bNormPosValue>
-      <bNormPosAngle>90</bNormPosAngle>
+      <bNormPosValue>-800</bNormPosValue>
+      <bNormPosAngle>-90</bNormPosAngle>
       <bNormOffsetValue>0</bNormOffsetValue>
       <bNormOnOff>true</bNormOnOff>
       <i_NormWin1Win4>3</i_NormWin1Win4>
@@ -872,12 +872,12 @@
   <bRecordLength>100000</bRecordLength>
   <bNumberOfData>100000</bNumberOfData>
   <bCurRangeValue>100</bCurRangeValue>
-  <bHorValue>0.1</bHorValue>
-  <bHorValue_rough>0.1</bHorValue_rough>
+  <bHorValue>2.5</bHorValue>
+  <bHorValue_rough>2.5</bHorValue_rough>
   <bCurPosValue>0</bCurPosValue>
   <bIndex_TrgNo>0</bIndex_TrgNo>
   <bTrgPosValue>0</bTrgPosValue>
-  <wd6Dir>D:\Desktop\abe実験\20250815_data_nonLasar</wd6Dir>
+  <wd6Dir>D:\Desktop\abe実験\20250815_data_Lasar</wd6Dir>
   <cfgDir>C:\Users\Ikeda\Documents\mizo_expert4_program\テストモータ\20210112_8_プログラムver2でエンコーダ読めるようにする_エンコーダ読み取り部分修正</cfgDir>
   <bVarsList>
     <string>ad1</string>
