@@ -4228,6 +4228,7 @@ void CalcInverseCmd_vel(float goal[3], float vel_hand[3], float ql_cmd[3], float
   J[2][0] = 0;
   J[2][1] = -L4 * C23 - Le * S2 - (Lg + Lii) * S23;
   J[2][2] = -L4 * C23 - (Lg + Lii) * S23;
+  // J[2][2] = -L4 * C23 - Lg + Lii * S23;
 
   // 逆行列の計算 (手計算で導出)
   float detJ = -Le * (L4 * C3 + (Lg + Lii) * S3) * (Lb + L4 * C23 + Le * S2 + Lg * S23 + Lii * S23);
