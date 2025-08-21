@@ -378,6 +378,9 @@ volatile float WAVE_ql3;
 volatile float WAVE_Iq1;
 volatile float WAVE_Iq2;
 volatile float WAVE_Iq3;
+volatile float WAVE_Ipi1
+volatile float WAVE_Ipi2
+volatile float WAVE_Ipi3
 volatile float WAVE_Isfb1;
 volatile float WAVE_Isfb2;
 volatile float WAVE_Isfb3;
@@ -684,6 +687,7 @@ typedef volatile struct Robot
   float est_conv_wm, est_conv_qs, est_conv_wl; //!< 従来法状態オブザーバの推定値
   float est_prop_wm, est_prop_qs, est_prop_wl; //!< 提案法状態オブザーバの推定値
   float est_ISOB_wm, est_ISOB_qs, est_ISOB_wl; //!< ISOB推定値
+  float Ipi;
   float Isfb;                                  //!< [A] 状態オブザーバによる推定補償電流
   float obp;
   float obpz;
@@ -1239,13 +1243,13 @@ interrupt void ControlFunction(void)
         axis3.wm = axis3.omega_rm;
 
 
+        // ラッチしたqlの情報をもとにJlを計算 
+        CalcJl(joint); // JLの変動は使うので3軸分計算
         // 可変ゲイン計算
         if(flag_cont_start != 3)
         {
-          // ラッチしたqlの情報をもとにJlを計算 
-          CalcJl(joint); // JLの変動は使うので3軸分計算
+          CalcPVGain();
         }
-        CalcPVGain();
 
         if (flag_FF_triple == 1)
         {
@@ -1424,11 +1428,12 @@ interrupt void ControlFunction(void)
           axis1.qm_ref = axis1.wm_cmd_z2 * Tp + axis1.qm_ref_z1;
           LimitPosCmd(&axis1);
 
-          axis1.wm_ref = (axis1.qm_ref - axis1.qm) * axis1.Kpp + axis1.Kff * axis1.wm_cmd_z2 - axis1.Kfb * axis1.wm;
-          
+          axis1.wm_ref = (axis1.qm_ref - axis1.qm) * axis1.Kpp + axis1.Kff * axis1.wm_cmd_z2 - axis1.Kfb * axis1.wm;          
+          axis1.Ipi = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1);
           if (flag_FF == 1)
           {
             // 1軸目 速度PI制御＋SFB＋FF
+
             axis1.IrefQ = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1) - axis1.Isfb + axis1.Iff;
             axis1.I_SOBinput = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1) - axis1.Isfb;
 
@@ -1460,7 +1465,7 @@ interrupt void ControlFunction(void)
           LimitPosCmd(&axis2);
           
           axis2.wm_ref = (axis2.qm_ref - axis2.qm) * axis2.Kpp + axis2.Kff * axis2.wm_cmd_z2 - axis2.Kfb * axis2.wm;          
-          
+          axis2.Ipi = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1);
           if (flag_FF == 1)
           {
             // 2軸目 速度PI制御＋SFB＋FF
@@ -1495,6 +1500,7 @@ interrupt void ControlFunction(void)
           LimitPosCmd(&axis3);
           
           axis3.wm_ref = (axis3.qm_ref - axis3.qm) * axis3.Kpp + axis3.Kff * axis3.wm_cmd_z2 - axis3.Kfb * axis3.wm;
+          axis3.Ipi = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1);
           
           // 3軸目 速度PI制御＋SFB
           if (flag_FF == 1)
@@ -1583,7 +1589,8 @@ interrupt void ControlFunction(void)
           LimitPosCmd(&axis1);
 
           axis1.wm_ref = (axis1.qm_ref - axis1.qm) * axis1.Kpp + axis1.Kff * axis1.wm_cmd_z2 - axis1.Kfb * axis1.wm;
-          
+          axis1.Ipi = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1);
+
           if (flag_FF == 1)
           {
             // 1軸目 速度PI制御＋SFB＋FF
@@ -1618,7 +1625,8 @@ interrupt void ControlFunction(void)
           LimitPosCmd(&axis2);
           
           axis2.wm_ref = (axis2.qm_ref - axis2.qm) * axis2.Kpp + axis2.Kff * axis2.wm_cmd_z2 - axis2.Kfb * axis2.wm;
-          
+          axis2.Ipi = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1);
+
           if (flag_FF == 1)
           {
             // 2軸目 速度PI制御＋SFB＋FF
@@ -1653,8 +1661,7 @@ interrupt void ControlFunction(void)
           LimitPosCmd(&axis3);
           
           axis3.wm_ref = (axis3.qm_ref - axis3.qm) * axis3.Kpp + axis3.Kff * axis3.wm_cmd_z2 - axis3.Kfb * axis3.wm;
-          
-
+          axis3.Ipi = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1);
           // 3軸目 速度PI制御＋SFB
           if (flag_FF == 1)
           {
@@ -1734,7 +1741,7 @@ interrupt void ControlFunction(void)
 
           // 1軸目 位置P制御
           axis1.wm_ref = (axis1.qm_ref - axis1.qm) * axis1.Kpp;
-          
+          axis1.Ipi = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1);
           if (flag_FF == 1)
           {
             // 1軸目 速度PI制御＋SFB＋FF
@@ -1778,7 +1785,7 @@ interrupt void ControlFunction(void)
 
           // 2軸目 位置P制御
           axis2.wm_ref = (axis2.qm_ref - axis2.qm) * axis2.Kpp;
-          
+          axis2.Ipi = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1);
           if (flag_FF == 1)
           {
             // 2軸目 速度PI制御＋SFB＋FF
@@ -1815,7 +1822,7 @@ interrupt void ControlFunction(void)
 
           // 3軸目 位置P制御
           axis3.wm_ref = (axis3.qm_ref - axis3.qm) * axis3.Kpp;
-          
+          axis3.Ipi = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1);
           // 3軸目 速度PI制御＋SFB
           if (flag_FF == 1)
           {
@@ -1993,6 +2000,10 @@ interrupt void ControlFunction(void)
   WAVE_Iq2 = axis2.Iq;
   WAVE_Iq3 = axis3.Iq;
 
+  WAVE_Ipi1 = axis1.Ipi;
+  WAVE_Ipi2 = axis2.Ipi;
+  WAVE_Ipi3 = axis3.Ipi;
+  
   WAVE_Isfb1 = axis1.Isfb;
   WAVE_Isfb2 = axis2.Isfb;
   WAVE_Isfb3 = axis3.Isfb;
