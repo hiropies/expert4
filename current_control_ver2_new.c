@@ -378,9 +378,9 @@ volatile float WAVE_ql3;
 volatile float WAVE_Iq1;
 volatile float WAVE_Iq2;
 volatile float WAVE_Iq3;
-volatile float WAVE_Ipi1
-volatile float WAVE_Ipi2
-volatile float WAVE_Ipi3
+volatile float WAVE_Ipi1;
+volatile float WAVE_Ipi2;
+volatile float WAVE_Ipi3;
 volatile float WAVE_Isfb1;
 volatile float WAVE_Isfb2;
 volatile float WAVE_Isfb3;
@@ -1242,14 +1242,13 @@ interrupt void ControlFunction(void)
         axis2.wm = -1.0 * axis2.wm;
         axis3.wm = axis3.omega_rm;
 
-
-        // ラッチしたqlの情報をもとにJlを計算 
-        CalcJl(joint); // JLの変動は使うので3軸分計算
         // 可変ゲイン計算
         if(flag_cont_start != 3)
         {
-          CalcPVGain();
+          // ラッチしたqlの情報をもとにJlを計算 
+          CalcJl(joint); // JLの変動は使うので3軸分計算
         }
+        CalcPVGain();
 
         if (flag_FF_triple == 1)
         {

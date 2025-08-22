@@ -92,7 +92,7 @@
       <i_NormWin1Win4>1</i_NormWin1Win4>
       <Button_Name>Win2</Button_Name>
       <bColorPickerIndex>8</bColorPickerIndex>
-      <bNormVariableIndex>376</bNormVariableIndex>
+      <bNormVariableIndex>382</bNormVariableIndex>
     </BindWaveNormRec>
     <BindWaveNormRec>
       <OnChipVarAddress>0</OnChipVarAddress>
@@ -105,7 +105,7 @@
       <i_NormWin1Win4>1</i_NormWin1Win4>
       <Button_Name>Win2</Button_Name>
       <bColorPickerIndex>5</bColorPickerIndex>
-      <bNormVariableIndex>377</bNormVariableIndex>
+      <bNormVariableIndex>383</bNormVariableIndex>
     </BindWaveNormRec>
     <BindWaveNormRec>
       <OnChipVarAddress>0</OnChipVarAddress>
@@ -118,7 +118,7 @@
       <i_NormWin1Win4>1</i_NormWin1Win4>
       <Button_Name>Win2</Button_Name>
       <bColorPickerIndex>3</bColorPickerIndex>
-      <bNormVariableIndex>378</bNormVariableIndex>
+      <bNormVariableIndex>384</bNormVariableIndex>
     </BindWaveNormRec>
     <BindWaveNormRec>
       <OnChipVarAddress>0</OnChipVarAddress>
@@ -170,7 +170,7 @@
       <i_NormWin1Win4>1</i_NormWin1Win4>
       <Button_Name>Win2</Button_Name>
       <bColorPickerIndex>18</bColorPickerIndex>
-      <bNormVariableIndex>364</bNormVariableIndex>
+      <bNormVariableIndex>367</bNormVariableIndex>
     </BindWaveNormRec>
     <BindWaveNormRec>
       <OnChipVarAddress>0</OnChipVarAddress>
@@ -183,7 +183,7 @@
       <i_NormWin1Win4>1</i_NormWin1Win4>
       <Button_Name>Win2</Button_Name>
       <bColorPickerIndex>20</bColorPickerIndex>
-      <bNormVariableIndex>365</bNormVariableIndex>
+      <bNormVariableIndex>368</bNormVariableIndex>
     </BindWaveNormRec>
     <BindWaveNormRec>
       <OnChipVarAddress>0</OnChipVarAddress>
@@ -196,7 +196,7 @@
       <i_NormWin1Win4>1</i_NormWin1Win4>
       <Button_Name>Win2</Button_Name>
       <bColorPickerIndex>19</bColorPickerIndex>
-      <bNormVariableIndex>366</bNormVariableIndex>
+      <bNormVariableIndex>369</bNormVariableIndex>
     </BindWaveNormRec>
     <BindWaveNormRec>
       <OnChipVarAddress>0</OnChipVarAddress>
@@ -209,7 +209,7 @@
       <i_NormWin1Win4>2</i_NormWin1Win4>
       <Button_Name>Win3</Button_Name>
       <bColorPickerIndex>8</bColorPickerIndex>
-      <bNormVariableIndex>195</bNormVariableIndex>
+      <bNormVariableIndex>198</bNormVariableIndex>
     </BindWaveNormRec>
     <BindWaveNormRec>
       <OnChipVarAddress>0</OnChipVarAddress>
@@ -222,7 +222,7 @@
       <i_NormWin1Win4>2</i_NormWin1Win4>
       <Button_Name>Win3</Button_Name>
       <bColorPickerIndex>5</bColorPickerIndex>
-      <bNormVariableIndex>196</bNormVariableIndex>
+      <bNormVariableIndex>199</bNormVariableIndex>
     </BindWaveNormRec>
     <BindWaveNormRec>
       <OnChipVarAddress>0</OnChipVarAddress>
@@ -235,46 +235,46 @@
       <i_NormWin1Win4>2</i_NormWin1Win4>
       <Button_Name>Win3</Button_Name>
       <bColorPickerIndex>3</bColorPickerIndex>
-      <bNormVariableIndex>197</bNormVariableIndex>
+      <bNormVariableIndex>200</bNormVariableIndex>
     </BindWaveNormRec>
     <BindWaveNormRec>
       <OnChipVarAddress>0</OnChipVarAddress>
       <OnchipVarType>0</OnchipVarType>
-      <bNormValDivValue>200</bNormValDivValue>
-      <bNormPosValue>-800</bNormPosValue>
-      <bNormPosAngle>-90</bNormPosAngle>
+      <bNormValDivValue>10</bNormValDivValue>
+      <bNormPosValue>0</bNormPosValue>
+      <bNormPosAngle>90</bNormPosAngle>
       <bNormOffsetValue>0</bNormOffsetValue>
       <bNormOnOff>true</bNormOnOff>
       <i_NormWin1Win4>3</i_NormWin1Win4>
       <Button_Name>Win4</Button_Name>
-      <bColorPickerIndex>8</bColorPickerIndex>
-      <bNormVariableIndex>386</bNormVariableIndex>
+      <bColorPickerIndex>9</bColorPickerIndex>
+      <bNormVariableIndex>222</bNormVariableIndex>
     </BindWaveNormRec>
     <BindWaveNormRec>
       <OnChipVarAddress>0</OnChipVarAddress>
       <OnchipVarType>0</OnchipVarType>
-      <bNormValDivValue>200</bNormValDivValue>
-      <bNormPosValue>-800</bNormPosValue>
-      <bNormPosAngle>-90</bNormPosAngle>
+      <bNormValDivValue>10</bNormValDivValue>
+      <bNormPosValue>0</bNormPosValue>
+      <bNormPosAngle>90</bNormPosAngle>
       <bNormOffsetValue>0</bNormOffsetValue>
       <bNormOnOff>true</bNormOnOff>
       <i_NormWin1Win4>3</i_NormWin1Win4>
       <Button_Name>Win4</Button_Name>
-      <bColorPickerIndex>5</bColorPickerIndex>
-      <bNormVariableIndex>387</bNormVariableIndex>
+      <bColorPickerIndex>20</bColorPickerIndex>
+      <bNormVariableIndex>223</bNormVariableIndex>
     </BindWaveNormRec>
     <BindWaveNormRec>
       <OnChipVarAddress>0</OnChipVarAddress>
       <OnchipVarType>0</OnchipVarType>
-      <bNormValDivValue>200</bNormValDivValue>
-      <bNormPosValue>-800</bNormPosValue>
-      <bNormPosAngle>-90</bNormPosAngle>
+      <bNormValDivValue>5</bNormValDivValue>
+      <bNormPosValue>0</bNormPosValue>
+      <bNormPosAngle>90</bNormPosAngle>
       <bNormOffsetValue>0</bNormOffsetValue>
       <bNormOnOff>true</bNormOnOff>
       <i_NormWin1Win4>3</i_NormWin1Win4>
       <Button_Name>Win4</Button_Name>
-      <bColorPickerIndex>3</bColorPickerIndex>
-      <bNormVariableIndex>388</bNormVariableIndex>
+      <bColorPickerIndex>19</bColorPickerIndex>
+      <bNormVariableIndex>224</bNormVariableIndex>
     </BindWaveNormRec>
     <BindWaveNormRec>
       <OnChipVarAddress>0</OnChipVarAddress>
@@ -870,14 +870,14 @@
   <bCurBColorIndex>2</bCurBColorIndex>
   <bCurGrabColorIndex>3</bCurGrabColorIndex>
   <bRecordLength>100000</bRecordLength>
-  <bNumberOfData>100000</bNumberOfData>
+  <bNumberOfData>50000</bNumberOfData>
   <bCurRangeValue>100</bCurRangeValue>
-  <bHorValue>2.5</bHorValue>
-  <bHorValue_rough>2.5</bHorValue_rough>
+  <bHorValue>0.05</bHorValue>
+  <bHorValue_rough>0.05</bHorValue_rough>
   <bCurPosValue>0</bCurPosValue>
   <bIndex_TrgNo>0</bIndex_TrgNo>
   <bTrgPosValue>0</bTrgPosValue>
-  <wd6Dir>D:\Desktop\abe実験\20250815_data_Lasar</wd6Dir>
+  <wd6Dir>D:\Desktop\abe実験\20250821</wd6Dir>
   <cfgDir>C:\Users\Ikeda\Documents\mizo_expert4_program\テストモータ\20210112_8_プログラムver2でエンコーダ読めるようにする_エンコーダ読み取り部分修正</cfgDir>
   <bVarsList>
     <string>ad1</string>
@@ -1069,6 +1069,9 @@
     <string>WAVE_Iff_2</string>
     <string>WAVE_Iff_3</string>
     <string>WAVE_INIT_COUNT</string>
+    <string>WAVE_Ipi1</string>
+    <string>WAVE_Ipi2</string>
+    <string>WAVE_Ipi3</string>
     <string>WAVE_Iq1</string>
     <string>WAVE_Iq2</string>
     <string>WAVE_Iq3</string>
