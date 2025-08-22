@@ -1238,7 +1238,6 @@ interrupt void ControlFunction(void)
         axis2.wm = -1.0 * axis2.wm;
         axis3.wm = axis3.omega_rm;
 
-
         // 可変ゲイン計算
         if(flag_cont_start != 3)
         {
