@@ -1,839 +1,745 @@
 <?xml version="1.0" encoding="utf-8"?>
-<BindWaveData xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <OnChipMode>false</OnChipMode>
-  <bTrgRisingEdgeData>
-    <boolean>true</boolean>
-    <boolean>true</boolean>
-    <boolean>true</boolean>
-    <boolean>true</boolean>
-  </bTrgRisingEdgeData>
-  <bTrgFallingEdgeData>
-    <boolean>false</boolean>
-    <boolean>false</boolean>
-    <boolean>false</boolean>
-    <boolean>false</boolean>
-  </bTrgFallingEdgeData>
-  <_bChkBox_TrgEnable>
-    <boolean>true</boolean>
-    <boolean>false</boolean>
-    <boolean>false</boolean>
-    <boolean>false</boolean>
-  </_bChkBox_TrgEnable>
-  <_bRBtn_TrgEdge>
-    <boolean>true</boolean>
-    <boolean>true</boolean>
-    <boolean>true</boolean>
-    <boolean>true</boolean>
-  </_bRBtn_TrgEdge>
-  <_bRBtn_TrgWidth>
-    <boolean>false</boolean>
-    <boolean>false</boolean>
-    <boolean>false</boolean>
-    <boolean>false</boolean>
-  </_bRBtn_TrgWidth>
-  <_bTrgWidthValue>
-    <double>0.004</double>
-    <double>0</double>
-    <double>0</double>
-    <double>0</double>
-  </_bTrgWidthValue>
-  <_bTglBtn_More>
-    <boolean>true</boolean>
-    <boolean>true</boolean>
-    <boolean>true</boolean>
-    <boolean>true</boolean>
-  </_bTglBtn_More>
-  <_bTglBtn_Less>
-    <boolean>false</boolean>
-    <boolean>false</boolean>
-    <boolean>false</boolean>
-    <boolean>false</boolean>
-  </_bTglBtn_Less>
-  <_bTglBtn_Plus>
-    <boolean>true</boolean>
-    <boolean>true</boolean>
-    <boolean>true</boolean>
-    <boolean>true</boolean>
-  </_bTglBtn_Plus>
-  <_bTglBtn_Minus>
-    <boolean>false</boolean>
-    <boolean>false</boolean>
-    <boolean>false</boolean>
-    <boolean>false</boolean>
-  </_bTglBtn_Minus>
-  <_bTrgChSelectedIndex>
-    <int>1</int>
-    <int>0</int>
-    <int>0</int>
-    <int>0</int>
-  </_bTrgChSelectedIndex>
-  <_bTrgLevelValue>
-    <double>0</double>
-    <double>0</double>
-    <double>0</double>
-    <double>0</double>
-  </_bTrgLevelValue>
-  <_bTrgLevelValue_rough>
-    <double>0</double>
-    <double>0</double>
-    <double>0</double>
-    <double>0</double>
-  </_bTrgLevelValue_rough>
-  <b_Specifed_TrgNo>0</b_Specifed_TrgNo>
-  <bindNormRec>
-    <BindWaveNormRec>
-      <OnChipVarAddress>0</OnChipVarAddress>
-      <OnchipVarType>0</OnchipVarType>
-      <bNormValDivValue>1</bNormValDivValue>
-      <bNormPosValue>0</bNormPosValue>
-      <bNormPosAngle>90</bNormPosAngle>
-      <bNormOffsetValue>0</bNormOffsetValue>
-      <bNormOnOff>true</bNormOnOff>
-      <i_NormWin1Win4>0</i_NormWin1Win4>
+<BindDataRecorderData xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <bindDRRec>
+    <BindDRNormRec>
+      <bDRValDivValue>1</bDRValDivValue>
+      <bDRPosValue>0</bDRPosValue>
+      <bDRPosAngle>90</bDRPosAngle>
+      <bDROffsetValue>0</bDROffsetValue>
+      <bDROnOff>false</bDROnOff>
+      <i_DRWin1Win4>0</i_DRWin1Win4>
       <Button_Name>Win1</Button_Name>
       <bColorPickerIndex>8</bColorPickerIndex>
-      <bNormVariableIndex>239</bNormVariableIndex>
-    </BindWaveNormRec>
-    <BindWaveNormRec>
-      <OnChipVarAddress>0</OnChipVarAddress>
-      <OnchipVarType>0</OnchipVarType>
-      <bNormValDivValue>1</bNormValDivValue>
-      <bNormPosValue>0</bNormPosValue>
-      <bNormPosAngle>90</bNormPosAngle>
-      <bNormOffsetValue>0</bNormOffsetValue>
-      <bNormOnOff>true</bNormOnOff>
-      <i_NormWin1Win4>0</i_NormWin1Win4>
+      <bDRVariableIndex>0</bDRVariableIndex>
+    </BindDRNormRec>
+    <BindDRNormRec>
+      <bDRValDivValue>1</bDRValDivValue>
+      <bDRPosValue>0</bDRPosValue>
+      <bDRPosAngle>90</bDRPosAngle>
+      <bDROffsetValue>0</bDROffsetValue>
+      <bDROnOff>false</bDROnOff>
+      <i_DRWin1Win4>0</i_DRWin1Win4>
       <Button_Name>Win1</Button_Name>
-      <bColorPickerIndex>5</bColorPickerIndex>
-      <bNormVariableIndex>236</bNormVariableIndex>
-    </BindWaveNormRec>
-    <BindWaveNormRec>
-      <OnChipVarAddress>0</OnChipVarAddress>
-      <OnchipVarType>0</OnchipVarType>
-      <bNormValDivValue>5</bNormValDivValue>
-      <bNormPosValue>0</bNormPosValue>
-      <bNormPosAngle>90</bNormPosAngle>
-      <bNormOffsetValue>0</bNormOffsetValue>
-      <bNormOnOff>true</bNormOnOff>
-      <i_NormWin1Win4>1</i_NormWin1Win4>
-      <Button_Name>Win2</Button_Name>
-      <bColorPickerIndex>3</bColorPickerIndex>
-      <bNormVariableIndex>347</bNormVariableIndex>
-    </BindWaveNormRec>
-    <BindWaveNormRec>
-      <OnChipVarAddress>0</OnChipVarAddress>
-      <OnchipVarType>0</OnchipVarType>
-      <bNormValDivValue>2</bNormValDivValue>
-      <bNormPosValue>0</bNormPosValue>
-      <bNormPosAngle>90</bNormPosAngle>
-      <bNormOffsetValue>0</bNormOffsetValue>
-      <bNormOnOff>true</bNormOnOff>
-      <i_NormWin1Win4>2</i_NormWin1Win4>
-      <Button_Name>Win3</Button_Name>
       <bColorPickerIndex>9</bColorPickerIndex>
-      <bNormVariableIndex>160</bNormVariableIndex>
-    </BindWaveNormRec>
-    <BindWaveNormRec>
-      <OnChipVarAddress>0</OnChipVarAddress>
-      <OnchipVarType>0</OnchipVarType>
-      <bNormValDivValue>0.02</bNormValDivValue>
-      <bNormPosValue>0</bNormPosValue>
-      <bNormPosAngle>90</bNormPosAngle>
-      <bNormOffsetValue>0</bNormOffsetValue>
-      <bNormOnOff>true</bNormOnOff>
-      <i_NormWin1Win4>2</i_NormWin1Win4>
-      <Button_Name>Win3</Button_Name>
-      <bColorPickerIndex>21</bColorPickerIndex>
-      <bNormVariableIndex>150</bNormVariableIndex>
-    </BindWaveNormRec>
-    <BindWaveNormRec>
-      <OnChipVarAddress>0</OnChipVarAddress>
-      <OnchipVarType>0</OnchipVarType>
-      <bNormValDivValue>0.1</bNormValDivValue>
-      <bNormPosValue>0</bNormPosValue>
-      <bNormPosAngle>90</bNormPosAngle>
-      <bNormOffsetValue>0</bNormOffsetValue>
-      <bNormOnOff>true</bNormOnOff>
-      <i_NormWin1Win4>3</i_NormWin1Win4>
-      <Button_Name>Win4</Button_Name>
-      <bColorPickerIndex>11</bColorPickerIndex>
-      <bNormVariableIndex>247</bNormVariableIndex>
-    </BindWaveNormRec>
-    <BindWaveNormRec>
-      <OnChipVarAddress>0</OnChipVarAddress>
-      <OnchipVarType>0</OnchipVarType>
-      <bNormValDivValue>10</bNormValDivValue>
-      <bNormPosValue>0</bNormPosValue>
-      <bNormPosAngle>90</bNormPosAngle>
-      <bNormOffsetValue>0</bNormOffsetValue>
-      <bNormOnOff>true</bNormOnOff>
-      <i_NormWin1Win4>3</i_NormWin1Win4>
-      <Button_Name>Win4</Button_Name>
-      <bColorPickerIndex>18</bColorPickerIndex>
-      <bNormVariableIndex>184</bNormVariableIndex>
-    </BindWaveNormRec>
-    <BindWaveNormRec>
-      <OnChipVarAddress>0</OnChipVarAddress>
-      <OnchipVarType>0</OnchipVarType>
-      <bNormValDivValue>200</bNormValDivValue>
-      <bNormPosValue>0</bNormPosValue>
-      <bNormPosAngle>90</bNormPosAngle>
-      <bNormOffsetValue>0</bNormOffsetValue>
-      <bNormOnOff>true</bNormOnOff>
-      <i_NormWin1Win4>3</i_NormWin1Win4>
-      <Button_Name>Win4</Button_Name>
-      <bColorPickerIndex>20</bColorPickerIndex>
-      <bNormVariableIndex>367</bNormVariableIndex>
-    </BindWaveNormRec>
-    <BindWaveNormRec>
-      <OnChipVarAddress>0</OnChipVarAddress>
-      <OnchipVarType>0</OnchipVarType>
-      <bNormValDivValue>200</bNormValDivValue>
-      <bNormPosValue>0</bNormPosValue>
-      <bNormPosAngle>90</bNormPosAngle>
-      <bNormOffsetValue>0</bNormOffsetValue>
-      <bNormOnOff>true</bNormOnOff>
-      <i_NormWin1Win4>3</i_NormWin1Win4>
-      <Button_Name>Win4</Button_Name>
-      <bColorPickerIndex>19</bColorPickerIndex>
-      <bNormVariableIndex>368</bNormVariableIndex>
-    </BindWaveNormRec>
-    <BindWaveNormRec>
-      <OnChipVarAddress>0</OnChipVarAddress>
-      <OnchipVarType>0</OnchipVarType>
-      <bNormValDivValue>200</bNormValDivValue>
-      <bNormPosValue>0</bNormPosValue>
-      <bNormPosAngle>90</bNormPosAngle>
-      <bNormOffsetValue>0</bNormOffsetValue>
-      <bNormOnOff>true</bNormOnOff>
-      <i_NormWin1Win4>3</i_NormWin1Win4>
-      <Button_Name>Win4</Button_Name>
-      <bColorPickerIndex>8</bColorPickerIndex>
-      <bNormVariableIndex>369</bNormVariableIndex>
-    </BindWaveNormRec>
-    <BindWaveNormRec>
-      <OnChipVarAddress>0</OnChipVarAddress>
-      <OnchipVarType>0</OnchipVarType>
-      <bNormValDivValue>5</bNormValDivValue>
-      <bNormPosValue>0</bNormPosValue>
-      <bNormPosAngle>90</bNormPosAngle>
-      <bNormOffsetValue>0</bNormOffsetValue>
-      <bNormOnOff>true</bNormOnOff>
-      <i_NormWin1Win4>1</i_NormWin1Win4>
-      <Button_Name>Win2</Button_Name>
-      <bColorPickerIndex>5</bColorPickerIndex>
-      <bNormVariableIndex>357</bNormVariableIndex>
-    </BindWaveNormRec>
-    <BindWaveNormRec>
-      <OnChipVarAddress>0</OnChipVarAddress>
-      <OnchipVarType>0</OnchipVarType>
-      <bNormValDivValue>5</bNormValDivValue>
-      <bNormPosValue>0</bNormPosValue>
-      <bNormPosAngle>90</bNormPosAngle>
-      <bNormOffsetValue>0</bNormOffsetValue>
-      <bNormOnOff>true</bNormOnOff>
-      <i_NormWin1Win4>2</i_NormWin1Win4>
-      <Button_Name>Win3</Button_Name>
-      <bColorPickerIndex>3</bColorPickerIndex>
-      <bNormVariableIndex>358</bNormVariableIndex>
-    </BindWaveNormRec>
-    <BindWaveNormRec>
-      <OnChipVarAddress>0</OnChipVarAddress>
-      <OnchipVarType>0</OnchipVarType>
-      <bNormValDivValue>5</bNormValDivValue>
-      <bNormPosValue>0</bNormPosValue>
-      <bNormPosAngle>90</bNormPosAngle>
-      <bNormOffsetValue>0</bNormOffsetValue>
-      <bNormOnOff>true</bNormOnOff>
-      <i_NormWin1Win4>1</i_NormWin1Win4>
-      <Button_Name>Win2</Button_Name>
-      <bColorPickerIndex>16</bColorPickerIndex>
-      <bNormVariableIndex>359</bNormVariableIndex>
-    </BindWaveNormRec>
-    <BindWaveNormRec>
-      <OnChipVarAddress>0</OnChipVarAddress>
-      <OnchipVarType>0</OnchipVarType>
-      <bNormValDivValue>20</bNormValDivValue>
-      <bNormPosValue>0</bNormPosValue>
-      <bNormPosAngle>90</bNormPosAngle>
-      <bNormOffsetValue>0</bNormOffsetValue>
-      <bNormOnOff>false</bNormOnOff>
-      <i_NormWin1Win4>3</i_NormWin1Win4>
-      <Button_Name>Win4</Button_Name>
-      <bColorPickerIndex>5</bColorPickerIndex>
-      <bNormVariableIndex>0</bNormVariableIndex>
-    </BindWaveNormRec>
-    <BindWaveNormRec>
-      <OnChipVarAddress>0</OnChipVarAddress>
-      <OnchipVarType>0</OnchipVarType>
-      <bNormValDivValue>1</bNormValDivValue>
-      <bNormPosValue>0</bNormPosValue>
-      <bNormPosAngle>90</bNormPosAngle>
-      <bNormOffsetValue>0</bNormOffsetValue>
-      <bNormOnOff>false</bNormOnOff>
-      <i_NormWin1Win4>3</i_NormWin1Win4>
-      <Button_Name>Win4</Button_Name>
-      <bColorPickerIndex>19</bColorPickerIndex>
-      <bNormVariableIndex>15</bNormVariableIndex>
-    </BindWaveNormRec>
-    <BindWaveNormRec>
-      <OnChipVarAddress>0</OnChipVarAddress>
-      <OnchipVarType>0</OnchipVarType>
-      <bNormValDivValue>1</bNormValDivValue>
-      <bNormPosValue>0</bNormPosValue>
-      <bNormPosAngle>90</bNormPosAngle>
-      <bNormOffsetValue>0</bNormOffsetValue>
-      <bNormOnOff>true</bNormOnOff>
-      <i_NormWin1Win4>3</i_NormWin1Win4>
-      <Button_Name>Win4</Button_Name>
-      <bColorPickerIndex>23</bColorPickerIndex>
-      <bNormVariableIndex>15</bNormVariableIndex>
-    </BindWaveNormRec>
-  </bindNormRec>
-  <bindMathRec>
-    <BindMathNormRec>
-      <bMathOnOff>false</bMathOnOff>
-      <i_MathWin1Win4>0</i_MathWin1Win4>
+      <bDRVariableIndex>0</bDRVariableIndex>
+    </BindDRNormRec>
+    <BindDRNormRec>
+      <bDRValDivValue>1</bDRValDivValue>
+      <bDRPosValue>0</bDRPosValue>
+      <bDRPosAngle>90</bDRPosAngle>
+      <bDROffsetValue>0</bDROffsetValue>
+      <bDROnOff>false</bDROnOff>
+      <i_DRWin1Win4>0</i_DRWin1Win4>
       <Button_Name>Win1</Button_Name>
-      <bMathEquationText />
-      <bColorPickerIndex>8</bColorPickerIndex>
-      <bMathValDivValue>10</bMathValDivValue>
-      <bMathPosValue>0</bMathPosValue>
-      <bMathPosAngle>90</bMathPosAngle>
-    </BindMathNormRec>
-    <BindMathNormRec>
-      <bMathOnOff>false</bMathOnOff>
-      <i_MathWin1Win4>0</i_MathWin1Win4>
-      <Button_Name>Win1</Button_Name>
-      <bMathEquationText />
-      <bColorPickerIndex>9</bColorPickerIndex>
-      <bMathValDivValue>10</bMathValDivValue>
-      <bMathPosValue>0</bMathPosValue>
-      <bMathPosAngle>90</bMathPosAngle>
-    </BindMathNormRec>
-    <BindMathNormRec>
-      <bMathOnOff>false</bMathOnOff>
-      <i_MathWin1Win4>0</i_MathWin1Win4>
-      <Button_Name>Win1</Button_Name>
-      <bMathEquationText />
       <bColorPickerIndex>10</bColorPickerIndex>
-      <bMathValDivValue>10</bMathValDivValue>
-      <bMathPosValue>0</bMathPosValue>
-      <bMathPosAngle>90</bMathPosAngle>
-    </BindMathNormRec>
-    <BindMathNormRec>
-      <bMathOnOff>false</bMathOnOff>
-      <i_MathWin1Win4>0</i_MathWin1Win4>
+      <bDRVariableIndex>0</bDRVariableIndex>
+    </BindDRNormRec>
+    <BindDRNormRec>
+      <bDRValDivValue>1</bDRValDivValue>
+      <bDRPosValue>0</bDRPosValue>
+      <bDRPosAngle>90</bDRPosAngle>
+      <bDROffsetValue>0</bDROffsetValue>
+      <bDROnOff>false</bDROnOff>
+      <i_DRWin1Win4>0</i_DRWin1Win4>
       <Button_Name>Win1</Button_Name>
-      <bMathEquationText />
       <bColorPickerIndex>11</bColorPickerIndex>
-      <bMathValDivValue>10</bMathValDivValue>
-      <bMathPosValue>0</bMathPosValue>
-      <bMathPosAngle>90</bMathPosAngle>
-    </BindMathNormRec>
-    <BindMathNormRec>
-      <bMathOnOff>false</bMathOnOff>
-      <i_MathWin1Win4>0</i_MathWin1Win4>
+      <bDRVariableIndex>0</bDRVariableIndex>
+    </BindDRNormRec>
+    <BindDRNormRec>
+      <bDRValDivValue>1</bDRValDivValue>
+      <bDRPosValue>0</bDRPosValue>
+      <bDRPosAngle>90</bDRPosAngle>
+      <bDROffsetValue>0</bDROffsetValue>
+      <bDROnOff>false</bDROnOff>
+      <i_DRWin1Win4>0</i_DRWin1Win4>
       <Button_Name>Win1</Button_Name>
-      <bMathEquationText />
       <bColorPickerIndex>12</bColorPickerIndex>
-      <bMathValDivValue>1</bMathValDivValue>
-      <bMathPosValue>0</bMathPosValue>
-      <bMathPosAngle>90</bMathPosAngle>
-    </BindMathNormRec>
-    <BindMathNormRec>
-      <bMathOnOff>false</bMathOnOff>
-      <i_MathWin1Win4>0</i_MathWin1Win4>
+      <bDRVariableIndex>0</bDRVariableIndex>
+    </BindDRNormRec>
+    <BindDRNormRec>
+      <bDRValDivValue>1</bDRValDivValue>
+      <bDRPosValue>0</bDRPosValue>
+      <bDRPosAngle>90</bDRPosAngle>
+      <bDROffsetValue>0</bDROffsetValue>
+      <bDROnOff>false</bDROnOff>
+      <i_DRWin1Win4>0</i_DRWin1Win4>
       <Button_Name>Win1</Button_Name>
-      <bMathEquationText />
       <bColorPickerIndex>13</bColorPickerIndex>
-      <bMathValDivValue>1</bMathValDivValue>
-      <bMathPosValue>0</bMathPosValue>
-      <bMathPosAngle>90</bMathPosAngle>
-    </BindMathNormRec>
-    <BindMathNormRec>
-      <bMathOnOff>false</bMathOnOff>
-      <i_MathWin1Win4>0</i_MathWin1Win4>
+      <bDRVariableIndex>0</bDRVariableIndex>
+    </BindDRNormRec>
+    <BindDRNormRec>
+      <bDRValDivValue>1</bDRValDivValue>
+      <bDRPosValue>0</bDRPosValue>
+      <bDRPosAngle>90</bDRPosAngle>
+      <bDROffsetValue>0</bDROffsetValue>
+      <bDROnOff>false</bDROnOff>
+      <i_DRWin1Win4>0</i_DRWin1Win4>
       <Button_Name>Win1</Button_Name>
-      <bMathEquationText />
       <bColorPickerIndex>14</bColorPickerIndex>
-      <bMathValDivValue>1</bMathValDivValue>
-      <bMathPosValue>0</bMathPosValue>
-      <bMathPosAngle>90</bMathPosAngle>
-    </BindMathNormRec>
-    <BindMathNormRec>
-      <bMathOnOff>false</bMathOnOff>
-      <i_MathWin1Win4>0</i_MathWin1Win4>
+      <bDRVariableIndex>0</bDRVariableIndex>
+    </BindDRNormRec>
+    <BindDRNormRec>
+      <bDRValDivValue>1</bDRValDivValue>
+      <bDRPosValue>0</bDRPosValue>
+      <bDRPosAngle>90</bDRPosAngle>
+      <bDROffsetValue>0</bDROffsetValue>
+      <bDROnOff>false</bDROnOff>
+      <i_DRWin1Win4>0</i_DRWin1Win4>
       <Button_Name>Win1</Button_Name>
-      <bMathEquationText />
       <bColorPickerIndex>15</bColorPickerIndex>
-      <bMathValDivValue>1</bMathValDivValue>
-      <bMathPosValue>0</bMathPosValue>
-      <bMathPosAngle>90</bMathPosAngle>
-    </BindMathNormRec>
-  </bindMathRec>
-  <bindXYRec>
-    <BindXYNormRec>
-      <bXYOnOff>false</bXYOnOff>
-      <i_XY_Win1Win4>0</i_XY_Win1Win4>
+      <bDRVariableIndex>0</bDRVariableIndex>
+    </BindDRNormRec>
+    <BindDRNormRec>
+      <bDRValDivValue>1</bDRValDivValue>
+      <bDRPosValue>0</bDRPosValue>
+      <bDRPosAngle>90</bDRPosAngle>
+      <bDROffsetValue>0</bDROffsetValue>
+      <bDROnOff>false</bDROnOff>
+      <i_DRWin1Win4>0</i_DRWin1Win4>
       <Button_Name>Win1</Button_Name>
-      <bXYSourceXSelectedIndex>0</bXYSourceXSelectedIndex>
-      <bXYSourceYSelectedIndex>0</bXYSourceYSelectedIndex>
+      <bColorPickerIndex>16</bColorPickerIndex>
+      <bDRVariableIndex>0</bDRVariableIndex>
+    </BindDRNormRec>
+    <BindDRNormRec>
+      <bDRValDivValue>1</bDRValDivValue>
+      <bDRPosValue>0</bDRPosValue>
+      <bDRPosAngle>90</bDRPosAngle>
+      <bDROffsetValue>0</bDROffsetValue>
+      <bDROnOff>false</bDROnOff>
+      <i_DRWin1Win4>0</i_DRWin1Win4>
+      <Button_Name>Win1</Button_Name>
+      <bColorPickerIndex>17</bColorPickerIndex>
+      <bDRVariableIndex>0</bDRVariableIndex>
+    </BindDRNormRec>
+    <BindDRNormRec>
+      <bDRValDivValue>1</bDRValDivValue>
+      <bDRPosValue>0</bDRPosValue>
+      <bDRPosAngle>90</bDRPosAngle>
+      <bDROffsetValue>0</bDROffsetValue>
+      <bDROnOff>false</bDROnOff>
+      <i_DRWin1Win4>0</i_DRWin1Win4>
+      <Button_Name>Win1</Button_Name>
+      <bColorPickerIndex>18</bColorPickerIndex>
+      <bDRVariableIndex>0</bDRVariableIndex>
+    </BindDRNormRec>
+    <BindDRNormRec>
+      <bDRValDivValue>1</bDRValDivValue>
+      <bDRPosValue>0</bDRPosValue>
+      <bDRPosAngle>90</bDRPosAngle>
+      <bDROffsetValue>0</bDROffsetValue>
+      <bDROnOff>false</bDROnOff>
+      <i_DRWin1Win4>0</i_DRWin1Win4>
+      <Button_Name>Win1</Button_Name>
+      <bColorPickerIndex>19</bColorPickerIndex>
+      <bDRVariableIndex>0</bDRVariableIndex>
+    </BindDRNormRec>
+    <BindDRNormRec>
+      <bDRValDivValue>1</bDRValDivValue>
+      <bDRPosValue>0</bDRPosValue>
+      <bDRPosAngle>90</bDRPosAngle>
+      <bDROffsetValue>0</bDROffsetValue>
+      <bDROnOff>false</bDROnOff>
+      <i_DRWin1Win4>0</i_DRWin1Win4>
+      <Button_Name>Win1</Button_Name>
+      <bColorPickerIndex>20</bColorPickerIndex>
+      <bDRVariableIndex>0</bDRVariableIndex>
+    </BindDRNormRec>
+    <BindDRNormRec>
+      <bDRValDivValue>1</bDRValDivValue>
+      <bDRPosValue>0</bDRPosValue>
+      <bDRPosAngle>90</bDRPosAngle>
+      <bDROffsetValue>0</bDROffsetValue>
+      <bDROnOff>false</bDROnOff>
+      <i_DRWin1Win4>0</i_DRWin1Win4>
+      <Button_Name>Win1</Button_Name>
+      <bColorPickerIndex>21</bColorPickerIndex>
+      <bDRVariableIndex>0</bDRVariableIndex>
+    </BindDRNormRec>
+    <BindDRNormRec>
+      <bDRValDivValue>1</bDRValDivValue>
+      <bDRPosValue>0</bDRPosValue>
+      <bDRPosAngle>90</bDRPosAngle>
+      <bDROffsetValue>0</bDROffsetValue>
+      <bDROnOff>false</bDROnOff>
+      <i_DRWin1Win4>0</i_DRWin1Win4>
+      <Button_Name>Win1</Button_Name>
+      <bColorPickerIndex>22</bColorPickerIndex>
+      <bDRVariableIndex>0</bDRVariableIndex>
+    </BindDRNormRec>
+    <BindDRNormRec>
+      <bDRValDivValue>1</bDRValDivValue>
+      <bDRPosValue>0</bDRPosValue>
+      <bDRPosAngle>90</bDRPosAngle>
+      <bDROffsetValue>0</bDROffsetValue>
+      <bDROnOff>false</bDROnOff>
+      <i_DRWin1Win4>0</i_DRWin1Win4>
+      <Button_Name>Win1</Button_Name>
+      <bColorPickerIndex>23</bColorPickerIndex>
+      <bDRVariableIndex>0</bDRVariableIndex>
+    </BindDRNormRec>
+    <BindDRNormRec>
+      <bDRValDivValue>1</bDRValDivValue>
+      <bDRPosValue>0</bDRPosValue>
+      <bDRPosAngle>90</bDRPosAngle>
+      <bDROffsetValue>0</bDROffsetValue>
+      <bDROnOff>false</bDROnOff>
+      <i_DRWin1Win4>0</i_DRWin1Win4>
+      <Button_Name>Win1</Button_Name>
       <bColorPickerIndex>8</bColorPickerIndex>
-      <bXYValDiv_X_Value>1</bXYValDiv_X_Value>
-      <bXYValDiv_Y_Value>1</bXYValDiv_Y_Value>
-      <bXYPosition_X>0</bXYPosition_X>
-      <bXYPosition_Y>0</bXYPosition_Y>
-    </BindXYNormRec>
-    <BindXYNormRec>
-      <bXYOnOff>true</bXYOnOff>
-      <i_XY_Win1Win4>0</i_XY_Win1Win4>
+      <bDRVariableIndex>0</bDRVariableIndex>
+    </BindDRNormRec>
+    <BindDRNormRec>
+      <bDRValDivValue>1</bDRValDivValue>
+      <bDRPosValue>0</bDRPosValue>
+      <bDRPosAngle>90</bDRPosAngle>
+      <bDROffsetValue>0</bDROffsetValue>
+      <bDROnOff>false</bDROnOff>
+      <i_DRWin1Win4>0</i_DRWin1Win4>
       <Button_Name>Win1</Button_Name>
-      <bXYSourceXSelectedIndex>0</bXYSourceXSelectedIndex>
-      <bXYSourceYSelectedIndex>0</bXYSourceYSelectedIndex>
       <bColorPickerIndex>9</bColorPickerIndex>
-      <bXYValDiv_X_Value>1</bXYValDiv_X_Value>
-      <bXYValDiv_Y_Value>1</bXYValDiv_Y_Value>
-      <bXYPosition_X>0</bXYPosition_X>
-      <bXYPosition_Y>0</bXYPosition_Y>
-    </BindXYNormRec>
-  </bindXYRec>
-  <bindFftRec>
-    <BindFftNormRec>
-      <bFftRMS>true</bFftRMS>
-      <bFftHz>false</bFftHz>
-      <bFftMean>false</bFftMean>
-    </BindFftNormRec>
-    <BindFftNormRec>
-      <bFftRMS>true</bFftRMS>
-      <bFftHz>false</bFftHz>
-      <bFftMean>false</bFftMean>
-    </BindFftNormRec>
-    <BindFftNormRec>
-      <bFftRMS>true</bFftRMS>
-      <bFftHz>false</bFftHz>
-      <bFftMean>false</bFftMean>
-    </BindFftNormRec>
-    <BindFftNormRec>
-      <bFftRMS>true</bFftRMS>
-      <bFftHz>false</bFftHz>
-      <bFftMean>false</bFftMean>
-    </BindFftNormRec>
-    <BindFftNormRec>
-      <bFftRMS>true</bFftRMS>
-      <bFftHz>false</bFftHz>
-      <bFftMean>false</bFftMean>
-    </BindFftNormRec>
-    <BindFftNormRec>
-      <bFftRMS>true</bFftRMS>
-      <bFftHz>false</bFftHz>
-      <bFftMean>false</bFftMean>
-    </BindFftNormRec>
-    <BindFftNormRec>
-      <bFftRMS>true</bFftRMS>
-      <bFftHz>false</bFftHz>
-      <bFftMean>false</bFftMean>
-    </BindFftNormRec>
-    <BindFftNormRec>
-      <bFftRMS>true</bFftRMS>
-      <bFftHz>false</bFftHz>
-      <bFftMean>false</bFftMean>
-    </BindFftNormRec>
-    <BindFftNormRec>
-      <bFftRMS>true</bFftRMS>
-      <bFftHz>false</bFftHz>
-      <bFftMean>false</bFftMean>
-    </BindFftNormRec>
-    <BindFftNormRec>
-      <bFftRMS>true</bFftRMS>
-      <bFftHz>false</bFftHz>
-      <bFftMean>false</bFftMean>
-    </BindFftNormRec>
-    <BindFftNormRec>
-      <bFftRMS>true</bFftRMS>
-      <bFftHz>false</bFftHz>
-      <bFftMean>false</bFftMean>
-    </BindFftNormRec>
-    <BindFftNormRec>
-      <bFftRMS>true</bFftRMS>
-      <bFftHz>false</bFftHz>
-      <bFftMean>false</bFftMean>
-    </BindFftNormRec>
-    <BindFftNormRec>
-      <bFftRMS>true</bFftRMS>
-      <bFftHz>false</bFftHz>
-      <bFftMean>false</bFftMean>
-    </BindFftNormRec>
-    <BindFftNormRec>
-      <bFftRMS>true</bFftRMS>
-      <bFftHz>false</bFftHz>
-      <bFftMean>false</bFftMean>
-    </BindFftNormRec>
-    <BindFftNormRec>
-      <bFftRMS>true</bFftRMS>
-      <bFftHz>false</bFftHz>
-      <bFftMean>false</bFftMean>
-    </BindFftNormRec>
-    <BindFftNormRec>
-      <bFftRMS>true</bFftRMS>
-      <bFftHz>false</bFftHz>
-      <bFftMean>false</bFftMean>
-    </BindFftNormRec>
-    <BindFftNormRec>
-      <bFftRMS>true</bFftRMS>
-      <bFftHz>false</bFftHz>
-      <bFftMean>false</bFftMean>
-    </BindFftNormRec>
-    <BindFftNormRec>
-      <bFftRMS>true</bFftRMS>
-      <bFftHz>false</bFftHz>
-      <bFftMean>false</bFftMean>
-    </BindFftNormRec>
-    <BindFftNormRec>
-      <bFftRMS>true</bFftRMS>
-      <bFftHz>false</bFftHz>
-      <bFftMean>false</bFftMean>
-    </BindFftNormRec>
-    <BindFftNormRec>
-      <bFftRMS>true</bFftRMS>
-      <bFftHz>false</bFftHz>
-      <bFftMean>false</bFftMean>
-    </BindFftNormRec>
-    <BindFftNormRec>
-      <bFftRMS>true</bFftRMS>
-      <bFftHz>false</bFftHz>
-      <bFftMean>false</bFftMean>
-    </BindFftNormRec>
-    <BindFftNormRec>
-      <bFftRMS>true</bFftRMS>
-      <bFftHz>false</bFftHz>
-      <bFftMean>false</bFftMean>
-    </BindFftNormRec>
-    <BindFftNormRec>
-      <bFftRMS>true</bFftRMS>
-      <bFftHz>false</bFftHz>
-      <bFftMean>false</bFftMean>
-    </BindFftNormRec>
-    <BindFftNormRec>
-      <bFftRMS>true</bFftRMS>
-      <bFftHz>false</bFftHz>
-      <bFftMean>false</bFftMean>
-    </BindFftNormRec>
-  </bindFftRec>
-  <bindChInfo>
+      <bDRVariableIndex>0</bDRVariableIndex>
+    </BindDRNormRec>
+    <BindDRNormRec>
+      <bDRValDivValue>1</bDRValDivValue>
+      <bDRPosValue>0</bDRPosValue>
+      <bDRPosAngle>90</bDRPosAngle>
+      <bDROffsetValue>0</bDROffsetValue>
+      <bDROnOff>false</bDROnOff>
+      <i_DRWin1Win4>0</i_DRWin1Win4>
+      <Button_Name>Win1</Button_Name>
+      <bColorPickerIndex>10</bColorPickerIndex>
+      <bDRVariableIndex>0</bDRVariableIndex>
+    </BindDRNormRec>
+    <BindDRNormRec>
+      <bDRValDivValue>1</bDRValDivValue>
+      <bDRPosValue>0</bDRPosValue>
+      <bDRPosAngle>90</bDRPosAngle>
+      <bDROffsetValue>0</bDROffsetValue>
+      <bDROnOff>false</bDROnOff>
+      <i_DRWin1Win4>0</i_DRWin1Win4>
+      <Button_Name>Win1</Button_Name>
+      <bColorPickerIndex>11</bColorPickerIndex>
+      <bDRVariableIndex>0</bDRVariableIndex>
+    </BindDRNormRec>
+    <BindDRNormRec>
+      <bDRValDivValue>1</bDRValDivValue>
+      <bDRPosValue>0</bDRPosValue>
+      <bDRPosAngle>90</bDRPosAngle>
+      <bDROffsetValue>0</bDROffsetValue>
+      <bDROnOff>false</bDROnOff>
+      <i_DRWin1Win4>0</i_DRWin1Win4>
+      <Button_Name>Win1</Button_Name>
+      <bColorPickerIndex>12</bColorPickerIndex>
+      <bDRVariableIndex>0</bDRVariableIndex>
+    </BindDRNormRec>
+    <BindDRNormRec>
+      <bDRValDivValue>1</bDRValDivValue>
+      <bDRPosValue>0</bDRPosValue>
+      <bDRPosAngle>90</bDRPosAngle>
+      <bDROffsetValue>0</bDROffsetValue>
+      <bDROnOff>false</bDROnOff>
+      <i_DRWin1Win4>0</i_DRWin1Win4>
+      <Button_Name>Win1</Button_Name>
+      <bColorPickerIndex>13</bColorPickerIndex>
+      <bDRVariableIndex>0</bDRVariableIndex>
+    </BindDRNormRec>
+    <BindDRNormRec>
+      <bDRValDivValue>1</bDRValDivValue>
+      <bDRPosValue>0</bDRPosValue>
+      <bDRPosAngle>90</bDRPosAngle>
+      <bDROffsetValue>0</bDROffsetValue>
+      <bDROnOff>false</bDROnOff>
+      <i_DRWin1Win4>0</i_DRWin1Win4>
+      <Button_Name>Win1</Button_Name>
+      <bColorPickerIndex>14</bColorPickerIndex>
+      <bDRVariableIndex>0</bDRVariableIndex>
+    </BindDRNormRec>
+    <BindDRNormRec>
+      <bDRValDivValue>1</bDRValDivValue>
+      <bDRPosValue>0</bDRPosValue>
+      <bDRPosAngle>90</bDRPosAngle>
+      <bDROffsetValue>0</bDROffsetValue>
+      <bDROnOff>false</bDROnOff>
+      <i_DRWin1Win4>0</i_DRWin1Win4>
+      <Button_Name>Win1</Button_Name>
+      <bColorPickerIndex>15</bColorPickerIndex>
+      <bDRVariableIndex>0</bDRVariableIndex>
+    </BindDRNormRec>
+    <BindDRNormRec>
+      <bDRValDivValue>1</bDRValDivValue>
+      <bDRPosValue>0</bDRPosValue>
+      <bDRPosAngle>90</bDRPosAngle>
+      <bDROffsetValue>0</bDROffsetValue>
+      <bDROnOff>false</bDROnOff>
+      <i_DRWin1Win4>0</i_DRWin1Win4>
+      <Button_Name>Win1</Button_Name>
+      <bColorPickerIndex>16</bColorPickerIndex>
+      <bDRVariableIndex>0</bDRVariableIndex>
+    </BindDRNormRec>
+    <BindDRNormRec>
+      <bDRValDivValue>1</bDRValDivValue>
+      <bDRPosValue>0</bDRPosValue>
+      <bDRPosAngle>90</bDRPosAngle>
+      <bDROffsetValue>0</bDROffsetValue>
+      <bDROnOff>false</bDROnOff>
+      <i_DRWin1Win4>0</i_DRWin1Win4>
+      <Button_Name>Win1</Button_Name>
+      <bColorPickerIndex>17</bColorPickerIndex>
+      <bDRVariableIndex>0</bDRVariableIndex>
+    </BindDRNormRec>
+    <BindDRNormRec>
+      <bDRValDivValue>1</bDRValDivValue>
+      <bDRPosValue>0</bDRPosValue>
+      <bDRPosAngle>90</bDRPosAngle>
+      <bDROffsetValue>0</bDROffsetValue>
+      <bDROnOff>false</bDROnOff>
+      <i_DRWin1Win4>0</i_DRWin1Win4>
+      <Button_Name>Win1</Button_Name>
+      <bColorPickerIndex>18</bColorPickerIndex>
+      <bDRVariableIndex>0</bDRVariableIndex>
+    </BindDRNormRec>
+    <BindDRNormRec>
+      <bDRValDivValue>1</bDRValDivValue>
+      <bDRPosValue>0</bDRPosValue>
+      <bDRPosAngle>90</bDRPosAngle>
+      <bDROffsetValue>0</bDROffsetValue>
+      <bDROnOff>false</bDROnOff>
+      <i_DRWin1Win4>0</i_DRWin1Win4>
+      <Button_Name>Win1</Button_Name>
+      <bColorPickerIndex>19</bColorPickerIndex>
+      <bDRVariableIndex>0</bDRVariableIndex>
+    </BindDRNormRec>
+    <BindDRNormRec>
+      <bDRValDivValue>1</bDRValDivValue>
+      <bDRPosValue>0</bDRPosValue>
+      <bDRPosAngle>90</bDRPosAngle>
+      <bDROffsetValue>0</bDROffsetValue>
+      <bDROnOff>false</bDROnOff>
+      <i_DRWin1Win4>0</i_DRWin1Win4>
+      <Button_Name>Win1</Button_Name>
+      <bColorPickerIndex>20</bColorPickerIndex>
+      <bDRVariableIndex>0</bDRVariableIndex>
+    </BindDRNormRec>
+    <BindDRNormRec>
+      <bDRValDivValue>1</bDRValDivValue>
+      <bDRPosValue>0</bDRPosValue>
+      <bDRPosAngle>90</bDRPosAngle>
+      <bDROffsetValue>0</bDROffsetValue>
+      <bDROnOff>false</bDROnOff>
+      <i_DRWin1Win4>0</i_DRWin1Win4>
+      <Button_Name>Win1</Button_Name>
+      <bColorPickerIndex>21</bColorPickerIndex>
+      <bDRVariableIndex>0</bDRVariableIndex>
+    </BindDRNormRec>
+    <BindDRNormRec>
+      <bDRValDivValue>1</bDRValDivValue>
+      <bDRPosValue>0</bDRPosValue>
+      <bDRPosAngle>90</bDRPosAngle>
+      <bDROffsetValue>0</bDROffsetValue>
+      <bDROnOff>false</bDROnOff>
+      <i_DRWin1Win4>0</i_DRWin1Win4>
+      <Button_Name>Win1</Button_Name>
+      <bColorPickerIndex>22</bColorPickerIndex>
+      <bDRVariableIndex>0</bDRVariableIndex>
+    </BindDRNormRec>
+    <BindDRNormRec>
+      <bDRValDivValue>1</bDRValDivValue>
+      <bDRPosValue>0</bDRPosValue>
+      <bDRPosAngle>90</bDRPosAngle>
+      <bDROffsetValue>0</bDROffsetValue>
+      <bDROnOff>false</bDROnOff>
+      <i_DRWin1Win4>0</i_DRWin1Win4>
+      <Button_Name>Win1</Button_Name>
+      <bColorPickerIndex>23</bColorPickerIndex>
+      <bDRVariableIndex>0</bDRVariableIndex>
+    </BindDRNormRec>
+  </bindDRRec>
+  <bindChInfoDR>
     <bindChInfoRec>
-      <BindDetailChInfoRec>
+      <BindDRInfoRec>
         <bChInfo_ChFontSize>12</bChInfo_ChFontSize>
         <chCapVisible>true</chCapVisible>
         <chCap2Visible>false</chCap2Visible>
-        <chVarVisible>true</chVarVisible>
+        <chValVisible>true</chValVisible>
         <chVar2Visible>false</chVar2Visible>
         <chPosVisible>true</chPosVisible>
         <chPos2Visible>false</chPos2Visible>
         <chOfsVisible>true</chOfsVisible>
         <chCurAVisible>true</chCurAVisible>
         <chCurBVisible>true</chCurBVisible>
-      </BindDetailChInfoRec>
-      <BindDetailChInfoRec>
+      </BindDRInfoRec>
+      <BindDRInfoRec>
         <bChInfo_ChFontSize>12</bChInfo_ChFontSize>
         <chCapVisible>true</chCapVisible>
         <chCap2Visible>false</chCap2Visible>
-        <chVarVisible>true</chVarVisible>
+        <chValVisible>true</chValVisible>
         <chVar2Visible>false</chVar2Visible>
         <chPosVisible>true</chPosVisible>
         <chPos2Visible>false</chPos2Visible>
         <chOfsVisible>true</chOfsVisible>
         <chCurAVisible>true</chCurAVisible>
         <chCurBVisible>true</chCurBVisible>
-      </BindDetailChInfoRec>
-      <BindDetailChInfoRec>
+      </BindDRInfoRec>
+      <BindDRInfoRec>
         <bChInfo_ChFontSize>12</bChInfo_ChFontSize>
         <chCapVisible>true</chCapVisible>
         <chCap2Visible>false</chCap2Visible>
-        <chVarVisible>true</chVarVisible>
+        <chValVisible>true</chValVisible>
         <chVar2Visible>false</chVar2Visible>
         <chPosVisible>true</chPosVisible>
         <chPos2Visible>false</chPos2Visible>
         <chOfsVisible>true</chOfsVisible>
         <chCurAVisible>true</chCurAVisible>
         <chCurBVisible>true</chCurBVisible>
-      </BindDetailChInfoRec>
-      <BindDetailChInfoRec>
+      </BindDRInfoRec>
+      <BindDRInfoRec>
         <bChInfo_ChFontSize>12</bChInfo_ChFontSize>
         <chCapVisible>true</chCapVisible>
         <chCap2Visible>false</chCap2Visible>
-        <chVarVisible>true</chVarVisible>
+        <chValVisible>true</chValVisible>
         <chVar2Visible>false</chVar2Visible>
         <chPosVisible>true</chPosVisible>
         <chPos2Visible>false</chPos2Visible>
         <chOfsVisible>true</chOfsVisible>
         <chCurAVisible>true</chCurAVisible>
         <chCurBVisible>true</chCurBVisible>
-      </BindDetailChInfoRec>
-      <BindDetailChInfoRec>
+      </BindDRInfoRec>
+      <BindDRInfoRec>
         <bChInfo_ChFontSize>12</bChInfo_ChFontSize>
         <chCapVisible>true</chCapVisible>
         <chCap2Visible>false</chCap2Visible>
-        <chVarVisible>true</chVarVisible>
+        <chValVisible>true</chValVisible>
         <chVar2Visible>false</chVar2Visible>
         <chPosVisible>true</chPosVisible>
         <chPos2Visible>false</chPos2Visible>
         <chOfsVisible>true</chOfsVisible>
         <chCurAVisible>true</chCurAVisible>
         <chCurBVisible>true</chCurBVisible>
-      </BindDetailChInfoRec>
-      <BindDetailChInfoRec>
+      </BindDRInfoRec>
+      <BindDRInfoRec>
         <bChInfo_ChFontSize>12</bChInfo_ChFontSize>
         <chCapVisible>true</chCapVisible>
         <chCap2Visible>false</chCap2Visible>
-        <chVarVisible>true</chVarVisible>
+        <chValVisible>true</chValVisible>
         <chVar2Visible>false</chVar2Visible>
         <chPosVisible>true</chPosVisible>
         <chPos2Visible>false</chPos2Visible>
         <chOfsVisible>true</chOfsVisible>
         <chCurAVisible>true</chCurAVisible>
         <chCurBVisible>true</chCurBVisible>
-      </BindDetailChInfoRec>
-      <BindDetailChInfoRec>
+      </BindDRInfoRec>
+      <BindDRInfoRec>
         <bChInfo_ChFontSize>12</bChInfo_ChFontSize>
         <chCapVisible>true</chCapVisible>
         <chCap2Visible>false</chCap2Visible>
-        <chVarVisible>true</chVarVisible>
+        <chValVisible>true</chValVisible>
         <chVar2Visible>false</chVar2Visible>
         <chPosVisible>true</chPosVisible>
         <chPos2Visible>false</chPos2Visible>
         <chOfsVisible>true</chOfsVisible>
         <chCurAVisible>true</chCurAVisible>
         <chCurBVisible>true</chCurBVisible>
-      </BindDetailChInfoRec>
-      <BindDetailChInfoRec>
+      </BindDRInfoRec>
+      <BindDRInfoRec>
         <bChInfo_ChFontSize>12</bChInfo_ChFontSize>
         <chCapVisible>true</chCapVisible>
         <chCap2Visible>false</chCap2Visible>
-        <chVarVisible>true</chVarVisible>
+        <chValVisible>true</chValVisible>
         <chVar2Visible>false</chVar2Visible>
         <chPosVisible>true</chPosVisible>
         <chPos2Visible>false</chPos2Visible>
         <chOfsVisible>true</chOfsVisible>
         <chCurAVisible>true</chCurAVisible>
         <chCurBVisible>true</chCurBVisible>
-      </BindDetailChInfoRec>
-      <BindDetailChInfoRec>
+      </BindDRInfoRec>
+      <BindDRInfoRec>
         <bChInfo_ChFontSize>12</bChInfo_ChFontSize>
         <chCapVisible>true</chCapVisible>
         <chCap2Visible>false</chCap2Visible>
-        <chVarVisible>true</chVarVisible>
+        <chValVisible>true</chValVisible>
         <chVar2Visible>false</chVar2Visible>
         <chPosVisible>true</chPosVisible>
         <chPos2Visible>false</chPos2Visible>
         <chOfsVisible>true</chOfsVisible>
         <chCurAVisible>true</chCurAVisible>
         <chCurBVisible>true</chCurBVisible>
-      </BindDetailChInfoRec>
-      <BindDetailChInfoRec>
+      </BindDRInfoRec>
+      <BindDRInfoRec>
         <bChInfo_ChFontSize>12</bChInfo_ChFontSize>
         <chCapVisible>true</chCapVisible>
         <chCap2Visible>false</chCap2Visible>
-        <chVarVisible>true</chVarVisible>
+        <chValVisible>true</chValVisible>
         <chVar2Visible>false</chVar2Visible>
         <chPosVisible>true</chPosVisible>
         <chPos2Visible>false</chPos2Visible>
         <chOfsVisible>true</chOfsVisible>
         <chCurAVisible>true</chCurAVisible>
         <chCurBVisible>true</chCurBVisible>
-      </BindDetailChInfoRec>
-      <BindDetailChInfoRec>
+      </BindDRInfoRec>
+      <BindDRInfoRec>
         <bChInfo_ChFontSize>12</bChInfo_ChFontSize>
         <chCapVisible>true</chCapVisible>
         <chCap2Visible>false</chCap2Visible>
-        <chVarVisible>true</chVarVisible>
+        <chValVisible>true</chValVisible>
         <chVar2Visible>false</chVar2Visible>
         <chPosVisible>true</chPosVisible>
         <chPos2Visible>false</chPos2Visible>
         <chOfsVisible>true</chOfsVisible>
         <chCurAVisible>true</chCurAVisible>
         <chCurBVisible>true</chCurBVisible>
-      </BindDetailChInfoRec>
-      <BindDetailChInfoRec>
+      </BindDRInfoRec>
+      <BindDRInfoRec>
         <bChInfo_ChFontSize>12</bChInfo_ChFontSize>
         <chCapVisible>true</chCapVisible>
         <chCap2Visible>false</chCap2Visible>
-        <chVarVisible>true</chVarVisible>
+        <chValVisible>true</chValVisible>
         <chVar2Visible>false</chVar2Visible>
         <chPosVisible>true</chPosVisible>
         <chPos2Visible>false</chPos2Visible>
         <chOfsVisible>true</chOfsVisible>
         <chCurAVisible>true</chCurAVisible>
         <chCurBVisible>true</chCurBVisible>
-      </BindDetailChInfoRec>
-      <BindDetailChInfoRec>
+      </BindDRInfoRec>
+      <BindDRInfoRec>
         <bChInfo_ChFontSize>12</bChInfo_ChFontSize>
         <chCapVisible>true</chCapVisible>
         <chCap2Visible>false</chCap2Visible>
-        <chVarVisible>true</chVarVisible>
+        <chValVisible>true</chValVisible>
         <chVar2Visible>false</chVar2Visible>
         <chPosVisible>true</chPosVisible>
         <chPos2Visible>false</chPos2Visible>
         <chOfsVisible>true</chOfsVisible>
         <chCurAVisible>true</chCurAVisible>
         <chCurBVisible>true</chCurBVisible>
-      </BindDetailChInfoRec>
-      <BindDetailChInfoRec>
+      </BindDRInfoRec>
+      <BindDRInfoRec>
         <bChInfo_ChFontSize>12</bChInfo_ChFontSize>
         <chCapVisible>true</chCapVisible>
         <chCap2Visible>false</chCap2Visible>
-        <chVarVisible>true</chVarVisible>
+        <chValVisible>true</chValVisible>
         <chVar2Visible>false</chVar2Visible>
         <chPosVisible>true</chPosVisible>
         <chPos2Visible>false</chPos2Visible>
         <chOfsVisible>true</chOfsVisible>
         <chCurAVisible>true</chCurAVisible>
         <chCurBVisible>true</chCurBVisible>
-      </BindDetailChInfoRec>
-      <BindDetailChInfoRec>
+      </BindDRInfoRec>
+      <BindDRInfoRec>
         <bChInfo_ChFontSize>12</bChInfo_ChFontSize>
         <chCapVisible>true</chCapVisible>
         <chCap2Visible>false</chCap2Visible>
-        <chVarVisible>true</chVarVisible>
+        <chValVisible>true</chValVisible>
         <chVar2Visible>false</chVar2Visible>
         <chPosVisible>true</chPosVisible>
         <chPos2Visible>false</chPos2Visible>
         <chOfsVisible>true</chOfsVisible>
         <chCurAVisible>true</chCurAVisible>
         <chCurBVisible>true</chCurBVisible>
-      </BindDetailChInfoRec>
-      <BindDetailChInfoRec>
+      </BindDRInfoRec>
+      <BindDRInfoRec>
         <bChInfo_ChFontSize>12</bChInfo_ChFontSize>
         <chCapVisible>true</chCapVisible>
         <chCap2Visible>false</chCap2Visible>
-        <chVarVisible>true</chVarVisible>
+        <chValVisible>true</chValVisible>
         <chVar2Visible>false</chVar2Visible>
         <chPosVisible>true</chPosVisible>
         <chPos2Visible>false</chPos2Visible>
         <chOfsVisible>true</chOfsVisible>
         <chCurAVisible>true</chCurAVisible>
         <chCurBVisible>true</chCurBVisible>
-      </BindDetailChInfoRec>
-      <BindDetailChInfoRec>
+      </BindDRInfoRec>
+      <BindDRInfoRec>
         <bChInfo_ChFontSize>12</bChInfo_ChFontSize>
         <chCapVisible>true</chCapVisible>
         <chCap2Visible>false</chCap2Visible>
-        <chVarVisible>true</chVarVisible>
+        <chValVisible>true</chValVisible>
         <chVar2Visible>false</chVar2Visible>
         <chPosVisible>true</chPosVisible>
         <chPos2Visible>false</chPos2Visible>
-        <chOfsVisible>false</chOfsVisible>
+        <chOfsVisible>true</chOfsVisible>
         <chCurAVisible>true</chCurAVisible>
         <chCurBVisible>true</chCurBVisible>
-      </BindDetailChInfoRec>
-      <BindDetailChInfoRec>
+      </BindDRInfoRec>
+      <BindDRInfoRec>
         <bChInfo_ChFontSize>12</bChInfo_ChFontSize>
         <chCapVisible>true</chCapVisible>
         <chCap2Visible>false</chCap2Visible>
-        <chVarVisible>true</chVarVisible>
+        <chValVisible>true</chValVisible>
         <chVar2Visible>false</chVar2Visible>
         <chPosVisible>true</chPosVisible>
         <chPos2Visible>false</chPos2Visible>
-        <chOfsVisible>false</chOfsVisible>
+        <chOfsVisible>true</chOfsVisible>
         <chCurAVisible>true</chCurAVisible>
         <chCurBVisible>true</chCurBVisible>
-      </BindDetailChInfoRec>
-      <BindDetailChInfoRec>
+      </BindDRInfoRec>
+      <BindDRInfoRec>
         <bChInfo_ChFontSize>12</bChInfo_ChFontSize>
         <chCapVisible>true</chCapVisible>
         <chCap2Visible>false</chCap2Visible>
-        <chVarVisible>true</chVarVisible>
+        <chValVisible>true</chValVisible>
         <chVar2Visible>false</chVar2Visible>
         <chPosVisible>true</chPosVisible>
         <chPos2Visible>false</chPos2Visible>
-        <chOfsVisible>false</chOfsVisible>
+        <chOfsVisible>true</chOfsVisible>
         <chCurAVisible>true</chCurAVisible>
         <chCurBVisible>true</chCurBVisible>
-      </BindDetailChInfoRec>
-      <BindDetailChInfoRec>
+      </BindDRInfoRec>
+      <BindDRInfoRec>
         <bChInfo_ChFontSize>12</bChInfo_ChFontSize>
         <chCapVisible>true</chCapVisible>
         <chCap2Visible>false</chCap2Visible>
-        <chVarVisible>true</chVarVisible>
+        <chValVisible>true</chValVisible>
         <chVar2Visible>false</chVar2Visible>
         <chPosVisible>true</chPosVisible>
         <chPos2Visible>false</chPos2Visible>
-        <chOfsVisible>false</chOfsVisible>
+        <chOfsVisible>true</chOfsVisible>
         <chCurAVisible>true</chCurAVisible>
         <chCurBVisible>true</chCurBVisible>
-      </BindDetailChInfoRec>
-      <BindDetailChInfoRec>
+      </BindDRInfoRec>
+      <BindDRInfoRec>
         <bChInfo_ChFontSize>12</bChInfo_ChFontSize>
         <chCapVisible>true</chCapVisible>
         <chCap2Visible>false</chCap2Visible>
-        <chVarVisible>true</chVarVisible>
+        <chValVisible>true</chValVisible>
         <chVar2Visible>false</chVar2Visible>
         <chPosVisible>true</chPosVisible>
         <chPos2Visible>false</chPos2Visible>
-        <chOfsVisible>false</chOfsVisible>
+        <chOfsVisible>true</chOfsVisible>
         <chCurAVisible>true</chCurAVisible>
         <chCurBVisible>true</chCurBVisible>
-      </BindDetailChInfoRec>
-      <BindDetailChInfoRec>
+      </BindDRInfoRec>
+      <BindDRInfoRec>
         <bChInfo_ChFontSize>12</bChInfo_ChFontSize>
         <chCapVisible>true</chCapVisible>
         <chCap2Visible>false</chCap2Visible>
-        <chVarVisible>true</chVarVisible>
+        <chValVisible>true</chValVisible>
         <chVar2Visible>false</chVar2Visible>
         <chPosVisible>true</chPosVisible>
         <chPos2Visible>false</chPos2Visible>
-        <chOfsVisible>false</chOfsVisible>
+        <chOfsVisible>true</chOfsVisible>
         <chCurAVisible>true</chCurAVisible>
         <chCurBVisible>true</chCurBVisible>
-      </BindDetailChInfoRec>
-      <BindDetailChInfoRec>
+      </BindDRInfoRec>
+      <BindDRInfoRec>
         <bChInfo_ChFontSize>12</bChInfo_ChFontSize>
         <chCapVisible>true</chCapVisible>
         <chCap2Visible>false</chCap2Visible>
-        <chVarVisible>true</chVarVisible>
+        <chValVisible>true</chValVisible>
         <chVar2Visible>false</chVar2Visible>
         <chPosVisible>true</chPosVisible>
         <chPos2Visible>false</chPos2Visible>
-        <chOfsVisible>false</chOfsVisible>
+        <chOfsVisible>true</chOfsVisible>
         <chCurAVisible>true</chCurAVisible>
         <chCurBVisible>true</chCurBVisible>
-      </BindDetailChInfoRec>
-      <BindDetailChInfoRec>
+      </BindDRInfoRec>
+      <BindDRInfoRec>
         <bChInfo_ChFontSize>12</bChInfo_ChFontSize>
         <chCapVisible>true</chCapVisible>
         <chCap2Visible>false</chCap2Visible>
-        <chVarVisible>true</chVarVisible>
+        <chValVisible>true</chValVisible>
         <chVar2Visible>false</chVar2Visible>
         <chPosVisible>true</chPosVisible>
         <chPos2Visible>false</chPos2Visible>
-        <chOfsVisible>false</chOfsVisible>
+        <chOfsVisible>true</chOfsVisible>
         <chCurAVisible>true</chCurAVisible>
         <chCurBVisible>true</chCurBVisible>
-      </BindDetailChInfoRec>
-      <BindDetailChInfoRec>
+      </BindDRInfoRec>
+      <BindDRInfoRec>
         <bChInfo_ChFontSize>12</bChInfo_ChFontSize>
         <chCapVisible>true</chCapVisible>
-        <chCap2Visible>true</chCap2Visible>
-        <chVarVisible>true</chVarVisible>
-        <chVar2Visible>true</chVar2Visible>
+        <chCap2Visible>false</chCap2Visible>
+        <chValVisible>true</chValVisible>
+        <chVar2Visible>false</chVar2Visible>
         <chPosVisible>true</chPosVisible>
-        <chPos2Visible>true</chPos2Visible>
-        <chOfsVisible>false</chOfsVisible>
-        <chCurAVisible>false</chCurAVisible>
-        <chCurBVisible>false</chCurBVisible>
-      </BindDetailChInfoRec>
-      <BindDetailChInfoRec>
+        <chPos2Visible>false</chPos2Visible>
+        <chOfsVisible>true</chOfsVisible>
+        <chCurAVisible>true</chCurAVisible>
+        <chCurBVisible>true</chCurBVisible>
+      </BindDRInfoRec>
+      <BindDRInfoRec>
         <bChInfo_ChFontSize>12</bChInfo_ChFontSize>
         <chCapVisible>true</chCapVisible>
-        <chCap2Visible>true</chCap2Visible>
-        <chVarVisible>true</chVarVisible>
-        <chVar2Visible>true</chVar2Visible>
+        <chCap2Visible>false</chCap2Visible>
+        <chValVisible>true</chValVisible>
+        <chVar2Visible>false</chVar2Visible>
         <chPosVisible>true</chPosVisible>
-        <chPos2Visible>true</chPos2Visible>
-        <chOfsVisible>false</chOfsVisible>
-        <chCurAVisible>false</chCurAVisible>
-        <chCurBVisible>false</chCurBVisible>
-      </BindDetailChInfoRec>
+        <chPos2Visible>false</chPos2Visible>
+        <chOfsVisible>true</chOfsVisible>
+        <chCurAVisible>true</chCurAVisible>
+        <chCurBVisible>true</chCurBVisible>
+      </BindDRInfoRec>
+      <BindDRInfoRec>
+        <bChInfo_ChFontSize>12</bChInfo_ChFontSize>
+        <chCapVisible>true</chCapVisible>
+        <chCap2Visible>false</chCap2Visible>
+        <chValVisible>true</chValVisible>
+        <chVar2Visible>false</chVar2Visible>
+        <chPosVisible>true</chPosVisible>
+        <chPos2Visible>false</chPos2Visible>
+        <chOfsVisible>true</chOfsVisible>
+        <chCurAVisible>true</chCurAVisible>
+        <chCurBVisible>true</chCurBVisible>
+      </BindDRInfoRec>
+      <BindDRInfoRec>
+        <bChInfo_ChFontSize>12</bChInfo_ChFontSize>
+        <chCapVisible>true</chCapVisible>
+        <chCap2Visible>false</chCap2Visible>
+        <chValVisible>true</chValVisible>
+        <chVar2Visible>false</chVar2Visible>
+        <chPosVisible>true</chPosVisible>
+        <chPos2Visible>false</chPos2Visible>
+        <chOfsVisible>true</chOfsVisible>
+        <chCurAVisible>true</chCurAVisible>
+        <chCurBVisible>true</chCurBVisible>
+      </BindDRInfoRec>
+      <BindDRInfoRec>
+        <bChInfo_ChFontSize>12</bChInfo_ChFontSize>
+        <chCapVisible>true</chCapVisible>
+        <chCap2Visible>false</chCap2Visible>
+        <chValVisible>true</chValVisible>
+        <chVar2Visible>false</chVar2Visible>
+        <chPosVisible>true</chPosVisible>
+        <chPos2Visible>false</chPos2Visible>
+        <chOfsVisible>true</chOfsVisible>
+        <chCurAVisible>true</chCurAVisible>
+        <chCurBVisible>true</chCurBVisible>
+      </BindDRInfoRec>
+      <BindDRInfoRec>
+        <bChInfo_ChFontSize>12</bChInfo_ChFontSize>
+        <chCapVisible>true</chCapVisible>
+        <chCap2Visible>false</chCap2Visible>
+        <chValVisible>true</chValVisible>
+        <chVar2Visible>false</chVar2Visible>
+        <chPosVisible>true</chPosVisible>
+        <chPos2Visible>false</chPos2Visible>
+        <chOfsVisible>true</chOfsVisible>
+        <chCurAVisible>true</chCurAVisible>
+        <chCurBVisible>true</chCurBVisible>
+      </BindDRInfoRec>
+      <BindDRInfoRec>
+        <bChInfo_ChFontSize>12</bChInfo_ChFontSize>
+        <chCapVisible>true</chCapVisible>
+        <chCap2Visible>false</chCap2Visible>
+        <chValVisible>true</chValVisible>
+        <chVar2Visible>false</chVar2Visible>
+        <chPosVisible>true</chPosVisible>
+        <chPos2Visible>false</chPos2Visible>
+        <chOfsVisible>true</chOfsVisible>
+        <chCurAVisible>true</chCurAVisible>
+        <chCurBVisible>true</chCurBVisible>
+      </BindDRInfoRec>
+      <BindDRInfoRec>
+        <bChInfo_ChFontSize>12</bChInfo_ChFontSize>
+        <chCapVisible>true</chCapVisible>
+        <chCap2Visible>false</chCap2Visible>
+        <chValVisible>true</chValVisible>
+        <chVar2Visible>false</chVar2Visible>
+        <chPosVisible>true</chPosVisible>
+        <chPos2Visible>false</chPos2Visible>
+        <chOfsVisible>true</chOfsVisible>
+        <chCurAVisible>true</chCurAVisible>
+        <chCurBVisible>true</chCurBVisible>
+      </BindDRInfoRec>
     </bindChInfoRec>
     <bDisp1Show>true</bDisp1Show>
     <bDisp2Show>true</bDisp2Show>
@@ -841,14 +747,6 @@
     <bDisp2SelectedId>0</bDisp2SelectedId>
     <bDisp1ChoiceSelectedId>0</bDisp1ChoiceSelectedId>
     <bDisp2ChoiceSelectedId>0</bDisp2ChoiceSelectedId>
-    <bDispFontSizeIndex>1</bDispFontSizeIndex>
-    <bDispAverageIndex>0</bDispAverageIndex>
-    <bGraphInfo_GrFontSize>12</bGraphInfo_GrFontSize>
-    <bDisp1_FontSize>14</bDisp1_FontSize>
-    <bDisp2_FontSize>14</bDisp2_FontSize>
-    <bMenuFontSize_Small>false</bMenuFontSize_Small>
-    <bMenuFontSize_Medium>true</bMenuFontSize_Medium>
-    <bMenuFontSize_Large>false</bMenuFontSize_Large>
     <bMenuGridType_Dot>true</bMenuGridType_Dot>
     <bMenuGridType_Line>false</bMenuGridType_Line>
     <bMenuPixelSize_Small>false</bMenuPixelSize_Small>
@@ -856,29 +754,44 @@
     <bMenuPixelSize_Large>false</bMenuPixelSize_Large>
     <bMenuSmooth_On>true</bMenuSmooth_On>
     <bMenuSmooth_Off>false</bMenuSmooth_Off>
-    <bMenu8ch_Mode_On>false</bMenu8ch_Mode_On>
-    <bMenu8ch_Mode_Off>true</bMenu8ch_Mode_Off>
-    <btextNum_THD>50</btextNum_THD>
-  </bindChInfo>
+  </bindChInfoDR>
   <bCurCursor>true</bCurCursor>
-  <bTrgAuto>true</bTrgAuto>
-  <bTrgNormal>false</bTrgNormal>
-  <bTrgSingle>false</bTrgSingle>
+  <bTrgRisingEdge>true</bTrgRisingEdge>
+  <bTrgFallingEdge>false</bTrgFallingEdge>
   <bBackColorIndex>0</bBackColorIndex>
   <bSysColorIndex>0</bSysColorIndex>
   <bCurAColorIndex>2</bCurAColorIndex>
   <bCurBColorIndex>2</bCurBColorIndex>
   <bCurGrabColorIndex>3</bCurGrabColorIndex>
-  <bRecordLength>100000</bRecordLength>
-  <bNumberOfData>100000</bNumberOfData>
+  <bindLogData>
+    <bLogMakeLogFile>false</bLogMakeLogFile>
+    <bLogSavePath>D:\Desktop\abe実験\20250312_DPD\DPD</bLogSavePath>
+    <bLogScene>Scene_1</bLogScene>
+    <bLogFileName>Data_1</bLogFileName>
+    <bLogSaveInterval>true</bLogSaveInterval>
+    <bLogSaveIntervalHourValue>1</bLogSaveIntervalHourValue>
+    <bLogSaveIntervalMinValue>0</bLogSaveIntervalMinValue>
+    <bLogSaveIntervalSecValue>0</bLogSaveIntervalSecValue>
+    <bLogSaveSchedule>false</bLogSaveSchedule>
+    <bLogSaveScheduleHourValue>0</bLogSaveScheduleHourValue>
+    <bLogSaveScheduleMinValue>0</bLogSaveScheduleMinValue>
+    <bLogSaveScheduleSecValue>0</bLogSaveScheduleSecValue>
+  </bindLogData>
   <bCurRangeValue>100</bCurRangeValue>
-  <bHorValue>2</bHorValue>
-  <bHorValue_rough>2</bHorValue_rough>
+  <bHorValue>10</bHorValue>
+  <bHorValue_rough>10</bHorValue_rough>
   <bCurPosValue>0</bCurPosValue>
-  <bIndex_TrgNo>0</bIndex_TrgNo>
-  <bTrgPosValue>0</bTrgPosValue>
-  <wd6Dir>D:\Desktop\abe実験\20250312_DPD\DPD\data04\20250416</wd6Dir>
-  <cfgDir>C:\Users\Ikeda\Documents\mizo_expert4_program\テストモータ\20210112_8_プログラムver2でエンコーダ読めるようにする_エンコーダ読み取り部分修正</cfgDir>
+  <bSmpValue>0.5</bSmpValue>
+  <bMaxiHValue>3</bMaxiHValue>
+  <bMaxiMValue>0</bMaxiMValue>
+  <bTrgChSelectedIndex>0</bTrgChSelectedIndex>
+  <bTrgLevelValue>0</bTrgLevelValue>
+  <bTrgLevelValue_rough>0</bTrgLevelValue_rough>
+  <bTrgPosValue>50</bTrgPosValue>
+  <bTrgCheck>false</bTrgCheck>
+  <bTrgDelayValue>0</bTrgDelayValue>
+  <csvDir>C:\Program Files (x86)\Myway Plus\PE-ViewX\pe-viewx\</csvDir>
+  <schDir>C:\Program Files (x86)\Myway Plus\PE-ViewX\pe-viewx\</schDir>
   <bVarsList>
     <string>ad1</string>
     <string>ad2</string>
@@ -928,6 +841,7 @@
     <string>ModRatioU</string>
     <string>ModRatioV</string>
     <string>ModRatioW</string>
+    <string>Ref_Hand_Speed</string>
     <string>ref_Iq_direct1</string>
     <string>ref_Iq_direct2</string>
     <string>ref_Iq_direct3</string>
@@ -937,7 +851,6 @@
     <string>Ref_Iq_ref_direct</string>
     <string>Ref_wM_direct</string>
     <string>right_rotation_flag</string>
-    <string>speed_hand</string>
     <string>start_back1</string>
     <string>start_back2</string>
     <string>start_back3</string>
@@ -962,7 +875,6 @@
     <string>WAVE_am_TriAccCmd1</string>
     <string>WAVE_am_TriAccCmd2</string>
     <string>WAVE_am_TriAccCmd3</string>
-    <string>WAVE_check</string>
     <string>WAVE_ENC1</string>
     <string>WAVE_ENC2</string>
     <string>WAVE_ENC3</string>
@@ -1123,7 +1035,6 @@
     <string>WAVE_qm_TriAccCmd1</string>
     <string>WAVE_qm_TriAccCmd2</string>
     <string>WAVE_qm_TriAccCmd3</string>
-    <string>WAVE_state</string>
     <string>WAVE_tauL_dyn_2nd</string>
     <string>WAVE_tauLdyn1</string>
     <string>WAVE_tauLdyn2</string>
@@ -1252,5 +1163,4 @@
     <string>WAVE_WSZ</string>
     <string>Wr_Throth_check</string>
   </bVarsList>
-  <isTrace>false</isTrace>
-</BindWaveData>
+</BindDataRecorderData>
