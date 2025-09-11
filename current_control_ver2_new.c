@@ -696,6 +696,7 @@ typedef volatile struct Robot
   float Jl_calc; // 慣性行列の対角項
   float Jl_calc_z1;
   float Jl_calc_z2;
+  float Jl_calc_Wr;
   // Wr計算結果
   float ql_calc;
   float wl_calc;
@@ -5148,6 +5149,9 @@ void SetVoltReferences(Robot *robo)
 
 void CalcFDTDWr_QmrefInputType(Robot *robo)
 {
+  float Jl1 = axis1.Jl_calc_Wr;
+  float Jl2 = axis2.Jl_calc_Wr;
+  float Jl3 = axis3.Jl_calc_Wr;
   // 状態変数の定義
   static float wm_Z[3] = {0}, qm_Z[3] = {0}, qs_Z[3] = {0}, wl_Z[3] = {0}, ql_Z[3] = {0}, z_Z[3] = {0};
   static float wm_Z1[3] = {0}, qm_Z1[3] = {0}, qs_Z1[3] = {0}, wl_Z1[3] = {0}, ql_Z1[3] = {0}, z_Z1[3] = {0};
@@ -5157,9 +5161,9 @@ void CalcFDTDWr_QmrefInputType(Robot *robo)
     // 状態量の計算
     wm_Z[0] = Wr_sub[0].a11cf * wm_Z1[0] + Wr_sub[0].a12cf * qm_Z1[0] + Wr_sub[0].a13cf * qs_Z1[0] + Wr_sub[0].a14cf * wl_Z1[0] + Wr_sub[0].a15cf * ql_Z1[0] + Wr_sub[0].a16cf * z_Z1[0] + Wr_sub[0].b1cf * robo->qm_ref;
     qm_Z[0] = Wr_sub[0].a21cf * wm_Z1[0] + Wr_sub[0].a22cf * qm_Z1[0] + Wr_sub[0].a23cf * qs_Z1[0] + Wr_sub[0].a24cf * wl_Z1[0] + Wr_sub[0].a25cf * ql_Z1[0] + Wr_sub[0].a26cf * z_Z1[0] + Wr_sub[0].b2cf * robo->qm_ref;
-    qs_Z[0] = Wr_sub[0].a31cf * wm_Z1[0] + Wr_sub[0].a32cf * qm_Z1[0] + (Wr_sub[0].a33cf1 + Wr_sub[0].a33cf2 / axis1.Jl_calc) * qs_Z1[0] + (Wr_sub[0].a34cf1 + Wr_sub[0].a34cf2 / axis1.Jl_calc) * wl_Z1[0] + Wr_sub[0].a35cf * ql_Z1[0] + Wr_sub[0].a36cf * z_Z1[0] + Wr_sub[0].b3cf * robo->qm_ref;
-    wl_Z[0] = Wr_sub[0].a41cf * wm_Z1[0] + Wr_sub[0].a42cf * qm_Z1[0] + Wr_sub[0].a43cf / axis1.Jl_calc * qs_Z1[0] + (Wr_sub[0].a44cf1 + Wr_sub[0].a44cf2 / axis1.Jl_calc) * wl_Z1[0] + Wr_sub[0].a45cf * ql_Z1[0] + Wr_sub[0].a46cf * z_Z1[0] + Wr_sub[0].b4cf * robo->qm_ref;
-    ql_Z[0] = Wr_sub[0].a51cf * wm_Z1[0] + Wr_sub[0].a52cf * qm_Z1[0] + Wr_sub[0].a53cf / axis1.Jl_calc * qs_Z1[0] + (Wr_sub[0].a54cf1 + Wr_sub[0].a54cf2 / axis1.Jl_calc) * wl_Z1[0] + Wr_sub[0].a55cf * ql_Z1[0] + Wr_sub[0].a56cf * z_Z1[0] + Wr_sub[0].b5cf * robo->qm_ref;
+    qs_Z[0] = Wr_sub[0].a31cf * wm_Z1[0] + Wr_sub[0].a32cf * qm_Z1[0] + (Wr_sub[0].a33cf1 + Wr_sub[0].a33cf2 / Jl1) * qs_Z1[0] + (Wr_sub[0].a34cf1 + Wr_sub[0].a34cf2 / Jl1) * wl_Z1[0] + Wr_sub[0].a35cf * ql_Z1[0] + Wr_sub[0].a36cf * z_Z1[0] + Wr_sub[0].b3cf * robo->qm_ref;
+    wl_Z[0] = Wr_sub[0].a41cf * wm_Z1[0] + Wr_sub[0].a42cf * qm_Z1[0] + Wr_sub[0].a43cf / Jl1 * qs_Z1[0] + (Wr_sub[0].a44cf1 + Wr_sub[0].a44cf2 / Jl1) * wl_Z1[0] + Wr_sub[0].a45cf * ql_Z1[0] + Wr_sub[0].a46cf * z_Z1[0] + Wr_sub[0].b4cf * robo->qm_ref;
+    ql_Z[0] = Wr_sub[0].a51cf * wm_Z1[0] + Wr_sub[0].a52cf * qm_Z1[0] + Wr_sub[0].a53cf / Jl1 * qs_Z1[0] + (Wr_sub[0].a54cf1 + Wr_sub[0].a54cf2 / Jl1) * wl_Z1[0] + Wr_sub[0].a55cf * ql_Z1[0] + Wr_sub[0].a56cf * z_Z1[0] + Wr_sub[0].b5cf * robo->qm_ref;
     z_Z[0] = Wr_sub[0].a61cf * wm_Z1[0] + Wr_sub[0].a62cf * qm_Z1[0] + Wr_sub[0].a63cf * qs_Z1[0] + Wr_sub[0].a64cf * wl_Z1[0] + Wr_sub[0].a65cf * ql_Z1[0] + Wr_sub[0].a66cf * z_Z1[0] + Wr_sub[0].b6cf * robo->qm_ref;
 
     // 状態量の更新axis1.
@@ -5173,7 +5177,7 @@ void CalcFDTDWr_QmrefInputType(Robot *robo)
     // 計算結果の代入
     robo->ql_calc = robo->theta_rl_init + ql_Z[0];
     robo->wl_calc = wl_Z[0];
-    robo->al_calc = (robo->Ksn * qs_Z[0] - robo->Dln * wl_Z[0]) / robo->Jl_calc;
+    robo->al_calc = (robo->Ksn * qs_Z[0] - robo->Dln * wl_Z[0]) / robo->Jl_calc_Wr;
     robo->wm_calc = wm_Z[0];
   }
   else if (robo->BDN == BDN1)
@@ -5181,9 +5185,9 @@ void CalcFDTDWr_QmrefInputType(Robot *robo)
     // 状態量の計算
     wm_Z[1] = Wr_sub[1].a11cf * wm_Z1[1] + Wr_sub[1].a12cf * qm_Z1[1] + Wr_sub[1].a13cf * qs_Z1[1] + Wr_sub[1].a14cf * wl_Z1[1] + Wr_sub[1].a15cf * ql_Z1[1] + Wr_sub[1].a16cf * z_Z1[1] + Wr_sub[1].b1cf * axis2.qm_ref;
     qm_Z[1] = Wr_sub[1].a21cf * wm_Z1[1] + Wr_sub[1].a22cf * qm_Z1[1] + Wr_sub[1].a23cf * qs_Z1[1] + Wr_sub[1].a24cf * wl_Z1[1] + Wr_sub[1].a25cf * ql_Z1[1] + Wr_sub[1].a26cf * z_Z1[1] + Wr_sub[1].b2cf * axis2.qm_ref;
-    qs_Z[1] = Wr_sub[1].a31cf * wm_Z1[1] + Wr_sub[1].a32cf * qm_Z1[1] + (Wr_sub[1].a33cf1 + Wr_sub[1].a33cf2 / axis2.Jl_calc) * qs_Z1[1] + (Wr_sub[1].a34cf1 + Wr_sub[1].a34cf2 / axis2.Jl_calc) * wl_Z1[1] + Wr_sub[1].a35cf * ql_Z1[1] + Wr_sub[1].a36cf * z_Z1[1] + Wr_sub[1].b3cf * axis2.qm_ref;
-    wl_Z[1] = Wr_sub[1].a41cf * wm_Z1[1] + Wr_sub[1].a42cf * qm_Z1[1] + Wr_sub[1].a43cf / axis2.Jl_calc * qs_Z1[1] + (Wr_sub[1].a44cf1 + Wr_sub[1].a44cf2 / axis2.Jl_calc) * wl_Z1[1] + Wr_sub[1].a45cf * ql_Z1[1] + Wr_sub[1].a46cf * z_Z1[1] + Wr_sub[1].b4cf * axis2.qm_ref;
-    ql_Z[1] = Wr_sub[1].a51cf * wm_Z1[1] + Wr_sub[1].a52cf * qm_Z1[1] + Wr_sub[1].a53cf / axis2.Jl_calc * qs_Z1[1] + (Wr_sub[1].a54cf1 + Wr_sub[1].a54cf2 / axis2.Jl_calc) * wl_Z1[1] + Wr_sub[1].a55cf * ql_Z1[1] + Wr_sub[1].a56cf * z_Z1[1] + Wr_sub[1].b5cf * axis2.qm_ref;
+    qs_Z[1] = Wr_sub[1].a31cf * wm_Z1[1] + Wr_sub[1].a32cf * qm_Z1[1] + (Wr_sub[1].a33cf1 + Wr_sub[1].a33cf2 / Jl2) * qs_Z1[1] + (Wr_sub[1].a34cf1 + Wr_sub[1].a34cf2 / Jl2) * wl_Z1[1] + Wr_sub[1].a35cf * ql_Z1[1] + Wr_sub[1].a36cf * z_Z1[1] + Wr_sub[1].b3cf * axis2.qm_ref;
+    wl_Z[1] = Wr_sub[1].a41cf * wm_Z1[1] + Wr_sub[1].a42cf * qm_Z1[1] + Wr_sub[1].a43cf / Jl2 * qs_Z1[1] + (Wr_sub[1].a44cf1 + Wr_sub[1].a44cf2 / Jl2) * wl_Z1[1] + Wr_sub[1].a45cf * ql_Z1[1] + Wr_sub[1].a46cf * z_Z1[1] + Wr_sub[1].b4cf * axis2.qm_ref;
+    ql_Z[1] = Wr_sub[1].a51cf * wm_Z1[1] + Wr_sub[1].a52cf * qm_Z1[1] + Wr_sub[1].a53cf / Jl2 * qs_Z1[1] + (Wr_sub[1].a54cf1 + Wr_sub[1].a54cf2 / Jl2) * wl_Z1[1] + Wr_sub[1].a55cf * ql_Z1[1] + Wr_sub[1].a56cf * z_Z1[1] + Wr_sub[1].b5cf * axis2.qm_ref;
     z_Z[1] = Wr_sub[1].a61cf * wm_Z1[1] + Wr_sub[1].a62cf * qm_Z1[1] + Wr_sub[1].a63cf * qs_Z1[1] + Wr_sub[1].a64cf * wl_Z1[1] + Wr_sub[1].a65cf * ql_Z1[1] + Wr_sub[1].a66cf * z_Z1[1] + Wr_sub[1].b6cf * axis2.qm_ref;
 
     // 状態量の更新
@@ -5195,19 +5199,19 @@ void CalcFDTDWr_QmrefInputType(Robot *robo)
     z_Z1[1] = z_Z[1];
 
     // 計算結果の代入
-    axis2.ql_calc = axis2.theta_rl_init + ql_Z[1];
-    axis2.wl_calc = wl_Z[1];
-    axis2.al_calc = (axis2.Ksn * qs_Z[1] - axis2.Dln * wl_Z[1]) / axis2.Jl_calc;
-    axis2.wm_calc = wm_Z[1];
+    robo->ql_calc = robo->theta_rl_init + ql_Z[1];
+    robo->wl_calc = wl_Z[1];
+    robo->al_calc = (robo->Ksn * qs_Z[1] - robo->Dln * wl_Z[1]) / robo->Jl_calc_Wr;
+    robo->wm_calc = wm_Z[1];
   }
   else if (robo->BDN == BDN2)
   {
     // 状態量の計算
     wm_Z[2] = Wr_sub[2].a11cf * wm_Z1[2] + Wr_sub[2].a12cf * qm_Z1[2] + Wr_sub[2].a13cf * qs_Z1[2] + Wr_sub[2].a14cf * wl_Z1[2] + Wr_sub[2].a15cf * ql_Z1[2] + Wr_sub[2].a16cf * z_Z1[2] + Wr_sub[2].b1cf * robo->qm_ref;
     qm_Z[2] = Wr_sub[2].a21cf * wm_Z1[2] + Wr_sub[2].a22cf * qm_Z1[2] + Wr_sub[2].a23cf * qs_Z1[2] + Wr_sub[2].a24cf * wl_Z1[2] + Wr_sub[2].a25cf * ql_Z1[2] + Wr_sub[2].a26cf * z_Z1[2] + Wr_sub[2].b2cf * robo->qm_ref;
-    qs_Z[2] = Wr_sub[2].a31cf * wm_Z1[2] + Wr_sub[2].a32cf * qm_Z1[2] + (Wr_sub[2].a33cf1 + Wr_sub[2].a33cf2 / axis3.Jl_calc) * qs_Z1[2] + (Wr_sub[2].a34cf1 + Wr_sub[2].a34cf2 / axis3.Jl_calc) * wl_Z1[2] + Wr_sub[2].a35cf * ql_Z1[2] + Wr_sub[2].a36cf * z_Z1[2] + Wr_sub[2].b3cf * robo->qm_ref;
-    wl_Z[2] = Wr_sub[2].a41cf * wm_Z1[2] + Wr_sub[2].a42cf * qm_Z1[2] + Wr_sub[2].a43cf / axis3.Jl_calc * qs_Z1[2] + (Wr_sub[2].a44cf1 + Wr_sub[2].a44cf2 / axis3.Jl_calc) * wl_Z1[2] + Wr_sub[2].a45cf * ql_Z1[2] + Wr_sub[2].a46cf * z_Z1[2] + Wr_sub[2].b4cf * robo->qm_ref;
-    ql_Z[2] = Wr_sub[2].a51cf * wm_Z1[2] + Wr_sub[2].a52cf * qm_Z1[2] + Wr_sub[2].a53cf / axis3.Jl_calc * qs_Z1[2] + (Wr_sub[2].a54cf1 + Wr_sub[2].a54cf2 / axis3.Jl_calc) * wl_Z1[2] + Wr_sub[2].a55cf * ql_Z1[2] + Wr_sub[2].a56cf * z_Z1[2] + Wr_sub[2].b5cf * robo->qm_ref;
+    qs_Z[2] = Wr_sub[2].a31cf * wm_Z1[2] + Wr_sub[2].a32cf * qm_Z1[2] + (Wr_sub[2].a33cf1 + Wr_sub[2].a33cf2 / Jl3) * qs_Z1[2] + (Wr_sub[2].a34cf1 + Wr_sub[2].a34cf2 / Jl3) * wl_Z1[2] + Wr_sub[2].a35cf * ql_Z1[2] + Wr_sub[2].a36cf * z_Z1[2] + Wr_sub[2].b3cf * robo->qm_ref;
+    wl_Z[2] = Wr_sub[2].a41cf * wm_Z1[2] + Wr_sub[2].a42cf * qm_Z1[2] + Wr_sub[2].a43cf / Jl3 * qs_Z1[2] + (Wr_sub[2].a44cf1 + Wr_sub[2].a44cf2 / Jl3) * wl_Z1[2] + Wr_sub[2].a45cf * ql_Z1[2] + Wr_sub[2].a46cf * z_Z1[2] + Wr_sub[2].b4cf * robo->qm_ref;
+    ql_Z[2] = Wr_sub[2].a51cf * wm_Z1[2] + Wr_sub[2].a52cf * qm_Z1[2] + Wr_sub[2].a53cf / Jl3 * qs_Z1[2] + (Wr_sub[2].a54cf1 + Wr_sub[2].a54cf2 / Jl3) * wl_Z1[2] + Wr_sub[2].a55cf * ql_Z1[2] + Wr_sub[2].a56cf * z_Z1[2] + Wr_sub[2].b5cf * robo->qm_ref;
     z_Z[2] = Wr_sub[2].a61cf * wm_Z1[2] + Wr_sub[2].a62cf * qm_Z1[2] + Wr_sub[2].a63cf * qs_Z1[2] + Wr_sub[2].a64cf * wl_Z1[2] + Wr_sub[2].a65cf * ql_Z1[2] + Wr_sub[2].a66cf * z_Z1[2] + Wr_sub[2].b6cf * robo->qm_ref;
 
     // 状態量の更新
@@ -5221,7 +5225,7 @@ void CalcFDTDWr_QmrefInputType(Robot *robo)
     // 計算結果の代入
     robo->ql_calc = robo->theta_rl_init + ql_Z[2];
     robo->wl_calc = wl_Z[2];
-    robo->al_calc = (robo->Ksn * qs_Z[2] - robo->Dln * wl_Z[2]) / robo->Jl_calc;
+    robo->al_calc = (robo->Ksn * qs_Z[2] - robo->Dln * wl_Z[2]) / robo->Jl_calc_Wr;
     robo->wm_calc = wm_Z[2];
   }
   else
@@ -5480,9 +5484,9 @@ void CalcFDTDWr_WmcmdInputType(Robot *robo)
     // 状態量の計算
     wm_Z[0] = Wr_DPD[0].a11cf * wm_Z1[0] + Wr_DPD[0].a12cf * qm_Z1[0] + Wr_DPD[0].a13cf * qs_Z1[0] + Wr_DPD[0].a14cf * wl_Z1[0] + Wr_DPD[0].a15cf * ql_Z1[0] + Wr_DPD[0].a16cf * n_Z1[0] + Wr_DPD[0].a17cf * m_Z1[0] + Wr_DPD[0].b1cf * robo->wm_cmd;
     qm_Z[0] = Wr_DPD[0].a21cf * wm_Z1[0] + Wr_DPD[0].a22cf * qm_Z1[0] + Wr_DPD[0].a23cf * qs_Z1[0] + Wr_DPD[0].a24cf * wl_Z1[0] + Wr_DPD[0].a25cf * ql_Z1[0] + Wr_DPD[0].a26cf * n_Z1[0] + Wr_DPD[0].a27cf * m_Z1[0] + Wr_DPD[0].b2cf * robo->wm_cmd;
-    qs_Z[0] = Wr_DPD[0].a31cf * wm_Z1[0] + Wr_DPD[0].a32cf * qm_Z1[0] + (Wr_DPD[0].a33cf1 + Wr_DPD[0].a33cf2 / robo->Jl_calc) * qs_Z1[0] + (Wr_DPD[0].a34cf1 + Wr_DPD[0].a34cf2 / robo->Jl_calc) * wl_Z1[0] + Wr_DPD[0].a35cf * ql_Z1[0] + Wr_DPD[0].a36cf * n_Z1[0] + Wr_DPD[0].a37cf * m_Z1[0] + Wr_DPD[0].b3cf * robo->wm_cmd;
-    wl_Z[0] = Wr_DPD[0].a41cf * wm_Z1[0] + Wr_DPD[0].a42cf * qm_Z1[0] + Wr_DPD[0].a43cf / robo->Jl_calc * qs_Z1[0] + (Wr_DPD[0].a44cf1 + Wr_DPD[0].a44cf2 / robo->Jl_calc) * wl_Z1[0] + Wr_DPD[0].a45cf * ql_Z1[0] + Wr_DPD[0].a46cf * n_Z1[0] + Wr_DPD[0].a47cf * m_Z1[0] + Wr_DPD[0].b4cf * robo->wm_cmd;
-    ql_Z[0] = Wr_DPD[0].a51cf * wm_Z1[0] + Wr_DPD[0].a52cf * qm_Z1[0] + Wr_DPD[0].a53cf / robo->Jl_calc * qs_Z1[0] + (Wr_DPD[0].a54cf1 + Wr_DPD[0].a54cf2 / robo->Jl_calc) * wl_Z1[0] + Wr_DPD[0].a55cf * ql_Z1[0] + Wr_DPD[0].a56cf * n_Z1[0] + Wr_DPD[0].a57cf * m_Z1[0] + Wr_DPD[0].b5cf * robo->wm_cmd;
+    qs_Z[0] = Wr_DPD[0].a31cf * wm_Z1[0] + Wr_DPD[0].a32cf * qm_Z1[0] + (Wr_DPD[0].a33cf1 + Wr_DPD[0].a33cf2 / robo->Jl_calc_Wr) * qs_Z1[0] + (Wr_DPD[0].a34cf1 + Wr_DPD[0].a34cf2 / robo->Jl_calc_Wr) * wl_Z1[0] + Wr_DPD[0].a35cf * ql_Z1[0] + Wr_DPD[0].a36cf * n_Z1[0] + Wr_DPD[0].a37cf * m_Z1[0] + Wr_DPD[0].b3cf * robo->wm_cmd;
+    wl_Z[0] = Wr_DPD[0].a41cf * wm_Z1[0] + Wr_DPD[0].a42cf * qm_Z1[0] + Wr_DPD[0].a43cf / robo->Jl_calc_Wr * qs_Z1[0] + (Wr_DPD[0].a44cf1 + Wr_DPD[0].a44cf2 / robo->Jl_calc_Wr) * wl_Z1[0] + Wr_DPD[0].a45cf * ql_Z1[0] + Wr_DPD[0].a46cf * n_Z1[0] + Wr_DPD[0].a47cf * m_Z1[0] + Wr_DPD[0].b4cf * robo->wm_cmd;
+    ql_Z[0] = Wr_DPD[0].a51cf * wm_Z1[0] + Wr_DPD[0].a52cf * qm_Z1[0] + Wr_DPD[0].a53cf / robo->Jl_calc_Wr * qs_Z1[0] + (Wr_DPD[0].a54cf1 + Wr_DPD[0].a54cf2 / robo->Jl_calc_Wr) * wl_Z1[0] + Wr_DPD[0].a55cf * ql_Z1[0] + Wr_DPD[0].a56cf * n_Z1[0] + Wr_DPD[0].a57cf * m_Z1[0] + Wr_DPD[0].b5cf * robo->wm_cmd;
     n_Z[0] = Wr_DPD[0].a61cf * wm_Z1[0] + Wr_DPD[0].a62cf * qm_Z1[0] + Wr_DPD[0].a63cf * qs_Z1[0] + Wr_DPD[0].a64cf * wl_Z1[0] + Wr_DPD[0].a65cf * ql_Z1[0] + Wr_DPD[0].a66cf * n_Z1[0] + Wr_DPD[0].a67cf * m_Z1[0] + Wr_DPD[0].b6cf * robo->wm_cmd;
     m_Z[0] = Wr_DPD[0].a71cf * wm_Z1[0] + Wr_DPD[0].a72cf * qm_Z1[0] + Wr_DPD[0].a73cf * qs_Z1[0] + Wr_DPD[0].a74cf * wl_Z1[0] + Wr_DPD[0].a75cf * ql_Z1[0] + Wr_DPD[0].a76cf * n_Z1[0] + Wr_DPD[0].a77cf * m_Z1[0] + Wr_DPD[0].b7cf * robo->wm_cmd;
 
@@ -5498,7 +5502,7 @@ void CalcFDTDWr_WmcmdInputType(Robot *robo)
     // 計算結果の代入
     robo->ql_calc = robo->theta_rl_init + ql_Z[0];
     robo->wl_calc = wl_Z[0];
-    robo->al_calc = (robo->Ksn * qs_Z[0] - robo->Dln * wl_Z[0]) / robo->Jl_calc;
+    robo->al_calc = (robo->Ksn * qs_Z[0] - robo->Dln * wl_Z[0]) / robo->Jl_calc_Wr;
     robo->wm_calc = wm_Z[0];
   }
   else if (robo->BDN == BDN1)
@@ -5506,9 +5510,9 @@ void CalcFDTDWr_WmcmdInputType(Robot *robo)
     // 状態量の計算
     wm_Z[1] = Wr_DPD[1].a11cf * wm_Z1[1] + Wr_DPD[1].a12cf * qm_Z1[1] + Wr_DPD[1].a13cf * qs_Z1[1] + Wr_DPD[1].a14cf * wl_Z1[1] + Wr_DPD[1].a15cf * ql_Z1[1] + Wr_DPD[1].a16cf * n_Z1[1] + Wr_DPD[1].a17cf * m_Z1[1] + Wr_DPD[1].b1cf * robo->wm_cmd;
     qm_Z[1] = Wr_DPD[1].a21cf * wm_Z1[1] + Wr_DPD[1].a22cf * qm_Z1[1] + Wr_DPD[1].a23cf * qs_Z1[1] + Wr_DPD[1].a24cf * wl_Z1[1] + Wr_DPD[1].a25cf * ql_Z1[1] + Wr_DPD[1].a26cf * n_Z1[1] + Wr_DPD[1].a27cf * m_Z1[1] + Wr_DPD[1].b2cf * robo->wm_cmd;
-    qs_Z[1] = Wr_DPD[1].a31cf * wm_Z1[1] + Wr_DPD[1].a32cf * qm_Z1[1] + (Wr_DPD[1].a33cf1 + Wr_DPD[1].a33cf2 / robo->Jl_calc) * qs_Z1[1] + (Wr_DPD[1].a34cf1 + Wr_DPD[1].a34cf2 / robo->Jl_calc) * wl_Z1[1] + Wr_DPD[1].a35cf * ql_Z1[1] + Wr_DPD[1].a36cf * n_Z1[1] + Wr_DPD[1].a37cf * m_Z1[1] + Wr_DPD[1].b3cf * robo->wm_cmd;
-    wl_Z[1] = Wr_DPD[1].a41cf * wm_Z1[1] + Wr_DPD[1].a42cf * qm_Z1[1] + Wr_DPD[1].a43cf / robo->Jl_calc * qs_Z1[1] + (Wr_DPD[1].a44cf1 + Wr_DPD[1].a44cf2 / robo->Jl_calc) * wl_Z1[1] + Wr_DPD[1].a45cf * ql_Z1[1] + Wr_DPD[1].a46cf * n_Z1[1] + Wr_DPD[1].a47cf * m_Z1[1] + Wr_DPD[1].b4cf * robo->wm_cmd;
-    ql_Z[1] = Wr_DPD[1].a51cf * wm_Z1[1] + Wr_DPD[1].a52cf * qm_Z1[1] + Wr_DPD[1].a53cf / robo->Jl_calc * qs_Z1[1] + (Wr_DPD[1].a54cf1 + Wr_DPD[1].a54cf2 / robo->Jl_calc) * wl_Z1[1] + Wr_DPD[1].a55cf * ql_Z1[1] + Wr_DPD[1].a56cf * n_Z1[1] + Wr_DPD[1].a57cf * m_Z1[1] + Wr_DPD[1].b5cf * robo->wm_cmd;
+    qs_Z[1] = Wr_DPD[1].a31cf * wm_Z1[1] + Wr_DPD[1].a32cf * qm_Z1[1] + (Wr_DPD[1].a33cf1 + Wr_DPD[1].a33cf2 / robo->Jl_calc_Wr) * qs_Z1[1] + (Wr_DPD[1].a34cf1 + Wr_DPD[1].a34cf2 / robo->Jl_calc_Wr) * wl_Z1[1] + Wr_DPD[1].a35cf * ql_Z1[1] + Wr_DPD[1].a36cf * n_Z1[1] + Wr_DPD[1].a37cf * m_Z1[1] + Wr_DPD[1].b3cf * robo->wm_cmd;
+    wl_Z[1] = Wr_DPD[1].a41cf * wm_Z1[1] + Wr_DPD[1].a42cf * qm_Z1[1] + Wr_DPD[1].a43cf / robo->Jl_calc_Wr * qs_Z1[1] + (Wr_DPD[1].a44cf1 + Wr_DPD[1].a44cf2 / robo->Jl_calc_Wr) * wl_Z1[1] + Wr_DPD[1].a45cf * ql_Z1[1] + Wr_DPD[1].a46cf * n_Z1[1] + Wr_DPD[1].a47cf * m_Z1[1] + Wr_DPD[1].b4cf * robo->wm_cmd;
+    ql_Z[1] = Wr_DPD[1].a51cf * wm_Z1[1] + Wr_DPD[1].a52cf * qm_Z1[1] + Wr_DPD[1].a53cf / robo->Jl_calc_Wr * qs_Z1[1] + (Wr_DPD[1].a54cf1 + Wr_DPD[1].a54cf2 / robo->Jl_calc_Wr) * wl_Z1[1] + Wr_DPD[1].a55cf * ql_Z1[1] + Wr_DPD[1].a56cf * n_Z1[1] + Wr_DPD[1].a57cf * m_Z1[1] + Wr_DPD[1].b5cf * robo->wm_cmd;
     n_Z[1] = Wr_DPD[1].a61cf * wm_Z1[1] + Wr_DPD[1].a62cf * qm_Z1[1] + Wr_DPD[1].a63cf * qs_Z1[1] + Wr_DPD[1].a64cf * wl_Z1[1] + Wr_DPD[1].a65cf * ql_Z1[1] + Wr_DPD[1].a66cf * n_Z1[1] + Wr_DPD[1].a67cf * m_Z1[1] + Wr_DPD[1].b6cf * robo->wm_cmd;
     m_Z[1] = Wr_DPD[1].a71cf * wm_Z1[1] + Wr_DPD[1].a72cf * qm_Z1[1] + Wr_DPD[1].a73cf * qs_Z1[1] + Wr_DPD[1].a74cf * wl_Z1[1] + Wr_DPD[1].a75cf * ql_Z1[1] + Wr_DPD[1].a76cf * n_Z1[1] + Wr_DPD[1].a77cf * m_Z1[1] + Wr_DPD[1].b7cf * robo->wm_cmd;
 
@@ -5524,7 +5528,7 @@ void CalcFDTDWr_WmcmdInputType(Robot *robo)
     // 計算結果の代入
     robo->ql_calc = robo->theta_rl_init + ql_Z[1];
     robo->wl_calc = wl_Z[1];
-    robo->al_calc = (robo->Ksn * qs_Z[1] - robo->Dln * wl_Z[1]) / robo->Jl_calc;
+    robo->al_calc = (robo->Ksn * qs_Z[1] - robo->Dln * wl_Z[1]) / robo->Jl_calc_Wr;
     robo->wm_calc = wm_Z[1];
   }
   else if (robo->BDN == BDN2)
@@ -5532,9 +5536,9 @@ void CalcFDTDWr_WmcmdInputType(Robot *robo)
     // 状態量の計算
     wm_Z[2] = Wr_DPD[2].a11cf * wm_Z1[2] + Wr_DPD[2].a12cf * qm_Z1[2] + Wr_DPD[2].a13cf * qs_Z1[2] + Wr_DPD[2].a14cf * wl_Z1[2] + Wr_DPD[2].a15cf * ql_Z1[2] + Wr_DPD[2].a16cf * n_Z1[2] + Wr_DPD[2].a17cf * m_Z1[2] + Wr_DPD[2].b1cf * robo->wm_cmd;
     qm_Z[2] = Wr_DPD[2].a21cf * wm_Z1[2] + Wr_DPD[2].a22cf * qm_Z1[2] + Wr_DPD[2].a23cf * qs_Z1[2] + Wr_DPD[2].a24cf * wl_Z1[2] + Wr_DPD[2].a25cf * ql_Z1[2] + Wr_DPD[2].a26cf * n_Z1[2] + Wr_DPD[2].a27cf * m_Z1[2] + Wr_DPD[2].b2cf * robo->wm_cmd;
-    qs_Z[2] = Wr_DPD[2].a31cf * wm_Z1[2] + Wr_DPD[2].a32cf * qm_Z1[2] + (Wr_DPD[2].a33cf1 + Wr_DPD[2].a33cf2 / robo->Jl_calc) * qs_Z1[2] + (Wr_DPD[2].a34cf1 + Wr_DPD[2].a34cf2 / robo->Jl_calc) * wl_Z1[2] + Wr_DPD[2].a35cf * ql_Z1[2] + Wr_DPD[2].a36cf * n_Z1[2] + Wr_DPD[2].a37cf * m_Z1[2] + Wr_DPD[2].b3cf * robo->wm_cmd;
-    wl_Z[2] = Wr_DPD[2].a41cf * wm_Z1[2] + Wr_DPD[2].a42cf * qm_Z1[2] + Wr_DPD[2].a43cf / robo->Jl_calc * qs_Z1[2] + (Wr_DPD[2].a44cf1 + Wr_DPD[2].a44cf2 / robo->Jl_calc) * wl_Z1[2] + Wr_DPD[2].a45cf * ql_Z1[2] + Wr_DPD[2].a46cf * n_Z1[2] + Wr_DPD[2].a47cf * m_Z1[2] + Wr_DPD[2].b4cf * robo->wm_cmd;
-    ql_Z[2] = Wr_DPD[2].a51cf * wm_Z1[2] + Wr_DPD[2].a52cf * qm_Z1[2] + Wr_DPD[2].a53cf / robo->Jl_calc * qs_Z1[2] + (Wr_DPD[2].a54cf1 + Wr_DPD[2].a54cf2 / robo->Jl_calc) * wl_Z1[2] + Wr_DPD[2].a55cf * ql_Z1[2] + Wr_DPD[2].a56cf * n_Z1[2] + Wr_DPD[2].a57cf * m_Z1[2] + Wr_DPD[2].b5cf * robo->wm_cmd;
+    qs_Z[2] = Wr_DPD[2].a31cf * wm_Z1[2] + Wr_DPD[2].a32cf * qm_Z1[2] + (Wr_DPD[2].a33cf1 + Wr_DPD[2].a33cf2 / robo->Jl_calc_Wr) * qs_Z1[2] + (Wr_DPD[2].a34cf1 + Wr_DPD[2].a34cf2 / robo->Jl_calc_Wr) * wl_Z1[2] + Wr_DPD[2].a35cf * ql_Z1[2] + Wr_DPD[2].a36cf * n_Z1[2] + Wr_DPD[2].a37cf * m_Z1[2] + Wr_DPD[2].b3cf * robo->wm_cmd;
+    wl_Z[2] = Wr_DPD[2].a41cf * wm_Z1[2] + Wr_DPD[2].a42cf * qm_Z1[2] + Wr_DPD[2].a43cf / robo->Jl_calc_Wr * qs_Z1[2] + (Wr_DPD[2].a44cf1 + Wr_DPD[2].a44cf2 / robo->Jl_calc_Wr) * wl_Z1[2] + Wr_DPD[2].a45cf * ql_Z1[2] + Wr_DPD[2].a46cf * n_Z1[2] + Wr_DPD[2].a47cf * m_Z1[2] + Wr_DPD[2].b4cf * robo->wm_cmd;
+    ql_Z[2] = Wr_DPD[2].a51cf * wm_Z1[2] + Wr_DPD[2].a52cf * qm_Z1[2] + Wr_DPD[2].a53cf / robo->Jl_calc_Wr * qs_Z1[2] + (Wr_DPD[2].a54cf1 + Wr_DPD[2].a54cf2 / robo->Jl_calc_Wr) * wl_Z1[2] + Wr_DPD[2].a55cf * ql_Z1[2] + Wr_DPD[2].a56cf * n_Z1[2] + Wr_DPD[2].a57cf * m_Z1[2] + Wr_DPD[2].b5cf * robo->wm_cmd;
     n_Z[2] = Wr_DPD[2].a61cf * wm_Z1[2] + Wr_DPD[2].a62cf * qm_Z1[2] + Wr_DPD[2].a63cf * qs_Z1[2] + Wr_DPD[2].a64cf * wl_Z1[2] + Wr_DPD[2].a65cf * ql_Z1[2] + Wr_DPD[2].a66cf * n_Z1[2] + Wr_DPD[2].a67cf * m_Z1[2] + Wr_DPD[2].b6cf * robo->wm_cmd;
     m_Z[2] = Wr_DPD[2].a71cf * wm_Z1[2] + Wr_DPD[2].a72cf * qm_Z1[2] + Wr_DPD[2].a73cf * qs_Z1[2] + Wr_DPD[2].a74cf * wl_Z1[2] + Wr_DPD[2].a75cf * ql_Z1[2] + Wr_DPD[2].a76cf * n_Z1[2] + Wr_DPD[2].a77cf * m_Z1[2] + Wr_DPD[2].b7cf * robo->wm_cmd;
 
@@ -5550,7 +5554,7 @@ void CalcFDTDWr_WmcmdInputType(Robot *robo)
     // 計算結果の代入
     robo->ql_calc = robo->theta_rl_init + ql_Z[2];
     robo->wl_calc = wl_Z[2];
-    robo->al_calc = (robo->Ksn * qs_Z[2] - robo->Dln * wl_Z[2]) / robo->Jl_calc;
+    robo->al_calc = (robo->Ksn * qs_Z[2] - robo->Dln * wl_Z[2]) / robo->Jl_calc_Wr;
     robo->wm_calc = wm_Z[2];
   }
   else
@@ -6249,85 +6253,52 @@ void CalcTauLDyn(Robot axis[])
 
   // ラグランジュ法に基づく動力学
   // 慣性項
-  float H11 = 0.0;
-  float H12 = 0.0;
-  float H13 = 0.0;
-  float H21 = 0.0;
-  float H22 = 0.0;
-  float H23 = 0.0;
-  float H31 = 0.0;
-  float H32 = 0.0;
-  float H33 = 0.0;
+  static float H11 = 0.0;
+  static float H12 = 0.0;
+  static float H13 = 0.0;
+  static float H21 = 0.0;
+  static float H22 = 0.0;
+  static float H23 = 0.0;
+  static float H31 = 0.0;
+  static float H32 = 0.0;
+  static float H33 = 0.0;
   // 遠心力項・コリオリ力項
-  float b111 = 0.0;
-  float b112 = 0.0;
-  float b113 = 0.0;
-  float b121 = 0.0;
-  float b122 = 0.0;
-  float b123 = 0.0;
-  float b131 = 0.0;
-  float b132 = 0.0;
-  float b133 = 0.0;
-  float b211 = 0.0;
-  float b212 = 0.0;
-  float b213 = 0.0;
-  float b221 = 0.0;
-  float b222 = 0.0;
-  float b223 = 0.0;
-  float b231 = 0.0;
-  float b232 = 0.0;
-  float b233 = 0.0;
-  float b311 = 0.0;
-  float b312 = 0.0;
-  float b313 = 0.0;
-  float b321 = 0.0;
-  float b322 = 0.0;
-  float b323 = 0.0;
-  float b331 = 0.0;
-  float b332 = 0.0;
-  float b333 = 0.0;
+  static float b111 = 0.0;
+  static float b112 = 0.0;
+  static float b113 = 0.0;
+  static float b121 = 0.0;
+  static float b122 = 0.0;
+  static float b123 = 0.0;
+  static float b131 = 0.0;
+  static float b132 = 0.0;
+  static float b133 = 0.0;
+  static float b211 = 0.0;
+  static float b212 = 0.0;
+  static float b213 = 0.0;
+  static float b221 = 0.0;
+  static float b222 = 0.0;
+  static float b223 = 0.0;
+  static float b231 = 0.0;
+  static float b232 = 0.0;
+  static float b233 = 0.0;
+  static float b311 = 0.0;
+  static float b312 = 0.0;
+  static float b313 = 0.0;
+  static float b321 = 0.0;
+  static float b322 = 0.0;
+  static float b323 = 0.0;
+  static float b331 = 0.0;
+  static float b332 = 0.0;
+  static float b333 = 0.0;
   // 重力項
-  float G1 = 0.0;
-  float G2 = 0.0;
-  float G3 = 0.0;
-
-  // 外乱トルクを計算したいので慣性行列の主対角成分はコメントアウト
-  // H11 =
-  //     dyn.H11p1
-  //   + dyn.H11p2*S2
-  //   + dyn.H11p3*C2233
-  //   + S3*
-  //   (
-  //       dyn.H11p4*S2
-  //     + dyn.H11p5*C2
-  //     + dyn.H11p6
-  //   )
-  //   + dyn.H11p7*S2233
-  //   + dyn.H11p8*S223
-  //   + C3*
-  //   (
-  //       dyn.H11p9*S2
-  //     + dyn.H11p10*C2
-  //     + dyn.H11p11
-  //   )
-  //   + dyn.H11p12*C223
-  //   + dyn.H11p13*C22;
+  static float G1 = 0.0;
+  static float G2 = 0.0;
+  static float G3 = 0.0;
 
   H12 = -C2 * dyn.H12p1;
-
   H21 = H12;
-
-  // 外乱トルクを計算したいので慣性行列の主対角成分はコメントアウト
-  // H22= dyn.H22p1
-  //   + dyn.H22p2*C3
-  //   + dyn.H22p3*S3;
-
   H23 = dyn.H23p1 + dyn.H23p2 * S3 + dyn.H23p3 * C3;
-
   H32 = H23;
-
-  // 外乱トルクを計算したいので慣性行列の主対角成分はコメントアウト
-  // H33 = dyn.H33p1;
 
   b122 = S2 * dyn.b122p1;
   b112 = dyn.b112p1 * S2233 + dyn.b112p2 * C2233 + dyn.b112p3 * S22 + dyn.b112p4 * S223 + dyn.b112p5 * C23 + dyn.b112p6 * C2 + dyn.b112p7 * S23 + dyn.b112p8 * C223;
@@ -6370,10 +6341,6 @@ void CalcTauLDyn(Robot axis[])
   axis3.tauLdyn_z2 = axis3.tauLdyn_z1;
   axis3.tauLdyn_z1 = axis3.tauLdyn;
   axis3.tauLdyn = H32 * axis2.al_calc + b311 * (axis1.wl_calc * axis1.wl_calc) + b322 * (axis2.wl_calc * axis2.wl_calc) + G3;
-  // Jlの計算
-  // axis1.Jl_calc = H11;
-  // axis2.Jl_calc = H22;
-  // axis3.Jl_calc = H33;
 
   // 動力学トルクの計算(3軸同時、簡略化)
   // axis1.tauLdyn = H11*axis1.al_calc + H12*axis2.al_calc + b122*powf(axis2.wl_calc,2) + b112*axis1.wl_calc*axis2.wl_calc + b113*axis1.wl_calc*axis3.wl_calc;
@@ -6389,11 +6356,15 @@ void CalcTauLDyn(Robot axis[])
   // *tauLdyn1 = H11*a1 + b111*powf(w1,2);
   // *tauLdyn2 = 0.0;
   // *tauLdyn3 = 0.0;
+
+  // 外乱トルクを計算したいので慣性行列の主対角成分はコメントアウト
+  axis1.Jl_calc_Wr = dyn.H11p1 + dyn.H11p2 * S2 + dyn.H11p3 * C2233 + S3 * (dyn.H11p4 * S2 + dyn.H11p5 * C2 + dyn.H11p6) + dyn.H11p7 * S2233 + dyn.H11p8 * S223 + C3 * (dyn.H11p9 * S2 + dyn.H11p10 * C2 + dyn.H11p11) + dyn.H11p12 * C223 + dyn.H11p13 * C22;
+  axis2.Jl_calc_Wr = dyn.H22p1 + dyn.H22p2 * C3 + dyn.H22p3 * S3;
+  axis3.Jl_calc_Wr = dyn.H33p1;
 }
 
 void CalcJl(Robot axis[])
 {
-
   // 三角関数の定義
   float C1 = 0.0;
   float C2 = 0.0;
@@ -6433,14 +6404,14 @@ void CalcJl(Robot axis[])
   H33 = dyn.H33p1;
 
   // Jlの計算
-  axis1.Jl_calc_z2 = axis1.Jl_calc_z1;
-  axis1.Jl_calc_z1 = axis1.Jl_calc;
+  // axis1.Jl_calc_z2 = axis1.Jl_calc_z1;
+  // axis1.Jl_calc_z1 = axis1.Jl_calc;
+  // axis2.Jl_calc_z2 = axis2.Jl_calc_z1;
+  // axis2.Jl_calc_z1 = axis2.Jl_calc;
+  // axis3.Jl_calc_z2 = axis3.Jl_calc_z1;
+  // axis3.Jl_calc_z1 = axis3.Jl_calc;
   axis1.Jl_calc = H11;
-  axis2.Jl_calc_z2 = axis2.Jl_calc_z1;
-  axis2.Jl_calc_z1 = axis2.Jl_calc;
   axis2.Jl_calc = H22;
-  axis3.Jl_calc_z2 = axis3.Jl_calc_z1;
-  axis3.Jl_calc_z1 = axis3.Jl_calc;
   axis3.Jl_calc = H33;
 }
 
@@ -6468,6 +6439,7 @@ void CalcGravIcmp(Robot axis[])
   // axis2.tauLdyn = dyn.G2p1*S2 +dyn.G2p2*S23 +dyn.G2p3*C23;
   // axis3.tauLdyn = dyn.G3p1*S23 +dyn.G3p2*C23;
 }
+
 void CalcDynamicsInit(int flag_dyn_payload)
 {
   // 動力学パラメータ
