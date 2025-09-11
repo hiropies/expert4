@@ -227,6 +227,10 @@ volatile float WAVE_tauLdyn3; // [Nm] 動力学外乱トルク
 volatile float WAVE_Jl_calc1; // [kgm^2] 動力学によるJl計算値
 volatile float WAVE_Jl_calc2; // [kgm^2] 動力学によるJl計算値
 volatile float WAVE_Jl_calc3; // [kgm^2] 動力学によるJl計算値
+// 動力学によるJl計算値
+volatile float WAVE_Jl_Wr1; // [kgm^2] 動力学によるJl計算値
+volatile float WAVE_Jl_Wr2; // [kgm^2] 動力学によるJl計算値
+volatile float WAVE_Jl_Wr3; // [kgm^2] 動力学によるJl計算値
 
 // 　負荷側情報計算関数　計算結果
 volatile float WAVE_al_calc1 = 0.0;
@@ -2079,6 +2083,10 @@ interrupt void ControlFunction(void)
   WAVE_Jl_calc1 = axis1.Jl_calc;
   WAVE_Jl_calc2 = axis2.Jl_calc;
   WAVE_Jl_calc3 = axis3.Jl_calc;
+  
+  WAVE_Jl_Wr1 = axis1.Jl_calc_Wr;
+  WAVE_Jl_Wr2 = axis2.Jl_calc_Wr;
+  WAVE_Jl_Wr3 = axis3.Jl_calc_Wr;
 
   WAVE_al_calc1 = axis1.al_calc;
   WAVE_wl_calc1 = axis1.wl_calc;
