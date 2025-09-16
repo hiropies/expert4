@@ -2083,7 +2083,7 @@ interrupt void ControlFunction(void)
   WAVE_Jl_calc1 = axis1.Jl_calc;
   WAVE_Jl_calc2 = axis2.Jl_calc;
   WAVE_Jl_calc3 = axis3.Jl_calc;
-  
+
   WAVE_Jl_Wr1 = axis1.Jl_calc_Wr;
   WAVE_Jl_Wr2 = axis2.Jl_calc_Wr;
   WAVE_Jl_Wr3 = axis3.Jl_calc_Wr;
@@ -6390,16 +6390,27 @@ void CalcJl(Robot axis[])
   float S223 = 0.0;
   float S2233 = 0.0;
 
-  C2 = cos(axis2.ql);
-  C3 = cos(axis3.ql);
-  C22 = cos(2 * axis2.ql);
-  C223 = cos(2 * axis2.ql + axis3.ql);
-  C2233 = cos(2 * axis2.ql + 2 * axis3.ql);
+  // Wr出力確認用　ql_calcからJLを計算する
+  C2 = cos(axis2.ql_calc);
+  C3 = cos(axis3.ql_calc);
+  C22 = cos(2 * axis2.ql_calc);
+  C223 = cos(2 * axis2.ql_calc + axis3.ql_calc);
+  C2233 = cos(2 * axis2.ql_calc + 2 * axis3.ql_calc);
+  S2 = sin(axis2.ql_calc);
+  S3 = sin(axis3.ql_calc);
+  S223 = sin(2 * axis2.ql_calc + axis3.ql_calc);
+  S2233 = sin(2 * axis2.ql_calc + 2 * axis3.ql_calc);
 
-  S2 = sin(axis2.ql);
-  S3 = sin(axis3.ql);
-  S223 = sin(2 * axis2.ql + axis3.ql);
-  S2233 = sin(2 * axis2.ql + 2 * axis3.ql);
+  // 実験用　qlからJLを計算する
+  // C2 = cos(axis2.ql);
+  // C3 = cos(axis3.ql);
+  // C22 = cos(2 * axis2.ql);
+  // C223 = cos(2 * axis2.ql + axis3.ql);
+  // C2233 = cos(2 * axis2.ql + 2 * axis3.ql);
+  // S2 = sin(axis2.ql);
+  // S3 = sin(axis3.ql);
+  // S223 = sin(2 * axis2.ql + axis3.ql);
+  // S2233 = sin(2 * axis2.ql + 2 * axis3.ql);
 
   // ラグランジュ法に基づく動力学
   // 慣性項
