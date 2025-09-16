@@ -5157,9 +5157,6 @@ void SetVoltReferences(Robot *robo)
 
 void CalcFDTDWr_QmrefInputType(Robot *robo)
 {
-  float Jl1 = axis1.Jl_calc_Wr;
-  float Jl2 = axis2.Jl_calc_Wr;
-  float Jl3 = axis3.Jl_calc_Wr;
   // 状態変数の定義
   static float wm_Z[3] = {0}, qm_Z[3] = {0}, qs_Z[3] = {0}, wl_Z[3] = {0}, ql_Z[3] = {0}, z_Z[3] = {0};
   static float wm_Z1[3] = {0}, qm_Z1[3] = {0}, qs_Z1[3] = {0}, wl_Z1[3] = {0}, ql_Z1[3] = {0}, z_Z1[3] = {0};
@@ -5169,9 +5166,9 @@ void CalcFDTDWr_QmrefInputType(Robot *robo)
     // 状態量の計算
     wm_Z[0] = Wr_sub[0].a11cf * wm_Z1[0] + Wr_sub[0].a12cf * qm_Z1[0] + Wr_sub[0].a13cf * qs_Z1[0] + Wr_sub[0].a14cf * wl_Z1[0] + Wr_sub[0].a15cf * ql_Z1[0] + Wr_sub[0].a16cf * z_Z1[0] + Wr_sub[0].b1cf * robo->qm_ref;
     qm_Z[0] = Wr_sub[0].a21cf * wm_Z1[0] + Wr_sub[0].a22cf * qm_Z1[0] + Wr_sub[0].a23cf * qs_Z1[0] + Wr_sub[0].a24cf * wl_Z1[0] + Wr_sub[0].a25cf * ql_Z1[0] + Wr_sub[0].a26cf * z_Z1[0] + Wr_sub[0].b2cf * robo->qm_ref;
-    qs_Z[0] = Wr_sub[0].a31cf * wm_Z1[0] + Wr_sub[0].a32cf * qm_Z1[0] + (Wr_sub[0].a33cf1 + Wr_sub[0].a33cf2 / Jl1) * qs_Z1[0] + (Wr_sub[0].a34cf1 + Wr_sub[0].a34cf2 / Jl1) * wl_Z1[0] + Wr_sub[0].a35cf * ql_Z1[0] + Wr_sub[0].a36cf * z_Z1[0] + Wr_sub[0].b3cf * robo->qm_ref;
-    wl_Z[0] = Wr_sub[0].a41cf * wm_Z1[0] + Wr_sub[0].a42cf * qm_Z1[0] + Wr_sub[0].a43cf / Jl1 * qs_Z1[0] + (Wr_sub[0].a44cf1 + Wr_sub[0].a44cf2 / Jl1) * wl_Z1[0] + Wr_sub[0].a45cf * ql_Z1[0] + Wr_sub[0].a46cf * z_Z1[0] + Wr_sub[0].b4cf * robo->qm_ref;
-    ql_Z[0] = Wr_sub[0].a51cf * wm_Z1[0] + Wr_sub[0].a52cf * qm_Z1[0] + Wr_sub[0].a53cf / Jl1 * qs_Z1[0] + (Wr_sub[0].a54cf1 + Wr_sub[0].a54cf2 / Jl1) * wl_Z1[0] + Wr_sub[0].a55cf * ql_Z1[0] + Wr_sub[0].a56cf * z_Z1[0] + Wr_sub[0].b5cf * robo->qm_ref;
+    qs_Z[0] = Wr_sub[0].a31cf * wm_Z1[0] + Wr_sub[0].a32cf * qm_Z1[0] + (Wr_sub[0].a33cf1 + Wr_sub[0].a33cf2 / axis1.Jl_calc) * qs_Z1[0] + (Wr_sub[0].a34cf1 + Wr_sub[0].a34cf2 / axis1.Jl_calc) * wl_Z1[0] + Wr_sub[0].a35cf * ql_Z1[0] + Wr_sub[0].a36cf * z_Z1[0] + Wr_sub[0].b3cf * robo->qm_ref;
+    wl_Z[0] = Wr_sub[0].a41cf * wm_Z1[0] + Wr_sub[0].a42cf * qm_Z1[0] + Wr_sub[0].a43cf / axis1.Jl_calc * qs_Z1[0] + (Wr_sub[0].a44cf1 + Wr_sub[0].a44cf2 / axis1.Jl_calc) * wl_Z1[0] + Wr_sub[0].a45cf * ql_Z1[0] + Wr_sub[0].a46cf * z_Z1[0] + Wr_sub[0].b4cf * robo->qm_ref;
+    ql_Z[0] = Wr_sub[0].a51cf * wm_Z1[0] + Wr_sub[0].a52cf * qm_Z1[0] + Wr_sub[0].a53cf / axis1.Jl_calc * qs_Z1[0] + (Wr_sub[0].a54cf1 + Wr_sub[0].a54cf2 / axis1.Jl_calc) * wl_Z1[0] + Wr_sub[0].a55cf * ql_Z1[0] + Wr_sub[0].a56cf * z_Z1[0] + Wr_sub[0].b5cf * robo->qm_ref;
     z_Z[0] = Wr_sub[0].a61cf * wm_Z1[0] + Wr_sub[0].a62cf * qm_Z1[0] + Wr_sub[0].a63cf * qs_Z1[0] + Wr_sub[0].a64cf * wl_Z1[0] + Wr_sub[0].a65cf * ql_Z1[0] + Wr_sub[0].a66cf * z_Z1[0] + Wr_sub[0].b6cf * robo->qm_ref;
 
     // 状態量の更新axis1.
@@ -5185,7 +5182,7 @@ void CalcFDTDWr_QmrefInputType(Robot *robo)
     // 計算結果の代入
     robo->ql_calc = robo->theta_rl_init + ql_Z[0];
     robo->wl_calc = wl_Z[0];
-    robo->al_calc = (robo->Ksn * qs_Z[0] - robo->Dln * wl_Z[0]) / robo->Jl_calc_Wr;
+    robo->al_calc = (robo->Ksn * qs_Z[0] - robo->Dln * wl_Z[0]) / axis1.Jl_calc;
     robo->wm_calc = wm_Z[0];
   }
   else if (robo->BDN == BDN1)
@@ -5193,9 +5190,9 @@ void CalcFDTDWr_QmrefInputType(Robot *robo)
     // 状態量の計算
     wm_Z[1] = Wr_sub[1].a11cf * wm_Z1[1] + Wr_sub[1].a12cf * qm_Z1[1] + Wr_sub[1].a13cf * qs_Z1[1] + Wr_sub[1].a14cf * wl_Z1[1] + Wr_sub[1].a15cf * ql_Z1[1] + Wr_sub[1].a16cf * z_Z1[1] + Wr_sub[1].b1cf * axis2.qm_ref;
     qm_Z[1] = Wr_sub[1].a21cf * wm_Z1[1] + Wr_sub[1].a22cf * qm_Z1[1] + Wr_sub[1].a23cf * qs_Z1[1] + Wr_sub[1].a24cf * wl_Z1[1] + Wr_sub[1].a25cf * ql_Z1[1] + Wr_sub[1].a26cf * z_Z1[1] + Wr_sub[1].b2cf * axis2.qm_ref;
-    qs_Z[1] = Wr_sub[1].a31cf * wm_Z1[1] + Wr_sub[1].a32cf * qm_Z1[1] + (Wr_sub[1].a33cf1 + Wr_sub[1].a33cf2 / Jl2) * qs_Z1[1] + (Wr_sub[1].a34cf1 + Wr_sub[1].a34cf2 / Jl2) * wl_Z1[1] + Wr_sub[1].a35cf * ql_Z1[1] + Wr_sub[1].a36cf * z_Z1[1] + Wr_sub[1].b3cf * axis2.qm_ref;
-    wl_Z[1] = Wr_sub[1].a41cf * wm_Z1[1] + Wr_sub[1].a42cf * qm_Z1[1] + Wr_sub[1].a43cf / Jl2 * qs_Z1[1] + (Wr_sub[1].a44cf1 + Wr_sub[1].a44cf2 / Jl2) * wl_Z1[1] + Wr_sub[1].a45cf * ql_Z1[1] + Wr_sub[1].a46cf * z_Z1[1] + Wr_sub[1].b4cf * axis2.qm_ref;
-    ql_Z[1] = Wr_sub[1].a51cf * wm_Z1[1] + Wr_sub[1].a52cf * qm_Z1[1] + Wr_sub[1].a53cf / Jl2 * qs_Z1[1] + (Wr_sub[1].a54cf1 + Wr_sub[1].a54cf2 / Jl2) * wl_Z1[1] + Wr_sub[1].a55cf * ql_Z1[1] + Wr_sub[1].a56cf * z_Z1[1] + Wr_sub[1].b5cf * axis2.qm_ref;
+    qs_Z[1] = Wr_sub[1].a31cf * wm_Z1[1] + Wr_sub[1].a32cf * qm_Z1[1] + (Wr_sub[1].a33cf1 + Wr_sub[1].a33cf2 / axis2.Jl_calc) * qs_Z1[1] + (Wr_sub[1].a34cf1 + Wr_sub[1].a34cf2 / axis2.Jl_calc) * wl_Z1[1] + Wr_sub[1].a35cf * ql_Z1[1] + Wr_sub[1].a36cf * z_Z1[1] + Wr_sub[1].b3cf * axis2.qm_ref;
+    wl_Z[1] = Wr_sub[1].a41cf * wm_Z1[1] + Wr_sub[1].a42cf * qm_Z1[1] + Wr_sub[1].a43cf / axis2.Jl_calc * qs_Z1[1] + (Wr_sub[1].a44cf1 + Wr_sub[1].a44cf2 / axis2.Jl_calc) * wl_Z1[1] + Wr_sub[1].a45cf * ql_Z1[1] + Wr_sub[1].a46cf * z_Z1[1] + Wr_sub[1].b4cf * axis2.qm_ref;
+    ql_Z[1] = Wr_sub[1].a51cf * wm_Z1[1] + Wr_sub[1].a52cf * qm_Z1[1] + Wr_sub[1].a53cf / axis2.Jl_calc * qs_Z1[1] + (Wr_sub[1].a54cf1 + Wr_sub[1].a54cf2 / axis2.Jl_calc) * wl_Z1[1] + Wr_sub[1].a55cf * ql_Z1[1] + Wr_sub[1].a56cf * z_Z1[1] + Wr_sub[1].b5cf * axis2.qm_ref;
     z_Z[1] = Wr_sub[1].a61cf * wm_Z1[1] + Wr_sub[1].a62cf * qm_Z1[1] + Wr_sub[1].a63cf * qs_Z1[1] + Wr_sub[1].a64cf * wl_Z1[1] + Wr_sub[1].a65cf * ql_Z1[1] + Wr_sub[1].a66cf * z_Z1[1] + Wr_sub[1].b6cf * axis2.qm_ref;
 
     // 状態量の更新
@@ -5209,7 +5206,7 @@ void CalcFDTDWr_QmrefInputType(Robot *robo)
     // 計算結果の代入
     robo->ql_calc = robo->theta_rl_init + ql_Z[1];
     robo->wl_calc = wl_Z[1];
-    robo->al_calc = (robo->Ksn * qs_Z[1] - robo->Dln * wl_Z[1]) / robo->Jl_calc_Wr;
+    robo->al_calc = (robo->Ksn * qs_Z[1] - robo->Dln * wl_Z[1]) / axis2.Jl_calc;
     robo->wm_calc = wm_Z[1];
   }
   else if (robo->BDN == BDN2)
@@ -5217,9 +5214,9 @@ void CalcFDTDWr_QmrefInputType(Robot *robo)
     // 状態量の計算
     wm_Z[2] = Wr_sub[2].a11cf * wm_Z1[2] + Wr_sub[2].a12cf * qm_Z1[2] + Wr_sub[2].a13cf * qs_Z1[2] + Wr_sub[2].a14cf * wl_Z1[2] + Wr_sub[2].a15cf * ql_Z1[2] + Wr_sub[2].a16cf * z_Z1[2] + Wr_sub[2].b1cf * robo->qm_ref;
     qm_Z[2] = Wr_sub[2].a21cf * wm_Z1[2] + Wr_sub[2].a22cf * qm_Z1[2] + Wr_sub[2].a23cf * qs_Z1[2] + Wr_sub[2].a24cf * wl_Z1[2] + Wr_sub[2].a25cf * ql_Z1[2] + Wr_sub[2].a26cf * z_Z1[2] + Wr_sub[2].b2cf * robo->qm_ref;
-    qs_Z[2] = Wr_sub[2].a31cf * wm_Z1[2] + Wr_sub[2].a32cf * qm_Z1[2] + (Wr_sub[2].a33cf1 + Wr_sub[2].a33cf2 / Jl3) * qs_Z1[2] + (Wr_sub[2].a34cf1 + Wr_sub[2].a34cf2 / Jl3) * wl_Z1[2] + Wr_sub[2].a35cf * ql_Z1[2] + Wr_sub[2].a36cf * z_Z1[2] + Wr_sub[2].b3cf * robo->qm_ref;
-    wl_Z[2] = Wr_sub[2].a41cf * wm_Z1[2] + Wr_sub[2].a42cf * qm_Z1[2] + Wr_sub[2].a43cf / Jl3 * qs_Z1[2] + (Wr_sub[2].a44cf1 + Wr_sub[2].a44cf2 / Jl3) * wl_Z1[2] + Wr_sub[2].a45cf * ql_Z1[2] + Wr_sub[2].a46cf * z_Z1[2] + Wr_sub[2].b4cf * robo->qm_ref;
-    ql_Z[2] = Wr_sub[2].a51cf * wm_Z1[2] + Wr_sub[2].a52cf * qm_Z1[2] + Wr_sub[2].a53cf / Jl3 * qs_Z1[2] + (Wr_sub[2].a54cf1 + Wr_sub[2].a54cf2 / Jl3) * wl_Z1[2] + Wr_sub[2].a55cf * ql_Z1[2] + Wr_sub[2].a56cf * z_Z1[2] + Wr_sub[2].b5cf * robo->qm_ref;
+    qs_Z[2] = Wr_sub[2].a31cf * wm_Z1[2] + Wr_sub[2].a32cf * qm_Z1[2] + (Wr_sub[2].a33cf1 + Wr_sub[2].a33cf2 / axis3.Jl_calc) * qs_Z1[2] + (Wr_sub[2].a34cf1 + Wr_sub[2].a34cf2 / axis3.Jl_calc) * wl_Z1[2] + Wr_sub[2].a35cf * ql_Z1[2] + Wr_sub[2].a36cf * z_Z1[2] + Wr_sub[2].b3cf * robo->qm_ref;
+    wl_Z[2] = Wr_sub[2].a41cf * wm_Z1[2] + Wr_sub[2].a42cf * qm_Z1[2] + Wr_sub[2].a43cf / axis3.Jl_calc * qs_Z1[2] + (Wr_sub[2].a44cf1 + Wr_sub[2].a44cf2 / axis3.Jl_calc) * wl_Z1[2] + Wr_sub[2].a45cf * ql_Z1[2] + Wr_sub[2].a46cf * z_Z1[2] + Wr_sub[2].b4cf * robo->qm_ref;
+    ql_Z[2] = Wr_sub[2].a51cf * wm_Z1[2] + Wr_sub[2].a52cf * qm_Z1[2] + Wr_sub[2].a53cf / axis3.Jl_calc * qs_Z1[2] + (Wr_sub[2].a54cf1 + Wr_sub[2].a54cf2 / axis3.Jl_calc) * wl_Z1[2] + Wr_sub[2].a55cf * ql_Z1[2] + Wr_sub[2].a56cf * z_Z1[2] + Wr_sub[2].b5cf * robo->qm_ref;
     z_Z[2] = Wr_sub[2].a61cf * wm_Z1[2] + Wr_sub[2].a62cf * qm_Z1[2] + Wr_sub[2].a63cf * qs_Z1[2] + Wr_sub[2].a64cf * wl_Z1[2] + Wr_sub[2].a65cf * ql_Z1[2] + Wr_sub[2].a66cf * z_Z1[2] + Wr_sub[2].b6cf * robo->qm_ref;
 
     // 状態量の更新
@@ -5233,7 +5230,7 @@ void CalcFDTDWr_QmrefInputType(Robot *robo)
     // 計算結果の代入
     robo->ql_calc = robo->theta_rl_init + ql_Z[2];
     robo->wl_calc = wl_Z[2];
-    robo->al_calc = (robo->Ksn * qs_Z[2] - robo->Dln * wl_Z[2]) / robo->Jl_calc_Wr;
+    robo->al_calc = (robo->Ksn * qs_Z[2] - robo->Dln * wl_Z[2]) / axis3.Jl_calc;
     robo->wm_calc = wm_Z[2];
   }
   else
@@ -5492,9 +5489,9 @@ void CalcFDTDWr_WmcmdInputType(Robot *robo)
     // 状態量の計算
     wm_Z[0] = Wr_DPD[0].a11cf * wm_Z1[0] + Wr_DPD[0].a12cf * qm_Z1[0] + Wr_DPD[0].a13cf * qs_Z1[0] + Wr_DPD[0].a14cf * wl_Z1[0] + Wr_DPD[0].a15cf * ql_Z1[0] + Wr_DPD[0].a16cf * n_Z1[0] + Wr_DPD[0].a17cf * m_Z1[0] + Wr_DPD[0].b1cf * robo->wm_cmd;
     qm_Z[0] = Wr_DPD[0].a21cf * wm_Z1[0] + Wr_DPD[0].a22cf * qm_Z1[0] + Wr_DPD[0].a23cf * qs_Z1[0] + Wr_DPD[0].a24cf * wl_Z1[0] + Wr_DPD[0].a25cf * ql_Z1[0] + Wr_DPD[0].a26cf * n_Z1[0] + Wr_DPD[0].a27cf * m_Z1[0] + Wr_DPD[0].b2cf * robo->wm_cmd;
-    qs_Z[0] = Wr_DPD[0].a31cf * wm_Z1[0] + Wr_DPD[0].a32cf * qm_Z1[0] + (Wr_DPD[0].a33cf1 + Wr_DPD[0].a33cf2 / robo->Jl_calc_Wr) * qs_Z1[0] + (Wr_DPD[0].a34cf1 + Wr_DPD[0].a34cf2 / robo->Jl_calc_Wr) * wl_Z1[0] + Wr_DPD[0].a35cf * ql_Z1[0] + Wr_DPD[0].a36cf * n_Z1[0] + Wr_DPD[0].a37cf * m_Z1[0] + Wr_DPD[0].b3cf * robo->wm_cmd;
-    wl_Z[0] = Wr_DPD[0].a41cf * wm_Z1[0] + Wr_DPD[0].a42cf * qm_Z1[0] + Wr_DPD[0].a43cf / robo->Jl_calc_Wr * qs_Z1[0] + (Wr_DPD[0].a44cf1 + Wr_DPD[0].a44cf2 / robo->Jl_calc_Wr) * wl_Z1[0] + Wr_DPD[0].a45cf * ql_Z1[0] + Wr_DPD[0].a46cf * n_Z1[0] + Wr_DPD[0].a47cf * m_Z1[0] + Wr_DPD[0].b4cf * robo->wm_cmd;
-    ql_Z[0] = Wr_DPD[0].a51cf * wm_Z1[0] + Wr_DPD[0].a52cf * qm_Z1[0] + Wr_DPD[0].a53cf / robo->Jl_calc_Wr * qs_Z1[0] + (Wr_DPD[0].a54cf1 + Wr_DPD[0].a54cf2 / robo->Jl_calc_Wr) * wl_Z1[0] + Wr_DPD[0].a55cf * ql_Z1[0] + Wr_DPD[0].a56cf * n_Z1[0] + Wr_DPD[0].a57cf * m_Z1[0] + Wr_DPD[0].b5cf * robo->wm_cmd;
+    qs_Z[0] = Wr_DPD[0].a31cf * wm_Z1[0] + Wr_DPD[0].a32cf * qm_Z1[0] + (Wr_DPD[0].a33cf1 + Wr_DPD[0].a33cf2 / robo->Jl_calc) * qs_Z1[0] + (Wr_DPD[0].a34cf1 + Wr_DPD[0].a34cf2 / robo->Jl_calc) * wl_Z1[0] + Wr_DPD[0].a35cf * ql_Z1[0] + Wr_DPD[0].a36cf * n_Z1[0] + Wr_DPD[0].a37cf * m_Z1[0] + Wr_DPD[0].b3cf * robo->wm_cmd;
+    wl_Z[0] = Wr_DPD[0].a41cf * wm_Z1[0] + Wr_DPD[0].a42cf * qm_Z1[0] + Wr_DPD[0].a43cf / robo->Jl_calc * qs_Z1[0] + (Wr_DPD[0].a44cf1 + Wr_DPD[0].a44cf2 / robo->Jl_calc) * wl_Z1[0] + Wr_DPD[0].a45cf * ql_Z1[0] + Wr_DPD[0].a46cf * n_Z1[0] + Wr_DPD[0].a47cf * m_Z1[0] + Wr_DPD[0].b4cf * robo->wm_cmd;
+    ql_Z[0] = Wr_DPD[0].a51cf * wm_Z1[0] + Wr_DPD[0].a52cf * qm_Z1[0] + Wr_DPD[0].a53cf / robo->Jl_calc * qs_Z1[0] + (Wr_DPD[0].a54cf1 + Wr_DPD[0].a54cf2 / robo->Jl_calc) * wl_Z1[0] + Wr_DPD[0].a55cf * ql_Z1[0] + Wr_DPD[0].a56cf * n_Z1[0] + Wr_DPD[0].a57cf * m_Z1[0] + Wr_DPD[0].b5cf * robo->wm_cmd;
     n_Z[0] = Wr_DPD[0].a61cf * wm_Z1[0] + Wr_DPD[0].a62cf * qm_Z1[0] + Wr_DPD[0].a63cf * qs_Z1[0] + Wr_DPD[0].a64cf * wl_Z1[0] + Wr_DPD[0].a65cf * ql_Z1[0] + Wr_DPD[0].a66cf * n_Z1[0] + Wr_DPD[0].a67cf * m_Z1[0] + Wr_DPD[0].b6cf * robo->wm_cmd;
     m_Z[0] = Wr_DPD[0].a71cf * wm_Z1[0] + Wr_DPD[0].a72cf * qm_Z1[0] + Wr_DPD[0].a73cf * qs_Z1[0] + Wr_DPD[0].a74cf * wl_Z1[0] + Wr_DPD[0].a75cf * ql_Z1[0] + Wr_DPD[0].a76cf * n_Z1[0] + Wr_DPD[0].a77cf * m_Z1[0] + Wr_DPD[0].b7cf * robo->wm_cmd;
 
@@ -5510,7 +5507,7 @@ void CalcFDTDWr_WmcmdInputType(Robot *robo)
     // 計算結果の代入
     robo->ql_calc = robo->theta_rl_init + ql_Z[0];
     robo->wl_calc = wl_Z[0];
-    robo->al_calc = (robo->Ksn * qs_Z[0] - robo->Dln * wl_Z[0]) / robo->Jl_calc_Wr;
+    robo->al_calc = (robo->Ksn * qs_Z[0] - robo->Dln * wl_Z[0]) / robo->Jl_calc;
     robo->wm_calc = wm_Z[0];
   }
   else if (robo->BDN == BDN1)
@@ -5518,9 +5515,9 @@ void CalcFDTDWr_WmcmdInputType(Robot *robo)
     // 状態量の計算
     wm_Z[1] = Wr_DPD[1].a11cf * wm_Z1[1] + Wr_DPD[1].a12cf * qm_Z1[1] + Wr_DPD[1].a13cf * qs_Z1[1] + Wr_DPD[1].a14cf * wl_Z1[1] + Wr_DPD[1].a15cf * ql_Z1[1] + Wr_DPD[1].a16cf * n_Z1[1] + Wr_DPD[1].a17cf * m_Z1[1] + Wr_DPD[1].b1cf * robo->wm_cmd;
     qm_Z[1] = Wr_DPD[1].a21cf * wm_Z1[1] + Wr_DPD[1].a22cf * qm_Z1[1] + Wr_DPD[1].a23cf * qs_Z1[1] + Wr_DPD[1].a24cf * wl_Z1[1] + Wr_DPD[1].a25cf * ql_Z1[1] + Wr_DPD[1].a26cf * n_Z1[1] + Wr_DPD[1].a27cf * m_Z1[1] + Wr_DPD[1].b2cf * robo->wm_cmd;
-    qs_Z[1] = Wr_DPD[1].a31cf * wm_Z1[1] + Wr_DPD[1].a32cf * qm_Z1[1] + (Wr_DPD[1].a33cf1 + Wr_DPD[1].a33cf2 / robo->Jl_calc_Wr) * qs_Z1[1] + (Wr_DPD[1].a34cf1 + Wr_DPD[1].a34cf2 / robo->Jl_calc_Wr) * wl_Z1[1] + Wr_DPD[1].a35cf * ql_Z1[1] + Wr_DPD[1].a36cf * n_Z1[1] + Wr_DPD[1].a37cf * m_Z1[1] + Wr_DPD[1].b3cf * robo->wm_cmd;
-    wl_Z[1] = Wr_DPD[1].a41cf * wm_Z1[1] + Wr_DPD[1].a42cf * qm_Z1[1] + Wr_DPD[1].a43cf / robo->Jl_calc_Wr * qs_Z1[1] + (Wr_DPD[1].a44cf1 + Wr_DPD[1].a44cf2 / robo->Jl_calc_Wr) * wl_Z1[1] + Wr_DPD[1].a45cf * ql_Z1[1] + Wr_DPD[1].a46cf * n_Z1[1] + Wr_DPD[1].a47cf * m_Z1[1] + Wr_DPD[1].b4cf * robo->wm_cmd;
-    ql_Z[1] = Wr_DPD[1].a51cf * wm_Z1[1] + Wr_DPD[1].a52cf * qm_Z1[1] + Wr_DPD[1].a53cf / robo->Jl_calc_Wr * qs_Z1[1] + (Wr_DPD[1].a54cf1 + Wr_DPD[1].a54cf2 / robo->Jl_calc_Wr) * wl_Z1[1] + Wr_DPD[1].a55cf * ql_Z1[1] + Wr_DPD[1].a56cf * n_Z1[1] + Wr_DPD[1].a57cf * m_Z1[1] + Wr_DPD[1].b5cf * robo->wm_cmd;
+    qs_Z[1] = Wr_DPD[1].a31cf * wm_Z1[1] + Wr_DPD[1].a32cf * qm_Z1[1] + (Wr_DPD[1].a33cf1 + Wr_DPD[1].a33cf2 / robo->Jl_calc) * qs_Z1[1] + (Wr_DPD[1].a34cf1 + Wr_DPD[1].a34cf2 / robo->Jl_calc) * wl_Z1[1] + Wr_DPD[1].a35cf * ql_Z1[1] + Wr_DPD[1].a36cf * n_Z1[1] + Wr_DPD[1].a37cf * m_Z1[1] + Wr_DPD[1].b3cf * robo->wm_cmd;
+    wl_Z[1] = Wr_DPD[1].a41cf * wm_Z1[1] + Wr_DPD[1].a42cf * qm_Z1[1] + Wr_DPD[1].a43cf / robo->Jl_calc * qs_Z1[1] + (Wr_DPD[1].a44cf1 + Wr_DPD[1].a44cf2 / robo->Jl_calc) * wl_Z1[1] + Wr_DPD[1].a45cf * ql_Z1[1] + Wr_DPD[1].a46cf * n_Z1[1] + Wr_DPD[1].a47cf * m_Z1[1] + Wr_DPD[1].b4cf * robo->wm_cmd;
+    ql_Z[1] = Wr_DPD[1].a51cf * wm_Z1[1] + Wr_DPD[1].a52cf * qm_Z1[1] + Wr_DPD[1].a53cf / robo->Jl_calc * qs_Z1[1] + (Wr_DPD[1].a54cf1 + Wr_DPD[1].a54cf2 / robo->Jl_calc) * wl_Z1[1] + Wr_DPD[1].a55cf * ql_Z1[1] + Wr_DPD[1].a56cf * n_Z1[1] + Wr_DPD[1].a57cf * m_Z1[1] + Wr_DPD[1].b5cf * robo->wm_cmd;
     n_Z[1] = Wr_DPD[1].a61cf * wm_Z1[1] + Wr_DPD[1].a62cf * qm_Z1[1] + Wr_DPD[1].a63cf * qs_Z1[1] + Wr_DPD[1].a64cf * wl_Z1[1] + Wr_DPD[1].a65cf * ql_Z1[1] + Wr_DPD[1].a66cf * n_Z1[1] + Wr_DPD[1].a67cf * m_Z1[1] + Wr_DPD[1].b6cf * robo->wm_cmd;
     m_Z[1] = Wr_DPD[1].a71cf * wm_Z1[1] + Wr_DPD[1].a72cf * qm_Z1[1] + Wr_DPD[1].a73cf * qs_Z1[1] + Wr_DPD[1].a74cf * wl_Z1[1] + Wr_DPD[1].a75cf * ql_Z1[1] + Wr_DPD[1].a76cf * n_Z1[1] + Wr_DPD[1].a77cf * m_Z1[1] + Wr_DPD[1].b7cf * robo->wm_cmd;
 
@@ -5536,7 +5533,7 @@ void CalcFDTDWr_WmcmdInputType(Robot *robo)
     // 計算結果の代入
     robo->ql_calc = robo->theta_rl_init + ql_Z[1];
     robo->wl_calc = wl_Z[1];
-    robo->al_calc = (robo->Ksn * qs_Z[1] - robo->Dln * wl_Z[1]) / robo->Jl_calc_Wr;
+    robo->al_calc = (robo->Ksn * qs_Z[1] - robo->Dln * wl_Z[1]) / robo->Jl_calc;
     robo->wm_calc = wm_Z[1];
   }
   else if (robo->BDN == BDN2)
@@ -5544,9 +5541,9 @@ void CalcFDTDWr_WmcmdInputType(Robot *robo)
     // 状態量の計算
     wm_Z[2] = Wr_DPD[2].a11cf * wm_Z1[2] + Wr_DPD[2].a12cf * qm_Z1[2] + Wr_DPD[2].a13cf * qs_Z1[2] + Wr_DPD[2].a14cf * wl_Z1[2] + Wr_DPD[2].a15cf * ql_Z1[2] + Wr_DPD[2].a16cf * n_Z1[2] + Wr_DPD[2].a17cf * m_Z1[2] + Wr_DPD[2].b1cf * robo->wm_cmd;
     qm_Z[2] = Wr_DPD[2].a21cf * wm_Z1[2] + Wr_DPD[2].a22cf * qm_Z1[2] + Wr_DPD[2].a23cf * qs_Z1[2] + Wr_DPD[2].a24cf * wl_Z1[2] + Wr_DPD[2].a25cf * ql_Z1[2] + Wr_DPD[2].a26cf * n_Z1[2] + Wr_DPD[2].a27cf * m_Z1[2] + Wr_DPD[2].b2cf * robo->wm_cmd;
-    qs_Z[2] = Wr_DPD[2].a31cf * wm_Z1[2] + Wr_DPD[2].a32cf * qm_Z1[2] + (Wr_DPD[2].a33cf1 + Wr_DPD[2].a33cf2 / robo->Jl_calc_Wr) * qs_Z1[2] + (Wr_DPD[2].a34cf1 + Wr_DPD[2].a34cf2 / robo->Jl_calc_Wr) * wl_Z1[2] + Wr_DPD[2].a35cf * ql_Z1[2] + Wr_DPD[2].a36cf * n_Z1[2] + Wr_DPD[2].a37cf * m_Z1[2] + Wr_DPD[2].b3cf * robo->wm_cmd;
-    wl_Z[2] = Wr_DPD[2].a41cf * wm_Z1[2] + Wr_DPD[2].a42cf * qm_Z1[2] + Wr_DPD[2].a43cf / robo->Jl_calc_Wr * qs_Z1[2] + (Wr_DPD[2].a44cf1 + Wr_DPD[2].a44cf2 / robo->Jl_calc_Wr) * wl_Z1[2] + Wr_DPD[2].a45cf * ql_Z1[2] + Wr_DPD[2].a46cf * n_Z1[2] + Wr_DPD[2].a47cf * m_Z1[2] + Wr_DPD[2].b4cf * robo->wm_cmd;
-    ql_Z[2] = Wr_DPD[2].a51cf * wm_Z1[2] + Wr_DPD[2].a52cf * qm_Z1[2] + Wr_DPD[2].a53cf / robo->Jl_calc_Wr * qs_Z1[2] + (Wr_DPD[2].a54cf1 + Wr_DPD[2].a54cf2 / robo->Jl_calc_Wr) * wl_Z1[2] + Wr_DPD[2].a55cf * ql_Z1[2] + Wr_DPD[2].a56cf * n_Z1[2] + Wr_DPD[2].a57cf * m_Z1[2] + Wr_DPD[2].b5cf * robo->wm_cmd;
+    qs_Z[2] = Wr_DPD[2].a31cf * wm_Z1[2] + Wr_DPD[2].a32cf * qm_Z1[2] + (Wr_DPD[2].a33cf1 + Wr_DPD[2].a33cf2 / robo->Jl_calc) * qs_Z1[2] + (Wr_DPD[2].a34cf1 + Wr_DPD[2].a34cf2 / robo->Jl_calc) * wl_Z1[2] + Wr_DPD[2].a35cf * ql_Z1[2] + Wr_DPD[2].a36cf * n_Z1[2] + Wr_DPD[2].a37cf * m_Z1[2] + Wr_DPD[2].b3cf * robo->wm_cmd;
+    wl_Z[2] = Wr_DPD[2].a41cf * wm_Z1[2] + Wr_DPD[2].a42cf * qm_Z1[2] + Wr_DPD[2].a43cf / robo->Jl_calc * qs_Z1[2] + (Wr_DPD[2].a44cf1 + Wr_DPD[2].a44cf2 / robo->Jl_calc) * wl_Z1[2] + Wr_DPD[2].a45cf * ql_Z1[2] + Wr_DPD[2].a46cf * n_Z1[2] + Wr_DPD[2].a47cf * m_Z1[2] + Wr_DPD[2].b4cf * robo->wm_cmd;
+    ql_Z[2] = Wr_DPD[2].a51cf * wm_Z1[2] + Wr_DPD[2].a52cf * qm_Z1[2] + Wr_DPD[2].a53cf / robo->Jl_calc * qs_Z1[2] + (Wr_DPD[2].a54cf1 + Wr_DPD[2].a54cf2 / robo->Jl_calc) * wl_Z1[2] + Wr_DPD[2].a55cf * ql_Z1[2] + Wr_DPD[2].a56cf * n_Z1[2] + Wr_DPD[2].a57cf * m_Z1[2] + Wr_DPD[2].b5cf * robo->wm_cmd;
     n_Z[2] = Wr_DPD[2].a61cf * wm_Z1[2] + Wr_DPD[2].a62cf * qm_Z1[2] + Wr_DPD[2].a63cf * qs_Z1[2] + Wr_DPD[2].a64cf * wl_Z1[2] + Wr_DPD[2].a65cf * ql_Z1[2] + Wr_DPD[2].a66cf * n_Z1[2] + Wr_DPD[2].a67cf * m_Z1[2] + Wr_DPD[2].b6cf * robo->wm_cmd;
     m_Z[2] = Wr_DPD[2].a71cf * wm_Z1[2] + Wr_DPD[2].a72cf * qm_Z1[2] + Wr_DPD[2].a73cf * qs_Z1[2] + Wr_DPD[2].a74cf * wl_Z1[2] + Wr_DPD[2].a75cf * ql_Z1[2] + Wr_DPD[2].a76cf * n_Z1[2] + Wr_DPD[2].a77cf * m_Z1[2] + Wr_DPD[2].b7cf * robo->wm_cmd;
 
@@ -5562,7 +5559,7 @@ void CalcFDTDWr_WmcmdInputType(Robot *robo)
     // 計算結果の代入
     robo->ql_calc = robo->theta_rl_init + ql_Z[2];
     robo->wl_calc = wl_Z[2];
-    robo->al_calc = (robo->Ksn * qs_Z[2] - robo->Dln * wl_Z[2]) / robo->Jl_calc_Wr;
+    robo->al_calc = (robo->Ksn * qs_Z[2] - robo->Dln * wl_Z[2]) / robo->Jl_calc;
     robo->wm_calc = wm_Z[2];
   }
   else
