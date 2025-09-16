@@ -1244,13 +1244,13 @@ interrupt void ControlFunction(void)
         // 動力学トルクを計算
         CalcTauLDyn(joint); // 1~3軸分を計算
 
+        // ラッチしたqlの情報をもとにJlを計算
+        CalcJl(joint); // JLの変動は使うので3軸分計算
         // 可変ゲイン計算
         if(flag_cont_start != 3)
         {
-          // ラッチしたqlの情報をもとにJlを計算 
-          CalcJl(joint); // JLの変動は使うので3軸分計算
+          CalcPVGain();
         }
-        CalcPVGain();
 
         if (flag_FF_triple == 1)
         {
