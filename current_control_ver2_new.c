@@ -6442,9 +6442,15 @@ void CalcGravIcmp(Robot axis[])
   float S2 = 0.0;
   float S23 = 0.0;
 
-  C23 = cos(axis2.ql + axis3.ql);
-  S2 = sin(axis2.ql);
-  S23 = sin(axis2.ql + axis3.ql);
+  // Wr確認用
+  C23 = cos(axis2.ql_calc + axis3.ql_calc);
+  S2 = sin(axis2.ql_calc);
+  S23 = sin(axis2.ql_calc + axis3.ql_calc);
+
+  // 実験用
+  // C23 = cos(axis2.ql + axis3.ql);
+  // S2 = sin(axis2.ql);
+  // S23 = sin(axis2.ql + axis3.ql);
 
   // ラグランジュ法に基づく動力学
   // 重力項
