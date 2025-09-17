@@ -200,6 +200,14 @@ volatile float WAVE_Kvi1 = 0.0;
 volatile float WAVE_fwm1 = 0.0;
 volatile float WAVE_fqs1 = 0.0;
 volatile float WAVE_fwl1 = 0.0;
+volatile float WAVE_Kpp1_wr = 0.0;
+volatile float WAVE_Kff1_wr = 0.0;
+volatile float WAVE_Kfb1_wr = 0.0;
+volatile float WAVE_Kvp1_wr = 0.0;
+volatile float WAVE_Kvi1_wr = 0.0;
+volatile float WAVE_fwm1_wr = 0.0;
+volatile float WAVE_fqs1_wr = 0.0;
+volatile float WAVE_fwl1_wr = 0.0;
 // 2軸目
 volatile float WAVE_Kpp2 = 0.0;
 volatile float WAVE_Kff2 = 0.0;
@@ -209,6 +217,14 @@ volatile float WAVE_Kvi2 = 0.0;
 volatile float WAVE_fwm2 = 0.0;
 volatile float WAVE_fqs2 = 0.0;
 volatile float WAVE_fwl2 = 0.0;
+volatile float WAVE_Kpp2_wr = 0.0;
+volatile float WAVE_Kff2_wr = 0.0;
+volatile float WAVE_Kfb2_wr = 0.0;
+volatile float WAVE_Kvp2_wr = 0.0;
+volatile float WAVE_Kvi2_wr = 0.0;
+volatile float WAVE_fwm2_wr = 0.0;
+volatile float WAVE_fqs2_wr = 0.0;
+volatile float WAVE_fwl2_wr = 0.0;
 // 3軸目
 volatile float WAVE_Kpp3 = 0.0;
 volatile float WAVE_Kff3 = 0.0;
@@ -218,6 +234,14 @@ volatile float WAVE_Kvi3 = 0.0;
 volatile float WAVE_fwm3 = 0.0;
 volatile float WAVE_fqs3 = 0.0;
 volatile float WAVE_fwl3 = 0.0;
+volatile float WAVE_Kpp3_wr = 0.0;
+volatile float WAVE_Kff3_wr = 0.0;
+volatile float WAVE_Kfb3_wr = 0.0;
+volatile float WAVE_Kvp3_wr = 0.0;
+volatile float WAVE_Kvi3_wr = 0.0;
+volatile float WAVE_fwm3_wr = 0.0;
+volatile float WAVE_fqs3_wr = 0.0;
+volatile float WAVE_fwl3_wr = 0.0;
 
 // 動力学外乱トルク
 volatile float WAVE_tauLdyn1; // [Nm] 動力学外乱トルク
