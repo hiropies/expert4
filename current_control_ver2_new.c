@@ -5978,21 +5978,21 @@ void CalcFDTDWrUpdate_WmcmdInputType_2nd(Robot *robo)
 void CalcWrGain(void)
 {
   // 1軸目
-  axis1.Kvp_wr = gsub[0].Kvp_cfp1 * axis1.Jl_calc_wr;
+  axis1.Kvp_wr = gsub[0].Kvp_cfp1 * axis1.Jl_calc_Wr;
   axis1.Kvi_wr = gsub[0].zw * axis1.Kvp_wr;
-  axis1.fwm_wr = gsub[0].fwm_cf0 + gsub[0].fwm_cfp1 * axis1.Jl_calc_wr + gsub[0].fwm_cfn1 / axis1.Jl_calc_wr;
-  axis1.fqs_wr = gsub[0].fqs_cf0 + gsub[0].fqs_cfp1 * axis1.Jl_calc_wr + gsub[0].fqs_cfn1 / axis1.Jl_calc_wr + gsub[0].fqs_cfn2 / powf(axis1.Jl_calc_wr, 2);
-  axis1.fwl_wr = gsub[0].fwl_cf0 + gsub[0].fwl_cfp1 * axis1.Jl_calc_wr + gsub[0].fwl_cfn1 / axis1.Jl_calc_wr + gsub[0].fwl_cfn2 / powf(axis1.Jl_calc_wr, 2);
+  axis1.fwm_wr = gsub[0].fwm_cf0 + gsub[0].fwm_cfp1 * axis1.Jl_calc_Wr + gsub[0].fwm_cfn1 / axis1.Jl_calc_Wr;
+  axis1.fqs_wr = gsub[0].fqs_cf0 + gsub[0].fqs_cfp1 * axis1.Jl_calc_Wr + gsub[0].fqs_cfn1 / axis1.Jl_calc_Wr + gsub[0].fqs_cfn2 / powf(axis1.Jl_calc_Wr, 2);
+  axis1.fwl_wr = gsub[0].fwl_cf0 + gsub[0].fwl_cfp1 * axis1.Jl_calc_Wr + gsub[0].fwl_cfn1 / axis1.Jl_calc_Wr + gsub[0].fwl_cfn2 / powf(axis1.Jl_calc_Wr, 2);
 
   axis1.av4_wr = 1;
-  axis1.av3_wr = (axis1.Rgn * axis1.Rgn * (axis1.Ktn * axis1.Jl_calc_wr * (axis1.fwm_wr + axis1.Kvp_wr)) + axis1.Jmn * axis1.Dln + axis1.Jl_calc_wr * axis1.Dmn) / (axis1.Rgn * axis1.Rgn * axis1.Jl_calc_wr * axis1.Jmn);
-  axis1.av2_wr = (axis1.Rgn * axis1.Rgn * axis1.Ktn * (axis1.Dln * axis1.fwm_wr + axis1.Dln * axis1.Kvp_wr + axis1.Jl_calc_wr * axis1.Kvi_wr) + axis1.Rgn * axis1.Ktn * axis1.Jl_calc_wr * axis1.fqs_wr + axis1.Jl_calc_wr * axis1.Ksn + axis1.Rgn * axis1.Rgn * (axis1.Jmn * axis1.Ksn + axis1.Dmn * axis1.Dln)) / (axis1.Rgn * axis1.Rgn * axis1.Jl_calc_wr * axis1.Jmn);
-  axis1.av1_wr = (axis1.Rgn * axis1.Rgn * axis1.Ktn * (axis1.Ksn * axis1.fwm_wr + axis1.Ksn * axis1.Kvp_wr + axis1.Dln * axis1.Kvi_wr) + axis1.Rgn * axis1.Ktn * (axis1.Dln * axis1.fqs_wr + axis1.Ksn * axis1.fwl_wr) + axis1.Dln * axis1.Ksn + axis1.Rgn * axis1.Rgn * axis1.Dmn * axis1.Ksn) / (axis1.Rgn * axis1.Rgn * axis1.Jl_calc_wr * axis1.Jmn);
-  axis1.av0_wr = (axis1.Rgn * axis1.Rgn * axis1.Ktn * axis1.Ksn * axis1.Kvi_wr) / (axis1.Rgn * axis1.Rgn * axis1.Jl_calc_wr * axis1.Jmn);
-  axis1.bv3_wr = (axis1.Rgn * axis1.Rgn * axis1.Ktn * axis1.Jl_calc_wr * axis1.Kvp_wr) / (axis1.Rgn * axis1.Rgn * axis1.Jl_calc_wr * axis1.Jmn);
-  axis1.bv2_wr = (axis1.Rgn * axis1.Rgn * axis1.Ktn * (axis1.Jl_calc_wr * axis1.Kvi_wr + axis1.Dln * axis1.Kvp_wr)) / (axis1.Rgn * axis1.Rgn * axis1.Jl_calc_wr * axis1.Jmn);
-  axis1.bv1_wr = (axis1.Rgn * axis1.Rgn * axis1.Ktn * (axis1.Dln * axis1.Kvi_wr + axis1.Ksn * axis1.Kvp_wr)) / (axis1.Rgn * axis1.Rgn * axis1.Jl_calc_wr * axis1.Jmn);
-  axis1.bv0_wr = (axis1.Rgn * axis1.Rgn * axis1.Ktn * axis1.Ksn * axis1.Kvi_wr) / (axis1.Rgn * axis1.Rgn * axis1.Jl_calc_wr * axis1.Jmn);
+  axis1.av3_wr = (axis1.Rgn * axis1.Rgn * (axis1.Ktn * axis1.Jl_calc_Wr * (axis1.fwm_wr + axis1.Kvp_wr)) + axis1.Jmn * axis1.Dln + axis1.Jl_calc_Wr * axis1.Dmn) / (axis1.Rgn * axis1.Rgn * axis1.Jl_calc_Wr * axis1.Jmn);
+  axis1.av2_wr = (axis1.Rgn * axis1.Rgn * axis1.Ktn * (axis1.Dln * axis1.fwm_wr + axis1.Dln * axis1.Kvp_wr + axis1.Jl_calc_Wr * axis1.Kvi_wr) + axis1.Rgn * axis1.Ktn * axis1.Jl_calc_Wr * axis1.fqs_wr + axis1.Jl_calc_Wr * axis1.Ksn + axis1.Rgn * axis1.Rgn * (axis1.Jmn * axis1.Ksn + axis1.Dmn * axis1.Dln)) / (axis1.Rgn * axis1.Rgn * axis1.Jl_calc_Wr * axis1.Jmn);
+  axis1.av1_wr = (axis1.Rgn * axis1.Rgn * axis1.Ktn * (axis1.Ksn * axis1.fwm_wr + axis1.Ksn * axis1.Kvp_wr + axis1.Dln * axis1.Kvi_wr) + axis1.Rgn * axis1.Ktn * (axis1.Dln * axis1.fqs_wr + axis1.Ksn * axis1.fwl_wr) + axis1.Dln * axis1.Ksn + axis1.Rgn * axis1.Rgn * axis1.Dmn * axis1.Ksn) / (axis1.Rgn * axis1.Rgn * axis1.Jl_calc_Wr * axis1.Jmn);
+  axis1.av0_wr = (axis1.Rgn * axis1.Rgn * axis1.Ktn * axis1.Ksn * axis1.Kvi_wr) / (axis1.Rgn * axis1.Rgn * axis1.Jl_calc_Wr * axis1.Jmn);
+  axis1.bv3_wr = (axis1.Rgn * axis1.Rgn * axis1.Ktn * axis1.Jl_calc_Wr * axis1.Kvp_wr) / (axis1.Rgn * axis1.Rgn * axis1.Jl_calc_Wr * axis1.Jmn);
+  axis1.bv2_wr = (axis1.Rgn * axis1.Rgn * axis1.Ktn * (axis1.Jl_calc_Wr * axis1.Kvi_wr + axis1.Dln * axis1.Kvp_wr)) / (axis1.Rgn * axis1.Rgn * axis1.Jl_calc_Wr * axis1.Jmn);
+  axis1.bv1_wr = (axis1.Rgn * axis1.Rgn * axis1.Ktn * (axis1.Dln * axis1.Kvi_wr + axis1.Ksn * axis1.Kvp_wr)) / (axis1.Rgn * axis1.Rgn * axis1.Jl_calc_Wr * axis1.Jmn);
+  axis1.bv0_wr = (axis1.Rgn * axis1.Rgn * axis1.Ktn * axis1.Ksn * axis1.Kvi_wr) / (axis1.Rgn * axis1.Rgn * axis1.Jl_calc_Wr * axis1.Jmn);
 
   axis1.Kpp_wr = (gsub[0].r1_pole * (axis1.av0_wr * axis1.bv1_wr - axis1.av1_wr * axis1.bv0_wr)) / (gsub[0].r1_pole * (axis1.bv0_wr * axis1.bv2_wr - axis1.bv1_wr * axis1.bv1_wr) + gsub[0].tau_pole * axis1.bv0_wr * (gsub[0].r1_pole * axis1.bv1_wr - gsub[0].tau_pole * axis1.bv0_wr));
   axis1.apm0_pd_wr = axis1.Kpp_wr * axis1.bv0_wr;
@@ -6033,21 +6033,21 @@ void CalcWrGain(void)
   }
   else
   {
-    axis2.Kvp_wr = gsub[1].Kvp_cfp1 * axis2.Jl_calc_wr;
+    axis2.Kvp_wr = gsub[1].Kvp_cfp1 * axis2.Jl_calc_Wr;
     axis2.Kvi_wr = gsub[1].zw * axis2.Kvp_wr;
-    axis2.fwm_wr = gsub[1].fwm_cf0 + gsub[1].fwm_cfp1 * axis2.Jl_calc_wr + gsub[1].fwm_cfn1 / axis2.Jl_calc_wr;
-    axis2.fqs_wr = gsub[1].fqs_cf0 + gsub[1].fqs_cfp1 * axis2.Jl_calc_wr + gsub[1].fqs_cfn1 / axis2.Jl_calc_wr + gsub[1].fqs_cfn2 / powf(axis2.Jl_calc_wr, 2);
-    axis2.fwl_wr = gsub[1].fwl_cf0 + gsub[1].fwl_cfp1 * axis2.Jl_calc_wr + gsub[1].fwl_cfn1 / axis2.Jl_calc_wr + gsub[1].fwl_cfn2 / powf(axis2.Jl_calc_wr, 2);
+    axis2.fwm_wr = gsub[1].fwm_cf0 + gsub[1].fwm_cfp1 * axis2.Jl_calc_Wr + gsub[1].fwm_cfn1 / axis2.Jl_calc_Wr;
+    axis2.fqs_wr = gsub[1].fqs_cf0 + gsub[1].fqs_cfp1 * axis2.Jl_calc_Wr + gsub[1].fqs_cfn1 / axis2.Jl_calc_Wr + gsub[1].fqs_cfn2 / powf(axis2.Jl_calc_Wr, 2);
+    axis2.fwl_wr = gsub[1].fwl_cf0 + gsub[1].fwl_cfp1 * axis2.Jl_calc_Wr + gsub[1].fwl_cfn1 / axis2.Jl_calc_Wr + gsub[1].fwl_cfn2 / powf(axis2.Jl_calc_Wr, 2);
   }
   axis2.av4_wr = 1;
-  axis2.av3_wr = (axis2.Rgn * axis2.Rgn * (axis2.Ktn * axis2.Jl_calc_wr * (axis2.fwm_wr + axis2.Kvp_wr)) + axis2.Jmn * axis2.Dln + axis2.Jl_calc_wr * axis2.Dmn) / (axis2.Rgn * axis2.Rgn * axis2.Jl_calc_wr * axis2.Jmn);
-  axis2.av2_wr = (axis2.Rgn * axis2.Rgn * axis2.Ktn * (axis2.Dln * axis2.fwm_wr + axis2.Dln * axis2.Kvp_wr + axis2.Jl_calc_wr * axis2.Kvi_wr) + axis2.Rgn * axis2.Ktn * axis2.Jl_calc_wr * axis2.fqs_wr + axis2.Jl_calc_wr * axis2.Ksn + axis2.Rgn * axis2.Rgn * (axis2.Jmn * axis2.Ksn + axis2.Dmn * axis2.Dln)) / (axis2.Rgn * axis2.Rgn * axis2.Jl_calc_wr * axis2.Jmn);
-  axis2.av1_wr = (axis2.Rgn * axis2.Rgn * axis2.Ktn * (axis2.Ksn * axis2.fwm_wr + axis2.Ksn * axis2.Kvp_wr + axis2.Dln * axis2.Kvi_wr) + axis2.Rgn * axis2.Ktn * (axis2.Dln * axis2.fqs_wr + axis2.Ksn * axis2.fwl_wr) + axis2.Dln * axis2.Ksn + axis2.Rgn * axis2.Rgn * axis2.Dmn * axis2.Ksn) / (axis2.Rgn * axis2.Rgn * axis2.Jl_calc_wr * axis2.Jmn);
-  axis2.av0_wr = (axis2.Rgn * axis2.Rgn * axis2.Ktn * axis2.Ksn * axis2.Kvi_wr) / (axis2.Rgn * axis2.Rgn * axis2.Jl_calc_wr * axis2.Jmn);
-  axis2.bv3_wr = (axis2.Rgn * axis2.Rgn * axis2.Ktn * axis2.Jl_calc_wr * axis2.Kvp_wr) / (axis2.Rgn * axis2.Rgn * axis2.Jl_calc_wr * axis2.Jmn);
-  axis2.bv2_wr = (axis2.Rgn * axis2.Rgn * axis2.Ktn * (axis2.Jl_calc_wr * axis2.Kvi_wr + axis2.Dln * axis2.Kvp_wr)) / (axis2.Rgn * axis2.Rgn * axis2.Jl_calc_wr * axis2.Jmn);
-  axis2.bv1_wr = (axis2.Rgn * axis2.Rgn * axis2.Ktn * (axis2.Dln * axis2.Kvi_wr + axis2.Ksn * axis2.Kvp_wr)) / (axis2.Rgn * axis2.Rgn * axis2.Jl_calc_wr * axis2.Jmn);
-  axis2.bv0_wr = (axis2.Rgn * axis2.Rgn * axis2.Ktn * axis2.Ksn * axis2.Kvi_wr) / (axis2.Rgn * axis2.Rgn * axis2.Jl_calc_wr * axis2.Jmn);
+  axis2.av3_wr = (axis2.Rgn * axis2.Rgn * (axis2.Ktn * axis2.Jl_calc_Wr * (axis2.fwm_wr + axis2.Kvp_wr)) + axis2.Jmn * axis2.Dln + axis2.Jl_calc_Wr * axis2.Dmn) / (axis2.Rgn * axis2.Rgn * axis2.Jl_calc_Wr * axis2.Jmn);
+  axis2.av2_wr = (axis2.Rgn * axis2.Rgn * axis2.Ktn * (axis2.Dln * axis2.fwm_wr + axis2.Dln * axis2.Kvp_wr + axis2.Jl_calc_Wr * axis2.Kvi_wr) + axis2.Rgn * axis2.Ktn * axis2.Jl_calc_Wr * axis2.fqs_wr + axis2.Jl_calc_Wr * axis2.Ksn + axis2.Rgn * axis2.Rgn * (axis2.Jmn * axis2.Ksn + axis2.Dmn * axis2.Dln)) / (axis2.Rgn * axis2.Rgn * axis2.Jl_calc_Wr * axis2.Jmn);
+  axis2.av1_wr = (axis2.Rgn * axis2.Rgn * axis2.Ktn * (axis2.Ksn * axis2.fwm_wr + axis2.Ksn * axis2.Kvp_wr + axis2.Dln * axis2.Kvi_wr) + axis2.Rgn * axis2.Ktn * (axis2.Dln * axis2.fqs_wr + axis2.Ksn * axis2.fwl_wr) + axis2.Dln * axis2.Ksn + axis2.Rgn * axis2.Rgn * axis2.Dmn * axis2.Ksn) / (axis2.Rgn * axis2.Rgn * axis2.Jl_calc_Wr * axis2.Jmn);
+  axis2.av0_wr = (axis2.Rgn * axis2.Rgn * axis2.Ktn * axis2.Ksn * axis2.Kvi_wr) / (axis2.Rgn * axis2.Rgn * axis2.Jl_calc_Wr * axis2.Jmn);
+  axis2.bv3_wr = (axis2.Rgn * axis2.Rgn * axis2.Ktn * axis2.Jl_calc_Wr * axis2.Kvp_wr) / (axis2.Rgn * axis2.Rgn * axis2.Jl_calc_Wr * axis2.Jmn);
+  axis2.bv2_wr = (axis2.Rgn * axis2.Rgn * axis2.Ktn * (axis2.Jl_calc_Wr * axis2.Kvi_wr + axis2.Dln * axis2.Kvp_wr)) / (axis2.Rgn * axis2.Rgn * axis2.Jl_calc_Wr * axis2.Jmn);
+  axis2.bv1_wr = (axis2.Rgn * axis2.Rgn * axis2.Ktn * (axis2.Dln * axis2.Kvi_wr + axis2.Ksn * axis2.Kvp_wr)) / (axis2.Rgn * axis2.Rgn * axis2.Jl_calc_Wr * axis2.Jmn);
+  axis2.bv0_wr = (axis2.Rgn * axis2.Rgn * axis2.Ktn * axis2.Ksn * axis2.Kvi_wr) / (axis2.Rgn * axis2.Rgn * axis2.Jl_calc_Wr * axis2.Jmn);
 
   axis2.Kpp_wr = gsub[1].r1_pole * (axis2.av0_wr * axis2.bv1_wr - axis2.av1_wr * axis2.bv0_wr) / (gsub[1].r1_pole * (axis2.bv0_wr * axis2.bv2_wr - axis2.bv1_wr * axis2.bv1_wr) + gsub[1].tau_pole * axis2.bv0_wr * (gsub[1].r1_pole * axis2.bv1_wr - gsub[1].tau_pole * axis2.bv0_wr));
   axis2.apm0_pd_wr = axis2.Kpp_wr * axis2.bv0_wr;
@@ -6078,21 +6078,21 @@ void CalcWrGain(void)
   WAVE_fwl2_wr = axis2.fwl_wr;
 
   // 3軸目
-  axis3.Kvp_wr = gsub[2].Kvp_cfp1 * axis3.Jl_calc_wr;
+  axis3.Kvp_wr = gsub[2].Kvp_cfp1 * axis3.Jl_calc_Wr;
   axis3.Kvi_wr = gsub[2].zw * axis3.Kvp_wr;
-  axis3.fwm_wr = gsub[2].fwm_cf0 + gsub[2].fwm_cfp1 * axis3.Jl_calc_wr + gsub[2].fwm_cfn1 / axis3.Jl_calc_wr;
-  axis3.fqs_wr = gsub[2].fqs_cf0 + gsub[2].fqs_cfp1 * axis3.Jl_calc_wr + gsub[2].fqs_cfn1 / axis3.Jl_calc_wr + gsub[2].fqs_cfn2 / powf(axis3.Jl_calc_wr, 2);
-  axis3.fwl_wr = gsub[2].fwl_cf0 + gsub[2].fwl_cfp1 * axis3.Jl_calc_wr + gsub[2].fwl_cfn1 / axis3.Jl_calc_wr + gsub[2].fwl_cfn2 / powf(axis3.Jl_calc_wr, 2);
+  axis3.fwm_wr = gsub[2].fwm_cf0 + gsub[2].fwm_cfp1 * axis3.Jl_calc_Wr + gsub[2].fwm_cfn1 / axis3.Jl_calc_Wr;
+  axis3.fqs_wr = gsub[2].fqs_cf0 + gsub[2].fqs_cfp1 * axis3.Jl_calc_Wr + gsub[2].fqs_cfn1 / axis3.Jl_calc_Wr + gsub[2].fqs_cfn2 / powf(axis3.Jl_calc_Wr, 2);
+  axis3.fwl_wr = gsub[2].fwl_cf0 + gsub[2].fwl_cfp1 * axis3.Jl_calc_Wr + gsub[2].fwl_cfn1 / axis3.Jl_calc_Wr + gsub[2].fwl_cfn2 / powf(axis3.Jl_calc_Wr, 2);
 
   axis3.av4_wr = 1;
-  axis3.av3_wr = (axis3.Rgn * axis3.Rgn * (axis3.Ktn * axis3.Jl_calc_wr * (axis3.fwm_wr + axis3.Kvp_wr)) + axis3.Jmn * axis3.Dln + axis3.Jl_calc_wr * axis3.Dmn) / (axis3.Rgn * axis3.Rgn * axis3.Jl_calc_wr * axis3.Jmn);
-  axis3.av2_wr = (axis3.Rgn * axis3.Rgn * axis3.Ktn * (axis3.Dln * axis3.fwm_wr + axis3.Dln * axis3.Kvp_wr + axis3.Jl_calc_wr * axis3.Kvi_wr) + axis3.Rgn * axis3.Ktn * axis3.Jl_calc_wr * axis3.fqs_wr + axis3.Jl_calc_wr * axis3.Ksn + axis3.Rgn * axis3.Rgn * (axis3.Jmn * axis3.Ksn + axis3.Dmn * axis3.Dln)) / (axis3.Rgn * axis3.Rgn * axis3.Jl_calc_wr * axis3.Jmn);
-  axis3.av1_wr = (axis3.Rgn * axis3.Rgn * axis3.Ktn * (axis3.Ksn * axis3.fwm_wr + axis3.Ksn * axis3.Kvp_wr + axis3.Dln * axis3.Kvi_wr) + axis3.Rgn * axis3.Ktn * (axis3.Dln * axis3.fqs_wr + axis3.Ksn * axis3.fwl_wr) + axis3.Dln * axis3.Ksn + axis3.Rgn * axis3.Rgn * axis3.Dmn * axis3.Ksn) / (axis3.Rgn * axis3.Rgn * axis3.Jl_calc_wr * axis3.Jmn);
-  axis3.av0_wr = (axis3.Rgn * axis3.Rgn * axis3.Ktn * axis3.Ksn * axis3.Kvi_wr) / (axis3.Rgn * axis3.Rgn * axis3.Jl_calc_wr * axis3.Jmn);
-  axis3.bv3_wr = (axis3.Rgn * axis3.Rgn * axis3.Ktn * axis3.Jl_calc_wr * axis3.Kvp_wr) / (axis3.Rgn * axis3.Rgn * axis3.Jl_calc_wr * axis3.Jmn);
-  axis3.bv2_wr = (axis3.Rgn * axis3.Rgn * axis3.Ktn * (axis3.Jl_calc_wr * axis3.Kvi_wr + axis3.Dln * axis3.Kvp_wr)) / (axis3.Rgn * axis3.Rgn * axis3.Jl_calc_wr * axis3.Jmn);
-  axis3.bv1_wr = (axis3.Rgn * axis3.Rgn * axis3.Ktn * (axis3.Dln * axis3.Kvi_wr + axis3.Ksn * axis3.Kvp_wr)) / (axis3.Rgn * axis3.Rgn * axis3.Jl_calc_wr * axis3.Jmn);
-  axis3.bv0_wr = (axis3.Rgn * axis3.Rgn * axis3.Ktn * axis3.Ksn * axis3.Kvi_wr) / (axis3.Rgn * axis3.Rgn * axis3.Jl_calc_wr * axis3.Jmn);
+  axis3.av3_wr = (axis3.Rgn * axis3.Rgn * (axis3.Ktn * axis3.Jl_calc_Wr * (axis3.fwm_wr + axis3.Kvp_wr)) + axis3.Jmn * axis3.Dln + axis3.Jl_calc_Wr * axis3.Dmn) / (axis3.Rgn * axis3.Rgn * axis3.Jl_calc_Wr * axis3.Jmn);
+  axis3.av2_wr = (axis3.Rgn * axis3.Rgn * axis3.Ktn * (axis3.Dln * axis3.fwm_wr + axis3.Dln * axis3.Kvp_wr + axis3.Jl_calc_Wr * axis3.Kvi_wr) + axis3.Rgn * axis3.Ktn * axis3.Jl_calc_Wr * axis3.fqs_wr + axis3.Jl_calc_Wr * axis3.Ksn + axis3.Rgn * axis3.Rgn * (axis3.Jmn * axis3.Ksn + axis3.Dmn * axis3.Dln)) / (axis3.Rgn * axis3.Rgn * axis3.Jl_calc_Wr * axis3.Jmn);
+  axis3.av1_wr = (axis3.Rgn * axis3.Rgn * axis3.Ktn * (axis3.Ksn * axis3.fwm_wr + axis3.Ksn * axis3.Kvp_wr + axis3.Dln * axis3.Kvi_wr) + axis3.Rgn * axis3.Ktn * (axis3.Dln * axis3.fqs_wr + axis3.Ksn * axis3.fwl_wr) + axis3.Dln * axis3.Ksn + axis3.Rgn * axis3.Rgn * axis3.Dmn * axis3.Ksn) / (axis3.Rgn * axis3.Rgn * axis3.Jl_calc_Wr * axis3.Jmn);
+  axis3.av0_wr = (axis3.Rgn * axis3.Rgn * axis3.Ktn * axis3.Ksn * axis3.Kvi_wr) / (axis3.Rgn * axis3.Rgn * axis3.Jl_calc_Wr * axis3.Jmn);
+  axis3.bv3_wr = (axis3.Rgn * axis3.Rgn * axis3.Ktn * axis3.Jl_calc_Wr * axis3.Kvp_wr) / (axis3.Rgn * axis3.Rgn * axis3.Jl_calc_Wr * axis3.Jmn);
+  axis3.bv2_wr = (axis3.Rgn * axis3.Rgn * axis3.Ktn * (axis3.Jl_calc_Wr * axis3.Kvi_wr + axis3.Dln * axis3.Kvp_wr)) / (axis3.Rgn * axis3.Rgn * axis3.Jl_calc_Wr * axis3.Jmn);
+  axis3.bv1_wr = (axis3.Rgn * axis3.Rgn * axis3.Ktn * (axis3.Dln * axis3.Kvi_wr + axis3.Ksn * axis3.Kvp_wr)) / (axis3.Rgn * axis3.Rgn * axis3.Jl_calc_Wr * axis3.Jmn);
+  axis3.bv0_wr = (axis3.Rgn * axis3.Rgn * axis3.Ktn * axis3.Ksn * axis3.Kvi_wr) / (axis3.Rgn * axis3.Rgn * axis3.Jl_calc_Wr * axis3.Jmn);
 
   axis3.Kpp_wr = gsub[2].r1_pole * (axis3.av0_wr * axis3.bv1_wr - axis3.av1_wr * axis3.bv0_wr) / (gsub[2].r1_pole * (axis3.bv0_wr * axis3.bv2_wr - axis3.bv1_wr * axis3.bv1_wr) + gsub[2].tau_pole * axis3.bv0_wr * (gsub[2].r1_pole * axis3.bv1_wr - gsub[2].tau_pole * axis3.bv0_wr));
   axis3.apm0_pd_wr = axis3.Kpp_wr * axis3.bv0_wr;
