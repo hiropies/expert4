@@ -5633,7 +5633,7 @@ void CalcFDTDWrInit_WmcmdInputType(Robot *robo)
     Wr_DPD[0].b3cf   = robo->Kff * robo->Kvp * robo->Ktn * Tp2 / (robo->Jmn * robo->Rgn);
     Wr_DPD[0].b4cf   = 0.0;
     Wr_DPD[0].b5cf   = 0.0;
-    Wr_DPD[0].b6cf   = (robo->Kff * robo->Kvi * Tp * (robo->Jmn - (1 + robo->Kfb) * robo->Ktn * robo->Kfb * Tp)) / robo->Jmn;
+    Wr_DPD[0].b6cf   = (robo->Kff * robo->Kvi * Tp * (robo->Jmn - (1 + robo->Kfb) * robo->Ktn * robo->Kvp * Tp)) / robo->Jmn;
     Wr_DPD[0].b7cf   = Tp;
   }
   else if (robo->BDN == BDN1)
@@ -5697,7 +5697,7 @@ void CalcFDTDWrInit_WmcmdInputType(Robot *robo)
     Wr_DPD[1].b3cf   = robo->Kff * robo->Kvp * robo->Ktn * Tp2 / (robo->Jmn * robo->Rgn);
     Wr_DPD[1].b4cf   = 0.0;
     Wr_DPD[1].b5cf   = 0.0;
-    Wr_DPD[1].b6cf   = (robo->Kff * robo->Kvi * Tp * (robo->Jmn - (1 + robo->Kfb) * robo->Ktn * robo->Kfb * Tp)) / robo->Jmn;
+    Wr_DPD[1].b6cf   = (robo->Kff * robo->Kvi * Tp * (robo->Jmn - (1 + robo->Kfb) * robo->Ktn * robo->Kvp * Tp)) / robo->Jmn;
     Wr_DPD[1].b7cf   = Tp;
   }
   else if (robo->BDN == BDN2)
@@ -5761,7 +5761,7 @@ void CalcFDTDWrInit_WmcmdInputType(Robot *robo)
     Wr_DPD[2].b3cf   = robo->Kff * robo->Kvp * robo->Ktn * Tp2 / (robo->Jmn * robo->Rgn);
     Wr_DPD[2].b4cf   = 0.0;
     Wr_DPD[2].b5cf   = 0.0;
-    Wr_DPD[2].b6cf   = (robo->Kff * robo->Kvi * Tp * (robo->Jmn - (1 + robo->Kfb) * robo->Ktn * robo->Kfb * Tp)) / robo->Jmn;
+    Wr_DPD[2].b6cf   = (robo->Kff * robo->Kvi * Tp * (robo->Jmn - (1 + robo->Kfb) * robo->Ktn * robo->Kvp * Tp)) / robo->Jmn;
     Wr_DPD[2].b7cf   = Tp;
   }
   else
