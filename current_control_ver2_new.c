@@ -1258,7 +1258,7 @@ interrupt void ControlFunction(void)
           // CalcFDTDWrUpdate_QmrefInputType_1st2nd();
           CalcFDTDWrUpdate_WmcmdInputType_1st2nd(&axis1);
           CalcFDTDWrUpdate_WmcmdInputType_1st2nd(&axis2);
-          // CalcFDTDWrUpdate_WmcmdInputType_1st2nd(&axis3);
+          CalcFDTDWrUpdate_WmcmdInputType_1st2nd(&axis3);
         }
         else
         {
@@ -5834,7 +5834,31 @@ void CalcFDTDWrUpdate_WmcmdInputType_1st2nd(Robot *robo)
   }
   else if (robo->BDN == BDN2)
   {
-    // BDN2を代えることは、ないんですね
+    Wr_DPD[2].a11cf = ((robo->Jmn) - Tp * (robo->Dmn + robo->Ktn * (robo->fwm + robo->Kvp + robo->Kfb * robo->Kvp))) / robo->Jmn;
+    Wr_DPD[2].a12cf = -robo->Ktn * robo->Kvp * robo->Kpp * Tp / robo->Jmn;
+    Wr_DPD[2].a13cf = (-robo->Ktn * robo->fqs * Tp - robo->Ksn * Tp / robo->Rgn) / robo->Jmn;
+    Wr_DPD[2].a14cf = -robo->Ktn * robo->fwl * Tp / robo->Jmn;
+    Wr_DPD[2].a17cf = Tp * robo->Ktn * robo->Kvp * robo->Kpp / robo->Jmn;
+    Wr_DPD[2].a21cf = (Tp * ((robo->Jmn) - Tp * (robo->Dmn + robo->Ktn * (robo->fwm + robo->Kvp + robo->Kfb * robo->Kvp)))) / robo->Jmn;
+    Wr_DPD[2].a22cf = 1 - (robo->Ktn * robo->Kvp * robo->Kpp * Tp2) / robo->Jmn;
+    Wr_DPD[2].a23cf = -((robo->Ktn * robo->fqs * robo->Rgn + robo->Ksn) * Tp2) / (robo->Jmn * robo->Rgn);
+    Wr_DPD[2].a24cf = -robo->Ktn * robo->fwl * Tp2 / robo->Jmn;
+    Wr_DPD[2].a27cf = Tp2 * robo->Ktn * robo->Kvp * robo->Kpp / robo->Jmn;
+    Wr_DPD[2].a31cf = (Tp / robo->Rgn) * ((robo->Jmn) - Tp * (robo->Dmn + robo->Ktn * (robo->fwm + robo->Kvp + robo->Kfb * robo->Kvp))) / robo->Jmn;
+    Wr_DPD[2].a32cf = -robo->Ktn * robo->Kvp * robo->Kpp * Tp2 / (robo->Jmn * robo->Rgn);
+    Wr_DPD[2].a33cf1 = 1.0 - (Tp2 * (robo->Ksn / robo->Rgn + robo->fqs * robo->Ktn)) / (robo->Jmn * robo->Rgn);
+    Wr_DPD[2].a34cf1 = -Tp - robo->Ktn * robo->fwl * Tp2 / (robo->Jmn * robo->Rgn);
+    Wr_DPD[2].a37cf = robo->Kvp * robo->Kpp * robo->Ktn * Tp2 / (robo->Jmn * robo->Rgn);
+    Wr_DPD[2].a61cf = ((1 + robo->Kfb) * robo->Kvi * Tp * (-robo->Jmn + (robo->Dmn + robo->Ktn * (robo->fwm + robo->Kvp + robo->Kfb * robo->Kvp)) * Tp)) / robo->Jmn;
+    Wr_DPD[2].a62cf = (robo->Kpp * robo->Kvi * Tp * (-robo->Jmn + (1 + robo->Kfb) * robo->Ktn * robo->Kvp * Tp)) / robo->Jmn;
+    Wr_DPD[2].a63cf = (Tp2 * (1 + robo->Kfb) * robo->Kvi * (robo->Ksn + robo->fqs * robo->Ktn * robo->Rgn)) / (robo->Jmn * robo->Rgn);
+    Wr_DPD[2].a64cf = (robo->fwl * (1 + robo->Kfb) * robo->Ktn * robo->Kvi * Tp2) / robo->Jmn;
+    Wr_DPD[2].a66cf = 1 - ((1 + robo->Kfb) * robo->Ktn * robo->Kvi * Tp2) / robo->Jmn;
+    Wr_DPD[2].a67cf = (robo->Kpp * robo->Kvi * Tp * (robo->Jmn - (1 + robo->Kfb) * robo->Ktn * robo->Kvp * Tp)) / robo->Jmn;
+    Wr_DPD[2].b1cf = robo->Kff * robo->Kvp * robo->Ktn * Tp / robo->Jmn;
+    Wr_DPD[2].b2cf = robo->Kff * robo->Kvp * robo->Ktn * Tp2 / robo->Jmn;
+    Wr_DPD[2].b3cf = robo->Kff * robo->Kvp * robo->Ktn * Tp2 / (robo->Jmn * robo->Rgn);
+    Wr_DPD[2].b6cf = (robo->Kff * robo->Kvi * Tp * (robo->Jmn - (1 + robo->Kfb) * robo->Ktn * robo->Kfb * Tp)) / robo->Jmn;
   }
   else
   {
