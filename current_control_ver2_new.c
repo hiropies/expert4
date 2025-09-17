@@ -5455,23 +5455,19 @@ void CalcFDTDWrUpdate_QmrefInputType_2nd(void)
   Wr_sub[1].a12cf = -axis2.Ktn * axis2.Kvp * axis2.Kpp * Tp / axis2.Jmn;
   Wr_sub[1].a13cf = (-axis2.Ktn * axis2.fqs * Tp - axis2.Ksn * Tp / axis2.Rgn) / axis2.Jmn;
   Wr_sub[1].a14cf = -axis2.Ktn * axis2.fwl * Tp / axis2.Jmn;
-
   Wr_sub[1].a21cf = Tp * Wr_sub[1].a11cf;
   Wr_sub[1].a22cf = Tp * Wr_sub[1].a12cf + 1.0;
   Wr_sub[1].a23cf = Tp * Wr_sub[1].a13cf;
   Wr_sub[1].a24cf = Tp * Wr_sub[1].a14cf;
-
   Wr_sub[1].a31cf = (-axis2.Ktn * axis2.Kvp * Tp_2 - axis2.Ktn * axis2.fwm * Tp_2 - axis2.Dmn * Tp_2 + axis2.Jmn * Tp) / (axis2.Jmn * axis2.Rgn);
   Wr_sub[1].a32cf = -axis2.Ktn * axis2.Kvp * axis2.Kpp * Tp_2 / (axis2.Jmn * axis2.Rgn);
   Wr_sub[1].a33cf1 = 1.0 + (-axis2.Ktn * axis2.fqs * Tp_2 - axis2.Ksn * Tp_2 / axis2.Rgn) / (axis2.Jmn * axis2.Rgn);
   Wr_sub[1].a34cf1 = -Tp - axis2.Ktn * axis2.fwl * Tp_2 / (axis2.Jmn * axis2.Rgn);
-
   Wr_sub[1].a61cf = (axis2.Ktn * axis2.Kvp * axis2.Kvi * Tp_2 + axis2.Ktn * axis2.fwm * axis2.Kvi * Tp_2 + axis2.Dmn * axis2.Kvi * Tp_2 - axis2.Jmn * axis2.Kvi * Tp) / axis2.Jmn - axis2.Kvi * axis2.Kpp * Tp_2;
   Wr_sub[1].a62cf = axis2.Ktn * axis2.Kvp * axis2.Kpp * axis2.Kvi * Tp_2 / axis2.Jmn - Tp * axis2.Kvi * axis2.Kpp;
   Wr_sub[1].a63cf = (axis2.Ktn * axis2.fqs * axis2.Kvi * Tp_2 + axis2.Ksn * axis2.Kvi * Tp_2 / axis2.Rgn) / axis2.Jmn;
   Wr_sub[1].a64cf = axis2.Ktn * axis2.fwl * axis2.Kvi * Tp_2 / axis2.Jmn;
   Wr_sub[1].a66cf = 1.0 - axis2.Ktn * axis2.Kvi * Tp_2 / axis2.Jmn;
-
   Wr_sub[1].b1cf = axis2.Kpp * axis2.Kvp * axis2.Ktn * Tp / axis2.Jmn;
   Wr_sub[1].b2cf = axis2.Kpp * axis2.Kvp * axis2.Ktn * Tp_2 / axis2.Jmn;
   Wr_sub[1].b3cf = axis2.Kpp * axis2.Kvp * axis2.Ktn * Tp_2 / (axis2.Jmn * axis2.Rgn);
@@ -5595,7 +5591,7 @@ void CalcFDTDWrInit_WmcmdInputType(Robot *robo)
     Wr_DPD[0].a27cf  = Tp2 * robo->Ktn * robo->Kvp * robo->Kpp / robo->Jmn;
     Wr_DPD[0].a31cf  = (Tp / robo->Rgn) * ((robo->Jmn) - Tp * (robo->Dmn + robo->Ktn * (robo->fwm + robo->Kvp + robo->Kfb * robo->Kvp))) / robo->Jmn;
     Wr_DPD[0].a32cf  = -robo->Ktn * robo->Kvp * robo->Kpp * Tp2 / (robo->Jmn * robo->Rgn);
-    Wr_DPD[0].a33cf1 = 1.0 + (Tp2 * (robo->Ksn / robo->Rgn + robo->fqs * robo->Ktn)) / (robo->Jmn * robo->Rgn);
+    Wr_DPD[0].a33cf1 = 1.0 - (Tp2 * (robo->Ksn / robo->Rgn + robo->fqs * robo->Ktn)) / (robo->Jmn * robo->Rgn);
     Wr_DPD[0].a33cf2 = -Tp2 * robo->Ksn;
     Wr_DPD[0].a34cf1 = -Tp - robo->Ktn * robo->fwl * Tp2 / (robo->Jmn * robo->Rgn);
     Wr_DPD[0].a34cf2 = Tp2 * robo->Dln;
@@ -5659,7 +5655,7 @@ void CalcFDTDWrInit_WmcmdInputType(Robot *robo)
     Wr_DPD[1].a27cf  = Tp2 * robo->Ktn * robo->Kvp * robo->Kpp / robo->Jmn;
     Wr_DPD[1].a31cf  = (Tp / robo->Rgn) * ((robo->Jmn) - Tp * (robo->Dmn + robo->Ktn * (robo->fwm + robo->Kvp + robo->Kfb * robo->Kvp))) / robo->Jmn;
     Wr_DPD[1].a32cf  = -robo->Ktn * robo->Kvp * robo->Kpp * Tp2 / (robo->Jmn * robo->Rgn);
-    Wr_DPD[1].a33cf1 = 1.0 + (Tp2 * (robo->Ksn / robo->Rgn + robo->fqs * robo->Ktn)) / (robo->Jmn * robo->Rgn);
+    Wr_DPD[1].a33cf1 = 1.0 - (Tp2 * (robo->Ksn / robo->Rgn + robo->fqs * robo->Ktn)) / (robo->Jmn * robo->Rgn);
     Wr_DPD[1].a33cf2 = -Tp2 * robo->Ksn;
     Wr_DPD[1].a34cf1 = -Tp - robo->Ktn * robo->fwl * Tp2 / (robo->Jmn * robo->Rgn);
     Wr_DPD[1].a34cf2 = Tp2 * robo->Dln;
@@ -5723,7 +5719,7 @@ void CalcFDTDWrInit_WmcmdInputType(Robot *robo)
     Wr_DPD[2].a27cf  = Tp2 * robo->Ktn * robo->Kvp * robo->Kpp / robo->Jmn;
     Wr_DPD[2].a31cf  = (Tp / robo->Rgn) * ((robo->Jmn) - Tp * (robo->Dmn + robo->Ktn * (robo->fwm + robo->Kvp + robo->Kfb * robo->Kvp))) / robo->Jmn;
     Wr_DPD[2].a32cf  = -robo->Ktn * robo->Kvp * robo->Kpp * Tp2 / (robo->Jmn * robo->Rgn);
-    Wr_DPD[2].a33cf1 = 1.0 + (Tp2 * (robo->Ksn / robo->Rgn + robo->fqs * robo->Ktn)) / (robo->Jmn * robo->Rgn);
+    Wr_DPD[2].a33cf1 = 1.0 - (Tp2 * (robo->Ksn / robo->Rgn + robo->fqs * robo->Ktn)) / (robo->Jmn * robo->Rgn);
     Wr_DPD[2].a33cf2 = -Tp2 * robo->Ksn;
     Wr_DPD[2].a34cf1 = -Tp - robo->Ktn * robo->fwl * Tp2 / (robo->Jmn * robo->Rgn);
     Wr_DPD[2].a34cf2 = Tp2 * robo->Dln;
@@ -5793,7 +5789,7 @@ void CalcFDTDWrUpdate_WmcmdInputType_1st2nd(Robot *robo)
     Wr_DPD[0].a27cf  = Tp2 * robo->Ktn * robo->Kvp * robo->Kpp / robo->Jmn;
     Wr_DPD[0].a31cf  = (Tp / robo->Rgn) * ((robo->Jmn) - Tp * (robo->Dmn + robo->Ktn * (robo->fwm + robo->Kvp + robo->Kfb * robo->Kvp))) / robo->Jmn;
     Wr_DPD[0].a32cf  = -robo->Ktn * robo->Kvp * robo->Kpp * Tp2 / (robo->Jmn * robo->Rgn);
-    Wr_DPD[0].a33cf1 = 1.0 + (Tp2 * (robo->Ksn / robo->Rgn + robo->fqs * robo->Ktn)) / (robo->Jmn * robo->Rgn);
+    Wr_DPD[0].a33cf1 = 1.0 - (Tp2 * (robo->Ksn / robo->Rgn + robo->fqs * robo->Ktn)) / (robo->Jmn * robo->Rgn);
     Wr_DPD[0].a34cf1 = -Tp - robo->Ktn * robo->fwl * Tp2 / (robo->Jmn * robo->Rgn);
     Wr_DPD[0].a37cf  = robo->Kvp * robo->Kpp * robo->Ktn * Tp2 / (robo->Jmn * robo->Rgn);
     Wr_DPD[0].a61cf  = ((1 + robo->Kfb) * robo->Kvi * Tp * (-robo->Jmn + (robo->Dmn + robo->Ktn * (robo->fwm + robo->Kvp + robo->Kfb * robo->Kvp)) * Tp)) / robo->Jmn;
@@ -5822,7 +5818,7 @@ void CalcFDTDWrUpdate_WmcmdInputType_1st2nd(Robot *robo)
     Wr_DPD[1].a27cf  = Tp2 * robo->Ktn * robo->Kvp * robo->Kpp / robo->Jmn;
     Wr_DPD[1].a31cf  = (Tp / robo->Rgn) * ((robo->Jmn) - Tp * (robo->Dmn + robo->Ktn * (robo->fwm + robo->Kvp + robo->Kfb * robo->Kvp))) / robo->Jmn;
     Wr_DPD[1].a32cf  = -robo->Ktn * robo->Kvp * robo->Kpp * Tp2 / (robo->Jmn * robo->Rgn);
-    Wr_DPD[1].a33cf1 = 1.0 + (Tp2 * (robo->Ksn / robo->Rgn + robo->fqs * robo->Ktn)) / (robo->Jmn * robo->Rgn);
+    Wr_DPD[1].a33cf1 = 1.0 - (Tp2 * (robo->Ksn / robo->Rgn + robo->fqs * robo->Ktn)) / (robo->Jmn * robo->Rgn);
     Wr_DPD[1].a34cf1 = -Tp - robo->Ktn * robo->fwl * Tp2 / (robo->Jmn * robo->Rgn);
     Wr_DPD[1].a37cf  = robo->Kvp * robo->Kpp * robo->Ktn * Tp2 / (robo->Jmn * robo->Rgn);
     Wr_DPD[1].a61cf  = ((1 + robo->Kfb) * robo->Kvi * Tp * (-robo->Jmn + (robo->Dmn + robo->Ktn * (robo->fwm + robo->Kvp + robo->Kfb * robo->Kvp)) * Tp)) / robo->Jmn;
