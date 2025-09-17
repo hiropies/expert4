@@ -6617,7 +6617,18 @@ void CalcJl(Robot axis[])
   float S223 = 0.0;
   float S2233 = 0.0;
 
-  // Wr出力確認用　ql_calcからJLを計算する
+  // // Wr出力確認用　ql_calcからJLを計算する
+  // C2 = cos(axis2.ql_calc);
+  // C3 = cos(axis3.ql_calc);
+  // C22 = cos(2 * axis2.ql_calc);
+  // C223 = cos(2 * axis2.ql_calc + axis3.ql_calc);
+  // C2233 = cos(2 * axis2.ql_calc + 2 * axis3.ql_calc);
+  // S2 = sin(axis2.ql_calc);
+  // S3 = sin(axis3.ql_calc);
+  // S223 = sin(2 * axis2.ql_calc + axis3.ql_calc);
+  // S2233 = sin(2 * axis2.ql_calc + 2 * axis3.ql_calc);
+
+  // 実験用　qlからJLを計算する
   C2 = cos(axis2.ql);
   C3 = cos(axis3.ql);
   C22 = cos(2 * axis2.ql);
@@ -6625,19 +6636,8 @@ void CalcJl(Robot axis[])
   C2233 = cos(2 * axis2.ql + 2 * axis3.ql);
   S2 = sin(axis2.ql);
   S3 = sin(axis3.ql);
-  S223 = sin(2 *  axis2.ql +     axis3.ql);
+  S223 = sin(2 * axis2.ql + axis3.ql);
   S2233 = sin(2 * axis2.ql + 2 * axis3.ql);
-
-  // 実験用　qlからJLを計算する
-  // C2 = cos(axis2.ql);
-  // C3 = cos(axis3.ql);
-  // C22 = cos(2 * axis2.ql);
-  // C223 = cos(2 * axis2.ql + axis3.ql);
-  // C2233 = cos(2 * axis2.ql + 2 * axis3.ql);
-  // S2 = sin(axis2.ql);
-  // S3 = sin(axis3.ql);
-  // S223 = sin(2 * axis2.ql + axis3.ql);
-  // S2233 = sin(2 * axis2.ql + 2 * axis3.ql);
 
   // ラグランジュ法に基づく動力学
   // 慣性項
@@ -6670,14 +6670,14 @@ void CalcGravIcmp(Robot axis[])
   float S23 = 0.0;
 
   // Wr確認用
-  C23 = cos(axis2.ql_calc + axis3.ql_calc);
-  S2 = sin(axis2.ql_calc);
-  S23 = sin(axis2.ql_calc + axis3.ql_calc);
+  // C23 = cos(axis2.ql_calc + axis3.ql_calc);
+  // S2 = sin(axis2.ql_calc);
+  // S23 = sin(axis2.ql_calc + axis3.ql_calc);
 
   // // 実験用
-  // C23 = cos(axis2.ql + axis3.ql);
-  // S2 = sin(axis2.ql);
-  // S23 = sin(axis2.ql + axis3.ql);
+  C23 = cos(axis2.ql + axis3.ql);
+  S2 = sin(axis2.ql);
+  S23 = sin(axis2.ql + axis3.ql);
 
   // ラグランジュ法に基づく動力学
   // 重力項
