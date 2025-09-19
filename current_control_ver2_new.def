@@ -50,7 +50,7 @@ load_angle_limit_rad5 11f0472c FLOAT 1
 ModRatioU 11f03614 FLOAT 1
 ModRatioV 11f03618 FLOAT 1
 ModRatioW 11f0361c FLOAT 1
-range c041068 FLOAT 20 8
+range c040fa8 FLOAT 20 8
 ref_Iq_direct1 11f0494c FLOAT 1
 ref_Iq_direct2 11f04950 FLOAT 1
 ref_Iq_direct3 11f04954 FLOAT 1

@@ -1237,24 +1237,24 @@ interrupt void ControlFunction(void)
       axis2.wm = axis2.omega_rm;
       axis2.wm = -1.0 * axis2.wm;
       axis3.wm = axis3.omega_rm;
-      if (flag_on == 0)
-      {
-        axis1.qm_ref = 0.0;
-        LimitPosCmd(&axis1);
-        axis2.qm_ref = 0.0;
-        LimitPosCmd(&axis2);
-        axis3.qm_ref = 0.0;
-        LimitPosCmd(&axis3);
-      }
-      else
-      {
-        axis1.qm_ref = axis1.qm;
-        LimitPosCmd(&axis1);
-        axis2.qm_ref = axis2.qm;
-        LimitPosCmd(&axis2);
-        axis3.qm_ref = axis3.qm;
-        LimitPosCmd(&axis3);
-      }
+      // if (flag_on == 0)
+      // {
+      //   axis1.qm_ref = 0.0;
+      //   LimitPosCmd(&axis1);
+      //   axis2.qm_ref = 0.0;
+      //   LimitPosCmd(&axis2);
+      //   axis3.qm_ref = 0.0;
+      //   LimitPosCmd(&axis3);
+      // }
+      // else
+      // {
+      //   axis1.qm_ref = axis1.qm;
+      //   LimitPosCmd(&axis1);
+      //   axis2.qm_ref = axis2.qm;
+      //   LimitPosCmd(&axis2);
+      //   axis3.qm_ref = axis3.qm;
+      //   LimitPosCmd(&axis3);
+      // }
 
       // 動力学トルクを計算
       CalcTauLDyn(joint);
@@ -1473,6 +1473,9 @@ interrupt void ControlFunction(void)
             start_go1 = axis1.qm;
             start_go2 = axis2.qm;
             start_go3 = axis3.qm;
+            axis1.qm_ref = start_go1;
+            axis2.qm_ref = start_go2;
+            axis3.qm_ref = start_go3;
             flag_reposition = 0;
             // 指令値の設定値
             SetRampParams((motor_cmd[0]-start_go1), (motor_cmd[1]-start_go2), (motor_cmd[2]-start_go3));
