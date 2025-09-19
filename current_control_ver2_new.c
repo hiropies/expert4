@@ -1479,7 +1479,7 @@ interrupt void ControlFunction(void)
             start_go3 = axis3.qm;
             flag_reposition = 0;
             // 指令値の設定値
-            SetRampParams((motor_cmd[0]), (motor_cmd[1]), (motor_cmd[2]));
+            SetRampParams((motor_cmd[0]-start_go1), (motor_cmd[1]-start_go2), (motor_cmd[2]-start_go3));
           }
           // ランプ指令用変数の設定
 
