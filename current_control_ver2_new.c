@@ -1084,6 +1084,7 @@ void LimDiffCalcDQ(Robot *robo);
 // 動力学計算
 void CalcTauLDyn(Robot axis[]);
 void CalcJl(Robot axis[]);
+void CalcJlWr(Robot axis[]);
 void CalcGravIcmp(Robot axis[]);
 void CalcDynamicsInit(int flag_dyn_payload);
 
@@ -1256,11 +1257,9 @@ interrupt void ControlFunction(void)
       //   LimitPosCmd(&axis3);
       // }
 
-      // 動力学トルクを計算
-      CalcTauLDyn(joint);
-
       CalcGravIcmp(joint); // 2,3軸の重力補償電流を計算　main関数の初期姿勢を要確認！！！！
-      CalcJl(joint);       // JLの変動は使うので3軸分計算
+      CalcJl(joint);         // JLの変動は使うので3軸分計算
+      CalcJlWr(joint);
 
       // // 可変ゲイン計算
       CalcPVGain();
@@ -1276,6 +1275,9 @@ interrupt void ControlFunction(void)
       CalcFDTDWr_WmcmdInputType(&axis1);
       CalcFDTDWr_WmcmdInputType(&axis2);
       CalcFDTDWr_WmcmdInputType(&axis3);
+
+      // 動力学トルクを計算
+      CalcTauLDyn(joint);
 
       // FF制御　動力学補償電流
       FDTD_Tm(&axis1);
@@ -1324,17 +1326,16 @@ interrupt void ControlFunction(void)
         axis2.wm = -1.0 * axis2.wm;
         axis3.wm = axis3.omega_rm;
 
-        // 動力学トルクを計算
-        CalcTauLDyn(joint); // 1~3軸分を計算
-
-        // ラッチしたqlの情報をもとにJlを計算
-        CalcJl(joint); // JLの変動は使うので3軸分計算
         // 可変ゲイン計算
         if(flag_cont_start != 3)
         {
-          CalcPVGain();
-          CalcWrGain();
+          // ラッチしたqlの情報をもとにJlを計算
+          CalcJl(joint); // JLの変動は使うので3軸分計算
+          CalcJlWr(joint);
         }
+
+        CalcPVGain();
+        CalcWrGain();
 
         if (flag_FF_triple == 1)
         {
@@ -1352,6 +1353,9 @@ interrupt void ControlFunction(void)
           CalcFDTDWrUpdate_WmcmdInputType_2nd(&axis2);
           // CalcFDTDWrUpdate_WmcmdInputType_2nd(&axis3);
         }
+
+        // 動力学トルクを計算
+        CalcTauLDyn(joint); // 1~3軸分を計算
 
         // 制御周期の測定結果出力 ファンクションリファレンスp45より
         // 制御にかかった時間を測定している。
@@ -6620,40 +6624,30 @@ void CalcTauLDyn(Robot axis[])
   // *tauLdyn3 = 0.0;
 
   // 外乱トルクを計算したいので慣性行列の主対角成分はコメントアウト
-  axis1.Jl_calc_Wr = dyn.H11p1 + dyn.H11p2 * S2 + dyn.H11p3 * C2233 + S3 * (dyn.H11p4 * S2 + dyn.H11p5 * C2 + dyn.H11p6) + dyn.H11p7 * S2233 + dyn.H11p8 * S223 + C3 * (dyn.H11p9 * S2 + dyn.H11p10 * C2 + dyn.H11p11) + dyn.H11p12 * C223 + dyn.H11p13 * C22;
-  axis2.Jl_calc_Wr = dyn.H22p1 + dyn.H22p2 * C3 + dyn.H22p3 * S3;
-  axis3.Jl_calc_Wr = dyn.H33p1;
+  // axis1.Jl_calc_Wr = dyn.H11p1 + dyn.H11p2 * S2 + dyn.H11p3 * C2233 + S3 * (dyn.H11p4 * S2 + dyn.H11p5 * C2 + dyn.H11p6) + dyn.H11p7 * S2233 + dyn.H11p8 * S223 + C3 * (dyn.H11p9 * S2 + dyn.H11p10 * C2 + dyn.H11p11) + dyn.H11p12 * C223 + dyn.H11p13 * C22;
+  // axis2.Jl_calc_Wr = dyn.H22p1 + dyn.H22p2 * C3 + dyn.H22p3 * S3;
+  // axis3.Jl_calc_Wr = dyn.H33p1;
 }
 
 void CalcJl(Robot axis[])
 {
   // 三角関数の定義
-  float C1 = 0.0;
-  float C2 = 0.0;
-  float C3 = 0.0;
-  float C22 = 0.0;
-  float C23 = 0.0;
-  float C223 = 0.0;
-  float C2233 = 0.0;
+  static float C2 = 0.0;
+  static float C3 = 0.0;
+  static float C22 = 0.0;
+  static float C223 = 0.0;
+  static float C2233 = 0.0;
 
-  float S1 = 0.0;
-  float S2 = 0.0;
-  float S3 = 0.0;
-  float S22 = 0.0;
-  float S23 = 0.0;
-  float S223 = 0.0;
-  float S2233 = 0.0;
+  static float S2 = 0.0;
+  static float S3 = 0.0;
+  static float S223 = 0.0;
+  static float S2233 = 0.0;
 
-  // // Wr出力確認用　ql_calcからJLを計算する
-  // C2 = cos(axis2.ql_calc);
-  // C3 = cos(axis3.ql_calc);
-  // C22 = cos(2 * axis2.ql_calc);
-  // C223 = cos(2 * axis2.ql_calc + axis3.ql_calc);
-  // C2233 = cos(2 * axis2.ql_calc + 2 * axis3.ql_calc);
-  // S2 = sin(axis2.ql_calc);
-  // S3 = sin(axis3.ql_calc);
-  // S223 = sin(2 * axis2.ql_calc + axis3.ql_calc);
-  // S2233 = sin(2 * axis2.ql_calc + 2 * axis3.ql_calc);
+  // ラグランジュ法に基づく動力学
+  // 慣性項
+  static float H11 = 0.0;
+  static float H22 = 0.0;
+  static float H33 = 0.0;
 
   // 実験用　qlからJLを計算する
   C2 = cos(axis2.ql);
@@ -6666,57 +6660,71 @@ void CalcJl(Robot axis[])
   S223 = sin(2 * axis2.ql + axis3.ql);
   S2233 = sin(2 * axis2.ql + 2 * axis3.ql);
 
-  // ラグランジュ法に基づく動力学
-  // 慣性項
-  float H11 = 0.0;
-  float H22 = 0.0;
-  float H33 = 0.0;
-
   H11 = dyn.H11p1 + dyn.H11p2 * S2 + dyn.H11p3 * C2233 + S3 * (dyn.H11p4 * S2 + dyn.H11p5 * C2 + dyn.H11p6) + dyn.H11p7 * S2233 + dyn.H11p8 * S223 + C3 * (dyn.H11p9 * S2 + dyn.H11p10 * C2 + dyn.H11p11) + dyn.H11p12 * C223 + dyn.H11p13 * C22;
   H22 = dyn.H22p1 + dyn.H22p2 * C3 + dyn.H22p3 * S3;
   H33 = dyn.H33p1;
 
-  // Jlの計算
-  // axis1.Jl_calc_z2 = axis1.Jl_calc_z1;
-  // axis1.Jl_calc_z1 = axis1.Jl_calc;
-  // axis2.Jl_calc_z2 = axis2.Jl_calc_z1;
-  // axis2.Jl_calc_z1 = axis2.Jl_calc;
-  // axis3.Jl_calc_z2 = axis3.Jl_calc_z1;
-  // axis3.Jl_calc_z1 = axis3.Jl_calc;
   axis1.Jl_calc = H11;
   axis2.Jl_calc = H22;
   axis3.Jl_calc = H33;
+}
+
+void CalcJlWr(Robot axis[])
+{
+  // 三角関数の定義
+  static float C2 = 0.0;
+  static float C3 = 0.0;
+  static float C22 = 0.0;
+  static float C223 = 0.0;
+  static float C2233 = 0.0;
+
+  static float S2 = 0.0;
+  static float S3 = 0.0;
+  static float S223 = 0.0;
+  static float S2233 = 0.0;
+
+  // ラグランジュ法に基づく動力学
+  // 慣性項
+  static float H11 = 0.0;
+  static float H22 = 0.0;
+  static float H33 = 0.0;
+
+  // // Wr出力確認用　ql_calcからJLを計算する
+  C2 = cos(axis2.ql_calc);
+  C3 = cos(axis3.ql_calc);
+  C22 = cos(2 * axis2.ql_calc);
+  C223 = cos(2 * axis2.ql_calc + axis3.ql_calc);
+  C2233 = cos(2 * axis2.ql_calc + 2 * axis3.ql_calc);
+  S2 = sin(axis2.ql_calc);
+  S3 = sin(axis3.ql_calc);
+  S223 = sin(2 * axis2.ql_calc + axis3.ql_calc);
+  S2233 = sin(2 * axis2.ql_calc + 2 * axis3.ql_calc);
+
+  H11 = dyn.H11p1 + dyn.H11p2 * S2 + dyn.H11p3 * C2233 + S3 * (dyn.H11p4 * S2 + dyn.H11p5 * C2 + dyn.H11p6) + dyn.H11p7 * S2233 + dyn.H11p8 * S223 + C3 * (dyn.H11p9 * S2 + dyn.H11p10 * C2 + dyn.H11p11) + dyn.H11p12 * C223 + dyn.H11p13 * C22;
+  H22 = dyn.H22p1 + dyn.H22p2 * C3 + dyn.H22p3 * S3;
+  H33 = dyn.H33p1;
+  axis1.Jl_calc_Wr = H11;
+  axis2.Jl_calc_Wr = H22;
+  axis3.Jl_calc_Wr = H33;
 }
 
 void CalcGravIcmp(Robot axis[])
 {
 
   // 三角関数の定義
-  float C23 = 0.0;
-  float S2 = 0.0;
-  float S23 = 0.0;
+  static float C23 = 0.0;
+  static float S2 = 0.0;
+  static float S23 = 0.0;
 
-  // Wr確認用
-  // C23 = cos(axis2.ql_calc + axis3.ql_calc);
-  // S2 = sin(axis2.ql_calc);
-  // S23 = sin(axis2.ql_calc + axis3.ql_calc);
-
-  // // 実験用
+  // 実験用
   C23 = cos(axis2.ql + axis3.ql);
   S2 = sin(axis2.ql);
   S23 = sin(axis2.ql + axis3.ql);
 
   // ラグランジュ法に基づく動力学
   // 重力項
-  // float G1 = 0.0;
-  // float G2 = 0.0;
-  // float G3 = 0.0;
-
   axis2.Icmp = (dyn.G2p1 * S2 + dyn.G2p2 * S23 + dyn.G2p3 * C23) / (axis2.Rgn * axis2.Ktn);
   axis3.Icmp = (dyn.G3p1 * S23 + dyn.G3p2 * C23) / (axis3.Rgn * axis3.Ktn);
-
-  // axis2.tauLdyn = dyn.G2p1*S2 +dyn.G2p2*S23 +dyn.G2p3*C23;
-  // axis3.tauLdyn = dyn.G3p1*S23 +dyn.G3p2*C23;
 }
 
 void CalcDynamicsInit(int flag_dyn_payload)
