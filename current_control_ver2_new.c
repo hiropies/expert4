@@ -1336,7 +1336,7 @@ interrupt void ControlFunction(void)
 
         CalcPVGain();
         CalcWrGain();
-        
+
         if (flag_FF_triple == 1)
         {
           // 1,2軸動力学モデル更新
@@ -6639,12 +6639,6 @@ void CalcJl(Robot axis[])
   static float S3 = 0.0;
   static float S223 = 0.0;
   static float S2233 = 0.0;
-
-  // ラグランジュ法に基づく動力学
-  // 慣性項
-  static float H11 = 0.0;
-  static float H22 = 0.0;
-  static float H33 = 0.0;
 
   // ラグランジュ法に基づく動力学
   // 慣性項
