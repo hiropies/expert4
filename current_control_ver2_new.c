@@ -108,6 +108,9 @@ volatile int counter_2 = 0;       // 指令値Z^=2用カウンタ
 volatile int WAVE_LoopCount = 1;
 volatile int flag_FF_triple = 1;
 volatile int flag_cmd_end = 0;
+volatile int flag_FRA_Axis = 1; // 1->1軸 2->2軸 3->3軸
+volatile int flag_FRA_test_start = 0; // FRA試験開始フラグ
+volatile int flag_FRA_test_end = 0;   // FRA試験終了フラグ
 
 volatile float WAVE_Timer0 = 0.0; // タイマー記録変数
 volatile float WAVE_Timer1 = 0.0; // タイマー記録変数
@@ -599,6 +602,13 @@ volatile float WAVE_bv0_3_wr = 0;
 volatile float WAVE_aq2_3_wr = 0;
 volatile float WAVE_aq1_3_wr = 0;
 volatile float WAVE_aq0_3_wr = 0;
+
+// volatile float Wave_phi_calc = 0.0;
+// volatile float Wave_ChirpFreq = 0.0;
+volatile float Wave_FRAFreq = 0.0;    // FRA更新周波数
+volatile float Wave_FRATime = 0.0;    // FRA試験時間数
+volatile float Wave_Nif = 0.0;        // Ni/f:fをN回分取得するまでの時間
+volatile int Wave_FRAtest_flag = 0.0; // FRA試験開始フラグの描画
 
 #pragma SET_DATA_SECTION(".DATA_ON_HIGHER_SPEED")
 
@@ -1180,6 +1190,15 @@ interrupt void ControlFunction(void)
   static float motor_vel_cmd[3] = {0, 0, 0};
   static float motor_cmd_init[3] = {0, 0, 0};
 
+  // FRA試験関係変数
+  const float fmin = 1.0;      //[Hz] 開始周波数
+  const float fmax = 50.0;     //[Hz] 終了周波数
+  const float fstep = 0.2;     //[Hz] 周波数刻み
+  const float Ni = 10.0;       // Sin波の個数 (積分回数)
+  static float freq = fmin;    // 現在の周波数:初めはfminからstart //プログラム上freq=fminを初期定義できないので、直接数値を打つ
+  static float tini = 0.0;     //[s] 時間初期化
+  static float Time_FRA = 0.0; //[s] FRA試験開始時間(フラグが来たら時間カウント開始)
+
   GetMultiPositions(joint); //!< 複数軸同時取得(特別な事情がない限りこっちを使う)
 
   debug3[0] = axis2.IresU;
@@ -1399,7 +1418,9 @@ interrupt void ControlFunction(void)
         FDTD_Tm(&axis2);
         FDTD_Tm(&axis3);
 
-        CalcGravIcmp(joint);
+        if(flag_cont_start != 3){
+          CalcGravIcmp(joint);
+        } 
 
         if (flag_SOB == 0)
         {
@@ -1627,148 +1648,61 @@ interrupt void ControlFunction(void)
         }
         else if (3 == flag_cont_start)
         {
-          //-------------------------- 実験 -----------------------------
-          // y = -45°平面での円軌道
-
-          // ランプ指令用変数の設定
-
-          // 初期姿勢
-          //  1st-axis -0.45260031 deg
-          //  2nd-axis -29.07706521 deg
-          //  3rd-axis 8.22494633 deg
-          // 終端姿勢
-          //  1st-axis 0.45483276 deg
-          //  2nd-axis -29.072343 deg
-          //  3rd-axis 8.22969042 deg
-
-          /*****************************************************************************
-            ロボット TA1400
-            1軸目 : 電流指令　正　→　ロボットから見て　右
-                    エンコーダ情報は右向きが正
-            2軸目 : 電流指令　正　→　ロボットから見て　上
-                    エンコーダ情報は上向きが正
-            3軸目 : 電流指令　正　→　ロボットから見て　下
-
-            ＊軸によって違うので注意！！！（ギアとかによる）
-          ***************************************************************************** */
-          static float time_wait = 3.0;
-          // static float speed_hand = 10.0; // [m/min] = 60 [m/s]
-          static int flag_loop = 1;
-          static int filter_reset = 0;
-          static int inverse_reset = 1;
-
-          // int flag_filter_on = CalcHandCmdCenter(flag_CalcHandCmd ,hand_cmd, time_wait, speed_hand, start_hand, flag_loop);
-          int flag_filter_on = CalcHandCmdCircle(hand_cmd, hand_vel, time_wait, speed_hand, start_hand, flag_loop);
-          
-          // CalcInverseCmd(hand_cmd, joint_cmd, motor_cmd, motor_vel_cmd, flag_filter_on, filter_reset, Tp);
-          CalcInverseCmd_vel(hand_cmd, hand_vel, motor_cmd, motor_vel_cmd, motor_cmd_init, inverse_reset);
-          inverse_reset = 0;
-          
-          // 1軸目 位置指令
-          // ランプ関数生成関数で位置指令を決定
-          // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
-          axis1.wm_cmd_z2 = axis1.wm_cmd_z1;
-          axis1.wm_cmd_z1 = axis1.wm_cmd;
-          axis1.wm_cmd = motor_vel_cmd[0];
-          axis1.qm_ref_z1 = axis1.qm_ref;
-          axis1.qm_ref = axis1.wm_cmd_z2 * Tp + axis1.qm_ref_z1;
-          
-          LimitPosCmd(&axis1);
-
-          axis1.wm_ref = (axis1.qm_ref - axis1.qm) * axis1.Kpp + axis1.Kff * axis1.wm_cmd_z2 - axis1.Kfb * axis1.wm;
-          
-          if (flag_FF == 1)
+          if (flag_FRA_test_start == 0)
           {
-            // 1軸目 速度PI制御＋SFB＋FF
-            axis1.IrefQ = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1) - axis1.Isfb + axis1.Iff;
-            axis1.I_SOBinput = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1) - axis1.Isfb;
-
-            if (flag_SOB == 1)
-            {
-              axis1.I_SOBinput = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1) - axis1.Isfb;
-            }
-            else if (flag_SOB == 2)
-            {
-              axis1.I_SOBinput = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1) - axis1.Isfb + axis1.Iff;
-            }
+            // FRA
+            axis1.Icmd = 0.0;
+            axis2.Icmd = 0.0;
+            axis3.Icmd = 0.0;
           }
-          else if (flag_FF == 0)
+          if (flag_FRA_test_start == 1)
           {
-            // 1軸目 速度PI制御＋SFB
-            axis1.IrefQ = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1) - axis1.Isfb;
-            axis1.I_SOBinput = axis1.IrefQ;
-          }
-
-          // 2軸目 位置指令
-          // ランプ関数生成関数で位置指令を決定
-          // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
-          axis2.wm_cmd_z2 = axis2.wm_cmd_z1;
-          axis2.wm_cmd_z1 = axis2.wm_cmd;
-          axis2.wm_cmd = motor_vel_cmd[1];
-          axis2.qm_ref_z1 = axis2.qm_ref;
-          axis2.qm_ref = axis2.wm_cmd_z2 * Tp + axis2.qm_ref_z1;
-
-          LimitPosCmd(&axis2);
-          
-          axis2.wm_ref = (axis2.qm_ref - axis2.qm) * axis2.Kpp + axis2.Kff * axis2.wm_cmd_z2 - axis2.Kfb * axis2.wm;
-          
-          if (flag_FF == 1)
-          {
-            // 2軸目 速度PI制御＋SFB＋FF
-            axis2.IrefQ = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb + axis2.Iff;
-            axis2.I_SOBinput = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb;
-
-            if (flag_SOB == 1)
+            if (freq != 0)
             {
-              axis2.I_SOBinput = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb;
+              axis1.Icmd = 0.0;
+              axis2.Icmd = 0.0;
+              axis3.Icmd = 0.0;
+              if(flag_FRA_Axis == 1){
+                axis1.Icmd = 5.1 * 0.3 * cosf(2.0 * PI * freq * (Time_FRA - tini)); // 単正弦波入力評価用(Sel FRA)
+              }
+              else if(flag_FRA_Axis == 2){
+                axis2.Icmd = 7.9 * 0.3 * cosf(2.0 * PI * freq * (Time_FRA - tini)); // 単正弦波入力評価用(Sel FRA)
+              }
+              else if (flag_FRA_Axis == 3){
+                axis3.Icmd = 4.6 * 0.3 * cosf(2.0 * PI * freq * (Time_FRA - tini)); // 単正弦波入力評価用(Sel FRA)
+              }
+              // FRAの1周波数の時間が経過したら次の周波数へ
+              if (Ni / freq <= (Time_FRA - tini))
+              {
+                if (freq < fmax) // 1刻み多いから freq<fmaxでも良いのでは?
+                {
+                  tini = Time_FRA;
+                  freq = freq + fstep;
+                }
+                else
+                {
+                  freq = 0;
+                }
+              }
             }
-            else if (flag_SOB == 2)
+            else
             {
-              axis2.I_SOBinput = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb + axis2.Iff;
+              flag_FRA_test_end = 1.0;
+              IrefQ = 0;
             }
+            Time_FRA += Ts; // [s] FRA開始時間更新開始
           }
-          else if (flag_FF == 0)
+          if (flag_FRA_test_end == 1)
           {
-            // 2軸目 速度PI制御＋SFB
-            axis2.IrefQ = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb;
-            axis2.I_SOBinput = axis2.IrefQ;
+            // 指令はゼロ
+            // FRA
+            axis1.Icmd = 0.0;
+            axis2.Icmd = 0.0;
+            axis3.Icmd = 0.0;
           }
-
-          // 3軸目 位置指令
-          // ランプ関数生成関数で位置指令を決定
-          // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
-          axis3.wm_cmd_z2 = axis3.wm_cmd_z1;
-          axis3.wm_cmd_z1 = axis3.wm_cmd;
-          axis3.wm_cmd = motor_vel_cmd[2];
-          axis3.qm_ref_z1 = axis3.qm_ref;
-          axis3.qm_ref = axis3.wm_cmd_z2 * Tp + axis3.qm_ref_z1;
-          
-          LimitPosCmd(&axis3);
-          
-          axis3.wm_ref = (axis3.qm_ref - axis3.qm) * axis3.Kpp + axis3.Kff * axis3.wm_cmd_z2 - axis3.Kfb * axis3.wm;
-          
-
-          // 3軸目 速度PI制御＋SFB
-          if (flag_FF == 1)
-          {
-            // 3軸目 速度PI制御＋SFB＋FF
-            axis3.IrefQ = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb + axis3.Iff;
-            axis3.I_SOBinput = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb;
-
-            if (flag_SOB == 1)
-            {
-              axis3.I_SOBinput = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb;
-            }
-            else if (flag_SOB == 2)
-            {
-              axis3.I_SOBinput = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb + axis3.Iff;
-            }
-          }
-          else if (flag_FF == 0)
-          {
-            axis3.IrefQ = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb;
-            axis3.I_SOBinput = axis3.IrefQ;
-          }
+          axis1.IrefQ = axis1.Icmd;
+          axis2.IrefQ = axis2.Icmd + axis2.Icmp;
+          axis3.IrefQ = axis3.Icmd + axis3.Icmp;
         }
         else if (4 == flag_cont_start)
         {
@@ -2306,6 +2240,13 @@ interrupt void ControlFunction(void)
   // WAVE_WSX        = WSX;
   // WAVE_WSY        = WSY;
   // WAVE_WSZ        = WSZ;
+
+  // Wave_phi_calc = phi_calc;
+  // Wave_ChirpFreq = ChirpFreq;
+  Wave_FRAFreq = freq;     // FRA更新周波数
+  Wave_FRATime = Time_FRA; // FRA試験時間数
+  // Wave_Nif = Ni/freq;			//Ni/f:fをN回分取得するまでの時間
+  Wave_FRAtest_flag = flag_FRA_test_start;
 
   // 制御演算開始
   t = (float)LoopCount * Ts; //!< 時刻計算
@@ -3840,10 +3781,10 @@ int CalcHandCmdCircle(float goal[3], float vel_hand[3], float t_wait, float spee
 {
   float D = 0.020;
   float path = (PI * D);
-  float freq = 1 / (path / (speed / 60.0));
-  // float t_task = (1.0 / freq) * 1.5;
-  float t_task = (1.0 / freq) * 3.5;
-  // const float t_task = 1.5 / freq;
+  float freq_cmd = 1 / (path / (speed / 60.0));
+  // float t_task = (1.0 / freq_cmd) * 1.5;
+  float t_task = (1.0 / freq_cmd) * 3.5;
+  // const float t_task = 1.5 / freq_cmd;
   // const float S1 = mwsin(theta);
   // const float C1 = mwcos(theta);
   // const float S2 = mwsin(theta2);
@@ -3911,11 +3852,11 @@ int CalcHandCmdCircle(float goal[3], float vel_hand[3], float t_wait, float spee
       else if (Tall >= t_wait && Tall < (t_wait + t_task))
       {
         WAVE_state = 5;
-        fx = (D / 2.0) * sin(2 * PI * freq * (Tall - t_wait));
-        fy = -(D / 2.0) * cos(2 * PI * freq * (Tall - t_wait));
+        fx = (D / 2.0) * sin(2 * PI * freq_cmd * (Tall - t_wait));
+        fy = -(D / 2.0) * cos(2 * PI * freq_cmd * (Tall - t_wait));
         fz = 0;
-        vfx = (D / 2.0) * (2 * PI * freq) * cos(2 * PI * freq * (Tall - t_wait));
-        vfy = (D / 2.0) * (2 * PI * freq) * sin(2 * PI * freq * (Tall - t_wait));
+        vfx = (D / 2.0) * (2 * PI * freq_cmd) * cos(2 * PI * freq_cmd * (Tall - t_wait));
+        vfy = (D / 2.0) * (2 * PI * freq_cmd) * sin(2 * PI * freq_cmd * (Tall - t_wait));
         vfz = 0;
 
         goal[0] = C1 * fx + S1 * fz + x_slide;
