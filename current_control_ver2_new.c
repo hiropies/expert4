@@ -504,6 +504,13 @@ volatile float WAVE_Icmp1;
 volatile float WAVE_Icmp2;
 volatile float WAVE_Icmp3;
 
+volatile float WAVE_Icmd1;
+volatile float WAVE_Icmd2;
+volatile float WAVE_Icmd3;
+
+volatile float WAVE_Freq;
+volatile float WAVE_Tfra;
+
 volatile float ref_Iq_direct1 = 0.0;
 volatile float ref_Iq_direct2 = 0.0;
 volatile float ref_Iq_direct3 = 0.0;
@@ -1191,11 +1198,11 @@ interrupt void ControlFunction(void)
   static float motor_cmd_init[3] = {0, 0, 0};
 
   // FRA試験関係変数
-  const float fmin = 1.0;      //[Hz] 開始周波数
-  const float fmax = 50.0;     //[Hz] 終了周波数
-  const float fstep = 0.2;     //[Hz] 周波数刻み
-  const float Ni = 10.0;       // Sin波の個数 (積分回数)
-  static float freq = fmin;    // 現在の周波数:初めはfminからstart //プログラム上freq=fminを初期定義できないので、直接数値を打つ
+  static float fmin = 1.0;      //[Hz] 開始周波数
+  static float fmax = 50.0;     //[Hz] 終了周波数
+  static float fstep = 0.2;     //[Hz] 周波数刻み
+  static float Ni = 10.0;       // Sin波の個数 (積分回数)
+  static float freq = 1.0;    // 現在の周波数:初めはfminからstart //プログラム上freq=fminを初期定義できないので、直接数値を打つ
   static float tini = 0.0;     //[s] 時間初期化
   static float Time_FRA = 0.0; //[s] FRA試験開始時間(フラグが来たら時間カウント開始)
 
@@ -1688,9 +1695,11 @@ interrupt void ControlFunction(void)
             else
             {
               flag_FRA_test_end = 1.0;
-              IrefQ = 0;
+              axis1.Icmd = 0.0;
+              axis2.Icmd = 0.0;
+              axis3.Icmd = 0.0;
             }
-            Time_FRA += Ts; // [s] FRA開始時間更新開始
+            Time_FRA += Tp; // [s] FRA開始時間更新開始
           }
           if (flag_FRA_test_end == 1)
           {
@@ -2097,6 +2106,13 @@ interrupt void ControlFunction(void)
   WAVE_Icmp1 = axis1.Icmp;
   WAVE_Icmp2 = axis2.Icmp;
   WAVE_Icmp3 = axis3.Icmp;
+
+  WAVE_Icmd1 = axis1.Icmd;
+  WAVE_Icmd2 = axis2.Icmd;
+  WAVE_Icmd3 = axis3.Icmd;
+
+  WAVE_Freq = freq;
+  WAVE_Tfra = Time_FRA;
 
   // ModRatioU = axis2.Vu_std;
   // ModRatioV = axis2.Vv_std;
