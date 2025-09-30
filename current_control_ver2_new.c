@@ -151,6 +151,9 @@ volatile float start_back3 = 0.0;
 
 // 可変指令値
 float Ref_Iq_ref_direct = 0.0; // [A]		q軸 電流指令
+float Ref_Iq_ref_direct1 = 0.0; // [-]	q軸 電流指令 倍率 0~1
+float Ref_Iq_ref_direct2 = 0.0; // [-]	q軸 電流指令 倍率 0~1
+float Ref_Iq_ref_direct3 = 0.0; // [-]	q軸 電流指令 倍率 0~1
 float Ref_wM_direct = 0.0;     // [rad/s]	速度指令
 float Iq_off = 0.0;
 int Flag_ARCS_start = 0; // ARCSへの制御フラグ信号
@@ -1315,9 +1318,9 @@ interrupt void ControlFunction(void)
       // axis1.wm_ref = Ref_wM_direct * RectGenerator(t,ref_freq);
       // 動力学方程式より出るトルクの正負に合わせて補償電流を入れる
       // inspectorで要確認！！！！
-      axis1.Icmd = 0.0;
-      axis2.Icmd = 0.0;
-      axis3.Icmd = 0.0;
+      axis1.Icmd = 5.1 * Ref_Iq_ref_direct1 * sinf(2.0*PI*t);
+      axis2.Icmd = 7.9 * Ref_Iq_ref_direct2 * sinf(2.0*PI*t);
+      axis3.Icmd = 4.6 * Ref_Iq_ref_direct3 * sinf(2.0*PI*t);
 
       axis1.IrefQ = axis1.Icmd;
       axis2.IrefQ = axis2.Icmd + axis2.Icmp;
@@ -1501,7 +1504,23 @@ interrupt void ControlFunction(void)
             static int flag = 0;
             static int reset = 1;
             // CalcInverseCmd(hand_cmd, joint_cmd, motor_cmd, motor_vel_cmd, filter, reset, Tp);
-            CalcInverseCmd_vel(hand_cmd, hand_vel, motor_cmd, motor_vel_cmd, motor_cmd_init, 1);
+            // CalcInverseCmd_vel(hand_cmd, hand_vel, motor_cmd, motor_vel_cmd, motor_cmd_init, 1);
+            
+            // X=0.00, Y = -0.010
+            motor_cmd[0] = 1.1004;
+            motor_cmd[1] = 87.1666;
+            motor_cmd[2] = 1.5867;
+            
+            // // X=0.010, Y = 0.00
+            // motor_cmd[0] = 0.0000;
+            // motor_cmd[1] = 87.7147;
+            // motor_cmd[2] = -0.3771;
+
+            // // X=-0.010, Y = 0.00
+            // motor_cmd[0] = 0.0000;
+            // motor_cmd[1] = 86.6302;
+            // motor_cmd[2] = 3.5414;
+
             start_go1 = axis1.qm;
             start_go2 = axis2.qm;
             start_go3 = axis3.qm;
@@ -1672,19 +1691,20 @@ interrupt void ControlFunction(void)
           }
           if (flag_FRA_test_start == 1)
           {
+            static float Ratio_FRA_Iq = 0.4;
             if (freq != 0)
             {
               axis1.Icmd = 0.0;
               axis2.Icmd = 0.0;
               axis3.Icmd = 0.0;
               if(flag_FRA_Axis == 1){
-                axis1.Icmd = 5.1 * 0.3 * cosf(2.0 * PI * freq * (Time_FRA - tini)); // 単正弦波入力評価用(Sel FRA)
+                axis1.Icmd = 5.1 * Ratio_FRA_Iq * cosf(2.0 * PI * freq * (Time_FRA - tini)); // 単正弦波入力評価用(Sel FRA)
               }
               else if(flag_FRA_Axis == 2){
-                axis2.Icmd = 7.9 * 0.3 * cosf(2.0 * PI * freq * (Time_FRA - tini)); // 単正弦波入力評価用(Sel FRA)
+                axis2.Icmd = 7.9 * Ratio_FRA_Iq * cosf(2.0 * PI * freq * (Time_FRA - tini)); // 単正弦波入力評価用(Sel FRA)
               }
               else if (flag_FRA_Axis == 3){
-                axis3.Icmd = 4.6 * 0.3 * cosf(2.0 * PI * freq * (Time_FRA - tini)); // 単正弦波入力評価用(Sel FRA)
+                axis3.Icmd = 4.6 * Ratio_FRA_Iq * cosf(2.0 * PI * freq * (Time_FRA - tini)); // 単正弦波入力評価用(Sel FRA)
               }
               // FRAの1周波数の時間が経過したら次の周波数へ
               if (Ni / freq <= (Time_FRA - tini))
@@ -1742,6 +1762,9 @@ interrupt void ControlFunction(void)
             start_back1 = axis1.qm;
             start_back2 = axis2.qm;
             start_back3 = axis3.qm;
+            axis1.qm_ref = start_back1;
+            axis2.qm_ref = start_back2;
+            axis3.qm_ref = start_back3;
             flag_reposition = 0;
             // flag_reposition = 0;
             // 指令値の設定値
