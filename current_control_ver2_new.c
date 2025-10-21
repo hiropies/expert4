@@ -5280,7 +5280,7 @@ void CalcFDTDWr_QmrefInputType(Robot *robo)
     // 計算結果の代入
     robo->ql_calc = robo->theta_rl_init + ql_Z[0];
     robo->wl_calc = wl_Z[0];
-    robo->al_calc = (robo->Ksn * qs_Z[0] - robo->Dln * wl_Z[0]) / axis1.Jl_calc;
+    robo->al_calc = (robo->Ksn * qs_Z[0] - robo->Dln * wl_Z[0]) / robo->Jl_calc;
     robo->wm_calc = wm_Z[0];
   }
   else if (robo->BDN == BDN1)
@@ -5304,7 +5304,7 @@ void CalcFDTDWr_QmrefInputType(Robot *robo)
     // 計算結果の代入
     robo->ql_calc = robo->theta_rl_init + ql_Z[1];
     robo->wl_calc = wl_Z[1];
-    robo->al_calc = (robo->Ksn * qs_Z[1] - robo->Dln * wl_Z[1]) / axis2.Jl_calc;
+    robo->al_calc = (robo->Ksn * qs_Z[1] - robo->Dln * wl_Z[1]) / robo->Jl_calc;
     robo->wm_calc = wm_Z[1];
   }
   else if (robo->BDN == BDN2)
@@ -5328,7 +5328,7 @@ void CalcFDTDWr_QmrefInputType(Robot *robo)
     // 計算結果の代入
     robo->ql_calc = robo->theta_rl_init + ql_Z[2];
     robo->wl_calc = wl_Z[2];
-    robo->al_calc = (robo->Ksn * qs_Z[2] - robo->Dln * wl_Z[2]) / axis3.Jl_calc;
+    robo->al_calc = (robo->Ksn * qs_Z[2] - robo->Dln * wl_Z[2]) / robo->Jl_calc;
     robo->wm_calc = wm_Z[2];
   }
   else
