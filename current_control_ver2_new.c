@@ -1272,6 +1272,9 @@ interrupt void ControlFunction(void)
           // CalcFDTDWrUpdate_WmcmdInputType_2nd(&axis3);
         }
 
+        // 動力学トルクを計算
+        CalcTauLDyn(joint); // 1~3軸分を計算
+
         // 制御周期の測定結果出力 ファンクションリファレンスp45より
         // 制御にかかった時間を測定している。
         WAVE_Timer0 = (float)C6657_timer0_read() * 4.8e-9 * 1e6;
@@ -1308,9 +1311,6 @@ interrupt void ControlFunction(void)
           CalcFDTDWr_WmcmdInputType(&axis2);
           CalcFDTDWr_WmcmdInputType(&axis3);
         }
-
-        // 動力学トルクを計算
-        CalcTauLDyn(joint); // 1~3軸分を計算
 
         // FF制御　動力学補償電流
         FDTD_Tm(&axis1);
@@ -1395,9 +1395,12 @@ interrupt void ControlFunction(void)
             start_go1 = axis1.qm;
             start_go2 = axis2.qm;
             start_go3 = axis3.qm;
+            axis1.qm_ref = start_go1;
+            axis2.qm_ref = start_go2;
+            axis3.qm_ref = start_go3;
             flag_reposition = 0;
             // 指令値の設定値
-            SetRampParams((motor_cmd[0] * (1.0/CmdGain[0])), (motor_cmd[1]), (motor_cmd[2]));
+            SetRampParams((motor_cmd[0]-start_go1), (motor_cmd[1]-start_go2), (motor_cmd[2]-start_go3));
           }
           // ランプ指令用変数の設定
 
@@ -1437,7 +1440,6 @@ interrupt void ControlFunction(void)
           if (flag_FF == 1)
           {
             // 1軸目 速度PI制御＋SFB＋FF
-
             axis1.IrefQ = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1) - axis1.Isfb + axis1.Iff;
             axis1.I_SOBinput = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1) - axis1.Isfb;
 
@@ -5214,10 +5216,10 @@ void CalcFDTDWr_QmrefInputType(Robot *robo)
     z_Z1[1] = z_Z[1];
 
     // 計算結果の代入
-    axis2.ql_calc = axis2.theta_rl_init + ql_Z[1];
-    axis2.wl_calc = wl_Z[1];
-    axis2.al_calc = (axis2.Ksn * qs_Z[1] - axis2.Dln * wl_Z[1]) / axis2.Jl_calc;
-    axis2.wm_calc = wm_Z[1];
+    robo->ql_calc = robo->theta_rl_init + ql_Z[1];
+    robo->wl_calc = wl_Z[1];
+    robo->al_calc = (robo->Ksn * qs_Z[1] - robo->Dln * wl_Z[1]) / robo->Jl_calc;
+    robo->wm_calc = wm_Z[1];
   }
   else if (robo->BDN == BDN2)
   {
@@ -5464,23 +5466,19 @@ void CalcFDTDWrUpdate_QmrefInputType_2nd(void)
   Wr_sub[1].a12cf = -axis2.Ktn * axis2.Kvp * axis2.Kpp * Tp / axis2.Jmn;
   Wr_sub[1].a13cf = (-axis2.Ktn * axis2.fqs * Tp - axis2.Ksn * Tp / axis2.Rgn) / axis2.Jmn;
   Wr_sub[1].a14cf = -axis2.Ktn * axis2.fwl * Tp / axis2.Jmn;
-
   Wr_sub[1].a21cf = Tp * Wr_sub[1].a11cf;
   Wr_sub[1].a22cf = Tp * Wr_sub[1].a12cf + 1.0;
   Wr_sub[1].a23cf = Tp * Wr_sub[1].a13cf;
   Wr_sub[1].a24cf = Tp * Wr_sub[1].a14cf;
-
   Wr_sub[1].a31cf = (-axis2.Ktn * axis2.Kvp * Tp_2 - axis2.Ktn * axis2.fwm * Tp_2 - axis2.Dmn * Tp_2 + axis2.Jmn * Tp) / (axis2.Jmn * axis2.Rgn);
   Wr_sub[1].a32cf = -axis2.Ktn * axis2.Kvp * axis2.Kpp * Tp_2 / (axis2.Jmn * axis2.Rgn);
   Wr_sub[1].a33cf1 = 1.0 + (-axis2.Ktn * axis2.fqs * Tp_2 - axis2.Ksn * Tp_2 / axis2.Rgn) / (axis2.Jmn * axis2.Rgn);
   Wr_sub[1].a34cf1 = -Tp - axis2.Ktn * axis2.fwl * Tp_2 / (axis2.Jmn * axis2.Rgn);
-
   Wr_sub[1].a61cf = (axis2.Ktn * axis2.Kvp * axis2.Kvi * Tp_2 + axis2.Ktn * axis2.fwm * axis2.Kvi * Tp_2 + axis2.Dmn * axis2.Kvi * Tp_2 - axis2.Jmn * axis2.Kvi * Tp) / axis2.Jmn - axis2.Kvi * axis2.Kpp * Tp_2;
   Wr_sub[1].a62cf = axis2.Ktn * axis2.Kvp * axis2.Kpp * axis2.Kvi * Tp_2 / axis2.Jmn - Tp * axis2.Kvi * axis2.Kpp;
   Wr_sub[1].a63cf = (axis2.Ktn * axis2.fqs * axis2.Kvi * Tp_2 + axis2.Ksn * axis2.Kvi * Tp_2 / axis2.Rgn) / axis2.Jmn;
   Wr_sub[1].a64cf = axis2.Ktn * axis2.fwl * axis2.Kvi * Tp_2 / axis2.Jmn;
   Wr_sub[1].a66cf = 1.0 - axis2.Ktn * axis2.Kvi * Tp_2 / axis2.Jmn;
-
   Wr_sub[1].b1cf = axis2.Kpp * axis2.Kvp * axis2.Ktn * Tp / axis2.Jmn;
   Wr_sub[1].b2cf = axis2.Kpp * axis2.Kvp * axis2.Ktn * Tp_2 / axis2.Jmn;
   Wr_sub[1].b3cf = axis2.Kpp * axis2.Kvp * axis2.Ktn * Tp_2 / (axis2.Jmn * axis2.Rgn);
@@ -6306,47 +6304,14 @@ void CalcTauLDyn(Robot axis[])
   float b332 = 0.0;
   float b333 = 0.0;
   // 重力項
-  float G1 = 0.0;
-  float G2 = 0.0;
-  float G3 = 0.0;
-
-  // 外乱トルクを計算したいので慣性行列の主対角成分はコメントアウト
-  // H11 =
-  //     dyn.H11p1
-  //   + dyn.H11p2*S2
-  //   + dyn.H11p3*C2233
-  //   + S3*
-  //   (
-  //       dyn.H11p4*S2
-  //     + dyn.H11p5*C2
-  //     + dyn.H11p6
-  //   )
-  //   + dyn.H11p7*S2233
-  //   + dyn.H11p8*S223
-  //   + C3*
-  //   (
-  //       dyn.H11p9*S2
-  //     + dyn.H11p10*C2
-  //     + dyn.H11p11
-  //   )
-  //   + dyn.H11p12*C223
-  //   + dyn.H11p13*C22;
+  static float G1 = 0.0;
+  static float G2 = 0.0;
+  static float G3 = 0.0;
 
   H12 = -C2 * dyn.H12p1;
-
   H21 = H12;
-
-  // 外乱トルクを計算したいので慣性行列の主対角成分はコメントアウト
-  // H22= dyn.H22p1
-  //   + dyn.H22p2*C3
-  //   + dyn.H22p3*S3;
-
   H23 = dyn.H23p1 + dyn.H23p2 * S3 + dyn.H23p3 * C3;
-
   H32 = H23;
-
-  // 外乱トルクを計算したいので慣性行列の主対角成分はコメントアウト
-  // H33 = dyn.H33p1;
 
   b122 = S2 * dyn.b122p1;
   b112 = dyn.b112p1 * S2233 + dyn.b112p2 * C2233 + dyn.b112p3 * S22 + dyn.b112p4 * S223 + dyn.b112p5 * C23 + dyn.b112p6 * C2 + dyn.b112p7 * S23 + dyn.b112p8 * C223;
@@ -6408,58 +6373,50 @@ void CalcTauLDyn(Robot axis[])
   // *tauLdyn1 = H11*a1 + b111*powf(w1,2);
   // *tauLdyn2 = 0.0;
   // *tauLdyn3 = 0.0;
+
+  // 外乱トルクを計算したいので慣性行列の主対角成分はコメントアウト
+  // axis1.Jl_calc_Wr = dyn.H11p1 + dyn.H11p2 * S2 + dyn.H11p3 * C2233 + S3 * (dyn.H11p4 * S2 + dyn.H11p5 * C2 + dyn.H11p6) + dyn.H11p7 * S2233 + dyn.H11p8 * S223 + C3 * (dyn.H11p9 * S2 + dyn.H11p10 * C2 + dyn.H11p11) + dyn.H11p12 * C223 + dyn.H11p13 * C22;
+  // axis2.Jl_calc_Wr = dyn.H22p1 + dyn.H22p2 * C3 + dyn.H22p3 * S3;
+  // axis3.Jl_calc_Wr = dyn.H33p1;
 }
 
 void CalcJl(Robot axis[])
 {
-
   // 三角関数の定義
-  float C1 = 0.0;
-  float C2 = 0.0;
-  float C3 = 0.0;
-  float C22 = 0.0;
-  float C23 = 0.0;
-  float C223 = 0.0;
-  float C2233 = 0.0;
+  static float C2 = 0.0;
+  static float C3 = 0.0;
+  static float C22 = 0.0;
+  static float C223 = 0.0;
+  static float C2233 = 0.0;
 
-  float S1 = 0.0;
-  float S2 = 0.0;
-  float S3 = 0.0;
-  float S22 = 0.0;
-  float S23 = 0.0;
-  float S223 = 0.0;
-  float S2233 = 0.0;
+  static float S2 = 0.0;
+  static float S3 = 0.0;
+  static float S223 = 0.0;
+  static float S2233 = 0.0;
 
+  // ラグランジュ法に基づく動力学
+  // 慣性項
+  static float H11 = 0.0;
+  static float H22 = 0.0;
+  static float H33 = 0.0;
+
+  // 実験用　qlからJLを計算する
   C2 = cos(axis2.ql);
   C3 = cos(axis3.ql);
   C22 = cos(2 * axis2.ql);
   C223 = cos(2 * axis2.ql + axis3.ql);
   C2233 = cos(2 * axis2.ql + 2 * axis3.ql);
-
   S2 = sin(axis2.ql);
   S3 = sin(axis3.ql);
   S223 = sin(2 * axis2.ql + axis3.ql);
   S2233 = sin(2 * axis2.ql + 2 * axis3.ql);
 
-  // ラグランジュ法に基づく動力学
-  // 慣性項
-  float H11 = 0.0;
-  float H22 = 0.0;
-  float H33 = 0.0;
-
   H11 = dyn.H11p1 + dyn.H11p2 * S2 + dyn.H11p3 * C2233 + S3 * (dyn.H11p4 * S2 + dyn.H11p5 * C2 + dyn.H11p6) + dyn.H11p7 * S2233 + dyn.H11p8 * S223 + C3 * (dyn.H11p9 * S2 + dyn.H11p10 * C2 + dyn.H11p11) + dyn.H11p12 * C223 + dyn.H11p13 * C22;
   H22 = dyn.H22p1 + dyn.H22p2 * C3 + dyn.H22p3 * S3;
   H33 = dyn.H33p1;
 
-  // Jlの計算
-  axis1.Jl_calc_z2 = axis1.Jl_calc_z1;
-  axis1.Jl_calc_z1 = axis1.Jl_calc;
   axis1.Jl_calc = H11;
-  axis2.Jl_calc_z2 = axis2.Jl_calc_z1;
-  axis2.Jl_calc_z1 = axis2.Jl_calc;
   axis2.Jl_calc = H22;
-  axis3.Jl_calc_z2 = axis3.Jl_calc_z1;
-  axis3.Jl_calc_z1 = axis3.Jl_calc;
   axis3.Jl_calc = H33;
 }
 
@@ -6467,26 +6424,21 @@ void CalcGravIcmp(Robot axis[])
 {
 
   // 三角関数の定義
-  float C23 = 0.0;
-  float S2 = 0.0;
-  float S23 = 0.0;
+  static float C23 = 0.0;
+  static float S2 = 0.0;
+  static float S23 = 0.0;
 
+  // 実験用
   C23 = cos(axis2.ql + axis3.ql);
   S2 = sin(axis2.ql);
   S23 = sin(axis2.ql + axis3.ql);
 
   // ラグランジュ法に基づく動力学
   // 重力項
-  // float G1 = 0.0;
-  // float G2 = 0.0;
-  // float G3 = 0.0;
-
   axis2.Icmp = (dyn.G2p1 * S2 + dyn.G2p2 * S23 + dyn.G2p3 * C23) / (axis2.Rgn * axis2.Ktn);
   axis3.Icmp = (dyn.G3p1 * S23 + dyn.G3p2 * C23) / (axis3.Rgn * axis3.Ktn);
-
-  // axis2.tauLdyn = dyn.G2p1*S2 +dyn.G2p2*S23 +dyn.G2p3*C23;
-  // axis3.tauLdyn = dyn.G3p1*S23 +dyn.G3p2*C23;
 }
+
 void CalcDynamicsInit(int flag_dyn_payload)
 {
   // 動力学パラメータ
@@ -6892,6 +6844,7 @@ float Integrator_w_ref2(float u, const float Ts)
   y = yZ1;
   return y;
 }
+
 float Integrator_acc_ref3(float u, const float Ts)
 {
   // 加速度指令==>速度指令
