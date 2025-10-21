@@ -1244,6 +1244,11 @@ interrupt void ControlFunction(void)
           // ラッチしたqlの情報をもとにJlを計算 
           CalcJl(joint); // JLの変動は使うので3軸分計算
         }
+        else
+        {
+          axis1.Jl_calc = 35.9000;
+          axis1.Ks = 104820.12;
+        }
         CalcPVGain();
 
         if (flag_FF_triple == 1)
