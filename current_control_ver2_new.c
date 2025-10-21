@@ -1333,6 +1333,11 @@ interrupt void ControlFunction(void)
           CalcJl(joint); // JLの変動は使うので3軸分計算
           CalcJlWr(joint);
         }
+        else
+        {
+          axis1.Jl_calc = 35.9000;
+          axis1.Ks = 104820.12;
+        }
 
         CalcPVGain();
         CalcWrGain();
@@ -2902,6 +2907,7 @@ float PIcontroller(float u, const float Kp, const float Ki, const float Ts, vola
   *uZ1 = u;
   return y;
 }
+
 float VconPI5Axis(float u, const float Kp, const float Ki)
 {
   float y;
