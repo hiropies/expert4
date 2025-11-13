@@ -2324,10 +2324,8 @@ void MW_main(void)
 
   // 可変ゲインの極を指定する(係数図法)
   // 1軸目
-  // gsub[0].tau_cdm = 0.05;
-  // gsub[0].zw = 50.0;
-  gsub[0].tau_cdm = 0.058;
-  gsub[0].zw = 30.0;
+  gsub[0].tau_cdm = 0.05;
+  gsub[0].zw = 50.0;
   gsub[0].r_cdm1 = 2.5;
   gsub[0].r_cdm2 = 2.0;
   gsub[0].r_cdm3 = 2.0;
@@ -2338,7 +2336,7 @@ void MW_main(void)
   gsub[0].r1_pole = 2.5;
 
   // 2軸目
-  gsub[1].tau_cdm = 0.058;
+  gsub[1].tau_cdm = 0.05;
   gsub[1].zw = 30.0;
   gsub[1].r_cdm1 = 2.5;
   gsub[1].r_cdm2 = 2.0;
