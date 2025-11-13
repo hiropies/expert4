@@ -1251,7 +1251,6 @@ interrupt void ControlFunction(void)
         else
         {
           axis1.Jl_calc = 35.9000;
-          axis1.Ks = 104820.12;
         }
         CalcPVGain();
 
@@ -2337,8 +2336,10 @@ void MW_main(void)
 
   // 可変ゲインの極を指定する(係数図法)
   // 1軸目
+  // gsub[0].tau_cdm = 0.05;
+  // gsub[0].zw = 50.0;
   gsub[0].tau_cdm = 0.05;
-  gsub[0].zw = 50.0;
+  gsub[0].zw = 30.0;
   gsub[0].r_cdm1 = 2.5;
   gsub[0].r_cdm2 = 2.0;
   gsub[0].r_cdm3 = 2.0;
@@ -2361,7 +2362,7 @@ void MW_main(void)
   gsub[1].r1_pole = 2.5;
 
   // 3軸目
-  gsub[2].tau_cdm = 0.058;
+  gsub[2].tau_cdm = 0.05;
   gsub[2].zw = 30.0;
   gsub[2].r_cdm1 = 2.5;
   gsub[2].r_cdm2 = 2.0;
@@ -6677,7 +6678,8 @@ void SetGain(Robot *robo)
   robo[0].Jmn = 3.5947e-04;
   robo[0].Dln = 129.6700;
   robo[0].Dmn = 0;
-  robo[0].Ksn = 92333;
+  // robo[0].Ksn = 92333;
+  robo[0].Ksn = 104820.12;
   robo[0].Jln = 21.6184; // homeから2軸目20deg下げた場合(7.2kg負荷)
 
   // パナゲイン1軸目(適用値100%)
