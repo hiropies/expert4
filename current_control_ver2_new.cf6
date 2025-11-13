@@ -240,7 +240,7 @@
     <BindWaveNormRec>
       <OnChipVarAddress>0</OnChipVarAddress>
       <OnchipVarType>0</OnchipVarType>
-      <bNormValDivValue>10</bNormValDivValue>
+      <bNormValDivValue>200</bNormValDivValue>
       <bNormPosValue>0</bNormPosValue>
       <bNormPosAngle>90</bNormPosAngle>
       <bNormOffsetValue>0</bNormOffsetValue>
@@ -248,12 +248,12 @@
       <i_NormWin1Win4>3</i_NormWin1Win4>
       <Button_Name>Win4</Button_Name>
       <bColorPickerIndex>8</bColorPickerIndex>
-      <bNormVariableIndex>219</bNormVariableIndex>
+      <bNormVariableIndex>386</bNormVariableIndex>
     </BindWaveNormRec>
     <BindWaveNormRec>
       <OnChipVarAddress>0</OnChipVarAddress>
       <OnchipVarType>0</OnchipVarType>
-      <bNormValDivValue>10</bNormValDivValue>
+      <bNormValDivValue>200</bNormValDivValue>
       <bNormPosValue>0</bNormPosValue>
       <bNormPosAngle>90</bNormPosAngle>
       <bNormOffsetValue>0</bNormOffsetValue>
@@ -261,12 +261,12 @@
       <i_NormWin1Win4>3</i_NormWin1Win4>
       <Button_Name>Win4</Button_Name>
       <bColorPickerIndex>5</bColorPickerIndex>
-      <bNormVariableIndex>220</bNormVariableIndex>
+      <bNormVariableIndex>387</bNormVariableIndex>
     </BindWaveNormRec>
     <BindWaveNormRec>
       <OnChipVarAddress>0</OnChipVarAddress>
       <OnchipVarType>0</OnchipVarType>
-      <bNormValDivValue>5</bNormValDivValue>
+      <bNormValDivValue>200</bNormValDivValue>
       <bNormPosValue>0</bNormPosValue>
       <bNormPosAngle>90</bNormPosAngle>
       <bNormOffsetValue>0</bNormOffsetValue>
@@ -274,7 +274,7 @@
       <i_NormWin1Win4>3</i_NormWin1Win4>
       <Button_Name>Win4</Button_Name>
       <bColorPickerIndex>3</bColorPickerIndex>
-      <bNormVariableIndex>221</bNormVariableIndex>
+      <bNormVariableIndex>388</bNormVariableIndex>
     </BindWaveNormRec>
     <BindWaveNormRec>
       <OnChipVarAddress>0</OnChipVarAddress>
@@ -877,7 +877,7 @@
   <bCurPosValue>0</bCurPosValue>
   <bIndex_TrgNo>0</bIndex_TrgNo>
   <bTrgPosValue>0</bTrgPosValue>
-  <wd6Dir>D:\Desktop\abe実験\20250821</wd6Dir>
+  <wd6Dir>D:\Desktop\abe実験\20251021</wd6Dir>
   <cfgDir>C:\Users\Ikeda\Documents\mizo_expert4_program\テストモータ\20210112_8_プログラムver2でエンコーダ読めるようにする_エンコーダ読み取り部分修正</cfgDir>
   <bVarsList>
     <string>ad1</string>
