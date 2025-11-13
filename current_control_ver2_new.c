@@ -54,7 +54,7 @@
 #define QL3_MIN -10.0
 
 // PIオリジナル　DPD　β調整　指令値補正用ゲイン
-static const float CmdGain[] = {1.0488, 1.0598, 1.0400};
+static const float CmdGain[] = {1.0499, 1.0600, 1.0402};
 
 /// 制御用定数
 static const float PI = 3.14159265358979; /// 円周率
@@ -1399,7 +1399,7 @@ interrupt void ControlFunction(void)
             axis3.qm_ref = start_go3;
             flag_reposition = 0;
             // 指令値の設定値
-            SetRampParams((motor_cmd[0]-start_go1), (motor_cmd[1]-start_go2), (motor_cmd[2]-start_go3));
+            SetRampParams((motor_cmd[0] * (1.0/CmdGain[0])) - start_go1, (motor_cmd[1]-start_go2), (motor_cmd[2]-start_go3));
           }
           // ランプ指令用変数の設定
 
@@ -2356,7 +2356,7 @@ void MW_main(void)
   gsub[1].r_cdm4 = 2.0;
   // 位置ゲイン設計指標
   gsub[1].tau_pole = 1 / 10.0;
-  gsub[1].beta_pole = 29.43;
+  gsub[1].beta_pole = 29.4101;
   gsub[1].r1_pole = 2.5;
 
   // 3軸目
@@ -2368,7 +2368,7 @@ void MW_main(void)
   gsub[2].r_cdm4 = 2.0;
   // 位置ゲイン設計指標
   gsub[2].tau_pole = 1 / 10.0;
-  gsub[2].beta_pole = 30.649;
+  gsub[2].beta_pole = 30.6257;
   gsub[2].r1_pole = 2.5;
 
   // 可変ゲインの定数計算関数
