@@ -1,7 +1,7 @@
 ******************************************************************************
                TMS320C6x Linker PC v7.4.24                     
 ******************************************************************************
->> Linked Tue Oct 21 10:50:45 2025
+>> Linked Thu Nov 13 17:37:56 2025
 
 OUTPUT FILE NAME:   <current_control_ver2_new.out>
 ENTRY POINT SYMBOL: "_c_int00"  address: 0c03d9c0
