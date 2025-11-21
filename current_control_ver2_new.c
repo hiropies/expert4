@@ -54,7 +54,8 @@
 #define QL3_MIN -10.0
 
 // PIオリジナル　DPD　β調整　指令値補正用ゲイン
-static const float CmdGain[] = {1.0499, 1.0600, 1.0402};
+// static const float CmdGain[] = {1.0499, 1.0600, 1.0402};
+static const float CmdGain[] = {1.3200, 1.2748, 1.2476};
 
 /// 制御用定数
 static const float PI = 3.14159265358979; /// 円周率
@@ -2344,7 +2345,7 @@ void MW_main(void)
   gsub[0].r_cdm4 = 2.0;
   // 位置ゲイン設計指標
   gsub[0].tau_pole = 1 / 10.0;
-  gsub[0].beta_pole = 20;
+  gsub[0].beta_pole = 13.4674;
   gsub[0].r1_pole = 2.5;
 
   // 2軸目
@@ -2356,7 +2357,7 @@ void MW_main(void)
   gsub[1].r_cdm4 = 2.0;
   // 位置ゲイン設計指標
   gsub[1].tau_pole = 1 / 10.0;
-  gsub[1].beta_pole = 29.4101;
+  gsub[1].beta_pole = 19.3107;
   gsub[1].r1_pole = 2.5;
 
   // 3軸目
@@ -2368,7 +2369,7 @@ void MW_main(void)
   gsub[2].r_cdm4 = 2.0;
   // 位置ゲイン設計指標
   gsub[2].tau_pole = 1 / 10.0;
-  gsub[2].beta_pole = 30.6257;
+  gsub[2].beta_pole = 20.0;
   gsub[2].r1_pole = 2.5;
 
   // 可変ゲインの定数計算関数
