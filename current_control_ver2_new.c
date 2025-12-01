@@ -55,6 +55,7 @@
 
 // PIオリジナル　DPD　β調整　指令値補正用ゲイン
 static const float CmdGain[] = {1.0499, 1.0600, 1.0402};
+static const float CmdGain_EX[] = {0.9145, 0.9172, 0.8908};
 
 /// 制御用定数
 static const float PI = 3.14159265358979; /// 円周率
@@ -1399,7 +1400,7 @@ interrupt void ControlFunction(void)
             axis3.qm_ref = start_go3;
             flag_reposition = 0;
             // 指令値の設定値
-            SetRampParams((motor_cmd[0] * (1.0/CmdGain[0])) - start_go1, (motor_cmd[1]-start_go2), (motor_cmd[2]-start_go3));
+            SetRampParams((motor_cmd[0] * (1.0/CmdGain[0]/CmdGain_EX[0])) - start_go1, (motor_cmd[1]-start_go2), (motor_cmd[2]-start_go3));
           }
           // ランプ指令用変数の設定
 
@@ -1587,7 +1588,7 @@ interrupt void ControlFunction(void)
           // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
           axis1.wm_cmd_z2 = axis1.wm_cmd_z1;
           axis1.wm_cmd_z1 = axis1.wm_cmd;
-          axis1.wm_cmd = motor_vel_cmd[0] * (1.0/CmdGain[0]);
+          axis1.wm_cmd = motor_vel_cmd[0] * (1.0 / CmdGain[0] / CmdGain_EX[0]);
           axis1.qm_ref_z1 = axis1.qm_ref;
           axis1.qm_ref = axis1.wm_cmd_z2 * Tp + axis1.qm_ref_z1;
           
@@ -1623,7 +1624,7 @@ interrupt void ControlFunction(void)
           // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
           axis2.wm_cmd_z2 = axis2.wm_cmd_z1;
           axis2.wm_cmd_z1 = axis2.wm_cmd;
-          axis2.wm_cmd = motor_vel_cmd[1] * (1.0/CmdGain[1]);
+          axis2.wm_cmd = motor_vel_cmd[1] * (1.0 / CmdGain[1] / CmdGain_EX[1]);
           axis2.qm_ref_z1 = axis2.qm_ref;
           axis2.qm_ref = axis2.wm_cmd_z2 * Tp + axis2.qm_ref_z1;
 
@@ -1659,7 +1660,7 @@ interrupt void ControlFunction(void)
           // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
           axis3.wm_cmd_z2 = axis3.wm_cmd_z1;
           axis3.wm_cmd_z1 = axis3.wm_cmd;
-          axis3.wm_cmd = motor_vel_cmd[2] * (1.0/CmdGain[2]);
+          axis3.wm_cmd = motor_vel_cmd[2] * (1.0 / CmdGain[2] / CmdGain_EX[2]);
           axis3.qm_ref_z1 = axis3.qm_ref;
           axis3.qm_ref = axis3.wm_cmd_z2 * Tp + axis3.qm_ref_z1;
           
