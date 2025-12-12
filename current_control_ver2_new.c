@@ -56,6 +56,7 @@
 // PIオリジナル　DPD　β調整　指令値補正用ゲイン
 // static const float CmdGain[] = {1.0499, 1.0600, 1.0402};
 static const float CmdGain[] = {1.3200, 1.2748, 1.2476};
+static const float CmdGain_EX[] = {0.9145, 0.9172, 0.8908};
 
 /// 制御用定数
 static const float PI = 3.14159265358979; /// 円周率
@@ -204,6 +205,14 @@ volatile float WAVE_Kvi1 = 0.0;
 volatile float WAVE_fwm1 = 0.0;
 volatile float WAVE_fqs1 = 0.0;
 volatile float WAVE_fwl1 = 0.0;
+volatile float WAVE_Kpp1_wr = 0.0;
+volatile float WAVE_Kff1_wr = 0.0;
+volatile float WAVE_Kfb1_wr = 0.0;
+volatile float WAVE_Kvp1_wr = 0.0;
+volatile float WAVE_Kvi1_wr = 0.0;
+volatile float WAVE_fwm1_wr = 0.0;
+volatile float WAVE_fqs1_wr = 0.0;
+volatile float WAVE_fwl1_wr = 0.0;
 // 2軸目
 volatile float WAVE_Kpp2 = 0.0;
 volatile float WAVE_Kff2 = 0.0;
@@ -213,6 +222,14 @@ volatile float WAVE_Kvi2 = 0.0;
 volatile float WAVE_fwm2 = 0.0;
 volatile float WAVE_fqs2 = 0.0;
 volatile float WAVE_fwl2 = 0.0;
+volatile float WAVE_Kpp2_wr = 0.0;
+volatile float WAVE_Kff2_wr = 0.0;
+volatile float WAVE_Kfb2_wr = 0.0;
+volatile float WAVE_Kvp2_wr = 0.0;
+volatile float WAVE_Kvi2_wr = 0.0;
+volatile float WAVE_fwm2_wr = 0.0;
+volatile float WAVE_fqs2_wr = 0.0;
+volatile float WAVE_fwl2_wr = 0.0;
 // 3軸目
 volatile float WAVE_Kpp3 = 0.0;
 volatile float WAVE_Kff3 = 0.0;
@@ -222,6 +239,14 @@ volatile float WAVE_Kvi3 = 0.0;
 volatile float WAVE_fwm3 = 0.0;
 volatile float WAVE_fqs3 = 0.0;
 volatile float WAVE_fwl3 = 0.0;
+volatile float WAVE_Kpp3_wr = 0.0;
+volatile float WAVE_Kff3_wr = 0.0;
+volatile float WAVE_Kfb3_wr = 0.0;
+volatile float WAVE_Kvp3_wr = 0.0;
+volatile float WAVE_Kvi3_wr = 0.0;
+volatile float WAVE_fwm3_wr = 0.0;
+volatile float WAVE_fqs3_wr = 0.0;
+volatile float WAVE_fwl3_wr = 0.0;
 
 // 動力学外乱トルク
 volatile float WAVE_tauLdyn1; // [Nm] 動力学外乱トルク
@@ -231,6 +256,10 @@ volatile float WAVE_tauLdyn3; // [Nm] 動力学外乱トルク
 volatile float WAVE_Jl_calc1; // [kgm^2] 動力学によるJl計算値
 volatile float WAVE_Jl_calc2; // [kgm^2] 動力学によるJl計算値
 volatile float WAVE_Jl_calc3; // [kgm^2] 動力学によるJl計算値
+// 動力学によるJl計算値
+volatile float WAVE_Jl_Wr1; // [kgm^2] 動力学によるJl計算値
+volatile float WAVE_Jl_Wr2; // [kgm^2] 動力学によるJl計算値
+volatile float WAVE_Jl_Wr3; // [kgm^2] 動力学によるJl計算値
 
 // 　負荷側情報計算関数　計算結果
 volatile float WAVE_al_calc1 = 0.0;
@@ -544,6 +573,43 @@ volatile float WAVE_aq2_3 = 0;
 volatile float WAVE_aq1_3 = 0;
 volatile float WAVE_aq0_3 = 0;
 
+volatile float WAVE_av4_1_wr = 0;
+volatile float WAVE_av3_1_wr = 0;
+volatile float WAVE_av2_1_wr = 0;
+volatile float WAVE_av1_1_wr = 0;
+volatile float WAVE_av0_1_wr = 0;
+volatile float WAVE_bv3_1_wr = 0;
+volatile float WAVE_bv2_1_wr = 0;
+volatile float WAVE_bv1_1_wr = 0;
+volatile float WAVE_bv0_1_wr = 0;
+volatile float WAVE_aq2_1_wr = 0;
+volatile float WAVE_aq1_1_wr = 0;
+volatile float WAVE_aq0_1_wr = 0;
+volatile float WAVE_av4_2_wr = 0;
+volatile float WAVE_av3_2_wr = 0;
+volatile float WAVE_av2_2_wr = 0;
+volatile float WAVE_av1_2_wr = 0;
+volatile float WAVE_av0_2_wr = 0;
+volatile float WAVE_bv3_2_wr = 0;
+volatile float WAVE_bv2_2_wr = 0;
+volatile float WAVE_bv1_2_wr = 0;
+volatile float WAVE_bv0_2_wr = 0;
+volatile float WAVE_aq2_2_wr = 0;
+volatile float WAVE_aq1_2_wr = 0;
+volatile float WAVE_aq0_2_wr = 0;
+volatile float WAVE_av4_3_wr = 0;
+volatile float WAVE_av3_3_wr = 0;
+volatile float WAVE_av2_3_wr = 0;
+volatile float WAVE_av1_3_wr = 0;
+volatile float WAVE_av0_3_wr = 0;
+volatile float WAVE_bv3_3_wr = 0;
+volatile float WAVE_bv2_3_wr = 0;
+volatile float WAVE_bv1_3_wr = 0;
+volatile float WAVE_bv0_3_wr = 0;
+volatile float WAVE_aq2_3_wr = 0;
+volatile float WAVE_aq1_3_wr = 0;
+volatile float WAVE_aq0_3_wr = 0;
+
 #pragma SET_DATA_SECTION(".DATA_ON_HIGHER_SPEED")
 
 /*********************************
@@ -613,6 +679,19 @@ typedef volatile struct Robot
   float apm1_pd;
   float apm2_pd;
 
+  float av4_wr;
+  float av3_wr;
+  float av2_wr;
+  float av1_wr;
+  float av0_wr;
+  float bv3_wr;
+  float bv2_wr;
+  float bv1_wr;
+  float bv0_wr;
+  float apm0_pd_wr;
+  float apm1_pd_wr;
+  float apm2_pd_wr;
+
   // 電流制御ゲイン
   float KpiD; //!< d軸電流Pゲイン
   float KiiD; //!< d軸電流Iゲイン
@@ -627,6 +706,15 @@ typedef volatile struct Robot
   float fwm; //!< モータ速度状態FBゲイン
   float fqs; //!< ねじれ角度状態FBゲイン
   float fwl; //!< 負荷側速度状態FBゲイン
+
+  float Kpp_wr; // 位置Pゲイン
+  float Kff_wr;
+  float Kfb_wr;
+  float Kvi_wr; //!< 速度制御Iゲイン
+  float Kvp_wr; //!< 速度制御Pゲイン
+  float fwm_wr; //!< モータ速度状態FBゲイン
+  float fqs_wr; //!< ねじれ角度状態FBゲイン
+  float fwl_wr; //!< 負荷側速度状態FBゲイン
 
   // 電流制御用変数
   float Vdc;                 //!< [V] 		直流リンク電圧
@@ -704,6 +792,7 @@ typedef volatile struct Robot
   float Jl_calc; // 慣性行列の対角項
   float Jl_calc_z1;
   float Jl_calc_z2;
+  float Jl_calc_Wr;
   // Wr計算結果
   float ql_calc;
   float wl_calc;
@@ -1006,6 +1095,7 @@ void LimDiffCalcDQ(Robot *robo);
 // 動力学計算
 void CalcTauLDyn(Robot axis[]);
 void CalcJl(Robot axis[]);
+void CalcJlWr(Robot axis[]);
 void CalcGravIcmp(Robot axis[]);
 void CalcDynamicsInit(int flag_dyn_payload);
 
@@ -1026,6 +1116,7 @@ float CalcPref2axis(float t_lim, float ql_deg_tilt, int flag);
 float CalcPrefRep2axis(float t_lim_up, float ql_deg_tilt_up, float t_lim_down, float ql_deg_tilt_down, float t_wait);
 float CalcPrefRep3axis(float t_lim_up, float ql_deg_tilt_up, float t_lim_down, float ql_deg_tilt_down, float t_wait);
 // 位置・速度制御系可変ゲイン演算関数
+void CalcWrGain(void);
 void CalcPVGain(void);
 void CalcPVGainInitCDM(void); // 係数図法
 // 回生ブレーキ関連
@@ -1158,30 +1249,32 @@ interrupt void ControlFunction(void)
       axis2.wm = axis2.omega_rm;
       axis2.wm = -1.0 * axis2.wm;
       axis3.wm = axis3.omega_rm;
-      if (flag_on == 0)
-      {
-        axis1.qm_ref = 0.0;
-        LimitPosCmd(&axis1);
-        axis2.qm_ref = 0.0;
-        LimitPosCmd(&axis2);
-        axis3.qm_ref = 0.0;
-        LimitPosCmd(&axis3);
-      }
-      else
-      {
-        axis1.qm_ref = axis1.qm;
-        LimitPosCmd(&axis1);
-        axis2.qm_ref = axis2.qm;
-        LimitPosCmd(&axis2);
-        axis3.qm_ref = axis3.qm;
-        LimitPosCmd(&axis3);
-      }
+      // if (flag_on == 0)
+      // {
+      //   axis1.qm_ref = 0.0;
+      //   LimitPosCmd(&axis1);
+      //   axis2.qm_ref = 0.0;
+      //   LimitPosCmd(&axis2);
+      //   axis3.qm_ref = 0.0;
+      //   LimitPosCmd(&axis3);
+      // }
+      // else
+      // {
+      //   axis1.qm_ref = axis1.qm;
+      //   LimitPosCmd(&axis1);
+      //   axis2.qm_ref = axis2.qm;
+      //   LimitPosCmd(&axis2);
+      //   axis3.qm_ref = axis3.qm;
+      //   LimitPosCmd(&axis3);
+      // }
 
       CalcGravIcmp(joint); // 2,3軸の重力補償電流を計算　main関数の初期姿勢を要確認！！！！
-      CalcJl(joint);       // JLの変動は使うので3軸分計算
+      CalcJl(joint);         // JLの変動は使うので3軸分計算
+      CalcJlWr(joint);
 
       // // 可変ゲイン計算
       CalcPVGain();
+      CalcWrGain();
 
       // 負荷側情報計算
       //P制御用Wr
@@ -1196,6 +1289,7 @@ interrupt void ControlFunction(void)
 
       // 動力学トルクを計算
       CalcTauLDyn(joint);
+
       // FF制御　動力学補償電流
       FDTD_Tm(&axis1);
       FDTD_Tm(&axis2);
@@ -1248,12 +1342,16 @@ interrupt void ControlFunction(void)
         {
           // ラッチしたqlの情報をもとにJlを計算 
           CalcJl(joint); // JLの変動は使うので3軸分計算
+          CalcJlWr(joint);
         }
         else
         {
           axis1.Jl_calc = 35.9000;
+          axis1.Jl_calc_Wr = 35.9000;
         }
+
         CalcPVGain();
+        CalcWrGain();
 
         if (flag_FF_triple == 1)
         {
@@ -1261,7 +1359,7 @@ interrupt void ControlFunction(void)
           // CalcFDTDWrUpdate_QmrefInputType_1st2nd();
           CalcFDTDWrUpdate_WmcmdInputType_1st2nd(&axis1);
           CalcFDTDWrUpdate_WmcmdInputType_1st2nd(&axis2);
-          // CalcFDTDWrUpdate_WmcmdInputType_1st2nd(&axis3);
+          CalcFDTDWrUpdate_WmcmdInputType_1st2nd(&axis3);
         }
         else
         {
@@ -1400,7 +1498,7 @@ interrupt void ControlFunction(void)
             axis3.qm_ref = start_go3;
             flag_reposition = 0;
             // 指令値の設定値
-            SetRampParams((motor_cmd[0] * (1.0/CmdGain[0])) - start_go1, (motor_cmd[1]-start_go2), (motor_cmd[2]-start_go3));
+            SetRampParams((motor_cmd[0] * (1.0/CmdGain[0]/CmdGain_EX[0])) - start_go1, (motor_cmd[1]-start_go2), (motor_cmd[2]-start_go3));
           }
           // ランプ指令用変数の設定
 
@@ -1588,7 +1686,7 @@ interrupt void ControlFunction(void)
           // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
           axis1.wm_cmd_z2 = axis1.wm_cmd_z1;
           axis1.wm_cmd_z1 = axis1.wm_cmd;
-          axis1.wm_cmd = motor_vel_cmd[0] * (1.0/CmdGain[0]);
+          axis1.wm_cmd = motor_vel_cmd[0] * (1.0 / CmdGain[0] / CmdGain_EX[0]);
           axis1.qm_ref_z1 = axis1.qm_ref;
           axis1.qm_ref = axis1.wm_cmd_z2 * Tp + axis1.qm_ref_z1;
           
@@ -1624,7 +1722,7 @@ interrupt void ControlFunction(void)
           // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
           axis2.wm_cmd_z2 = axis2.wm_cmd_z1;
           axis2.wm_cmd_z1 = axis2.wm_cmd;
-          axis2.wm_cmd = motor_vel_cmd[1] * (1.0/CmdGain[1]);
+          axis2.wm_cmd = motor_vel_cmd[1] * (1.0 / CmdGain[1] / CmdGain_EX[1]);
           axis2.qm_ref_z1 = axis2.qm_ref;
           axis2.qm_ref = axis2.wm_cmd_z2 * Tp + axis2.qm_ref_z1;
 
@@ -1660,7 +1758,7 @@ interrupt void ControlFunction(void)
           // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
           axis3.wm_cmd_z2 = axis3.wm_cmd_z1;
           axis3.wm_cmd_z1 = axis3.wm_cmd;
-          axis3.wm_cmd = motor_vel_cmd[2] * (1.0/CmdGain[2]);
+          axis3.wm_cmd = motor_vel_cmd[2] * (1.0 / CmdGain[2] / CmdGain_EX[2]);
           axis3.qm_ref_z1 = axis3.qm_ref;
           axis3.qm_ref = axis3.wm_cmd_z2 * Tp + axis3.qm_ref_z1;
           
@@ -2099,6 +2197,10 @@ interrupt void ControlFunction(void)
   WAVE_Jl_calc1 = axis1.Jl_calc;
   WAVE_Jl_calc2 = axis2.Jl_calc;
   WAVE_Jl_calc3 = axis3.Jl_calc;
+
+  WAVE_Jl_Wr1 = axis1.Jl_calc_Wr;
+  WAVE_Jl_Wr2 = axis2.Jl_calc_Wr;
+  WAVE_Jl_Wr3 = axis3.Jl_calc_Wr;
 
   WAVE_al_calc1 = axis1.al_calc;
   WAVE_wl_calc1 = axis1.wl_calc;
@@ -2822,6 +2924,7 @@ float PIcontroller(float u, const float Kp, const float Ki, const float Ts, vola
   *uZ1 = u;
   return y;
 }
+
 float VconPI5Axis(float u, const float Kp, const float Ki)
 {
   float y;
@@ -5497,9 +5600,9 @@ void CalcFDTDWr_WmcmdInputType(Robot *robo)
     // 状態量の計算
     wm_Z[0] = Wr_DPD[0].a11cf * wm_Z1[0] + Wr_DPD[0].a12cf * qm_Z1[0] + Wr_DPD[0].a13cf * qs_Z1[0] + Wr_DPD[0].a14cf * wl_Z1[0] + Wr_DPD[0].a15cf * ql_Z1[0] + Wr_DPD[0].a16cf * n_Z1[0] + Wr_DPD[0].a17cf * m_Z1[0] + Wr_DPD[0].b1cf * robo->wm_cmd;
     qm_Z[0] = Wr_DPD[0].a21cf * wm_Z1[0] + Wr_DPD[0].a22cf * qm_Z1[0] + Wr_DPD[0].a23cf * qs_Z1[0] + Wr_DPD[0].a24cf * wl_Z1[0] + Wr_DPD[0].a25cf * ql_Z1[0] + Wr_DPD[0].a26cf * n_Z1[0] + Wr_DPD[0].a27cf * m_Z1[0] + Wr_DPD[0].b2cf * robo->wm_cmd;
-    qs_Z[0] = Wr_DPD[0].a31cf * wm_Z1[0] + Wr_DPD[0].a32cf * qm_Z1[0] + (Wr_DPD[0].a33cf1 + Wr_DPD[0].a33cf2 / robo->Jl_calc) * qs_Z1[0] + (Wr_DPD[0].a34cf1 + Wr_DPD[0].a34cf2 / robo->Jl_calc) * wl_Z1[0] + Wr_DPD[0].a35cf * ql_Z1[0] + Wr_DPD[0].a36cf * n_Z1[0] + Wr_DPD[0].a37cf * m_Z1[0] + Wr_DPD[0].b3cf * robo->wm_cmd;
-    wl_Z[0] = Wr_DPD[0].a41cf * wm_Z1[0] + Wr_DPD[0].a42cf * qm_Z1[0] + Wr_DPD[0].a43cf / robo->Jl_calc * qs_Z1[0] + (Wr_DPD[0].a44cf1 + Wr_DPD[0].a44cf2 / robo->Jl_calc) * wl_Z1[0] + Wr_DPD[0].a45cf * ql_Z1[0] + Wr_DPD[0].a46cf * n_Z1[0] + Wr_DPD[0].a47cf * m_Z1[0] + Wr_DPD[0].b4cf * robo->wm_cmd;
-    ql_Z[0] = Wr_DPD[0].a51cf * wm_Z1[0] + Wr_DPD[0].a52cf * qm_Z1[0] + Wr_DPD[0].a53cf / robo->Jl_calc * qs_Z1[0] + (Wr_DPD[0].a54cf1 + Wr_DPD[0].a54cf2 / robo->Jl_calc) * wl_Z1[0] + Wr_DPD[0].a55cf * ql_Z1[0] + Wr_DPD[0].a56cf * n_Z1[0] + Wr_DPD[0].a57cf * m_Z1[0] + Wr_DPD[0].b5cf * robo->wm_cmd;
+    qs_Z[0] = Wr_DPD[0].a31cf * wm_Z1[0] + Wr_DPD[0].a32cf * qm_Z1[0] + (Wr_DPD[0].a33cf1 + Wr_DPD[0].a33cf2 / robo->Jl_calc_Wr) * qs_Z1[0] + (Wr_DPD[0].a34cf1 + Wr_DPD[0].a34cf2 / robo->Jl_calc_Wr) * wl_Z1[0] + Wr_DPD[0].a35cf * ql_Z1[0] + Wr_DPD[0].a36cf * n_Z1[0] + Wr_DPD[0].a37cf * m_Z1[0] + Wr_DPD[0].b3cf * robo->wm_cmd;
+    wl_Z[0] = Wr_DPD[0].a41cf * wm_Z1[0] + Wr_DPD[0].a42cf * qm_Z1[0] + Wr_DPD[0].a43cf / robo->Jl_calc_Wr * qs_Z1[0] + (Wr_DPD[0].a44cf1 + Wr_DPD[0].a44cf2 / robo->Jl_calc_Wr) * wl_Z1[0] + Wr_DPD[0].a45cf * ql_Z1[0] + Wr_DPD[0].a46cf * n_Z1[0] + Wr_DPD[0].a47cf * m_Z1[0] + Wr_DPD[0].b4cf * robo->wm_cmd;
+    ql_Z[0] = Wr_DPD[0].a51cf * wm_Z1[0] + Wr_DPD[0].a52cf * qm_Z1[0] + Wr_DPD[0].a53cf / robo->Jl_calc_Wr * qs_Z1[0] + (Wr_DPD[0].a54cf1 + Wr_DPD[0].a54cf2 / robo->Jl_calc_Wr) * wl_Z1[0] + Wr_DPD[0].a55cf * ql_Z1[0] + Wr_DPD[0].a56cf * n_Z1[0] + Wr_DPD[0].a57cf * m_Z1[0] + Wr_DPD[0].b5cf * robo->wm_cmd;
     n_Z[0] = Wr_DPD[0].a61cf * wm_Z1[0] + Wr_DPD[0].a62cf * qm_Z1[0] + Wr_DPD[0].a63cf * qs_Z1[0] + Wr_DPD[0].a64cf * wl_Z1[0] + Wr_DPD[0].a65cf * ql_Z1[0] + Wr_DPD[0].a66cf * n_Z1[0] + Wr_DPD[0].a67cf * m_Z1[0] + Wr_DPD[0].b6cf * robo->wm_cmd;
     m_Z[0] = Wr_DPD[0].a71cf * wm_Z1[0] + Wr_DPD[0].a72cf * qm_Z1[0] + Wr_DPD[0].a73cf * qs_Z1[0] + Wr_DPD[0].a74cf * wl_Z1[0] + Wr_DPD[0].a75cf * ql_Z1[0] + Wr_DPD[0].a76cf * n_Z1[0] + Wr_DPD[0].a77cf * m_Z1[0] + Wr_DPD[0].b7cf * robo->wm_cmd;
 
@@ -5515,7 +5618,7 @@ void CalcFDTDWr_WmcmdInputType(Robot *robo)
     // 計算結果の代入
     robo->ql_calc = robo->theta_rl_init + ql_Z[0];
     robo->wl_calc = wl_Z[0];
-    robo->al_calc = (robo->Ksn * qs_Z[0] - robo->Dln * wl_Z[0]) / robo->Jl_calc;
+    robo->al_calc = (robo->Ksn * qs_Z[0] - robo->Dln * wl_Z[0]) / robo->Jl_calc_Wr;
     robo->wm_calc = wm_Z[0];
   }
   else if (robo->BDN == BDN1)
@@ -5523,9 +5626,9 @@ void CalcFDTDWr_WmcmdInputType(Robot *robo)
     // 状態量の計算
     wm_Z[1] = Wr_DPD[1].a11cf * wm_Z1[1] + Wr_DPD[1].a12cf * qm_Z1[1] + Wr_DPD[1].a13cf * qs_Z1[1] + Wr_DPD[1].a14cf * wl_Z1[1] + Wr_DPD[1].a15cf * ql_Z1[1] + Wr_DPD[1].a16cf * n_Z1[1] + Wr_DPD[1].a17cf * m_Z1[1] + Wr_DPD[1].b1cf * robo->wm_cmd;
     qm_Z[1] = Wr_DPD[1].a21cf * wm_Z1[1] + Wr_DPD[1].a22cf * qm_Z1[1] + Wr_DPD[1].a23cf * qs_Z1[1] + Wr_DPD[1].a24cf * wl_Z1[1] + Wr_DPD[1].a25cf * ql_Z1[1] + Wr_DPD[1].a26cf * n_Z1[1] + Wr_DPD[1].a27cf * m_Z1[1] + Wr_DPD[1].b2cf * robo->wm_cmd;
-    qs_Z[1] = Wr_DPD[1].a31cf * wm_Z1[1] + Wr_DPD[1].a32cf * qm_Z1[1] + (Wr_DPD[1].a33cf1 + Wr_DPD[1].a33cf2 / robo->Jl_calc) * qs_Z1[1] + (Wr_DPD[1].a34cf1 + Wr_DPD[1].a34cf2 / robo->Jl_calc) * wl_Z1[1] + Wr_DPD[1].a35cf * ql_Z1[1] + Wr_DPD[1].a36cf * n_Z1[1] + Wr_DPD[1].a37cf * m_Z1[1] + Wr_DPD[1].b3cf * robo->wm_cmd;
-    wl_Z[1] = Wr_DPD[1].a41cf * wm_Z1[1] + Wr_DPD[1].a42cf * qm_Z1[1] + Wr_DPD[1].a43cf / robo->Jl_calc * qs_Z1[1] + (Wr_DPD[1].a44cf1 + Wr_DPD[1].a44cf2 / robo->Jl_calc) * wl_Z1[1] + Wr_DPD[1].a45cf * ql_Z1[1] + Wr_DPD[1].a46cf * n_Z1[1] + Wr_DPD[1].a47cf * m_Z1[1] + Wr_DPD[1].b4cf * robo->wm_cmd;
-    ql_Z[1] = Wr_DPD[1].a51cf * wm_Z1[1] + Wr_DPD[1].a52cf * qm_Z1[1] + Wr_DPD[1].a53cf / robo->Jl_calc * qs_Z1[1] + (Wr_DPD[1].a54cf1 + Wr_DPD[1].a54cf2 / robo->Jl_calc) * wl_Z1[1] + Wr_DPD[1].a55cf * ql_Z1[1] + Wr_DPD[1].a56cf * n_Z1[1] + Wr_DPD[1].a57cf * m_Z1[1] + Wr_DPD[1].b5cf * robo->wm_cmd;
+    qs_Z[1] = Wr_DPD[1].a31cf * wm_Z1[1] + Wr_DPD[1].a32cf * qm_Z1[1] + (Wr_DPD[1].a33cf1 + Wr_DPD[1].a33cf2 / robo->Jl_calc_Wr) * qs_Z1[1] + (Wr_DPD[1].a34cf1 + Wr_DPD[1].a34cf2 / robo->Jl_calc_Wr) * wl_Z1[1] + Wr_DPD[1].a35cf * ql_Z1[1] + Wr_DPD[1].a36cf * n_Z1[1] + Wr_DPD[1].a37cf * m_Z1[1] + Wr_DPD[1].b3cf * robo->wm_cmd;
+    wl_Z[1] = Wr_DPD[1].a41cf * wm_Z1[1] + Wr_DPD[1].a42cf * qm_Z1[1] + Wr_DPD[1].a43cf / robo->Jl_calc_Wr * qs_Z1[1] + (Wr_DPD[1].a44cf1 + Wr_DPD[1].a44cf2 / robo->Jl_calc_Wr) * wl_Z1[1] + Wr_DPD[1].a45cf * ql_Z1[1] + Wr_DPD[1].a46cf * n_Z1[1] + Wr_DPD[1].a47cf * m_Z1[1] + Wr_DPD[1].b4cf * robo->wm_cmd;
+    ql_Z[1] = Wr_DPD[1].a51cf * wm_Z1[1] + Wr_DPD[1].a52cf * qm_Z1[1] + Wr_DPD[1].a53cf / robo->Jl_calc_Wr * qs_Z1[1] + (Wr_DPD[1].a54cf1 + Wr_DPD[1].a54cf2 / robo->Jl_calc_Wr) * wl_Z1[1] + Wr_DPD[1].a55cf * ql_Z1[1] + Wr_DPD[1].a56cf * n_Z1[1] + Wr_DPD[1].a57cf * m_Z1[1] + Wr_DPD[1].b5cf * robo->wm_cmd;
     n_Z[1] = Wr_DPD[1].a61cf * wm_Z1[1] + Wr_DPD[1].a62cf * qm_Z1[1] + Wr_DPD[1].a63cf * qs_Z1[1] + Wr_DPD[1].a64cf * wl_Z1[1] + Wr_DPD[1].a65cf * ql_Z1[1] + Wr_DPD[1].a66cf * n_Z1[1] + Wr_DPD[1].a67cf * m_Z1[1] + Wr_DPD[1].b6cf * robo->wm_cmd;
     m_Z[1] = Wr_DPD[1].a71cf * wm_Z1[1] + Wr_DPD[1].a72cf * qm_Z1[1] + Wr_DPD[1].a73cf * qs_Z1[1] + Wr_DPD[1].a74cf * wl_Z1[1] + Wr_DPD[1].a75cf * ql_Z1[1] + Wr_DPD[1].a76cf * n_Z1[1] + Wr_DPD[1].a77cf * m_Z1[1] + Wr_DPD[1].b7cf * robo->wm_cmd;
 
@@ -5541,7 +5644,7 @@ void CalcFDTDWr_WmcmdInputType(Robot *robo)
     // 計算結果の代入
     robo->ql_calc = robo->theta_rl_init + ql_Z[1];
     robo->wl_calc = wl_Z[1];
-    robo->al_calc = (robo->Ksn * qs_Z[1] - robo->Dln * wl_Z[1]) / robo->Jl_calc;
+    robo->al_calc = (robo->Ksn * qs_Z[1] - robo->Dln * wl_Z[1]) / robo->Jl_calc_Wr;
     robo->wm_calc = wm_Z[1];
   }
   else if (robo->BDN == BDN2)
@@ -5549,9 +5652,9 @@ void CalcFDTDWr_WmcmdInputType(Robot *robo)
     // 状態量の計算
     wm_Z[2] = Wr_DPD[2].a11cf * wm_Z1[2] + Wr_DPD[2].a12cf * qm_Z1[2] + Wr_DPD[2].a13cf * qs_Z1[2] + Wr_DPD[2].a14cf * wl_Z1[2] + Wr_DPD[2].a15cf * ql_Z1[2] + Wr_DPD[2].a16cf * n_Z1[2] + Wr_DPD[2].a17cf * m_Z1[2] + Wr_DPD[2].b1cf * robo->wm_cmd;
     qm_Z[2] = Wr_DPD[2].a21cf * wm_Z1[2] + Wr_DPD[2].a22cf * qm_Z1[2] + Wr_DPD[2].a23cf * qs_Z1[2] + Wr_DPD[2].a24cf * wl_Z1[2] + Wr_DPD[2].a25cf * ql_Z1[2] + Wr_DPD[2].a26cf * n_Z1[2] + Wr_DPD[2].a27cf * m_Z1[2] + Wr_DPD[2].b2cf * robo->wm_cmd;
-    qs_Z[2] = Wr_DPD[2].a31cf * wm_Z1[2] + Wr_DPD[2].a32cf * qm_Z1[2] + (Wr_DPD[2].a33cf1 + Wr_DPD[2].a33cf2 / robo->Jl_calc) * qs_Z1[2] + (Wr_DPD[2].a34cf1 + Wr_DPD[2].a34cf2 / robo->Jl_calc) * wl_Z1[2] + Wr_DPD[2].a35cf * ql_Z1[2] + Wr_DPD[2].a36cf * n_Z1[2] + Wr_DPD[2].a37cf * m_Z1[2] + Wr_DPD[2].b3cf * robo->wm_cmd;
-    wl_Z[2] = Wr_DPD[2].a41cf * wm_Z1[2] + Wr_DPD[2].a42cf * qm_Z1[2] + Wr_DPD[2].a43cf / robo->Jl_calc * qs_Z1[2] + (Wr_DPD[2].a44cf1 + Wr_DPD[2].a44cf2 / robo->Jl_calc) * wl_Z1[2] + Wr_DPD[2].a45cf * ql_Z1[2] + Wr_DPD[2].a46cf * n_Z1[2] + Wr_DPD[2].a47cf * m_Z1[2] + Wr_DPD[2].b4cf * robo->wm_cmd;
-    ql_Z[2] = Wr_DPD[2].a51cf * wm_Z1[2] + Wr_DPD[2].a52cf * qm_Z1[2] + Wr_DPD[2].a53cf / robo->Jl_calc * qs_Z1[2] + (Wr_DPD[2].a54cf1 + Wr_DPD[2].a54cf2 / robo->Jl_calc) * wl_Z1[2] + Wr_DPD[2].a55cf * ql_Z1[2] + Wr_DPD[2].a56cf * n_Z1[2] + Wr_DPD[2].a57cf * m_Z1[2] + Wr_DPD[2].b5cf * robo->wm_cmd;
+    qs_Z[2] = Wr_DPD[2].a31cf * wm_Z1[2] + Wr_DPD[2].a32cf * qm_Z1[2] + (Wr_DPD[2].a33cf1 + Wr_DPD[2].a33cf2 / robo->Jl_calc_Wr) * qs_Z1[2] + (Wr_DPD[2].a34cf1 + Wr_DPD[2].a34cf2 / robo->Jl_calc_Wr) * wl_Z1[2] + Wr_DPD[2].a35cf * ql_Z1[2] + Wr_DPD[2].a36cf * n_Z1[2] + Wr_DPD[2].a37cf * m_Z1[2] + Wr_DPD[2].b3cf * robo->wm_cmd;
+    wl_Z[2] = Wr_DPD[2].a41cf * wm_Z1[2] + Wr_DPD[2].a42cf * qm_Z1[2] + Wr_DPD[2].a43cf / robo->Jl_calc_Wr * qs_Z1[2] + (Wr_DPD[2].a44cf1 + Wr_DPD[2].a44cf2 / robo->Jl_calc_Wr) * wl_Z1[2] + Wr_DPD[2].a45cf * ql_Z1[2] + Wr_DPD[2].a46cf * n_Z1[2] + Wr_DPD[2].a47cf * m_Z1[2] + Wr_DPD[2].b4cf * robo->wm_cmd;
+    ql_Z[2] = Wr_DPD[2].a51cf * wm_Z1[2] + Wr_DPD[2].a52cf * qm_Z1[2] + Wr_DPD[2].a53cf / robo->Jl_calc_Wr * qs_Z1[2] + (Wr_DPD[2].a54cf1 + Wr_DPD[2].a54cf2 / robo->Jl_calc_Wr) * wl_Z1[2] + Wr_DPD[2].a55cf * ql_Z1[2] + Wr_DPD[2].a56cf * n_Z1[2] + Wr_DPD[2].a57cf * m_Z1[2] + Wr_DPD[2].b5cf * robo->wm_cmd;
     n_Z[2] = Wr_DPD[2].a61cf * wm_Z1[2] + Wr_DPD[2].a62cf * qm_Z1[2] + Wr_DPD[2].a63cf * qs_Z1[2] + Wr_DPD[2].a64cf * wl_Z1[2] + Wr_DPD[2].a65cf * ql_Z1[2] + Wr_DPD[2].a66cf * n_Z1[2] + Wr_DPD[2].a67cf * m_Z1[2] + Wr_DPD[2].b6cf * robo->wm_cmd;
     m_Z[2] = Wr_DPD[2].a71cf * wm_Z1[2] + Wr_DPD[2].a72cf * qm_Z1[2] + Wr_DPD[2].a73cf * qs_Z1[2] + Wr_DPD[2].a74cf * wl_Z1[2] + Wr_DPD[2].a75cf * ql_Z1[2] + Wr_DPD[2].a76cf * n_Z1[2] + Wr_DPD[2].a77cf * m_Z1[2] + Wr_DPD[2].b7cf * robo->wm_cmd;
 
@@ -5567,7 +5670,7 @@ void CalcFDTDWr_WmcmdInputType(Robot *robo)
     // 計算結果の代入
     robo->ql_calc = robo->theta_rl_init + ql_Z[2];
     robo->wl_calc = wl_Z[2];
-    robo->al_calc = (robo->Ksn * qs_Z[2] - robo->Dln * wl_Z[2]) / robo->Jl_calc;
+    robo->al_calc = (robo->Ksn * qs_Z[2] - robo->Dln * wl_Z[2]) / robo->Jl_calc_Wr;
     robo->wm_calc = wm_Z[2];
   }
   else
@@ -5586,194 +5689,194 @@ void CalcFDTDWrInit_WmcmdInputType(Robot *robo)
     // 20220408 FDTD法適用見直し
     // wm_cmd入力型FDTDWrのJlの係数の計算
     // 1軸目
-    Wr_DPD[0].a11cf  = ((robo->Jmn) - Tp * (robo->Dmn + robo->Ktn * (robo->fwm + robo->Kvp + robo->Kfb * robo->Kvp))) / robo->Jmn;
-    Wr_DPD[0].a12cf  = -robo->Ktn * robo->Kvp * robo->Kpp * Tp / robo->Jmn;
-    Wr_DPD[0].a13cf  = (-robo->Ktn * robo->fqs * Tp - robo->Ksn * Tp / robo->Rgn) / robo->Jmn;
-    Wr_DPD[0].a14cf  = -robo->Ktn * robo->fwl * Tp / robo->Jmn;
-    Wr_DPD[0].a15cf  = 0.0;
-    Wr_DPD[0].a16cf  = robo->Ktn * Tp / robo->Jmn;
-    Wr_DPD[0].a17cf  = Tp * robo->Ktn * robo->Kvp * robo->Kpp / robo->Jmn;
-    Wr_DPD[0].a21cf  = (Tp * ((robo->Jmn) - Tp * (robo->Dmn + robo->Ktn * (robo->fwm + robo->Kvp + robo->Kfb * robo->Kvp)))) / robo->Jmn;
-    Wr_DPD[0].a22cf  = 1 - (robo->Ktn * robo->Kvp * robo->Kpp * Tp2) / robo->Jmn;
-    Wr_DPD[0].a23cf  = -((robo->Ktn * robo->fqs * robo->Rgn + robo->Ksn) * Tp2) / (robo->Jmn * robo->Rgn);
-    Wr_DPD[0].a24cf  = -robo->Ktn * robo->fwl * Tp2 / robo->Jmn;
-    Wr_DPD[0].a25cf  = 0.0;
-    Wr_DPD[0].a26cf  = robo->Ktn * Tp2 / robo->Jmn;
-    Wr_DPD[0].a27cf  = Tp2 * robo->Ktn * robo->Kvp * robo->Kpp / robo->Jmn;
-    Wr_DPD[0].a31cf  = (Tp / robo->Rgn) * ((robo->Jmn) - Tp * (robo->Dmn + robo->Ktn * (robo->fwm + robo->Kvp + robo->Kfb * robo->Kvp))) / robo->Jmn;
-    Wr_DPD[0].a32cf  = -robo->Ktn * robo->Kvp * robo->Kpp * Tp2 / (robo->Jmn * robo->Rgn);
-    Wr_DPD[0].a33cf1 = 1.0 + (Tp2 * (robo->Ksn / robo->Rgn + robo->fqs * robo->Ktn)) / (robo->Jmn * robo->Rgn);
+    Wr_DPD[0].a11cf = ((robo->Jmn) - Tp * (robo->Dmn + robo->Ktn * (robo->fwm_wr + robo->Kvp_wr + robo->Kfb_wr * robo->Kvp_wr))) / robo->Jmn;
+    Wr_DPD[0].a12cf = -robo->Ktn * robo->Kvp_wr * robo->Kpp_wr * Tp / robo->Jmn;
+    Wr_DPD[0].a13cf = (-robo->Ktn * robo->fqs_wr * Tp - robo->Ksn * Tp / robo->Rgn) / robo->Jmn;
+    Wr_DPD[0].a14cf = -robo->Ktn * robo->fwl_wr * Tp / robo->Jmn;
+    Wr_DPD[0].a15cf = 0.0;
+    Wr_DPD[0].a16cf = robo->Ktn * Tp / robo->Jmn;
+    Wr_DPD[0].a17cf = Tp * robo->Ktn * robo->Kvp_wr * robo->Kpp_wr / robo->Jmn;
+    Wr_DPD[0].a21cf = (Tp * ((robo->Jmn) - Tp * (robo->Dmn + robo->Ktn * (robo->fwm_wr + robo->Kvp_wr + robo->Kfb_wr * robo->Kvp_wr)))) / robo->Jmn;
+    Wr_DPD[0].a22cf = 1 - (robo->Ktn * robo->Kvp_wr * robo->Kpp_wr * Tp2) / robo->Jmn;
+    Wr_DPD[0].a23cf = -((robo->Ktn * robo->fqs_wr * robo->Rgn + robo->Ksn) * Tp2) / (robo->Jmn * robo->Rgn);
+    Wr_DPD[0].a24cf = -robo->Ktn * robo->fwl_wr * Tp2 / robo->Jmn;
+    Wr_DPD[0].a25cf = 0.0;
+    Wr_DPD[0].a26cf = robo->Ktn * Tp2 / robo->Jmn;
+    Wr_DPD[0].a27cf = Tp2 * robo->Ktn * robo->Kvp_wr * robo->Kpp_wr / robo->Jmn;
+    Wr_DPD[0].a31cf = (Tp / robo->Rgn) * ((robo->Jmn) - Tp * (robo->Dmn + robo->Ktn * (robo->fwm_wr + robo->Kvp_wr + robo->Kfb_wr * robo->Kvp_wr))) / robo->Jmn;
+    Wr_DPD[0].a32cf = -robo->Ktn * robo->Kvp_wr * robo->Kpp_wr * Tp2 / (robo->Jmn * robo->Rgn);
+    Wr_DPD[0].a33cf1 = 1.0 - (Tp2 * (robo->Ksn / robo->Rgn + robo->fqs_wr * robo->Ktn)) / (robo->Jmn * robo->Rgn);
     Wr_DPD[0].a33cf2 = -Tp2 * robo->Ksn;
-    Wr_DPD[0].a34cf1 = -Tp - robo->Ktn * robo->fwl * Tp2 / (robo->Jmn * robo->Rgn);
+    Wr_DPD[0].a34cf1 = -Tp - robo->Ktn * robo->fwl_wr * Tp2 / (robo->Jmn * robo->Rgn);
     Wr_DPD[0].a34cf2 = Tp2 * robo->Dln;
-    Wr_DPD[0].a35cf  = 0.0;
-    Wr_DPD[0].a36cf  = robo->Ktn * Tp2 / (robo->Jmn * robo->Rgn);
-    Wr_DPD[0].a37cf  = robo->Kvp * robo->Kpp * robo->Ktn * Tp2 / (robo->Jmn * robo->Rgn);
-    Wr_DPD[0].a41cf  = 0.0;
-    Wr_DPD[0].a42cf  = 0.0;
-    Wr_DPD[0].a43cf  = Tp * robo->Ksn;
+    Wr_DPD[0].a35cf = 0.0;
+    Wr_DPD[0].a36cf = robo->Ktn * Tp2 / (robo->Jmn * robo->Rgn);
+    Wr_DPD[0].a37cf = robo->Kvp_wr * robo->Kpp_wr * robo->Ktn * Tp2 / (robo->Jmn * robo->Rgn);
+    Wr_DPD[0].a41cf = 0.0;
+    Wr_DPD[0].a42cf = 0.0;
+    Wr_DPD[0].a43cf = Tp * robo->Ksn;
     Wr_DPD[0].a44cf1 = 1.0;
     Wr_DPD[0].a44cf2 = -Tp * robo->Dln;
-    Wr_DPD[0].a45cf  = 0.0;
-    Wr_DPD[0].a46cf  = 0.0;
-    Wr_DPD[0].a47cf  = 0.0;
-    Wr_DPD[0].a51cf  = 0.0;
-    Wr_DPD[0].a52cf  = 0.0;
-    Wr_DPD[0].a53cf  = Tp2 * robo->Ksn;
+    Wr_DPD[0].a45cf = 0.0;
+    Wr_DPD[0].a46cf = 0.0;
+    Wr_DPD[0].a47cf = 0.0;
+    Wr_DPD[0].a51cf = 0.0;
+    Wr_DPD[0].a52cf = 0.0;
+    Wr_DPD[0].a53cf = Tp2 * robo->Ksn;
     Wr_DPD[0].a54cf1 = Tp;
     Wr_DPD[0].a54cf2 = -Tp2 * robo->Dln;
-    Wr_DPD[0].a55cf  = 1.0;
-    Wr_DPD[0].a56cf  = 0.0;
-    Wr_DPD[0].a57cf  = 0.0;
-    Wr_DPD[0].a61cf  = ((1 + robo->Kfb) * robo->Kvi * Tp * (-robo->Jmn + (robo->Dmn + robo->Ktn * (robo->fwm + robo->Kvp + robo->Kfb * robo->Kvp)) * Tp)) / robo->Jmn;
-    Wr_DPD[0].a62cf  = (robo->Kpp * robo->Kvi * Tp * (-robo->Jmn + (1 + robo->Kfb) * robo->Ktn * robo->Kvp * Tp)) / robo->Jmn;
-    Wr_DPD[0].a63cf  = (Tp2 * (1 + robo->Kfb) * robo->Kvi * (robo->Ksn + robo->fqs * robo->Ktn * robo->Rgn)) / (robo->Jmn * robo->Rgn);
-    Wr_DPD[0].a64cf  = (robo->fwl * (1 + robo->Kfb) * robo->Ktn * robo->Kvi * Tp2) / robo->Jmn;
-    Wr_DPD[0].a65cf  = 0;
-    Wr_DPD[0].a66cf  = 1 - ((1 + robo->Kfb) * robo->Ktn * robo->Kvi * Tp2) / robo->Jmn;
-    Wr_DPD[0].a67cf  = (robo->Kpp * robo->Kvi * Tp * (robo->Jmn - (1 + robo->Kfb) * robo->Ktn * robo->Kvp * Tp)) / robo->Jmn;
-    Wr_DPD[0].a71cf  = 0;
-    Wr_DPD[0].a72cf  = 0;
-    Wr_DPD[0].a73cf  = 0;
-    Wr_DPD[0].a74cf  = 0;
-    Wr_DPD[0].a75cf  = 0;
-    Wr_DPD[0].a76cf  = 0;
-    Wr_DPD[0].a77cf  = 1;
-    Wr_DPD[0].b1cf   = robo->Kff * robo->Kvp * robo->Ktn * Tp / robo->Jmn;
-    Wr_DPD[0].b2cf   = robo->Kff * robo->Kvp * robo->Ktn * Tp2 / robo->Jmn;
-    Wr_DPD[0].b3cf   = robo->Kff * robo->Kvp * robo->Ktn * Tp2 / (robo->Jmn * robo->Rgn);
-    Wr_DPD[0].b4cf   = 0.0;
-    Wr_DPD[0].b5cf   = 0.0;
-    Wr_DPD[0].b6cf   = (robo->Kff * robo->Kvi * Tp * (robo->Jmn - (1 + robo->Kfb) * robo->Ktn * robo->Kfb * Tp)) / robo->Jmn;
-    Wr_DPD[0].b7cf   = Tp;
+    Wr_DPD[0].a55cf = 1.0;
+    Wr_DPD[0].a56cf = 0.0;
+    Wr_DPD[0].a57cf = 0.0;
+    Wr_DPD[0].a61cf = ((1 + robo->Kfb_wr) * robo->Kvi_wr * Tp * (-robo->Jmn + (robo->Dmn + robo->Ktn * (robo->fwm_wr + robo->Kvp_wr + robo->Kfb_wr * robo->Kvp_wr)) * Tp)) / robo->Jmn;
+    Wr_DPD[0].a62cf = (robo->Kpp_wr * robo->Kvi_wr * Tp * (-robo->Jmn + (1 + robo->Kfb_wr) * robo->Ktn * robo->Kvp_wr * Tp)) / robo->Jmn;
+    Wr_DPD[0].a63cf = (Tp2 * (1 + robo->Kfb_wr) * robo->Kvi_wr * (robo->Ksn + robo->fqs_wr * robo->Ktn * robo->Rgn)) / (robo->Jmn * robo->Rgn);
+    Wr_DPD[0].a64cf = (robo->fwl_wr * (1 + robo->Kfb_wr) * robo->Ktn * robo->Kvi_wr * Tp2) / robo->Jmn;
+    Wr_DPD[0].a65cf = 0;
+    Wr_DPD[0].a66cf = 1 - ((1 + robo->Kfb_wr) * robo->Ktn * robo->Kvi_wr * Tp2) / robo->Jmn;
+    Wr_DPD[0].a67cf = (robo->Kpp_wr * robo->Kvi_wr * Tp * (robo->Jmn - (1 + robo->Kfb_wr) * robo->Ktn * robo->Kvp_wr * Tp)) / robo->Jmn;
+    Wr_DPD[0].a71cf = 0;
+    Wr_DPD[0].a72cf = 0;
+    Wr_DPD[0].a73cf = 0;
+    Wr_DPD[0].a74cf = 0;
+    Wr_DPD[0].a75cf = 0;
+    Wr_DPD[0].a76cf = 0;
+    Wr_DPD[0].a77cf = 1;
+    Wr_DPD[0].b1cf = robo->Kff * robo->Kvp_wr * robo->Ktn * Tp / robo->Jmn;
+    Wr_DPD[0].b2cf = robo->Kff * robo->Kvp_wr * robo->Ktn * Tp2 / robo->Jmn;
+    Wr_DPD[0].b3cf = robo->Kff * robo->Kvp_wr * robo->Ktn * Tp2 / (robo->Jmn * robo->Rgn);
+    Wr_DPD[0].b4cf = 0.0;
+    Wr_DPD[0].b5cf = 0.0;
+    Wr_DPD[0].b6cf = (robo->Kff * robo->Kvi_wr * Tp * (robo->Jmn - (1 + robo->Kfb_wr) * robo->Ktn * robo->Kvp_wr * Tp)) / robo->Jmn;
+    Wr_DPD[0].b7cf = Tp;
   }
   else if (robo->BDN == BDN1)
   {
     // 2軸目
-    Wr_DPD[1].a11cf  = ((robo->Jmn) - Tp * (robo->Dmn + robo->Ktn * (robo->fwm + robo->Kvp + robo->Kfb * robo->Kvp))) / robo->Jmn;
-    Wr_DPD[1].a12cf  = -robo->Ktn * robo->Kvp * robo->Kpp * Tp / robo->Jmn;
-    Wr_DPD[1].a13cf  = (-robo->Ktn * robo->fqs * Tp - robo->Ksn * Tp / robo->Rgn) / robo->Jmn;
-    Wr_DPD[1].a14cf  = -robo->Ktn * robo->fwl * Tp / robo->Jmn;
-    Wr_DPD[1].a15cf  = 0.0;
-    Wr_DPD[1].a16cf  = robo->Ktn * Tp / robo->Jmn;
-    Wr_DPD[1].a17cf  = Tp * robo->Ktn * robo->Kvp * robo->Kpp / robo->Jmn;
-    Wr_DPD[1].a21cf  = (Tp * ((robo->Jmn) - Tp * (robo->Dmn + robo->Ktn * (robo->fwm + robo->Kvp + robo->Kfb * robo->Kvp)))) / robo->Jmn;
-    Wr_DPD[1].a22cf  = 1 - (robo->Ktn * robo->Kvp * robo->Kpp * Tp2) / robo->Jmn;
-    Wr_DPD[1].a23cf  = -((robo->Ktn * robo->fqs * robo->Rgn + robo->Ksn) * Tp2) / (robo->Jmn * robo->Rgn);
-    Wr_DPD[1].a24cf  = -robo->Ktn * robo->fwl * Tp2 / robo->Jmn;
-    Wr_DPD[1].a25cf  = 0.0;
-    Wr_DPD[1].a26cf  = robo->Ktn * Tp2 / robo->Jmn;
-    Wr_DPD[1].a27cf  = Tp2 * robo->Ktn * robo->Kvp * robo->Kpp / robo->Jmn;
-    Wr_DPD[1].a31cf  = (Tp / robo->Rgn) * ((robo->Jmn) - Tp * (robo->Dmn + robo->Ktn * (robo->fwm + robo->Kvp + robo->Kfb * robo->Kvp))) / robo->Jmn;
-    Wr_DPD[1].a32cf  = -robo->Ktn * robo->Kvp * robo->Kpp * Tp2 / (robo->Jmn * robo->Rgn);
-    Wr_DPD[1].a33cf1 = 1.0 + (Tp2 * (robo->Ksn / robo->Rgn + robo->fqs * robo->Ktn)) / (robo->Jmn * robo->Rgn);
+    Wr_DPD[1].a11cf = ((robo->Jmn) - Tp * (robo->Dmn + robo->Ktn * (robo->fwm_wr + robo->Kvp_wr + robo->Kfb_wr * robo->Kvp_wr))) / robo->Jmn;
+    Wr_DPD[1].a12cf = -robo->Ktn * robo->Kvp_wr * robo->Kpp_wr * Tp / robo->Jmn;
+    Wr_DPD[1].a13cf = (-robo->Ktn * robo->fqs_wr * Tp - robo->Ksn * Tp / robo->Rgn) / robo->Jmn;
+    Wr_DPD[1].a14cf = -robo->Ktn * robo->fwl_wr * Tp / robo->Jmn;
+    Wr_DPD[1].a15cf = 0.0;
+    Wr_DPD[1].a16cf = robo->Ktn * Tp / robo->Jmn;
+    Wr_DPD[1].a17cf = Tp * robo->Ktn * robo->Kvp_wr * robo->Kpp_wr / robo->Jmn;
+    Wr_DPD[1].a21cf = (Tp * ((robo->Jmn) - Tp * (robo->Dmn + robo->Ktn * (robo->fwm_wr + robo->Kvp_wr + robo->Kfb_wr * robo->Kvp_wr)))) / robo->Jmn;
+    Wr_DPD[1].a22cf = 1 - (robo->Ktn * robo->Kvp_wr * robo->Kpp_wr * Tp2) / robo->Jmn;
+    Wr_DPD[1].a23cf = -((robo->Ktn * robo->fqs_wr * robo->Rgn + robo->Ksn) * Tp2) / (robo->Jmn * robo->Rgn);
+    Wr_DPD[1].a24cf = -robo->Ktn * robo->fwl_wr * Tp2 / robo->Jmn;
+    Wr_DPD[1].a25cf = 0.0;
+    Wr_DPD[1].a26cf = robo->Ktn * Tp2 / robo->Jmn;
+    Wr_DPD[1].a27cf = Tp2 * robo->Ktn * robo->Kvp_wr * robo->Kpp_wr / robo->Jmn;
+    Wr_DPD[1].a31cf = (Tp / robo->Rgn) * ((robo->Jmn) - Tp * (robo->Dmn + robo->Ktn * (robo->fwm_wr + robo->Kvp_wr + robo->Kfb_wr * robo->Kvp_wr))) / robo->Jmn;
+    Wr_DPD[1].a32cf = -robo->Ktn * robo->Kvp_wr * robo->Kpp_wr * Tp2 / (robo->Jmn * robo->Rgn);
+    Wr_DPD[1].a33cf1 = 1.0 - (Tp2 * (robo->Ksn / robo->Rgn + robo->fqs_wr * robo->Ktn)) / (robo->Jmn * robo->Rgn);
     Wr_DPD[1].a33cf2 = -Tp2 * robo->Ksn;
-    Wr_DPD[1].a34cf1 = -Tp - robo->Ktn * robo->fwl * Tp2 / (robo->Jmn * robo->Rgn);
+    Wr_DPD[1].a34cf1 = -Tp - robo->Ktn * robo->fwl_wr * Tp2 / (robo->Jmn * robo->Rgn);
     Wr_DPD[1].a34cf2 = Tp2 * robo->Dln;
-    Wr_DPD[1].a35cf  = 0.0;
-    Wr_DPD[1].a36cf  = robo->Ktn * Tp2 / (robo->Jmn * robo->Rgn);
-    Wr_DPD[1].a37cf  = robo->Kvp * robo->Kpp * robo->Ktn * Tp2 / (robo->Jmn * robo->Rgn);
-    Wr_DPD[1].a41cf  = 0.0;
-    Wr_DPD[1].a42cf  = 0.0;
-    Wr_DPD[1].a43cf  = Tp * robo->Ksn;
+    Wr_DPD[1].a35cf = 0.0;
+    Wr_DPD[1].a36cf = robo->Ktn * Tp2 / (robo->Jmn * robo->Rgn);
+    Wr_DPD[1].a37cf = robo->Kvp_wr * robo->Kpp_wr * robo->Ktn * Tp2 / (robo->Jmn * robo->Rgn);
+    Wr_DPD[1].a41cf = 0.0;
+    Wr_DPD[1].a42cf = 0.0;
+    Wr_DPD[1].a43cf = Tp * robo->Ksn;
     Wr_DPD[1].a44cf1 = 1.0;
     Wr_DPD[1].a44cf2 = -Tp * robo->Dln;
-    Wr_DPD[1].a45cf  = 0.0;
-    Wr_DPD[1].a46cf  = 0.0;
-    Wr_DPD[1].a47cf  = 0.0;
-    Wr_DPD[1].a51cf  = 0.0;
-    Wr_DPD[1].a52cf  = 0.0;
-    Wr_DPD[1].a53cf  = Tp2 * robo->Ksn;
+    Wr_DPD[1].a45cf = 0.0;
+    Wr_DPD[1].a46cf = 0.0;
+    Wr_DPD[1].a47cf = 0.0;
+    Wr_DPD[1].a51cf = 0.0;
+    Wr_DPD[1].a52cf = 0.0;
+    Wr_DPD[1].a53cf = Tp2 * robo->Ksn;
     Wr_DPD[1].a54cf1 = Tp;
     Wr_DPD[1].a54cf2 = -Tp2 * robo->Dln;
-    Wr_DPD[1].a55cf  = 1.0;
-    Wr_DPD[1].a56cf  = 0.0;
-    Wr_DPD[1].a57cf  = 0.0;
-    Wr_DPD[1].a61cf  = ((1 + robo->Kfb) * robo->Kvi * Tp * (-robo->Jmn + (robo->Dmn + robo->Ktn * (robo->fwm + robo->Kvp + robo->Kfb * robo->Kvp)) * Tp)) / robo->Jmn;
-    Wr_DPD[1].a62cf  = (robo->Kpp * robo->Kvi * Tp * (-robo->Jmn + (1 + robo->Kfb) * robo->Ktn * robo->Kvp * Tp)) / robo->Jmn;
-    Wr_DPD[1].a63cf  = (Tp2 * (1 + robo->Kfb) * robo->Kvi * (robo->Ksn + robo->fqs * robo->Ktn * robo->Rgn)) / (robo->Jmn * robo->Rgn);
-    Wr_DPD[1].a64cf  = (robo->fwl * (1 + robo->Kfb) * robo->Ktn * robo->Kvi * Tp2) / robo->Jmn;
-    Wr_DPD[1].a65cf  = 0;
-    Wr_DPD[1].a66cf  = 1 - ((1 + robo->Kfb) * robo->Ktn * robo->Kvi * Tp2) / robo->Jmn;
-    Wr_DPD[1].a67cf  = (robo->Kpp * robo->Kvi * Tp * (robo->Jmn - (1 + robo->Kfb) * robo->Ktn * robo->Kvp * Tp)) / robo->Jmn;
-    Wr_DPD[1].a71cf  = 0;
-    Wr_DPD[1].a72cf  = 0;
-    Wr_DPD[1].a73cf  = 0;
-    Wr_DPD[1].a74cf  = 0;
-    Wr_DPD[1].a75cf  = 0;
-    Wr_DPD[1].a76cf  = 0;
-    Wr_DPD[1].a77cf  = 1;
-    Wr_DPD[1].b1cf   = robo->Kff * robo->Kvp * robo->Ktn * Tp / robo->Jmn;
-    Wr_DPD[1].b2cf   = robo->Kff * robo->Kvp * robo->Ktn * Tp2 / robo->Jmn;
-    Wr_DPD[1].b3cf   = robo->Kff * robo->Kvp * robo->Ktn * Tp2 / (robo->Jmn * robo->Rgn);
-    Wr_DPD[1].b4cf   = 0.0;
-    Wr_DPD[1].b5cf   = 0.0;
-    Wr_DPD[1].b6cf   = (robo->Kff * robo->Kvi * Tp * (robo->Jmn - (1 + robo->Kfb) * robo->Ktn * robo->Kfb * Tp)) / robo->Jmn;
-    Wr_DPD[1].b7cf   = Tp;
+    Wr_DPD[1].a55cf = 1.0;
+    Wr_DPD[1].a56cf = 0.0;
+    Wr_DPD[1].a57cf = 0.0;
+    Wr_DPD[1].a61cf = ((1 + robo->Kfb_wr) * robo->Kvi_wr * Tp * (-robo->Jmn + (robo->Dmn + robo->Ktn * (robo->fwm_wr + robo->Kvp_wr + robo->Kfb_wr * robo->Kvp_wr)) * Tp)) / robo->Jmn;
+    Wr_DPD[1].a62cf = (robo->Kpp_wr * robo->Kvi_wr * Tp * (-robo->Jmn + (1 + robo->Kfb_wr) * robo->Ktn * robo->Kvp_wr * Tp)) / robo->Jmn;
+    Wr_DPD[1].a63cf = (Tp2 * (1 + robo->Kfb_wr) * robo->Kvi_wr * (robo->Ksn + robo->fqs_wr * robo->Ktn * robo->Rgn)) / (robo->Jmn * robo->Rgn);
+    Wr_DPD[1].a64cf = (robo->fwl_wr * (1 + robo->Kfb_wr) * robo->Ktn * robo->Kvi_wr * Tp2) / robo->Jmn;
+    Wr_DPD[1].a65cf = 0;
+    Wr_DPD[1].a66cf = 1 - ((1 + robo->Kfb_wr) * robo->Ktn * robo->Kvi_wr * Tp2) / robo->Jmn;
+    Wr_DPD[1].a67cf = (robo->Kpp_wr * robo->Kvi_wr * Tp * (robo->Jmn - (1 + robo->Kfb_wr) * robo->Ktn * robo->Kvp_wr * Tp)) / robo->Jmn;
+    Wr_DPD[1].a71cf = 0;
+    Wr_DPD[1].a72cf = 0;
+    Wr_DPD[1].a73cf = 0;
+    Wr_DPD[1].a74cf = 0;
+    Wr_DPD[1].a75cf = 0;
+    Wr_DPD[1].a76cf = 0;
+    Wr_DPD[1].a77cf = 1;
+    Wr_DPD[1].b1cf = robo->Kff * robo->Kvp_wr * robo->Ktn * Tp / robo->Jmn;
+    Wr_DPD[1].b2cf = robo->Kff * robo->Kvp_wr * robo->Ktn * Tp2 / robo->Jmn;
+    Wr_DPD[1].b3cf = robo->Kff * robo->Kvp_wr * robo->Ktn * Tp2 / (robo->Jmn * robo->Rgn);
+    Wr_DPD[1].b4cf = 0.0;
+    Wr_DPD[1].b5cf = 0.0;
+    Wr_DPD[1].b6cf = (robo->Kff * robo->Kvi_wr * Tp * (robo->Jmn - (1 + robo->Kfb_wr) * robo->Ktn * robo->Kvp_wr * Tp)) / robo->Jmn;
+    Wr_DPD[1].b7cf = Tp;
   }
   else if (robo->BDN == BDN2)
   {
     // 3軸目
-    Wr_DPD[2].a11cf  = ((robo->Jmn) - Tp * (robo->Dmn + robo->Ktn * (robo->fwm + robo->Kvp + robo->Kfb * robo->Kvp))) / robo->Jmn;
-    Wr_DPD[2].a12cf  = -robo->Ktn * robo->Kvp * robo->Kpp * Tp / robo->Jmn;
-    Wr_DPD[2].a13cf  = (-robo->Ktn * robo->fqs * Tp - robo->Ksn * Tp / robo->Rgn) / robo->Jmn;
-    Wr_DPD[2].a14cf  = -robo->Ktn * robo->fwl * Tp / robo->Jmn;
-    Wr_DPD[2].a15cf  = 0.0;
-    Wr_DPD[2].a16cf  = robo->Ktn * Tp / robo->Jmn;
-    Wr_DPD[2].a17cf  = Tp * robo->Ktn * robo->Kvp * robo->Kpp / robo->Jmn;
-    Wr_DPD[2].a21cf  = (Tp * ((robo->Jmn) - Tp * (robo->Dmn + robo->Ktn * (robo->fwm + robo->Kvp + robo->Kfb * robo->Kvp)))) / robo->Jmn;
-    Wr_DPD[2].a22cf  = 1 - (robo->Ktn * robo->Kvp * robo->Kpp * Tp2) / robo->Jmn;
-    Wr_DPD[2].a23cf  = -((robo->Ktn * robo->fqs * robo->Rgn + robo->Ksn) * Tp2) / (robo->Jmn * robo->Rgn);
-    Wr_DPD[2].a24cf  = -robo->Ktn * robo->fwl * Tp2 / robo->Jmn;
-    Wr_DPD[2].a25cf  = 0.0;
-    Wr_DPD[2].a26cf  = robo->Ktn * Tp2 / robo->Jmn;
-    Wr_DPD[2].a27cf  = Tp2 * robo->Ktn * robo->Kvp * robo->Kpp / robo->Jmn;
-    Wr_DPD[2].a31cf  = (Tp / robo->Rgn) * ((robo->Jmn) - Tp * (robo->Dmn + robo->Ktn * (robo->fwm + robo->Kvp + robo->Kfb * robo->Kvp))) / robo->Jmn;
-    Wr_DPD[2].a32cf  = -robo->Ktn * robo->Kvp * robo->Kpp * Tp2 / (robo->Jmn * robo->Rgn);
-    Wr_DPD[2].a33cf1 = 1.0 + (Tp2 * (robo->Ksn / robo->Rgn + robo->fqs * robo->Ktn)) / (robo->Jmn * robo->Rgn);
+    Wr_DPD[2].a11cf = ((robo->Jmn) - Tp * (robo->Dmn + robo->Ktn * (robo->fwm_wr + robo->Kvp_wr + robo->Kfb_wr * robo->Kvp_wr))) / robo->Jmn;
+    Wr_DPD[2].a12cf = -robo->Ktn * robo->Kvp_wr * robo->Kpp_wr * Tp / robo->Jmn;
+    Wr_DPD[2].a13cf = (-robo->Ktn * robo->fqs_wr * Tp - robo->Ksn * Tp / robo->Rgn) / robo->Jmn;
+    Wr_DPD[2].a14cf = -robo->Ktn * robo->fwl_wr * Tp / robo->Jmn;
+    Wr_DPD[2].a15cf = 0.0;
+    Wr_DPD[2].a16cf = robo->Ktn * Tp / robo->Jmn;
+    Wr_DPD[2].a17cf = Tp * robo->Ktn * robo->Kvp_wr * robo->Kpp_wr / robo->Jmn;
+    Wr_DPD[2].a21cf = (Tp * ((robo->Jmn) - Tp * (robo->Dmn + robo->Ktn * (robo->fwm_wr + robo->Kvp_wr + robo->Kfb_wr * robo->Kvp_wr)))) / robo->Jmn;
+    Wr_DPD[2].a22cf = 1 - (robo->Ktn * robo->Kvp_wr * robo->Kpp_wr * Tp2) / robo->Jmn;
+    Wr_DPD[2].a23cf = -((robo->Ktn * robo->fqs_wr * robo->Rgn + robo->Ksn) * Tp2) / (robo->Jmn * robo->Rgn);
+    Wr_DPD[2].a24cf = -robo->Ktn * robo->fwl_wr * Tp2 / robo->Jmn;
+    Wr_DPD[2].a25cf = 0.0;
+    Wr_DPD[2].a26cf = robo->Ktn * Tp2 / robo->Jmn;
+    Wr_DPD[2].a27cf = Tp2 * robo->Ktn * robo->Kvp_wr * robo->Kpp_wr / robo->Jmn;
+    Wr_DPD[2].a31cf = (Tp / robo->Rgn) * ((robo->Jmn) - Tp * (robo->Dmn + robo->Ktn * (robo->fwm_wr + robo->Kvp_wr + robo->Kfb_wr * robo->Kvp_wr))) / robo->Jmn;
+    Wr_DPD[2].a32cf = -robo->Ktn * robo->Kvp_wr * robo->Kpp_wr * Tp2 / (robo->Jmn * robo->Rgn);
+    Wr_DPD[2].a33cf1 = 1.0 - (Tp2 * (robo->Ksn / robo->Rgn + robo->fqs_wr * robo->Ktn)) / (robo->Jmn * robo->Rgn);
     Wr_DPD[2].a33cf2 = -Tp2 * robo->Ksn;
-    Wr_DPD[2].a34cf1 = -Tp - robo->Ktn * robo->fwl * Tp2 / (robo->Jmn * robo->Rgn);
+    Wr_DPD[2].a34cf1 = -Tp - robo->Ktn * robo->fwl_wr * Tp2 / (robo->Jmn * robo->Rgn);
     Wr_DPD[2].a34cf2 = Tp2 * robo->Dln;
-    Wr_DPD[2].a35cf  = 0.0;
-    Wr_DPD[2].a36cf  = robo->Ktn * Tp2 / (robo->Jmn * robo->Rgn);
-    Wr_DPD[2].a37cf  = robo->Kvp * robo->Kpp * robo->Ktn * Tp2 / (robo->Jmn * robo->Rgn);
-    Wr_DPD[2].a41cf  = 0.0;
-    Wr_DPD[2].a42cf  = 0.0;
-    Wr_DPD[2].a43cf  = Tp * robo->Ksn;
+    Wr_DPD[2].a35cf = 0.0;
+    Wr_DPD[2].a36cf = robo->Ktn * Tp2 / (robo->Jmn * robo->Rgn);
+    Wr_DPD[2].a37cf = robo->Kvp_wr * robo->Kpp_wr * robo->Ktn * Tp2 / (robo->Jmn * robo->Rgn);
+    Wr_DPD[2].a41cf = 0.0;
+    Wr_DPD[2].a42cf = 0.0;
+    Wr_DPD[2].a43cf = Tp * robo->Ksn;
     Wr_DPD[2].a44cf1 = 1.0;
     Wr_DPD[2].a44cf2 = -Tp * robo->Dln;
-    Wr_DPD[2].a45cf  = 0.0;
-    Wr_DPD[2].a46cf  = 0.0;
-    Wr_DPD[2].a47cf  = 0.0;
-    Wr_DPD[2].a51cf  = 0.0;
-    Wr_DPD[2].a52cf  = 0.0;
-    Wr_DPD[2].a53cf  = Tp2 * robo->Ksn;
+    Wr_DPD[2].a45cf = 0.0;
+    Wr_DPD[2].a46cf = 0.0;
+    Wr_DPD[2].a47cf = 0.0;
+    Wr_DPD[2].a51cf = 0.0;
+    Wr_DPD[2].a52cf = 0.0;
+    Wr_DPD[2].a53cf = Tp2 * robo->Ksn;
     Wr_DPD[2].a54cf1 = Tp;
     Wr_DPD[2].a54cf2 = -Tp2 * robo->Dln;
-    Wr_DPD[2].a55cf  = 1.0;
-    Wr_DPD[2].a56cf  = 0.0;
-    Wr_DPD[2].a57cf  = 0.0;
-    Wr_DPD[2].a61cf  = ((1 + robo->Kfb) * robo->Kvi * Tp * (-robo->Jmn + (robo->Dmn + robo->Ktn * (robo->fwm + robo->Kvp + robo->Kfb * robo->Kvp)) * Tp)) / robo->Jmn;
-    Wr_DPD[2].a62cf  = (robo->Kpp * robo->Kvi * Tp * (-robo->Jmn + (1 + robo->Kfb) * robo->Ktn * robo->Kvp * Tp)) / robo->Jmn;
-    Wr_DPD[2].a63cf  = (Tp2 * (1 + robo->Kfb) * robo->Kvi * (robo->Ksn + robo->fqs * robo->Ktn * robo->Rgn)) / (robo->Jmn * robo->Rgn);
-    Wr_DPD[2].a64cf  = (robo->fwl * (1 + robo->Kfb) * robo->Ktn * robo->Kvi * Tp2) / robo->Jmn;
-    Wr_DPD[2].a65cf  = 0;
-    Wr_DPD[2].a66cf  = 1 - ((1 + robo->Kfb) * robo->Ktn * robo->Kvi * Tp2) / robo->Jmn;
-    Wr_DPD[2].a67cf  = (robo->Kpp * robo->Kvi * Tp * (robo->Jmn - (1 + robo->Kfb) * robo->Ktn * robo->Kvp * Tp)) / robo->Jmn;
-    Wr_DPD[2].a71cf  = 0;
-    Wr_DPD[2].a72cf  = 0;
-    Wr_DPD[2].a73cf  = 0;
-    Wr_DPD[2].a74cf  = 0;
-    Wr_DPD[2].a75cf  = 0;
-    Wr_DPD[2].a76cf  = 0;
-    Wr_DPD[2].a77cf  = 1;
-    Wr_DPD[2].b1cf   = robo->Kff * robo->Kvp * robo->Ktn * Tp / robo->Jmn;
-    Wr_DPD[2].b2cf   = robo->Kff * robo->Kvp * robo->Ktn * Tp2 / robo->Jmn;
-    Wr_DPD[2].b3cf   = robo->Kff * robo->Kvp * robo->Ktn * Tp2 / (robo->Jmn * robo->Rgn);
-    Wr_DPD[2].b4cf   = 0.0;
-    Wr_DPD[2].b5cf   = 0.0;
-    Wr_DPD[2].b6cf   = (robo->Kff * robo->Kvi * Tp * (robo->Jmn - (1 + robo->Kfb) * robo->Ktn * robo->Kfb * Tp)) / robo->Jmn;
-    Wr_DPD[2].b7cf   = Tp;
+    Wr_DPD[2].a55cf = 1.0;
+    Wr_DPD[2].a56cf = 0.0;
+    Wr_DPD[2].a57cf = 0.0;
+    Wr_DPD[2].a61cf = ((1 + robo->Kfb_wr) * robo->Kvi_wr * Tp * (-robo->Jmn + (robo->Dmn + robo->Ktn * (robo->fwm_wr + robo->Kvp_wr + robo->Kfb_wr * robo->Kvp_wr)) * Tp)) / robo->Jmn;
+    Wr_DPD[2].a62cf = (robo->Kpp_wr * robo->Kvi_wr * Tp * (-robo->Jmn + (1 + robo->Kfb_wr) * robo->Ktn * robo->Kvp_wr * Tp)) / robo->Jmn;
+    Wr_DPD[2].a63cf = (Tp2 * (1 + robo->Kfb_wr) * robo->Kvi_wr * (robo->Ksn + robo->fqs_wr * robo->Ktn * robo->Rgn)) / (robo->Jmn * robo->Rgn);
+    Wr_DPD[2].a64cf = (robo->fwl_wr * (1 + robo->Kfb_wr) * robo->Ktn * robo->Kvi_wr * Tp2) / robo->Jmn;
+    Wr_DPD[2].a65cf = 0;
+    Wr_DPD[2].a66cf = 1 - ((1 + robo->Kfb_wr) * robo->Ktn * robo->Kvi_wr * Tp2) / robo->Jmn;
+    Wr_DPD[2].a67cf = (robo->Kpp_wr * robo->Kvi_wr * Tp * (robo->Jmn - (1 + robo->Kfb_wr) * robo->Ktn * robo->Kvp_wr * Tp)) / robo->Jmn;
+    Wr_DPD[2].a71cf = 0;
+    Wr_DPD[2].a72cf = 0;
+    Wr_DPD[2].a73cf = 0;
+    Wr_DPD[2].a74cf = 0;
+    Wr_DPD[2].a75cf = 0;
+    Wr_DPD[2].a76cf = 0;
+    Wr_DPD[2].a77cf = 1;
+    Wr_DPD[2].b1cf = robo->Kff * robo->Kvp_wr * robo->Ktn * Tp / robo->Jmn;
+    Wr_DPD[2].b2cf = robo->Kff * robo->Kvp_wr * robo->Ktn * Tp2 / robo->Jmn;
+    Wr_DPD[2].b3cf = robo->Kff * robo->Kvp_wr * robo->Ktn * Tp2 / (robo->Jmn * robo->Rgn);
+    Wr_DPD[2].b4cf = 0.0;
+    Wr_DPD[2].b5cf = 0.0;
+    Wr_DPD[2].b6cf = (robo->Kff * robo->Kvi_wr * Tp * (robo->Jmn - (1 + robo->Kfb_wr) * robo->Ktn * robo->Kvp_wr * Tp)) / robo->Jmn;
+    Wr_DPD[2].b7cf = Tp;
   }
   else
   {
@@ -5788,64 +5891,88 @@ void CalcFDTDWrUpdate_WmcmdInputType_1st2nd(Robot *robo)
   if (robo->BDN == BDN0)
   {
     // 1軸目
-    Wr_DPD[0].a11cf  = ((robo->Jmn) - Tp * (robo->Dmn + robo->Ktn * (robo->fwm + robo->Kvp + robo->Kfb * robo->Kvp))) / robo->Jmn;
-    Wr_DPD[0].a12cf  = -robo->Ktn * robo->Kvp * robo->Kpp * Tp / robo->Jmn;
-    Wr_DPD[0].a13cf  = (-robo->Ktn * robo->fqs * Tp - robo->Ksn * Tp / robo->Rgn) / robo->Jmn;
-    Wr_DPD[0].a14cf  = -robo->Ktn * robo->fwl * Tp / robo->Jmn;
-    Wr_DPD[0].a17cf  = Tp * robo->Ktn * robo->Kvp * robo->Kpp / robo->Jmn;
-    Wr_DPD[0].a21cf  = (Tp * ((robo->Jmn) - Tp * (robo->Dmn + robo->Ktn * (robo->fwm + robo->Kvp + robo->Kfb * robo->Kvp)))) / robo->Jmn;
-    Wr_DPD[0].a22cf  = 1 - (robo->Ktn * robo->Kvp * robo->Kpp * Tp2) / robo->Jmn;
-    Wr_DPD[0].a23cf  = -((robo->Ktn * robo->fqs * robo->Rgn + robo->Ksn) * Tp2) / (robo->Jmn * robo->Rgn);
-    Wr_DPD[0].a24cf  = -robo->Ktn * robo->fwl * Tp2 / robo->Jmn;
-    Wr_DPD[0].a27cf  = Tp2 * robo->Ktn * robo->Kvp * robo->Kpp / robo->Jmn;
-    Wr_DPD[0].a31cf  = (Tp / robo->Rgn) * ((robo->Jmn) - Tp * (robo->Dmn + robo->Ktn * (robo->fwm + robo->Kvp + robo->Kfb * robo->Kvp))) / robo->Jmn;
-    Wr_DPD[0].a32cf  = -robo->Ktn * robo->Kvp * robo->Kpp * Tp2 / (robo->Jmn * robo->Rgn);
-    Wr_DPD[0].a33cf1 = 1.0 + (Tp2 * (robo->Ksn / robo->Rgn + robo->fqs * robo->Ktn)) / (robo->Jmn * robo->Rgn);
-    Wr_DPD[0].a34cf1 = -Tp - robo->Ktn * robo->fwl * Tp2 / (robo->Jmn * robo->Rgn);
-    Wr_DPD[0].a37cf  = robo->Kvp * robo->Kpp * robo->Ktn * Tp2 / (robo->Jmn * robo->Rgn);
-    Wr_DPD[0].a61cf  = ((1 + robo->Kfb) * robo->Kvi * Tp * (-robo->Jmn + (robo->Dmn + robo->Ktn * (robo->fwm + robo->Kvp + robo->Kfb * robo->Kvp)) * Tp)) / robo->Jmn;
-    Wr_DPD[0].a62cf  = (robo->Kpp * robo->Kvi * Tp * (-robo->Jmn + (1 + robo->Kfb) * robo->Ktn * robo->Kvp * Tp)) / robo->Jmn;
-    Wr_DPD[0].a63cf  = (Tp2 * (1 + robo->Kfb) * robo->Kvi * (robo->Ksn + robo->fqs * robo->Ktn * robo->Rgn)) / (robo->Jmn * robo->Rgn);
-    Wr_DPD[0].a64cf  = (robo->fwl * (1 + robo->Kfb) * robo->Ktn * robo->Kvi * Tp2) / robo->Jmn;
-    Wr_DPD[0].a66cf  = 1 - ((1 + robo->Kfb) * robo->Ktn * robo->Kvi * Tp2) / robo->Jmn;
-    Wr_DPD[0].a67cf  = (robo->Kpp * robo->Kvi * Tp * (robo->Jmn - (1 + robo->Kfb) * robo->Ktn * robo->Kvp * Tp)) / robo->Jmn;
-    Wr_DPD[0].b1cf   = robo->Kff * robo->Kvp * robo->Ktn * Tp / robo->Jmn;
-    Wr_DPD[0].b2cf   = robo->Kff * robo->Kvp * robo->Ktn * Tp2 / robo->Jmn;
-    Wr_DPD[0].b3cf   = robo->Kff * robo->Kvp * robo->Ktn * Tp2 / (robo->Jmn * robo->Rgn);
-    Wr_DPD[0].b6cf   = (robo->Kff * robo->Kvi * Tp * (robo->Jmn - (1 + robo->Kfb) * robo->Ktn * robo->Kfb * Tp)) / robo->Jmn;
+    Wr_DPD[0].a11cf = ((robo->Jmn) - Tp * (robo->Dmn + robo->Ktn * (robo->fwm_wr + robo->Kvp_wr + robo->Kfb_wr * robo->Kvp_wr))) / robo->Jmn;
+    Wr_DPD[0].a12cf = -robo->Ktn * robo->Kvp_wr * robo->Kpp_wr * Tp / robo->Jmn;
+    Wr_DPD[0].a13cf = (-robo->Ktn * robo->fqs_wr * Tp - robo->Ksn * Tp / robo->Rgn) / robo->Jmn;
+    Wr_DPD[0].a14cf = -robo->Ktn * robo->fwl_wr * Tp / robo->Jmn;
+    Wr_DPD[0].a17cf = Tp * robo->Ktn * robo->Kvp_wr * robo->Kpp_wr / robo->Jmn;
+    Wr_DPD[0].a21cf = (Tp * ((robo->Jmn) - Tp * (robo->Dmn + robo->Ktn * (robo->fwm_wr + robo->Kvp_wr + robo->Kfb_wr * robo->Kvp_wr)))) / robo->Jmn;
+    Wr_DPD[0].a22cf = 1 - (robo->Ktn * robo->Kvp_wr * robo->Kpp_wr * Tp2) / robo->Jmn;
+    Wr_DPD[0].a23cf = -((robo->Ktn * robo->fqs_wr * robo->Rgn + robo->Ksn) * Tp2) / (robo->Jmn * robo->Rgn);
+    Wr_DPD[0].a24cf = -robo->Ktn * robo->fwl_wr * Tp2 / robo->Jmn;
+    Wr_DPD[0].a27cf = Tp2 * robo->Ktn * robo->Kvp_wr * robo->Kpp_wr / robo->Jmn;
+    Wr_DPD[0].a31cf = (Tp / robo->Rgn) * ((robo->Jmn) - Tp * (robo->Dmn + robo->Ktn * (robo->fwm_wr + robo->Kvp_wr + robo->Kfb_wr * robo->Kvp_wr))) / robo->Jmn;
+    Wr_DPD[0].a32cf = -robo->Ktn * robo->Kvp_wr * robo->Kpp_wr * Tp2 / (robo->Jmn * robo->Rgn);
+    Wr_DPD[0].a33cf1 = 1.0 - (Tp2 * (robo->Ksn / robo->Rgn + robo->fqs_wr * robo->Ktn)) / (robo->Jmn * robo->Rgn);
+    Wr_DPD[0].a34cf1 = -Tp - robo->Ktn * robo->fwl_wr * Tp2 / (robo->Jmn * robo->Rgn);
+    Wr_DPD[0].a37cf = robo->Kvp_wr * robo->Kpp_wr * robo->Ktn * Tp2 / (robo->Jmn * robo->Rgn);
+    Wr_DPD[0].a61cf = ((1 + robo->Kfb_wr) * robo->Kvi_wr * Tp * (-robo->Jmn + (robo->Dmn + robo->Ktn * (robo->fwm_wr + robo->Kvp_wr + robo->Kfb_wr * robo->Kvp_wr)) * Tp)) / robo->Jmn;
+    Wr_DPD[0].a62cf = (robo->Kpp_wr * robo->Kvi_wr * Tp * (-robo->Jmn + (1 + robo->Kfb_wr) * robo->Ktn * robo->Kvp_wr * Tp)) / robo->Jmn;
+    Wr_DPD[0].a63cf = (Tp2 * (1 + robo->Kfb_wr) * robo->Kvi_wr * (robo->Ksn + robo->fqs_wr * robo->Ktn * robo->Rgn)) / (robo->Jmn * robo->Rgn);
+    Wr_DPD[0].a64cf = (robo->fwl_wr * (1 + robo->Kfb_wr) * robo->Ktn * robo->Kvi_wr * Tp2) / robo->Jmn;
+    Wr_DPD[0].a66cf = 1 - ((1 + robo->Kfb_wr) * robo->Ktn * robo->Kvi_wr * Tp2) / robo->Jmn;
+    Wr_DPD[0].a67cf = (robo->Kpp_wr * robo->Kvi_wr * Tp * (robo->Jmn - (1 + robo->Kfb_wr) * robo->Ktn * robo->Kvp_wr * Tp)) / robo->Jmn;
+    Wr_DPD[0].b1cf = robo->Kff * robo->Kvp_wr * robo->Ktn * Tp / robo->Jmn;
+    Wr_DPD[0].b2cf = robo->Kff * robo->Kvp_wr * robo->Ktn * Tp2 / robo->Jmn;
+    Wr_DPD[0].b3cf = robo->Kff * robo->Kvp_wr * robo->Ktn * Tp2 / (robo->Jmn * robo->Rgn);
+    Wr_DPD[0].b6cf = (robo->Kff * robo->Kvi_wr * Tp * (robo->Jmn - (1 + robo->Kfb_wr) * robo->Ktn * robo->Kfb_wr * Tp)) / robo->Jmn;
   }
   else if (robo->BDN == BDN1)
   {
     // 2軸目
-    Wr_DPD[1].a11cf  = ((robo->Jmn) - Tp * (robo->Dmn + robo->Ktn * (robo->fwm + robo->Kvp + robo->Kfb * robo->Kvp))) / robo->Jmn;
-    Wr_DPD[1].a12cf  = -robo->Ktn * robo->Kvp * robo->Kpp * Tp / robo->Jmn;
-    Wr_DPD[1].a13cf  = (-robo->Ktn * robo->fqs * Tp - robo->Ksn * Tp / robo->Rgn) / robo->Jmn;
-    Wr_DPD[1].a14cf  = -robo->Ktn * robo->fwl * Tp / robo->Jmn;
-    Wr_DPD[1].a17cf  = Tp * robo->Ktn * robo->Kvp * robo->Kpp / robo->Jmn;
-    Wr_DPD[1].a21cf  = (Tp * ((robo->Jmn) - Tp * (robo->Dmn + robo->Ktn * (robo->fwm + robo->Kvp + robo->Kfb * robo->Kvp)))) / robo->Jmn;
-    Wr_DPD[1].a22cf  = 1 - (robo->Ktn * robo->Kvp * robo->Kpp * Tp2) / robo->Jmn;
-    Wr_DPD[1].a23cf  = -((robo->Ktn * robo->fqs * robo->Rgn + robo->Ksn) * Tp2) / (robo->Jmn * robo->Rgn);
-    Wr_DPD[1].a24cf  = -robo->Ktn * robo->fwl * Tp2 / robo->Jmn;
-    Wr_DPD[1].a27cf  = Tp2 * robo->Ktn * robo->Kvp * robo->Kpp / robo->Jmn;
-    Wr_DPD[1].a31cf  = (Tp / robo->Rgn) * ((robo->Jmn) - Tp * (robo->Dmn + robo->Ktn * (robo->fwm + robo->Kvp + robo->Kfb * robo->Kvp))) / robo->Jmn;
-    Wr_DPD[1].a32cf  = -robo->Ktn * robo->Kvp * robo->Kpp * Tp2 / (robo->Jmn * robo->Rgn);
-    Wr_DPD[1].a33cf1 = 1.0 + (Tp2 * (robo->Ksn / robo->Rgn + robo->fqs * robo->Ktn)) / (robo->Jmn * robo->Rgn);
-    Wr_DPD[1].a34cf1 = -Tp - robo->Ktn * robo->fwl * Tp2 / (robo->Jmn * robo->Rgn);
-    Wr_DPD[1].a37cf  = robo->Kvp * robo->Kpp * robo->Ktn * Tp2 / (robo->Jmn * robo->Rgn);
-    Wr_DPD[1].a61cf  = ((1 + robo->Kfb) * robo->Kvi * Tp * (-robo->Jmn + (robo->Dmn + robo->Ktn * (robo->fwm + robo->Kvp + robo->Kfb * robo->Kvp)) * Tp)) / robo->Jmn;
-    Wr_DPD[1].a62cf  = (robo->Kpp * robo->Kvi * Tp * (-robo->Jmn + (1 + robo->Kfb) * robo->Ktn * robo->Kvp * Tp)) / robo->Jmn;
-    Wr_DPD[1].a63cf  = (Tp2 * (1 + robo->Kfb) * robo->Kvi * (robo->Ksn + robo->fqs * robo->Ktn * robo->Rgn)) / (robo->Jmn * robo->Rgn);
-    Wr_DPD[1].a64cf  = (robo->fwl * (1 + robo->Kfb) * robo->Ktn * robo->Kvi * Tp2) / robo->Jmn;
-    Wr_DPD[1].a66cf  = 1 - ((1 + robo->Kfb) * robo->Ktn * robo->Kvi * Tp2) / robo->Jmn;
-    Wr_DPD[1].a67cf  = (robo->Kpp * robo->Kvi * Tp * (robo->Jmn - (1 + robo->Kfb) * robo->Ktn * robo->Kvp * Tp)) / robo->Jmn;
-    Wr_DPD[1].b1cf   = robo->Kff * robo->Kvp * robo->Ktn * Tp / robo->Jmn;
-    Wr_DPD[1].b2cf   = robo->Kff * robo->Kvp * robo->Ktn * Tp2 / robo->Jmn;
-    Wr_DPD[1].b3cf   = robo->Kff * robo->Kvp * robo->Ktn * Tp2 / (robo->Jmn * robo->Rgn);
-    Wr_DPD[1].b6cf   = (robo->Kff * robo->Kvi * Tp * (robo->Jmn - (1 + robo->Kfb) * robo->Ktn * robo->Kfb * Tp)) / robo->Jmn;
+    Wr_DPD[1].a11cf = ((robo->Jmn) - Tp * (robo->Dmn + robo->Ktn * (robo->fwm_wr + robo->Kvp_wr + robo->Kfb_wr * robo->Kvp_wr))) / robo->Jmn;
+    Wr_DPD[1].a12cf = -robo->Ktn * robo->Kvp_wr * robo->Kpp_wr * Tp / robo->Jmn;
+    Wr_DPD[1].a13cf = (-robo->Ktn * robo->fqs_wr * Tp - robo->Ksn * Tp / robo->Rgn) / robo->Jmn;
+    Wr_DPD[1].a14cf = -robo->Ktn * robo->fwl_wr * Tp / robo->Jmn;
+    Wr_DPD[1].a17cf = Tp * robo->Ktn * robo->Kvp_wr * robo->Kpp_wr / robo->Jmn;
+    Wr_DPD[1].a21cf = (Tp * ((robo->Jmn) - Tp * (robo->Dmn + robo->Ktn * (robo->fwm_wr + robo->Kvp_wr + robo->Kfb_wr * robo->Kvp_wr)))) / robo->Jmn;
+    Wr_DPD[1].a22cf = 1 - (robo->Ktn * robo->Kvp_wr * robo->Kpp_wr * Tp2) / robo->Jmn;
+    Wr_DPD[1].a23cf = -((robo->Ktn * robo->fqs_wr * robo->Rgn + robo->Ksn) * Tp2) / (robo->Jmn * robo->Rgn);
+    Wr_DPD[1].a24cf = -robo->Ktn * robo->fwl_wr * Tp2 / robo->Jmn;
+    Wr_DPD[1].a27cf = Tp2 * robo->Ktn * robo->Kvp_wr * robo->Kpp_wr / robo->Jmn;
+    Wr_DPD[1].a31cf = (Tp / robo->Rgn) * ((robo->Jmn) - Tp * (robo->Dmn + robo->Ktn * (robo->fwm_wr + robo->Kvp_wr + robo->Kfb_wr * robo->Kvp_wr))) / robo->Jmn;
+    Wr_DPD[1].a32cf = -robo->Ktn * robo->Kvp_wr * robo->Kpp_wr * Tp2 / (robo->Jmn * robo->Rgn);
+    Wr_DPD[1].a33cf1 = 1.0 - (Tp2 * (robo->Ksn / robo->Rgn + robo->fqs_wr * robo->Ktn)) / (robo->Jmn * robo->Rgn);
+    Wr_DPD[1].a34cf1 = -Tp - robo->Ktn * robo->fwl_wr * Tp2 / (robo->Jmn * robo->Rgn);
+    Wr_DPD[1].a37cf = robo->Kvp_wr * robo->Kpp_wr * robo->Ktn * Tp2 / (robo->Jmn * robo->Rgn);
+    Wr_DPD[1].a61cf = ((1 + robo->Kfb_wr) * robo->Kvi_wr * Tp * (-robo->Jmn + (robo->Dmn + robo->Ktn * (robo->fwm_wr + robo->Kvp_wr + robo->Kfb_wr * robo->Kvp_wr)) * Tp)) / robo->Jmn;
+    Wr_DPD[1].a62cf = (robo->Kpp_wr * robo->Kvi_wr * Tp * (-robo->Jmn + (1 + robo->Kfb_wr) * robo->Ktn * robo->Kvp_wr * Tp)) / robo->Jmn;
+    Wr_DPD[1].a63cf = (Tp2 * (1 + robo->Kfb_wr) * robo->Kvi_wr * (robo->Ksn + robo->fqs_wr * robo->Ktn * robo->Rgn)) / (robo->Jmn * robo->Rgn);
+    Wr_DPD[1].a64cf = (robo->fwl_wr * (1 + robo->Kfb_wr) * robo->Ktn * robo->Kvi_wr * Tp2) / robo->Jmn;
+    Wr_DPD[1].a66cf = 1 - ((1 + robo->Kfb_wr) * robo->Ktn * robo->Kvi_wr * Tp2) / robo->Jmn;
+    Wr_DPD[1].a67cf = (robo->Kpp_wr * robo->Kvi_wr * Tp * (robo->Jmn - (1 + robo->Kfb_wr) * robo->Ktn * robo->Kvp_wr * Tp)) / robo->Jmn;
+    Wr_DPD[1].b1cf = robo->Kff * robo->Kvp_wr * robo->Ktn * Tp / robo->Jmn;
+    Wr_DPD[1].b2cf = robo->Kff * robo->Kvp_wr * robo->Ktn * Tp2 / robo->Jmn;
+    Wr_DPD[1].b3cf = robo->Kff * robo->Kvp_wr * robo->Ktn * Tp2 / (robo->Jmn * robo->Rgn);
+    Wr_DPD[1].b6cf = (robo->Kff * robo->Kvi_wr * Tp * (robo->Jmn - (1 + robo->Kfb_wr) * robo->Ktn * robo->Kfb_wr * Tp)) / robo->Jmn;
   }
   else if (robo->BDN == BDN2)
   {
-    // BDN2を代えることは、ないんですね
+    Wr_DPD[2].a11cf = ((robo->Jmn) - Tp * (robo->Dmn + robo->Ktn * (robo->fwm_wr + robo->Kvp_wr + robo->Kfb_wr * robo->Kvp_wr))) / robo->Jmn;
+    Wr_DPD[2].a12cf = -robo->Ktn * robo->Kvp_wr * robo->Kpp_wr * Tp / robo->Jmn;
+    Wr_DPD[2].a13cf = (-robo->Ktn * robo->fqs_wr * Tp - robo->Ksn * Tp / robo->Rgn) / robo->Jmn;
+    Wr_DPD[2].a14cf = -robo->Ktn * robo->fwl_wr * Tp / robo->Jmn;
+    Wr_DPD[2].a17cf = Tp * robo->Ktn * robo->Kvp_wr * robo->Kpp_wr / robo->Jmn;
+    Wr_DPD[2].a21cf = (Tp * ((robo->Jmn) - Tp * (robo->Dmn + robo->Ktn * (robo->fwm_wr + robo->Kvp_wr + robo->Kfb_wr * robo->Kvp_wr)))) / robo->Jmn;
+    Wr_DPD[2].a22cf = 1 - (robo->Ktn * robo->Kvp_wr * robo->Kpp_wr * Tp2) / robo->Jmn;
+    Wr_DPD[2].a23cf = -((robo->Ktn * robo->fqs_wr * robo->Rgn + robo->Ksn) * Tp2) / (robo->Jmn * robo->Rgn);
+    Wr_DPD[2].a24cf = -robo->Ktn * robo->fwl_wr * Tp2 / robo->Jmn;
+    Wr_DPD[2].a27cf = Tp2 * robo->Ktn * robo->Kvp_wr * robo->Kpp_wr / robo->Jmn;
+    Wr_DPD[2].a31cf = (Tp / robo->Rgn) * ((robo->Jmn) - Tp * (robo->Dmn + robo->Ktn * (robo->fwm_wr + robo->Kvp_wr + robo->Kfb_wr * robo->Kvp_wr))) / robo->Jmn;
+    Wr_DPD[2].a32cf = -robo->Ktn * robo->Kvp_wr * robo->Kpp_wr * Tp2 / (robo->Jmn * robo->Rgn);
+    Wr_DPD[2].a33cf1 = 1.0 - (Tp2 * (robo->Ksn / robo->Rgn + robo->fqs_wr * robo->Ktn)) / (robo->Jmn * robo->Rgn);
+    Wr_DPD[2].a34cf1 = -Tp - robo->Ktn * robo->fwl_wr * Tp2 / (robo->Jmn * robo->Rgn);
+    Wr_DPD[2].a37cf = robo->Kvp_wr * robo->Kpp_wr * robo->Ktn * Tp2 / (robo->Jmn * robo->Rgn);
+    Wr_DPD[2].a61cf = ((1 + robo->Kfb_wr) * robo->Kvi_wr * Tp * (-robo->Jmn + (robo->Dmn + robo->Ktn * (robo->fwm_wr + robo->Kvp_wr + robo->Kfb_wr * robo->Kvp_wr)) * Tp)) / robo->Jmn;
+    Wr_DPD[2].a62cf = (robo->Kpp_wr * robo->Kvi_wr * Tp * (-robo->Jmn + (1 + robo->Kfb_wr) * robo->Ktn * robo->Kvp_wr * Tp)) / robo->Jmn;
+    Wr_DPD[2].a63cf = (Tp2 * (1 + robo->Kfb_wr) * robo->Kvi_wr * (robo->Ksn + robo->fqs_wr * robo->Ktn * robo->Rgn)) / (robo->Jmn * robo->Rgn);
+    Wr_DPD[2].a64cf = (robo->fwl_wr * (1 + robo->Kfb_wr) * robo->Ktn * robo->Kvi_wr * Tp2) / robo->Jmn;
+    Wr_DPD[2].a66cf = 1 - ((1 + robo->Kfb_wr) * robo->Ktn * robo->Kvi_wr * Tp2) / robo->Jmn;
+    Wr_DPD[2].a67cf = (robo->Kpp_wr * robo->Kvi_wr * Tp * (robo->Jmn - (1 + robo->Kfb_wr) * robo->Ktn * robo->Kvp_wr * Tp)) / robo->Jmn;
+    Wr_DPD[2].b1cf = robo->Kff * robo->Kvp_wr * robo->Ktn * Tp / robo->Jmn;
+    Wr_DPD[2].b2cf = robo->Kff * robo->Kvp_wr * robo->Ktn * Tp2 / robo->Jmn;
+    Wr_DPD[2].b3cf = robo->Kff * robo->Kvp_wr * robo->Ktn * Tp2 / (robo->Jmn * robo->Rgn);
+    Wr_DPD[2].b6cf = (robo->Kff * robo->Kvi_wr * Tp * (robo->Jmn - (1 + robo->Kfb_wr) * robo->Ktn * robo->Kfb_wr * Tp)) / robo->Jmn;
   }
   else
   {
@@ -5864,31 +5991,31 @@ void CalcFDTDWrUpdate_WmcmdInputType_2nd(Robot *robo)
   else if (robo->BDN == BDN1)
   {
     // 2軸目
-    Wr_DPD[1].a11cf = ((robo->Jmn) - Tp * (robo->Dmn + robo->Ktn * (robo->fwm + robo->Kvp + robo->Kfb * robo->Kvp))) / robo->Jmn;
-    Wr_DPD[1].a12cf = -robo->Ktn * robo->Kvp * robo->Kpp * Tp / robo->Jmn;
-    Wr_DPD[1].a13cf = (-robo->Ktn * robo->fqs * Tp - robo->Ksn * Tp / robo->Rgn) / robo->Jmn;
-    Wr_DPD[1].a14cf = -robo->Ktn * robo->fwl * Tp / robo->Jmn;
-    Wr_DPD[1].a17cf = Tp * robo->Ktn * robo->Kvp * robo->Kpp / robo->Jmn;
-    Wr_DPD[1].a21cf = (Tp * ((robo->Jmn) - Tp * (robo->Dmn + robo->Ktn * (robo->fwm + robo->Kvp + robo->Kfb * robo->Kvp)))) / robo->Jmn;
-    Wr_DPD[1].a22cf = 1 - (robo->Ktn * robo->Kvp * robo->Kpp * Tp2) / robo->Jmn;
-    Wr_DPD[1].a23cf = -((robo->Ktn * robo->fqs * robo->Rgn + robo->Ksn) * Tp2) / (robo->Jmn * robo->Rgn);
-    Wr_DPD[1].a24cf = -robo->Ktn * robo->fwl * Tp2 / robo->Jmn;
-    Wr_DPD[1].a27cf = Tp2 * robo->Ktn * robo->Kvp * robo->Kpp / robo->Jmn;
-    Wr_DPD[1].a31cf = (Tp / robo->Rgn) * ((robo->Jmn) - Tp * (robo->Dmn + robo->Ktn * (robo->fwm + robo->Kvp + robo->Kfb * robo->Kvp))) / robo->Jmn;
-    Wr_DPD[1].a32cf = -robo->Ktn * robo->Kvp * robo->Kpp * Tp2 / (robo->Jmn * robo->Rgn);
-    Wr_DPD[1].a33cf1 = 1.0 + (Tp2 * (robo->Ksn / robo->Rgn + robo->fqs * robo->Ktn)) / (robo->Jmn * robo->Rgn);
-    Wr_DPD[1].a34cf1 = -Tp - robo->Ktn * robo->fwl * Tp2 / (robo->Jmn * robo->Rgn);
-    Wr_DPD[1].a37cf = robo->Kvp * robo->Kpp * robo->Ktn * Tp2 / (robo->Jmn * robo->Rgn);
-    Wr_DPD[1].a61cf = ((1 + robo->Kfb) * robo->Kvi * Tp * (-robo->Jmn + (robo->Dmn + robo->Ktn * (robo->fwm + robo->Kvp + robo->Kfb * robo->Kvp)) * Tp)) / robo->Jmn;
-    Wr_DPD[1].a62cf = (robo->Kpp * robo->Kvi * Tp * (-robo->Jmn + (1 + robo->Kfb) * robo->Ktn * robo->Kvp * Tp)) / robo->Jmn;
-    Wr_DPD[1].a63cf = (Tp2 * (1 + robo->Kfb) * robo->Kvi * (robo->Ksn + robo->fqs * robo->Ktn * robo->Rgn)) / (robo->Jmn * robo->Rgn);
-    Wr_DPD[1].a64cf = (robo->fwl * (1 + robo->Kfb) * robo->Ktn * robo->Kvi * Tp2) / robo->Jmn;
-    Wr_DPD[1].a66cf = 1 - ((1 + robo->Kfb) * robo->Ktn * robo->Kvi * Tp2) / robo->Jmn;
-    Wr_DPD[1].a67cf = (robo->Kpp * robo->Kvi * Tp * (robo->Jmn - (1 + robo->Kfb) * robo->Ktn * robo->Kvp * Tp)) / robo->Jmn;
-    Wr_DPD[1].b1cf = robo->Kff * robo->Kvp * robo->Ktn * Tp / robo->Jmn;
-    Wr_DPD[1].b2cf = robo->Kff * robo->Kvp * robo->Ktn * Tp2 / robo->Jmn;
-    Wr_DPD[1].b3cf = robo->Kff * robo->Kvp * robo->Ktn * Tp2 / (robo->Jmn * robo->Rgn);
-    Wr_DPD[1].b6cf = (robo->Kff * robo->Kvi * Tp * (robo->Jmn - (1 + robo->Kfb) * robo->Ktn * robo->Kfb * Tp)) / robo->Jmn;
+    Wr_DPD[1].a11cf = ((robo->Jmn) - Tp * (robo->Dmn + robo->Ktn * (robo->fwm_wr + robo->Kvp_wr + robo->Kfb_wr * robo->Kvp_wr))) / robo->Jmn;
+    Wr_DPD[1].a12cf = -robo->Ktn * robo->Kvp_wr * robo->Kpp_wr * Tp / robo->Jmn;
+    Wr_DPD[1].a13cf = (-robo->Ktn * robo->fqs_wr * Tp - robo->Ksn * Tp / robo->Rgn) / robo->Jmn;
+    Wr_DPD[1].a14cf = -robo->Ktn * robo->fwl_wr * Tp / robo->Jmn;
+    Wr_DPD[1].a17cf = Tp * robo->Ktn * robo->Kvp_wr * robo->Kpp_wr / robo->Jmn;
+    Wr_DPD[1].a21cf = (Tp * ((robo->Jmn) - Tp * (robo->Dmn + robo->Ktn * (robo->fwm_wr + robo->Kvp_wr + robo->Kfb_wr * robo->Kvp_wr)))) / robo->Jmn;
+    Wr_DPD[1].a22cf = 1 - (robo->Ktn * robo->Kvp_wr * robo->Kpp_wr * Tp2) / robo->Jmn;
+    Wr_DPD[1].a23cf = -((robo->Ktn * robo->fqs_wr * robo->Rgn + robo->Ksn) * Tp2) / (robo->Jmn * robo->Rgn);
+    Wr_DPD[1].a24cf = -robo->Ktn * robo->fwl_wr * Tp2 / robo->Jmn;
+    Wr_DPD[1].a27cf = Tp2 * robo->Ktn * robo->Kvp_wr * robo->Kpp_wr / robo->Jmn;
+    Wr_DPD[1].a31cf = (Tp / robo->Rgn) * ((robo->Jmn) - Tp * (robo->Dmn + robo->Ktn * (robo->fwm_wr + robo->Kvp_wr + robo->Kfb_wr * robo->Kvp_wr))) / robo->Jmn;
+    Wr_DPD[1].a32cf = -robo->Ktn * robo->Kvp_wr * robo->Kpp_wr * Tp2 / (robo->Jmn * robo->Rgn);
+    Wr_DPD[1].a33cf1 = 1.0 + (Tp2 * (robo->Ksn / robo->Rgn + robo->fqs_wr * robo->Ktn)) / (robo->Jmn * robo->Rgn);
+    Wr_DPD[1].a34cf1 = -Tp - robo->Ktn * robo->fwl_wr * Tp2 / (robo->Jmn * robo->Rgn);
+    Wr_DPD[1].a37cf = robo->Kvp_wr * robo->Kpp_wr * robo->Ktn * Tp2 / (robo->Jmn * robo->Rgn);
+    Wr_DPD[1].a61cf = ((1 + robo->Kfb_wr) * robo->Kvi_wr * Tp * (-robo->Jmn + (robo->Dmn + robo->Ktn * (robo->fwm_wr + robo->Kvp_wr + robo->Kfb_wr * robo->Kvp_wr)) * Tp)) / robo->Jmn;
+    Wr_DPD[1].a62cf = (robo->Kpp_wr * robo->Kvi_wr * Tp * (-robo->Jmn + (1 + robo->Kfb_wr) * robo->Ktn * robo->Kvp_wr * Tp)) / robo->Jmn;
+    Wr_DPD[1].a63cf = (Tp2 * (1 + robo->Kfb_wr) * robo->Kvi_wr * (robo->Ksn + robo->fqs_wr * robo->Ktn * robo->Rgn)) / (robo->Jmn * robo->Rgn);
+    Wr_DPD[1].a64cf = (robo->fwl_wr * (1 + robo->Kfb_wr) * robo->Ktn * robo->Kvi_wr * Tp2) / robo->Jmn;
+    Wr_DPD[1].a66cf = 1 - ((1 + robo->Kfb_wr) * robo->Ktn * robo->Kvi_wr * Tp2) / robo->Jmn;
+    Wr_DPD[1].a67cf = (robo->Kpp_wr * robo->Kvi_wr * Tp * (robo->Jmn - (1 + robo->Kfb_wr) * robo->Ktn * robo->Kvp_wr * Tp)) / robo->Jmn;
+    Wr_DPD[1].b1cf = robo->Kff * robo->Kvp_wr * robo->Ktn * Tp / robo->Jmn;
+    Wr_DPD[1].b2cf = robo->Kff * robo->Kvp_wr * robo->Ktn * Tp2 / robo->Jmn;
+    Wr_DPD[1].b3cf = robo->Kff * robo->Kvp_wr * robo->Ktn * Tp2 / (robo->Jmn * robo->Rgn);
+    Wr_DPD[1].b6cf = (robo->Kff * robo->Kvi_wr * Tp * (robo->Jmn - (1 + robo->Kfb_wr) * robo->Ktn * robo->Kfb_wr * Tp)) / robo->Jmn;
   }
   else if (robo->BDN == BDN2)
   {
@@ -5899,6 +6026,155 @@ void CalcFDTDWrUpdate_WmcmdInputType_2nd(Robot *robo)
     // ボード番号認識できない場合
     Wr_Throth_check++;
   }
+}
+
+// 位置・速度制御系可変ゲイン演算関数
+void CalcWrGain(void)
+{
+  // 1軸目
+  axis1.Kvp_wr = gsub[0].Kvp_cfp1 * axis1.Jl_calc_Wr;
+  axis1.Kvi_wr = gsub[0].zw * axis1.Kvp_wr;
+  axis1.fwm_wr = gsub[0].fwm_cf0 + gsub[0].fwm_cfp1 * axis1.Jl_calc_Wr + gsub[0].fwm_cfn1 / axis1.Jl_calc_Wr;
+  axis1.fqs_wr = gsub[0].fqs_cf0 + gsub[0].fqs_cfp1 * axis1.Jl_calc_Wr + gsub[0].fqs_cfn1 / axis1.Jl_calc_Wr + gsub[0].fqs_cfn2 / powf(axis1.Jl_calc_Wr, 2);
+  axis1.fwl_wr = gsub[0].fwl_cf0 + gsub[0].fwl_cfp1 * axis1.Jl_calc_Wr + gsub[0].fwl_cfn1 / axis1.Jl_calc_Wr + gsub[0].fwl_cfn2 / powf(axis1.Jl_calc_Wr, 2);
+
+  axis1.av4_wr = 1;
+  axis1.av3_wr = (axis1.Rgn * axis1.Rgn * (axis1.Ktn * axis1.Jl_calc_Wr * (axis1.fwm_wr + axis1.Kvp_wr)) + axis1.Jmn * axis1.Dln + axis1.Jl_calc_Wr * axis1.Dmn) / (axis1.Rgn * axis1.Rgn * axis1.Jl_calc_Wr * axis1.Jmn);
+  axis1.av2_wr = (axis1.Rgn * axis1.Rgn * axis1.Ktn * (axis1.Dln * axis1.fwm_wr + axis1.Dln * axis1.Kvp_wr + axis1.Jl_calc_Wr * axis1.Kvi_wr) + axis1.Rgn * axis1.Ktn * axis1.Jl_calc_Wr * axis1.fqs_wr + axis1.Jl_calc_Wr * axis1.Ksn + axis1.Rgn * axis1.Rgn * (axis1.Jmn * axis1.Ksn + axis1.Dmn * axis1.Dln)) / (axis1.Rgn * axis1.Rgn * axis1.Jl_calc_Wr * axis1.Jmn);
+  axis1.av1_wr = (axis1.Rgn * axis1.Rgn * axis1.Ktn * (axis1.Ksn * axis1.fwm_wr + axis1.Ksn * axis1.Kvp_wr + axis1.Dln * axis1.Kvi_wr) + axis1.Rgn * axis1.Ktn * (axis1.Dln * axis1.fqs_wr + axis1.Ksn * axis1.fwl_wr) + axis1.Dln * axis1.Ksn + axis1.Rgn * axis1.Rgn * axis1.Dmn * axis1.Ksn) / (axis1.Rgn * axis1.Rgn * axis1.Jl_calc_Wr * axis1.Jmn);
+  axis1.av0_wr = (axis1.Rgn * axis1.Rgn * axis1.Ktn * axis1.Ksn * axis1.Kvi_wr) / (axis1.Rgn * axis1.Rgn * axis1.Jl_calc_Wr * axis1.Jmn);
+  axis1.bv3_wr = (axis1.Rgn * axis1.Rgn * axis1.Ktn * axis1.Jl_calc_Wr * axis1.Kvp_wr) / (axis1.Rgn * axis1.Rgn * axis1.Jl_calc_Wr * axis1.Jmn);
+  axis1.bv2_wr = (axis1.Rgn * axis1.Rgn * axis1.Ktn * (axis1.Jl_calc_Wr * axis1.Kvi_wr + axis1.Dln * axis1.Kvp_wr)) / (axis1.Rgn * axis1.Rgn * axis1.Jl_calc_Wr * axis1.Jmn);
+  axis1.bv1_wr = (axis1.Rgn * axis1.Rgn * axis1.Ktn * (axis1.Dln * axis1.Kvi_wr + axis1.Ksn * axis1.Kvp_wr)) / (axis1.Rgn * axis1.Rgn * axis1.Jl_calc_Wr * axis1.Jmn);
+  axis1.bv0_wr = (axis1.Rgn * axis1.Rgn * axis1.Ktn * axis1.Ksn * axis1.Kvi_wr) / (axis1.Rgn * axis1.Rgn * axis1.Jl_calc_Wr * axis1.Jmn);
+
+  axis1.Kpp_wr = (gsub[0].r1_pole * (axis1.av0_wr * axis1.bv1_wr - axis1.av1_wr * axis1.bv0_wr)) / (gsub[0].r1_pole * (axis1.bv0_wr * axis1.bv2_wr - axis1.bv1_wr * axis1.bv1_wr) + gsub[0].tau_pole * axis1.bv0_wr * (gsub[0].r1_pole * axis1.bv1_wr - gsub[0].tau_pole * axis1.bv0_wr));
+  axis1.apm0_pd_wr = axis1.Kpp_wr * axis1.bv0_wr;
+  axis1.apm1_pd_wr = gsub[0].tau_pole * axis1.apm0_pd_wr;
+  axis1.apm2_pd_wr = gsub[0].tau_pole * gsub[0].tau_pole * axis1.apm0_pd_wr / (gsub[0].r1_pole);
+  axis1.Kfb_wr = (axis1.apm1_pd_wr - (axis1.av0_wr + axis1.Kpp_wr * axis1.bv1_wr)) / axis1.bv0_wr;
+  axis1.Kff_wr = axis1.Kpp_wr / gsub[0].beta_pole;
+
+  WAVE_av4_1_wr = axis1.av4_wr;
+  WAVE_av3_1_wr = axis1.av3_wr;
+  WAVE_av2_1_wr = axis1.av2_wr;
+  WAVE_av1_1_wr = axis1.av1_wr;
+  WAVE_av0_1_wr = axis1.av0_wr;
+  WAVE_bv3_1_wr = axis1.bv3_wr;
+  WAVE_bv2_1_wr = axis1.bv2_wr;
+  WAVE_bv1_1_wr = axis1.bv1_wr;
+  WAVE_bv0_1_wr = axis1.bv0_wr;
+  WAVE_aq2_1_wr = axis1.apm2_pd_wr;
+  WAVE_aq1_1_wr = axis1.apm1_pd_wr;
+  WAVE_aq0_1_wr = axis1.apm0_pd_wr;
+  WAVE_Kff1_wr = axis1.Kff_wr;
+  WAVE_Kfb1_wr = axis1.Kfb_wr;
+  WAVE_Kpp1_wr = axis1.Kpp_wr;
+  WAVE_Kvp1_wr = axis1.Kvp_wr;
+  WAVE_Kvi1_wr = axis1.Kvi_wr;
+  WAVE_fwm1_wr = axis1.fwm_wr;
+  WAVE_fqs1_wr = axis1.fqs_wr;
+  WAVE_fwl1_wr = axis1.fwl_wr;
+
+  // 2軸目
+  if (flag_SOB == 0)
+  {
+    axis2.Kvp_wr = gsub[1].Kvp_cfp1 * 23.97;
+    axis2.Kvi_wr = gsub[1].zw * axis2.Kvp_wr;
+    axis2.fwm_wr = gsub[1].fwm_cf0 + gsub[1].fwm_cfp1 * 23.97 + gsub[1].fwm_cfn1 / 23.97;
+    axis2.fqs_wr = gsub[1].fqs_cf0 + gsub[1].fqs_cfp1 * 23.97 + gsub[1].fqs_cfn1 / 23.97 + gsub[1].fqs_cfn2 / powf(23.97, 2);
+    axis2.fwl_wr = gsub[1].fwl_cf0 + gsub[1].fwl_cfp1 * 23.97 + gsub[1].fwl_cfn1 / 23.97 + gsub[1].fwl_cfn2 / powf(23.97, 2);
+  }
+  else
+  {
+    axis2.Kvp_wr = gsub[1].Kvp_cfp1 * axis2.Jl_calc_Wr;
+    axis2.Kvi_wr = gsub[1].zw * axis2.Kvp_wr;
+    axis2.fwm_wr = gsub[1].fwm_cf0 + gsub[1].fwm_cfp1 * axis2.Jl_calc_Wr + gsub[1].fwm_cfn1 / axis2.Jl_calc_Wr;
+    axis2.fqs_wr = gsub[1].fqs_cf0 + gsub[1].fqs_cfp1 * axis2.Jl_calc_Wr + gsub[1].fqs_cfn1 / axis2.Jl_calc_Wr + gsub[1].fqs_cfn2 / powf(axis2.Jl_calc_Wr, 2);
+    axis2.fwl_wr = gsub[1].fwl_cf0 + gsub[1].fwl_cfp1 * axis2.Jl_calc_Wr + gsub[1].fwl_cfn1 / axis2.Jl_calc_Wr + gsub[1].fwl_cfn2 / powf(axis2.Jl_calc_Wr, 2);
+  }
+  axis2.av4_wr = 1;
+  axis2.av3_wr = (axis2.Rgn * axis2.Rgn * (axis2.Ktn * axis2.Jl_calc_Wr * (axis2.fwm_wr + axis2.Kvp_wr)) + axis2.Jmn * axis2.Dln + axis2.Jl_calc_Wr * axis2.Dmn) / (axis2.Rgn * axis2.Rgn * axis2.Jl_calc_Wr * axis2.Jmn);
+  axis2.av2_wr = (axis2.Rgn * axis2.Rgn * axis2.Ktn * (axis2.Dln * axis2.fwm_wr + axis2.Dln * axis2.Kvp_wr + axis2.Jl_calc_Wr * axis2.Kvi_wr) + axis2.Rgn * axis2.Ktn * axis2.Jl_calc_Wr * axis2.fqs_wr + axis2.Jl_calc_Wr * axis2.Ksn + axis2.Rgn * axis2.Rgn * (axis2.Jmn * axis2.Ksn + axis2.Dmn * axis2.Dln)) / (axis2.Rgn * axis2.Rgn * axis2.Jl_calc_Wr * axis2.Jmn);
+  axis2.av1_wr = (axis2.Rgn * axis2.Rgn * axis2.Ktn * (axis2.Ksn * axis2.fwm_wr + axis2.Ksn * axis2.Kvp_wr + axis2.Dln * axis2.Kvi_wr) + axis2.Rgn * axis2.Ktn * (axis2.Dln * axis2.fqs_wr + axis2.Ksn * axis2.fwl_wr) + axis2.Dln * axis2.Ksn + axis2.Rgn * axis2.Rgn * axis2.Dmn * axis2.Ksn) / (axis2.Rgn * axis2.Rgn * axis2.Jl_calc_Wr * axis2.Jmn);
+  axis2.av0_wr = (axis2.Rgn * axis2.Rgn * axis2.Ktn * axis2.Ksn * axis2.Kvi_wr) / (axis2.Rgn * axis2.Rgn * axis2.Jl_calc_Wr * axis2.Jmn);
+  axis2.bv3_wr = (axis2.Rgn * axis2.Rgn * axis2.Ktn * axis2.Jl_calc_Wr * axis2.Kvp_wr) / (axis2.Rgn * axis2.Rgn * axis2.Jl_calc_Wr * axis2.Jmn);
+  axis2.bv2_wr = (axis2.Rgn * axis2.Rgn * axis2.Ktn * (axis2.Jl_calc_Wr * axis2.Kvi_wr + axis2.Dln * axis2.Kvp_wr)) / (axis2.Rgn * axis2.Rgn * axis2.Jl_calc_Wr * axis2.Jmn);
+  axis2.bv1_wr = (axis2.Rgn * axis2.Rgn * axis2.Ktn * (axis2.Dln * axis2.Kvi_wr + axis2.Ksn * axis2.Kvp_wr)) / (axis2.Rgn * axis2.Rgn * axis2.Jl_calc_Wr * axis2.Jmn);
+  axis2.bv0_wr = (axis2.Rgn * axis2.Rgn * axis2.Ktn * axis2.Ksn * axis2.Kvi_wr) / (axis2.Rgn * axis2.Rgn * axis2.Jl_calc_Wr * axis2.Jmn);
+
+  axis2.Kpp_wr = gsub[1].r1_pole * (axis2.av0_wr * axis2.bv1_wr - axis2.av1_wr * axis2.bv0_wr) / (gsub[1].r1_pole * (axis2.bv0_wr * axis2.bv2_wr - axis2.bv1_wr * axis2.bv1_wr) + gsub[1].tau_pole * axis2.bv0_wr * (gsub[1].r1_pole * axis2.bv1_wr - gsub[1].tau_pole * axis2.bv0_wr));
+  axis2.apm0_pd_wr = axis2.Kpp_wr * axis2.bv0_wr;
+  axis2.apm1_pd_wr = gsub[1].tau_pole * axis2.apm0_pd_wr;
+  axis2.apm2_pd_wr = gsub[1].tau_pole * gsub[1].tau_pole * axis2.apm0_pd_wr / (gsub[1].r1_pole);
+  axis2.Kfb_wr = (axis2.apm1_pd_wr - (axis2.av0_wr + axis2.Kpp_wr * axis2.bv1_wr)) / axis2.bv0_wr;
+  axis2.Kff_wr = axis2.Kpp_wr / gsub[1].beta_pole;
+
+  WAVE_av4_2_wr = axis2.av4_wr;
+  WAVE_av3_2_wr = axis2.av3_wr;
+  WAVE_av2_2_wr = axis2.av2_wr;
+  WAVE_av1_2_wr = axis2.av1_wr;
+  WAVE_av0_2_wr = axis2.av0_wr;
+  WAVE_bv3_2_wr = axis2.bv3_wr;
+  WAVE_bv2_2_wr = axis2.bv2_wr;
+  WAVE_bv1_2_wr = axis2.bv1_wr;
+  WAVE_bv0_2_wr = axis2.bv0_wr;
+  WAVE_aq2_2_wr = axis2.apm2_pd_wr;
+  WAVE_aq1_2_wr = axis2.apm1_pd_wr;
+  WAVE_aq0_2_wr = axis2.apm0_pd_wr;
+  WAVE_Kff2_wr = axis2.Kff_wr;
+  WAVE_Kfb2_wr = axis2.Kfb_wr;
+  WAVE_Kpp2_wr = axis2.Kpp_wr;
+  WAVE_Kvp2_wr = axis2.Kvp_wr;
+  WAVE_Kvi2_wr = axis2.Kvi_wr;
+  WAVE_fwm2_wr = axis2.fwm_wr;
+  WAVE_fqs2_wr = axis2.fqs_wr;
+  WAVE_fwl2_wr = axis2.fwl_wr;
+
+  // 3軸目
+  axis3.Kvp_wr = gsub[2].Kvp_cfp1 * axis3.Jl_calc_Wr;
+  axis3.Kvi_wr = gsub[2].zw * axis3.Kvp_wr;
+  axis3.fwm_wr = gsub[2].fwm_cf0 + gsub[2].fwm_cfp1 * axis3.Jl_calc_Wr + gsub[2].fwm_cfn1 / axis3.Jl_calc_Wr;
+  axis3.fqs_wr = gsub[2].fqs_cf0 + gsub[2].fqs_cfp1 * axis3.Jl_calc_Wr + gsub[2].fqs_cfn1 / axis3.Jl_calc_Wr + gsub[2].fqs_cfn2 / powf(axis3.Jl_calc_Wr, 2);
+  axis3.fwl_wr = gsub[2].fwl_cf0 + gsub[2].fwl_cfp1 * axis3.Jl_calc_Wr + gsub[2].fwl_cfn1 / axis3.Jl_calc_Wr + gsub[2].fwl_cfn2 / powf(axis3.Jl_calc_Wr, 2);
+
+  axis3.av4_wr = 1;
+  axis3.av3_wr = (axis3.Rgn * axis3.Rgn * (axis3.Ktn * axis3.Jl_calc_Wr * (axis3.fwm_wr + axis3.Kvp_wr)) + axis3.Jmn * axis3.Dln + axis3.Jl_calc_Wr * axis3.Dmn) / (axis3.Rgn * axis3.Rgn * axis3.Jl_calc_Wr * axis3.Jmn);
+  axis3.av2_wr = (axis3.Rgn * axis3.Rgn * axis3.Ktn * (axis3.Dln * axis3.fwm_wr + axis3.Dln * axis3.Kvp_wr + axis3.Jl_calc_Wr * axis3.Kvi_wr) + axis3.Rgn * axis3.Ktn * axis3.Jl_calc_Wr * axis3.fqs_wr + axis3.Jl_calc_Wr * axis3.Ksn + axis3.Rgn * axis3.Rgn * (axis3.Jmn * axis3.Ksn + axis3.Dmn * axis3.Dln)) / (axis3.Rgn * axis3.Rgn * axis3.Jl_calc_Wr * axis3.Jmn);
+  axis3.av1_wr = (axis3.Rgn * axis3.Rgn * axis3.Ktn * (axis3.Ksn * axis3.fwm_wr + axis3.Ksn * axis3.Kvp_wr + axis3.Dln * axis3.Kvi_wr) + axis3.Rgn * axis3.Ktn * (axis3.Dln * axis3.fqs_wr + axis3.Ksn * axis3.fwl_wr) + axis3.Dln * axis3.Ksn + axis3.Rgn * axis3.Rgn * axis3.Dmn * axis3.Ksn) / (axis3.Rgn * axis3.Rgn * axis3.Jl_calc_Wr * axis3.Jmn);
+  axis3.av0_wr = (axis3.Rgn * axis3.Rgn * axis3.Ktn * axis3.Ksn * axis3.Kvi_wr) / (axis3.Rgn * axis3.Rgn * axis3.Jl_calc_Wr * axis3.Jmn);
+  axis3.bv3_wr = (axis3.Rgn * axis3.Rgn * axis3.Ktn * axis3.Jl_calc_Wr * axis3.Kvp_wr) / (axis3.Rgn * axis3.Rgn * axis3.Jl_calc_Wr * axis3.Jmn);
+  axis3.bv2_wr = (axis3.Rgn * axis3.Rgn * axis3.Ktn * (axis3.Jl_calc_Wr * axis3.Kvi_wr + axis3.Dln * axis3.Kvp_wr)) / (axis3.Rgn * axis3.Rgn * axis3.Jl_calc_Wr * axis3.Jmn);
+  axis3.bv1_wr = (axis3.Rgn * axis3.Rgn * axis3.Ktn * (axis3.Dln * axis3.Kvi_wr + axis3.Ksn * axis3.Kvp_wr)) / (axis3.Rgn * axis3.Rgn * axis3.Jl_calc_Wr * axis3.Jmn);
+  axis3.bv0_wr = (axis3.Rgn * axis3.Rgn * axis3.Ktn * axis3.Ksn * axis3.Kvi_wr) / (axis3.Rgn * axis3.Rgn * axis3.Jl_calc_Wr * axis3.Jmn);
+
+  axis3.Kpp_wr = gsub[2].r1_pole * (axis3.av0_wr * axis3.bv1_wr - axis3.av1_wr * axis3.bv0_wr) / (gsub[2].r1_pole * (axis3.bv0_wr * axis3.bv2_wr - axis3.bv1_wr * axis3.bv1_wr) + gsub[2].tau_pole * axis3.bv0_wr * (gsub[2].r1_pole * axis3.bv1_wr - gsub[2].tau_pole * axis3.bv0_wr));
+  axis3.apm0_pd_wr = axis3.Kpp_wr * axis3.bv0_wr;
+  axis3.apm1_pd_wr = gsub[2].tau_pole * axis3.apm0_pd_wr;
+  axis3.apm2_pd_wr = gsub[2].tau_pole * gsub[2].tau_pole * axis3.apm0_pd_wr / (gsub[2].r1_pole);
+  axis3.Kfb_wr = (axis3.apm1_pd_wr - (axis3.av0_wr + axis3.Kpp_wr * axis3.bv1_wr)) / axis3.bv0_wr;
+  axis3.Kff_wr = axis3.Kpp_wr / gsub[2].beta_pole;
+
+  WAVE_av4_3_wr = axis3.av4_wr;
+  WAVE_av3_3_wr = axis3.av3_wr;
+  WAVE_av2_3_wr = axis3.av2_wr;
+  WAVE_av1_3_wr = axis3.av1_wr;
+  WAVE_av0_3_wr = axis3.av0_wr;
+  WAVE_bv3_3_wr = axis3.bv3_wr;
+  WAVE_bv2_3_wr = axis3.bv2_wr;
+  WAVE_bv1_3_wr = axis3.bv1_wr;
+  WAVE_bv0_3_wr = axis3.bv0_wr;
+  WAVE_aq2_3_wr = axis3.apm2_pd_wr;
+  WAVE_aq1_3_wr = axis3.apm1_pd_wr;
+  WAVE_aq0_3_wr = axis3.apm0_pd_wr;
+  WAVE_Kff3_wr = axis3.Kff_wr;
+  WAVE_Kfb3_wr = axis3.Kfb_wr;
+  WAVE_Kpp3_wr = axis3.Kpp_wr;
+  WAVE_Kvp3_wr = axis3.Kvp_wr;
+  WAVE_Kvi3_wr = axis3.Kvi_wr;
+  WAVE_fwm3_wr = axis3.fwm_wr;
+  WAVE_fqs3_wr = axis3.fqs_wr;
+  WAVE_fwl3_wr = axis3.fwl_wr;
 }
 
 // 位置・速度制御系可変ゲイン演算関数
@@ -6266,43 +6542,43 @@ void CalcTauLDyn(Robot axis[])
 
   // ラグランジュ法に基づく動力学
   // 慣性項
-  float H11 = 0.0;
-  float H12 = 0.0;
-  float H13 = 0.0;
-  float H21 = 0.0;
-  float H22 = 0.0;
-  float H23 = 0.0;
-  float H31 = 0.0;
-  float H32 = 0.0;
-  float H33 = 0.0;
+  static float H11 = 0.0;
+  static float H12 = 0.0;
+  static float H13 = 0.0;
+  static float H21 = 0.0;
+  static float H22 = 0.0;
+  static float H23 = 0.0;
+  static float H31 = 0.0;
+  static float H32 = 0.0;
+  static float H33 = 0.0;
   // 遠心力項・コリオリ力項
-  float b111 = 0.0;
-  float b112 = 0.0;
-  float b113 = 0.0;
-  float b121 = 0.0;
-  float b122 = 0.0;
-  float b123 = 0.0;
-  float b131 = 0.0;
-  float b132 = 0.0;
-  float b133 = 0.0;
-  float b211 = 0.0;
-  float b212 = 0.0;
-  float b213 = 0.0;
-  float b221 = 0.0;
-  float b222 = 0.0;
-  float b223 = 0.0;
-  float b231 = 0.0;
-  float b232 = 0.0;
-  float b233 = 0.0;
-  float b311 = 0.0;
-  float b312 = 0.0;
-  float b313 = 0.0;
-  float b321 = 0.0;
-  float b322 = 0.0;
-  float b323 = 0.0;
-  float b331 = 0.0;
-  float b332 = 0.0;
-  float b333 = 0.0;
+  static float b111 = 0.0;
+  static float b112 = 0.0;
+  static float b113 = 0.0;
+  static float b121 = 0.0;
+  static float b122 = 0.0;
+  static float b123 = 0.0;
+  static float b131 = 0.0;
+  static float b132 = 0.0;
+  static float b133 = 0.0;
+  static float b211 = 0.0;
+  static float b212 = 0.0;
+  static float b213 = 0.0;
+  static float b221 = 0.0;
+  static float b222 = 0.0;
+  static float b223 = 0.0;
+  static float b231 = 0.0;
+  static float b232 = 0.0;
+  static float b233 = 0.0;
+  static float b311 = 0.0;
+  static float b312 = 0.0;
+  static float b313 = 0.0;
+  static float b321 = 0.0;
+  static float b322 = 0.0;
+  static float b323 = 0.0;
+  static float b331 = 0.0;
+  static float b332 = 0.0;
+  static float b333 = 0.0;
   // 重力項
   static float G1 = 0.0;
   static float G2 = 0.0;
@@ -6418,6 +6694,45 @@ void CalcJl(Robot axis[])
   axis1.Jl_calc = H11;
   axis2.Jl_calc = H22;
   axis3.Jl_calc = H33;
+}
+
+void CalcJlWr(Robot axis[])
+{
+  // 三角関数の定義
+  static float C2 = 0.0;
+  static float C3 = 0.0;
+  static float C22 = 0.0;
+  static float C223 = 0.0;
+  static float C2233 = 0.0;
+
+  static float S2 = 0.0;
+  static float S3 = 0.0;
+  static float S223 = 0.0;
+  static float S2233 = 0.0;
+
+  // ラグランジュ法に基づく動力学
+  // 慣性項
+  static float H11 = 0.0;
+  static float H22 = 0.0;
+  static float H33 = 0.0;
+
+  // // Wr出力確認用　ql_calcからJLを計算する
+  C2 = cos(axis2.ql_calc);
+  C3 = cos(axis3.ql_calc);
+  C22 = cos(2 * axis2.ql_calc);
+  C223 = cos(2 * axis2.ql_calc + axis3.ql_calc);
+  C2233 = cos(2 * axis2.ql_calc + 2 * axis3.ql_calc);
+  S2 = sin(axis2.ql_calc);
+  S3 = sin(axis3.ql_calc);
+  S223 = sin(2 * axis2.ql_calc + axis3.ql_calc);
+  S2233 = sin(2 * axis2.ql_calc + 2 * axis3.ql_calc);
+
+  H11 = dyn.H11p1 + dyn.H11p2 * S2 + dyn.H11p3 * C2233 + S3 * (dyn.H11p4 * S2 + dyn.H11p5 * C2 + dyn.H11p6) + dyn.H11p7 * S2233 + dyn.H11p8 * S223 + C3 * (dyn.H11p9 * S2 + dyn.H11p10 * C2 + dyn.H11p11) + dyn.H11p12 * C223 + dyn.H11p13 * C22;
+  H22 = dyn.H22p1 + dyn.H22p2 * C3 + dyn.H22p3 * S3;
+  H33 = dyn.H33p1;
+  axis1.Jl_calc_Wr = H11;
+  axis2.Jl_calc_Wr = H22;
+  axis3.Jl_calc_Wr = H33;
 }
 
 void CalcGravIcmp(Robot axis[])
