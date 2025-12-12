@@ -32,7 +32,7 @@
 "" "WAVE_IresQ3" "true" "" "false" "" "" "1" "" "" 
 "" "" "false" "" "false" "" "" "0" "" "" 
 "" "WAVE_Jl_calc1" "true" "" "false" "" "" "1" "" "" 
-"" "" "false" "" "false" "" "" "0" "" "" 
+"" "WAVE_Jl_Wr1" "true" "" "false" "" "" "1" "" "" 
 "" "" "false" "" "false" "" "" "0" "" "" 
 "" "" "false" "" "false" "" "" "0" "" "" 
 "" "" "false" "" "false" "" "" "0" "" "" 
@@ -44,5 +44,5 @@
 [VARIABLE_END]
 [Settings]
 "autoRefresh" "True" 
-"refreshInterval" "1000" 
+"refreshInterval" "2000" 
 [Settings END]
