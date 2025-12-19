@@ -538,6 +538,7 @@ volatile float WAVE_bv0_1 = 0;
 volatile float WAVE_aq2_1 = 0;
 volatile float WAVE_aq1_1 = 0;
 volatile float WAVE_aq0_1 = 0;
+
 volatile float WAVE_av4_2 = 0;
 volatile float WAVE_av3_2 = 0;
 volatile float WAVE_av2_2 = 0;
@@ -550,6 +551,7 @@ volatile float WAVE_bv0_2 = 0;
 volatile float WAVE_aq2_2 = 0;
 volatile float WAVE_aq1_2 = 0;
 volatile float WAVE_aq0_2 = 0;
+
 volatile float WAVE_av4_3 = 0;
 volatile float WAVE_av3_3 = 0;
 volatile float WAVE_av2_3 = 0;
