@@ -55,7 +55,8 @@
 
 // PIオリジナル　DPD　β調整　指令値補正用ゲイン
 static const float CmdGain[] = {1.0499, 1.0600, 1.0402};
-static const float CmdGain_EX[] = {0.9145, 0.9172, 0.8908};
+// static const float CmdGain_EX[] = {0.9145, 0.9172, 0.8908};
+static const float CmdGain_EX[] = {1.0000, 1.0000, 1.0000};
 
 /// 制御用定数
 static const float PI = 3.14159265358979; /// 円周率
@@ -608,6 +609,33 @@ volatile float WAVE_bv0_3_wr = 0;
 volatile float WAVE_aq2_3_wr = 0;
 volatile float WAVE_aq1_3_wr = 0;
 volatile float WAVE_aq0_3_wr = 0;
+
+volatile float WAVE_wr_wm1 = 0;
+volatile float WAVE_wr_qm1 = 0;
+volatile float WAVE_wr_qs1 = 0;
+volatile float WAVE_wr_wl1 = 0;
+volatile float WAVE_wr_ql1 = 0;
+volatile float WAVE_wr_al1 = 0;
+volatile float WAVE_wr_n1 = 0;
+volatile float WAVE_wr_m1 = 0;
+
+volatile float WAVE_wr_wm2 = 0;
+volatile float WAVE_wr_qm2 = 0;
+volatile float WAVE_wr_qs2 = 0;
+volatile float WAVE_wr_wl2 = 0;
+volatile float WAVE_wr_ql2 = 0;
+volatile float WAVE_wr_al2 = 0;
+volatile float WAVE_wr_n2 = 0;
+volatile float WAVE_wr_m2 = 0;
+
+volatile float WAVE_wr_wm3 = 0;
+volatile float WAVE_wr_qm3 = 0;
+volatile float WAVE_wr_qs3 = 0;
+volatile float WAVE_wr_wl3 = 0;
+volatile float WAVE_wr_ql3 = 0;
+volatile float WAVE_wr_al3 = 0;
+volatile float WAVE_wr_n3 = 0;
+volatile float WAVE_wr_m3 = 0;
 
 #pragma SET_DATA_SECTION(".DATA_ON_HIGHER_SPEED")
 
@@ -5619,6 +5647,15 @@ void CalcFDTDWr_WmcmdInputType(Robot *robo)
     robo->wl_calc = wl_Z[0];
     robo->al_calc = (robo->Ksn * qs_Z[0] - robo->Dln * wl_Z[0]) / robo->Jl_calc_Wr;
     robo->wm_calc = wm_Z[0];
+    
+    WAVE_wr_wm1 = wm_Z[0];
+    WAVE_wr_qm1 = qm_Z[0];
+    WAVE_wr_qs1 = qs_Z[0];
+    WAVE_wr_wl1 = wl_Z[0];
+    WAVE_wr_ql1 = ql_Z[0];
+    WAVE_wr_al1 = robo->al_calc;
+    WAVE_wr_n1 = n_Z[0];
+    WAVE_wr_m1 = m_Z[0];
   }
   else if (robo->BDN == BDN1)
   {
@@ -5645,6 +5682,15 @@ void CalcFDTDWr_WmcmdInputType(Robot *robo)
     robo->wl_calc = wl_Z[1];
     robo->al_calc = (robo->Ksn * qs_Z[1] - robo->Dln * wl_Z[1]) / robo->Jl_calc_Wr;
     robo->wm_calc = wm_Z[1];
+
+    WAVE_wr_wm2 = wm_Z[1];
+    WAVE_wr_qm2 = qm_Z[1];
+    WAVE_wr_qs2 = qs_Z[1];
+    WAVE_wr_wl2 = wl_Z[1];
+    WAVE_wr_ql2 = ql_Z[1];
+    WAVE_wr_al2 = robo->al_calc;
+    WAVE_wr_n2  = n_Z[1];
+    WAVE_wr_m2  = m_Z[1];
   }
   else if (robo->BDN == BDN2)
   {
@@ -5671,6 +5717,15 @@ void CalcFDTDWr_WmcmdInputType(Robot *robo)
     robo->wl_calc = wl_Z[2];
     robo->al_calc = (robo->Ksn * qs_Z[2] - robo->Dln * wl_Z[2]) / robo->Jl_calc_Wr;
     robo->wm_calc = wm_Z[2];
+
+    WAVE_wr_wm3 = wm_Z[2];
+    WAVE_wr_qm3 = qm_Z[2];
+    WAVE_wr_qs3 = qs_Z[2];
+    WAVE_wr_wl3 = wl_Z[2];
+    WAVE_wr_ql3 = ql_Z[2];
+    WAVE_wr_al3 = robo->al_calc;
+    WAVE_wr_n3  = n_Z[2];
+    WAVE_wr_m3  = m_Z[2];
   }
   else
   {
