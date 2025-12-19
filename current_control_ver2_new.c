@@ -1025,6 +1025,27 @@ typedef struct Fdtd_Tm_Coefficient
 
 Fdtd_Tm_Coefficient Tm_sub[3] = {0};
 
+typedef struct Fdtd_Tm_full_Coefficient
+{
+  float den_0;
+  float den_1;
+  float den_2;
+  float den_3;
+  float num_0;
+  float num_1;
+  float num_2;
+  float num_3;
+
+  float b0_rate;
+  float b01;
+  float a03;
+  float a02;
+  float a01;
+  float a00;
+} Fdtd_Tm_full_Coefficient;
+
+Fdtd_Tm_full_Coefficient Tm_full_sub[3] = {0};
+
 #pragma SET_DATA_SECTION()
 
 /*! @struct Controller
@@ -1111,7 +1132,10 @@ void FDTDSOB(Robot *robo);
 // FF制御器　補償電流計算Tm(z)
 void FDTD_Tm(Robot *robo);
 void FDTD_Tm_woG(Robot *robo);
+void FDTD_Tm_Full_woG(Robot *robo);
 void FDTD_Tm_Init(void);
+void FDTD_Tm_Full_Init(void);
+void FDTD_Tm_Full_Update(Robot *robo);
 /// 電流と各センサの値取得
 void GetVoltAndCurrent(Robot *robo, Sensor *sense);
 /// センサオフセット計算
@@ -1321,12 +1345,18 @@ interrupt void ControlFunction(void)
       CalcTauLDyn(joint);
 
       // FF制御　動力学補償電流
+      FDTD_Tm_Full_Update(&axis1); // 重力補償無し
+      FDTD_Tm_Full_Update(&axis2); // 重力補償無し
+      FDTD_Tm_Full_Update(&axis3); // 重力補償無し
       // FDTD_Tm(&axis1); // 重力補償込み
       // FDTD_Tm(&axis2); // 重力補償込み
       // FDTD_Tm(&axis3); // 重力補償込み
-      FDTD_Tm_woG(&axis1); // 重力補償無し
-      FDTD_Tm_woG(&axis2); // 重力補償無し
-      FDTD_Tm_woG(&axis3); // 重力補償無し
+      // FDTD_Tm_woG(&axis1); // 重力補償無し
+      // FDTD_Tm_woG(&axis2); // 重力補償無し
+      // FDTD_Tm_woG(&axis3); // 重力補償無し
+      FDTD_Tm_Full_woG(&axis1); // 重力補償無し
+      FDTD_Tm_Full_woG(&axis2); // 重力補償無し
+      FDTD_Tm_Full_woG(&axis3); // 重力補償無し
 
       // axis1.IrefQ = Ref_Iq_ref_direct;
       // axis1.IrefQ = Ref_Iq_ref_direct*sinf(2.0*PI*t); // 正弦波指令 電流指令確認用;
@@ -1444,12 +1474,18 @@ interrupt void ControlFunction(void)
         }
 
         // FF制御　動力学補償電流
+        FDTD_Tm_Full_Update(&axis1); // 重力補償無し
+        FDTD_Tm_Full_Update(&axis2); // 重力補償無し
+        FDTD_Tm_Full_Update(&axis3); // 重力補償無し
         // FDTD_Tm(&axis1); // 重力補償込み
         // FDTD_Tm(&axis2); // 重力補償込み
         // FDTD_Tm(&axis3); // 重力補償込み
-        FDTD_Tm_woG(&axis1); // 重力補償無し
-        FDTD_Tm_woG(&axis2); // 重力補償無し
-        FDTD_Tm_woG(&axis3); // 重力補償無し
+        // FDTD_Tm_woG(&axis1); // 重力補償無し
+        // FDTD_Tm_woG(&axis2); // 重力補償無し
+        // FDTD_Tm_woG(&axis3); // 重力補償無し
+        FDTD_Tm_Full_woG(&axis1); // 重力補償無し
+        FDTD_Tm_Full_woG(&axis2); // 重力補償無し
+        FDTD_Tm_Full_woG(&axis3); // 重力補償無し
 
         CalcGravIcmp(joint);
 
@@ -1561,15 +1597,16 @@ interrupt void ControlFunction(void)
           // 1軸目 位置指令
           // ランプ関数生成関数で位置指令を決定
           // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
+          axis1.wm_cmd_z3 = axis1.wm_cmd_z2;
           axis1.wm_cmd_z2 = axis1.wm_cmd_z1;
           axis1.wm_cmd_z1 = axis1.wm_cmd;
           axis1.wm_cmd = 1.0 * ManyRampGenerator1stAxis(axis1.a_ramp, axis1.vel, axis1.t_start, axis1.t_ramp, axis1.t_const, axis1.a_ramp_back, axis1.t_ramp_back);
           axis1.qm_ref_z1 = axis1.qm_ref;
           
-          axis1.qm_ref = axis1.wm_cmd_z2 * Tp + axis1.qm_ref_z1;
+          axis1.qm_ref = axis1.wm_cmd_z3 * Tp + axis1.qm_ref_z1;
           LimitPosCmd(&axis1);
 
-          axis1.wm_ref = (axis1.qm_ref - axis1.qm) * axis1.Kpp + axis1.Kff * axis1.wm_cmd_z2 - axis1.Kfb * axis1.wm;
+          axis1.wm_ref = (axis1.qm_ref - axis1.qm) * axis1.Kpp + axis1.Kff * axis1.wm_cmd_z3 - axis1.Kfb * axis1.wm;
           axis1.Ipi = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1);
           if (flag_FF == 1)
           {
@@ -1596,15 +1633,16 @@ interrupt void ControlFunction(void)
           // 2軸目 位置指令
           // ランプ関数生成関数で位置指令を決定
           // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
+          axis2.wm_cmd_z3 = axis2.wm_cmd_z2;
           axis2.wm_cmd_z2 = axis2.wm_cmd_z1;
           axis2.wm_cmd_z1 = axis2.wm_cmd;
           axis2.wm_cmd = 1.0 * ManyRampGenerator2ndAxis(axis2.a_ramp, axis2.vel, axis2.t_start, axis2.t_ramp, axis2.t_const, axis2.a_ramp_back, axis2.t_ramp_back);
           axis2.qm_ref_z1 = axis2.qm_ref;
 
-          axis2.qm_ref = axis2.wm_cmd_z2 * Tp + axis2.qm_ref_z1;
+          axis2.qm_ref = axis2.wm_cmd_z3 * Tp + axis2.qm_ref_z1;
           LimitPosCmd(&axis2);
-          
-          axis2.wm_ref = (axis2.qm_ref - axis2.qm) * axis2.Kpp + axis2.Kff * axis2.wm_cmd_z2 - axis2.Kfb * axis2.wm;
+
+          axis2.wm_ref = (axis2.qm_ref - axis2.qm) * axis2.Kpp + axis2.Kff * axis2.wm_cmd_z3 - axis2.Kfb * axis2.wm;
           axis2.Ipi = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1);
           if (flag_FF == 1)
           {
@@ -1631,15 +1669,16 @@ interrupt void ControlFunction(void)
           // 3軸目 位置指令
           // ランプ関数生成関数で位置指令を決定
           // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
+          axis3.wm_cmd_z3 = axis3.wm_cmd_z2;
           axis3.wm_cmd_z2 = axis3.wm_cmd_z1;
           axis3.wm_cmd_z1 = axis3.wm_cmd;
           axis3.wm_cmd = 1.0 * ManyRampGenerator3rdAxis(axis3.a_ramp, axis3.vel, axis3.t_start, axis3.t_ramp, axis3.t_const, axis3.a_ramp_back, axis3.t_ramp_back);
           axis3.qm_ref_z1 = axis3.qm_ref;
           
-          axis3.qm_ref = axis3.wm_cmd_z2 * Tp + axis3.qm_ref_z1;
+          axis3.qm_ref = axis3.wm_cmd_z3 * Tp + axis3.qm_ref_z1;
           LimitPosCmd(&axis3);
           
-          axis3.wm_ref = (axis3.qm_ref - axis3.qm) * axis3.Kpp + axis3.Kff * axis3.wm_cmd_z2 - axis3.Kfb * axis3.wm;
+          axis3.wm_ref = (axis3.qm_ref - axis3.qm) * axis3.Kpp + axis3.Kff * axis3.wm_cmd_z3 - axis3.Kfb * axis3.wm;
           axis3.Ipi = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1);
           
           // 3軸目 速度PI制御＋SFB
@@ -1720,15 +1759,16 @@ interrupt void ControlFunction(void)
           // 1軸目 位置指令
           // ランプ関数生成関数で位置指令を決定
           // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
+          axis1.wm_cmd_z3 = axis1.wm_cmd_z2;
           axis1.wm_cmd_z2 = axis1.wm_cmd_z1;
           axis1.wm_cmd_z1 = axis1.wm_cmd;
           axis1.wm_cmd = motor_vel_cmd[0];
           axis1.qm_ref_z1 = axis1.qm_ref;
-          axis1.qm_ref = axis1.wm_cmd_z2 * Tp + axis1.qm_ref_z1;
+          axis1.qm_ref = axis1.wm_cmd_z3 * Tp + axis1.qm_ref_z1;
           
           LimitPosCmd(&axis1);
 
-          axis1.wm_ref = (axis1.qm_ref - axis1.qm) * axis1.Kpp + axis1.Kff * axis1.wm_cmd_z2 - axis1.Kfb * axis1.wm;
+          axis1.wm_ref = (axis1.qm_ref - axis1.qm) * axis1.Kpp + axis1.Kff * axis1.wm_cmd_z3 - axis1.Kfb * axis1.wm;
           axis1.Ipi = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1);
           
           if (flag_FF == 1)
@@ -1756,14 +1796,15 @@ interrupt void ControlFunction(void)
           // 2軸目 位置指令
           // ランプ関数生成関数で位置指令を決定
           // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
+          axis2.wm_cmd_z3 = axis2.wm_cmd_z2;
           axis2.wm_cmd_z2 = axis2.wm_cmd_z1;
           axis2.wm_cmd_z1 = axis2.wm_cmd;
           axis2.wm_cmd = motor_vel_cmd[1];
           axis2.qm_ref_z1 = axis2.qm_ref;
-          axis2.qm_ref = axis2.wm_cmd_z2 * Tp + axis2.qm_ref_z1;
+          axis2.qm_ref = axis2.wm_cmd_z3 * Tp + axis2.qm_ref_z1;
 
           LimitPosCmd(&axis2);
-          axis2.wm_ref = (axis2.qm_ref - axis2.qm) * axis2.Kpp + axis2.Kff * axis2.wm_cmd_z2 - axis2.Kfb * axis2.wm;
+          axis2.wm_ref = (axis2.qm_ref - axis2.qm) * axis2.Kpp + axis2.Kff * axis2.wm_cmd_z3 - axis2.Kfb * axis2.wm;
           axis2.Ipi = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1);
           if (flag_FF == 1)
           {
@@ -1790,13 +1831,14 @@ interrupt void ControlFunction(void)
           // 3軸目 位置指令
           // ランプ関数生成関数で位置指令を決定
           // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
+          axis3.wm_cmd_z3 = axis3.wm_cmd_z2;
           axis3.wm_cmd_z2 = axis3.wm_cmd_z1;
           axis3.wm_cmd_z1 = axis3.wm_cmd;
           axis3.wm_cmd = motor_vel_cmd[2];
           axis3.qm_ref_z1 = axis3.qm_ref;
-          axis3.qm_ref = axis3.wm_cmd_z2 * Tp + axis3.qm_ref_z1;
+          axis3.qm_ref = axis3.wm_cmd_z3 * Tp + axis3.qm_ref_z1;
           LimitPosCmd(&axis3);
-          axis3.wm_ref = (axis3.qm_ref - axis3.qm) * axis3.Kpp + axis3.Kff * axis3.wm_cmd_z2 - axis3.Kfb * axis3.wm;
+          axis3.wm_ref = (axis3.qm_ref - axis3.qm) * axis3.Kpp + axis3.Kff * axis3.wm_cmd_z3 - axis3.Kfb * axis3.wm;
           axis3.Ipi = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1);
           // 3軸目 速度PI制御＋SFB
           if (flag_FF == 1)
@@ -1860,6 +1902,7 @@ interrupt void ControlFunction(void)
           // 1軸目 位置指令
           // ランプ関数生成関数で位置指令を決定
           // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
+          axis1.wm_cmd_z3 = axis1.wm_cmd_z2;
           axis1.wm_cmd_z2 = axis1.wm_cmd_z1;
           axis1.wm_cmd_z1 = axis1.wm_cmd;
           axis1.qm_ref_z1 = axis1.qm_ref;
@@ -1867,7 +1910,7 @@ interrupt void ControlFunction(void)
           if (flag_end3 == 1)
           {            
             axis1.wm_cmd = 1.0 * ManyRampGenerator1stAxis(axis1.a_ramp, axis1.vel, axis1.t_start, axis1.t_ramp, axis1.t_const, axis1.a_ramp_back, axis1.t_ramp_back);
-            axis1.qm_ref = axis1.wm_cmd_z2 * Tp + axis1.qm_ref_z1;
+            axis1.qm_ref = axis1.wm_cmd_z3 * Tp + axis1.qm_ref_z1;
           }
           else
           {
@@ -1901,6 +1944,7 @@ interrupt void ControlFunction(void)
           // 2軸目 位置指令
           // ランプ関数生成関数で位置指令を決定
           // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
+          axis2.wm_cmd_z3 = axis2.wm_cmd_z2;
           axis2.wm_cmd_z2 = axis2.wm_cmd_z1;
           axis2.wm_cmd_z1 = axis2.wm_cmd;
           axis2.qm_ref_z1 = axis2.qm_ref;
@@ -1908,7 +1952,7 @@ interrupt void ControlFunction(void)
           if (flag_end3 == 1 && flag_end1 == 1)
           {
             axis2.wm_cmd = 1.0 * ManyRampGenerator2ndAxis(axis2.a_ramp, axis2.vel, axis2.t_start, axis2.t_ramp, axis2.t_const, axis2.a_ramp_back, axis2.t_ramp_back);
-            axis2.qm_ref = axis2.wm_cmd_z2 * Tp + axis2.qm_ref_z1;
+            axis2.qm_ref = axis2.wm_cmd_z3 * Tp + axis2.qm_ref_z1;
           }
           else
           {
@@ -1947,12 +1991,13 @@ interrupt void ControlFunction(void)
           // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
           // axis3.qm_ref_z2 = axis3.qm_ref_z1;
           // axis3.qm_ref_z1 = axis3.qm_ref;
+          axis3.wm_cmd_z3 = axis3.wm_cmd_z2;
           axis3.wm_cmd_z2 = axis3.wm_cmd_z1;
           axis3.wm_cmd_z1 = axis3.wm_cmd;
           axis3.qm_ref_z1 = axis3.qm_ref;
           axis3.wm_cmd = 1.0 * ManyRampGenerator3rdAxis(axis3.a_ramp, axis3.vel, axis3.t_start, axis3.t_ramp, axis3.t_const, axis3.a_ramp_back, axis3.t_ramp_back);
           // axis3.qm_ref = 1.0 * ManyRampGenerator3rdAxis(axis3.a_ramp, axis3.vel, axis3.t_start, axis3.t_ramp, axis3.t_const, axis3.a_ramp_back, axis3.t_ramp_back) + start_back3;
-          axis3.qm_ref = axis3.wm_cmd_z2 * Tp + axis3.qm_ref_z1;
+          axis3.qm_ref = axis3.wm_cmd_z3 * Tp + axis3.qm_ref_z1;
           // 3軸目 位置P制御
           axis3.wm_ref = (axis3.qm_ref - axis3.qm) * axis3.Kpp;
           axis3.Ipi = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1);
@@ -2465,7 +2510,8 @@ void MW_main(void)
   CalcFDTDTSOBInit();
 
   // FF制御　補償電流計算関数Tm 係数計算
-  FDTD_Tm_Init();
+  // FDTD_Tm_Init();
+  FDTD_Tm_Full_Init();
 
   // 可変ゲインの極を指定する(係数図法)
   // 1軸目
@@ -3839,6 +3885,133 @@ void FDTD_Tm_Init()
   Tm_sub[2].num_0 = (-Tp * axis3.Dmn + axis3.Jmn) / axis3.Jmn;
   Tm_sub[2].num_1 = (axis3.Rgn * axis3.Rgn * (Tp * axis3.Dmn - 2.0 * axis3.Jmn) + Tp * Tp * axis3.Ksn) / axis3.Rgn / axis3.Rgn / axis3.Jmn;
   Tm_sub[2].num_2 = 1.0;
+}
+
+void FDTD_Tm_Full_woG(Robot *robo)
+{
+  static float y_0 = 0.0;
+  static float yZ1_0 = 0.0;
+  static float uZ1_0 = 0.0;
+  static float uZ2_0 = 0.0;
+  static float uZ3_0 = 0.0;
+  static float a_0 = 0.0;
+
+  static float y_1 = 0.0;
+  static float yZ1_1 = 0.0;
+  static float uZ1_1 = 0.0;
+  static float uZ2_1 = 0.0;
+  static float uZ3_1 = 0.0;
+  static float a_1 = 0.0;
+
+  static float y_2 = 0.0;
+  static float yZ1_2 = 0.0;
+  static float uZ1_2 = 0.0;
+  static float uZ2_2 = 0.0;
+  static float uZ3_2 = 0.0;
+  static float a_2 = 0.0;
+
+  if (robo->BDN == BDN0)
+  {
+    y_0 = (-Tm_sub[0].den_2 * yZ1_0 + Tm_sub[0].num_3 * robo->tauLdyn + Tm_sub[0].num_2 * uZ1_0 + Tm_sub[0].num_1 * uZ2_0 + Tm_sub[0].num_0 * uZ3_0) / Tm_sub[0].den_3;
+    robo->Iff = y_0;
+    yZ1_0 = robo->Iff;
+    uZ3_0 = uZ2_0;
+    uZ2_0 = uZ1_0;
+    uZ1_0 = robo->tauLdyn;
+  }
+  else if (robo->BDN == BDN1)
+  {
+    y_0 = (-Tm_sub[1].den_2 * yZ1_1 + Tm_sub[1].num_3 * robo->tauLdyn + Tm_sub[1].num_2 * uZ1_1 + Tm_sub[1].num_1 * uZ2_1 + Tm_sub[1].num_0 * uZ3_1) / Tm_sub[1].den_3;
+    robo->Iff = y_0;
+    yZ1_1 = robo->Iff;
+    uZ3_1 = uZ2_1;
+    uZ2_1 = uZ1_1;
+    uZ1_1 = robo->tauLdyn;
+  }
+  else if (robo->BDN == BDN2)
+  {
+    y_0 = (-Tm_sub[2].den_2 * yZ1_2 + Tm_sub[2].num_3 * robo->tauLdyn + Tm_sub[2].num_2 * uZ1_2 + Tm_sub[2].num_1 * uZ2_2 + Tm_sub[2].num_0 * uZ3_2) / Tm_sub[2].den_3;
+    robo->Iff = y_0;
+    yZ1_2 = robo->Iff;
+    uZ3_2 = uZ2_2;
+    uZ2_2 = uZ1_2;
+    uZ1_2 = robo->tauLdyn;
+  }
+}
+
+void FDTD_Tm_Full_Init()
+{
+  Tm_full_sub[0].b0_rate = 1.0;
+  Tm_full_sub[0].b01 = axis1.Ksn * axis1.Ktn / (axis1.Rgn * axis1.Jmn);
+  Tm_full_sub[0].a03 = 1;
+  Tm_full_sub[0].a02 = (axis1.Dmn + axis1.Ktn * axis1.fwm + axis1.Ktn * axis1.Kvp * (1 + axis1.Kfb)) / axis1.Jmn;
+  Tm_full_sub[0].a01 = (axis1.Ktn * axis1.Kvp * axis1.Kpp + axis1.Ktn * axis1.Kvi * (1 + axis1.Kfb) + (axis1.Ktn * axis1.fqs / axis1.Rgn) + (axis1.Ksn / (axis1.Rgn ^ 2))) / axis1.Jmn;
+  Tm_full_sub[0].a00 = axis1.Ktn * axis1.Kvi * axis1.Kpp / axis1.Jmn;
+
+  Tm_full_sub[0].den_3 = Tm_full_sub[0].b01 * Tp * Tp;
+  Tm_full_sub[0].den_2 = (-Tm_full_sub[0].b01 * Tp * Tp) * Tm_full_sub[0].b0_rate;
+  Tm_full_sub[0].den_1 = 0;
+  Tm_full_sub[0].den_0 = 0;
+  Tm_full_sub[0].num_3 = 1;
+  Tm_full_sub[0].num_2 = -3 + Tm_full_sub[0].a02 * Tp + Tm_full_sub[0].a01 * Tp * Tp;
+  Tm_full_sub[0].num_1 = 3 - 2 * Tm_full_sub[0].a02 * Tp - Tm_full_sub[0].a01 * Tp * Tp + Tm_full_sub[0].a00 * Tp * Tp * Tp;
+  Tm_full_sub[0].num_0 = -1 + Tm_full_sub[0].a02 * Tp;
+
+  Tm_full_sub[1].b0_rate = 1.0;
+  Tm_full_sub[1].b01 = axis2.Ksn * axis2.Ktn / (axis2.Rgn * axis2.Jmn);
+  Tm_full_sub[1].a03 = 1;
+  Tm_full_sub[1].a02 = (axis2.Dmn + axis2.Ktn * axis2.fwm + axis2.Ktn * axis2.Kvp * (1 + axis2.Kfb)) / axis2.Jmn;
+  Tm_full_sub[1].a01 = (axis2.Ktn * axis2.Kvp * axis2.Kpp + axis2.Ktn * axis2.Kvi * (1 + axis2.Kfb) + (axis2.Ktn * axis2.fqs / axis2.Rgn) + (axis2.Ksn / (axis2.Rgn ^ 2))) / axis2.Jmn;
+  Tm_full_sub[1].a00 = axis2.Ktn * axis2.Kvi * axis2.Kpp / axis2.Jmn;
+
+  Tm_full_sub[1].den_3 = Tm_full_sub[1].b01 * Tp * Tp;
+  Tm_full_sub[1].den_2 = (-Tm_full_sub[1].b01 * Tp * Tp) * Tm_full_sub[1].b0_rate;
+  Tm_full_sub[1].den_1 = 0;
+  Tm_full_sub[1].den_0 = 0;
+  Tm_full_sub[1].num_3 = 1;
+  Tm_full_sub[1].num_2 = -3 + Tm_full_sub[1].a02 * Tp + Tm_full_sub[1].a01 * Tp * Tp;
+  Tm_full_sub[1].num_1 = 3 - 2 * Tm_full_sub[1].a02 * Tp - Tm_full_sub[1].a01 * Tp * Tp + Tm_full_sub[1].a00 * Tp * Tp * Tp;
+  Tm_full_sub[1].num_0 = -1 + Tm_full_sub[1].a02 * Tp;
+
+  Tm_full_sub[2].b0_rate = 1.0;
+  Tm_full_sub[2].b01 = axis3.Ksn * axis3.Ktn / (axis3.Rgn * axis3.Jmn);
+  Tm_full_sub[2].a03 = 1;
+  Tm_full_sub[2].a02 = (axis3.Dmn + axis3.Ktn * axis3.fwm + axis3.Ktn * axis3.Kvp * (1 + axis3.Kfb)) / axis3.Jmn;
+  Tm_full_sub[2].a01 = (axis3.Ktn * axis3.Kvp * axis3.Kpp + axis3.Ktn * axis3.Kvi * (1 + axis3.Kfb) + (axis3.Ktn * axis3.fqs / axis3.Rgn) + (axis3.Ksn / (axis3.Rgn ^ 2))) / axis3.Jmn;
+  Tm_full_sub[2].a00 = axis3.Ktn * axis3.Kvi * axis3.Kpp / axis3.Jmn;
+
+  Tm_full_sub[2].den_3 = Tm_full_sub[2].b01 * Tp * Tp;
+  Tm_full_sub[2].den_2 = (-Tm_full_sub[2].b01 * Tp * Tp) * Tm_full_sub[2].b0_rate;
+  Tm_full_sub[2].den_1 = 0;
+  Tm_full_sub[2].den_0 = 0;
+  Tm_full_sub[2].num_3 = 1;
+  Tm_full_sub[2].num_2 = -3 + Tm_full_sub[2].a02 * Tp + Tm_full_sub[2].a01 * Tp * Tp;
+  Tm_full_sub[2].num_1 = 3 - 2 * Tm_full_sub[2].a02 * Tp - Tm_full_sub[2].a01 * Tp * Tp + Tm_full_sub[2].a00 * Tp * Tp * Tp;
+  Tm_full_sub[2].num_0 = -1 + Tm_full_sub[2].a02 * Tp;
+}
+
+void FDTD_Tm_Full_Update()
+{
+  Tm_full_sub[0].a02 = (axis1.Dmn + axis1.Ktn * axis1.fwm + axis1.Ktn * axis1.Kvp * (1 + axis1.Kfb)) / axis1.Jmn;
+  Tm_full_sub[0].a01 = (axis1.Ktn * axis1.Kvp * axis1.Kpp + axis1.Ktn * axis1.Kvi * (1 + axis1.Kfb) + (axis1.Ktn * axis1.fqs / axis1.Rgn) + (axis1.Ksn / (axis1.Rgn ^ 2))) / axis1.Jmn;
+  Tm_full_sub[0].a00 = axis1.Ktn * axis1.Kvi * axis1.Kpp / axis1.Jmn;
+  Tm_full_sub[0].num_2 = -3 + Tm_full_sub[0].a02 * Tp + Tm_full_sub[0].a01 * Tp * Tp;
+  Tm_full_sub[0].num_1 = 3 - 2 * Tm_full_sub[0].a02 * Tp - Tm_full_sub[0].a01 * Tp * Tp + Tm_full_sub[0].a00 * Tp * Tp * Tp;
+  Tm_full_sub[0].num_0 = -1 + Tm_full_sub[0].a02 * Tp;
+
+  Tm_full_sub[1].a02 = (axis2.Dmn + axis2.Ktn * axis2.fwm + axis2.Ktn * axis2.Kvp * (1 + axis2.Kfb)) / axis2.Jmn;
+  Tm_full_sub[1].a01 = (axis2.Ktn * axis2.Kvp * axis2.Kpp + axis2.Ktn * axis2.Kvi * (1 + axis2.Kfb) + (axis2.Ktn * axis2.fqs / axis2.Rgn) + (axis2.Ksn / (axis2.Rgn ^ 2))) / axis2.Jmn;
+  Tm_full_sub[1].a00 = axis2.Ktn * axis2.Kvi * axis2.Kpp / axis2.Jmn;
+  Tm_full_sub[1].num_2 = -3 + Tm_full_sub[1].a02 * Tp + Tm_full_sub[1].a01 * Tp * Tp;
+  Tm_full_sub[1].num_1 = 3 - 2 * Tm_full_sub[1].a02 * Tp - Tm_full_sub[1].a01 * Tp * Tp + Tm_full_sub[1].a00 * Tp * Tp * Tp;
+  Tm_full_sub[1].num_0 = -1 + Tm_full_sub[1].a02 * Tp;
+
+  Tm_full_sub[2].a02 = (axis3.Dmn + axis3.Ktn * axis3.fwm + axis3.Ktn * axis3.Kvp * (1 + axis3.Kfb)) / axis3.Jmn;
+  Tm_full_sub[2].a01 = (axis3.Ktn * axis3.Kvp * axis3.Kpp + axis3.Ktn * axis3.Kvi * (1 + axis3.Kfb) + (axis3.Ktn * axis3.fqs / axis3.Rgn) + (axis3.Ksn / (axis3.Rgn ^ 2))) / axis3.Jmn;
+  Tm_full_sub[2].a00 = axis3.Ktn * axis3.Kvi * axis3.Kpp / axis3.Jmn;
+  Tm_full_sub[2].num_2 = -3 + Tm_full_sub[2].a02 * Tp + Tm_full_sub[2].a01 * Tp * Tp;
+  Tm_full_sub[2].num_1 = 3 - 2 * Tm_full_sub[2].a02 * Tp - Tm_full_sub[2].a01 * Tp * Tp + Tm_full_sub[2].a00 * Tp * Tp * Tp;
+  Tm_full_sub[2].num_0 = -1 + Tm_full_sub[2].a02 * Tp;
 }
 
 void SetLPF(LPF_param *Filter, float Ts, float fs, float Q)
