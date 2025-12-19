@@ -3940,9 +3940,9 @@ void FDTD_Tm_Full_Init()
   Tm_full_sub[0].b0_rate = 1.0;
   Tm_full_sub[0].b01 = axis1.Ksn * axis1.Ktn / (axis1.Rgn * axis1.Jmn);
   Tm_full_sub[0].a03 = 1.0;
-  Tm_full_sub[0].a02 = (axis1.Dmn + axis1.Ktn * axis1.fwm_wr + axis1.Ktn * axis1.Kvp_wr * (1.0 + axis1.Kfb_wr)) / axis1.Jmn;
-  Tm_full_sub[0].a01 = (axis1.Ktn * axis1.Kvp_wr * axis1.Kpp_wr + axis1.Ktn * axis1.Kvi_wr * (1.0 + axis1.Kfb_wr) + (axis1.Ktn * axis1.fqs_wr / axis1.Rgn) + (axis1.Ksn / (axis1.Rgn * axis1.Rgn))) / axis1.Jmn;
-  Tm_full_sub[0].a00 = axis1.Ktn * axis1.Kvi_wr * axis1.Kpp_wr / axis1.Jmn;
+  Tm_full_sub[0].a02 = (axis1.Dmn + axis1.Ktn * axis1.fwm + axis1.Ktn * axis1.Kvp * (1.0 + axis1.Kfb)) / axis1.Jmn;
+  Tm_full_sub[0].a01 = (axis1.Ktn * axis1.Kvp * axis1.Kpp + axis1.Ktn * axis1.Kvi * (1.0 + axis1.Kfb) + (axis1.Ktn * axis1.fqs / axis1.Rgn) + (axis1.Ksn / (axis1.Rgn * axis1.Rgn))) / axis1.Jmn;
+  Tm_full_sub[0].a00 = axis1.Ktn * axis1.Kvi * axis1.Kpp / axis1.Jmn;
 
   Tm_full_sub[0].den_3 = Tm_full_sub[0].b01 * Tp * Tp;
   Tm_full_sub[0].den_2 = (-Tm_full_sub[0].b01 * Tp * Tp) * Tm_full_sub[0].b0_rate;
@@ -3956,9 +3956,9 @@ void FDTD_Tm_Full_Init()
   Tm_full_sub[1].b0_rate = 1.0;
   Tm_full_sub[1].b01 = axis2.Ksn * axis2.Ktn / (axis2.Rgn * axis2.Jmn);
   Tm_full_sub[1].a03 = 1.0;
-  Tm_full_sub[1].a02 = (axis2.Dmn + axis2.Ktn * axis2.fwm_wr + axis2.Ktn * axis2.Kvp_wr * (1.0 + axis2.Kfb_wr)) / axis2.Jmn;
-  Tm_full_sub[1].a01 = (axis2.Ktn * axis2.Kvp_wr * axis2.Kpp_wr + axis2.Ktn * axis2.Kvi_wr * (1.0 + axis2.Kfb_wr) + (axis2.Ktn * axis2.fqs_wr / axis2.Rgn) + (axis2.Ksn / (axis2.Rgn * axis2.Rgn))) / axis2.Jmn;
-  Tm_full_sub[1].a00 = axis2.Ktn * axis2.Kvi_wr * axis2.Kpp_wr / axis2.Jmn;
+  Tm_full_sub[1].a02 = (axis2.Dmn + axis2.Ktn * axis2.fwm + axis2.Ktn * axis2.Kvp * (1.0 + axis2.Kfb)) / axis2.Jmn;
+  Tm_full_sub[1].a01 = (axis2.Ktn * axis2.Kvp * axis2.Kpp + axis2.Ktn * axis2.Kvi * (1.0 + axis2.Kfb) + (axis2.Ktn * axis2.fqs / axis2.Rgn) + (axis2.Ksn / (axis2.Rgn * axis2.Rgn))) / axis2.Jmn;
+  Tm_full_sub[1].a00 = axis2.Ktn * axis2.Kvi * axis2.Kpp / axis2.Jmn;
 
   Tm_full_sub[1].den_3 = Tm_full_sub[1].b01 * Tp * Tp;
   Tm_full_sub[1].den_2 = (-Tm_full_sub[1].b01 * Tp * Tp) * Tm_full_sub[1].b0_rate;
@@ -3972,9 +3972,9 @@ void FDTD_Tm_Full_Init()
   Tm_full_sub[2].b0_rate = 1.0;
   Tm_full_sub[2].b01 = axis3.Ksn * axis3.Ktn / (axis3.Rgn * axis3.Jmn);
   Tm_full_sub[2].a03 = 1.0;
-  Tm_full_sub[2].a02 = (axis3.Dmn + axis3.Ktn * axis3.fwm_wr + axis3.Ktn * axis3.Kvp_wr * (1.0 + axis3.Kfb_wr)) / axis3.Jmn;
-  Tm_full_sub[2].a01 = (axis3.Ktn * axis3.Kvp_wr * axis3.Kpp_wr + axis3.Ktn * axis3.Kvi_wr * (1.0 + axis3.Kfb_wr) + (axis3.Ktn * axis3.fqs_wr / axis3.Rgn) + (axis3.Ksn / (axis3.Rgn * axis3.Rgn))) / axis3.Jmn;
-  Tm_full_sub[2].a00 = axis3.Ktn * axis3.Kvi_wr * axis3.Kpp_wr / axis3.Jmn;
+  Tm_full_sub[2].a02 = (axis3.Dmn + axis3.Ktn * axis3.fwm + axis3.Ktn * axis3.Kvp * (1.0 + axis3.Kfb)) / axis3.Jmn;
+  Tm_full_sub[2].a01 = (axis3.Ktn * axis3.Kvp * axis3.Kpp + axis3.Ktn * axis3.Kvi * (1.0 + axis3.Kfb) + (axis3.Ktn * axis3.fqs / axis3.Rgn) + (axis3.Ksn / (axis3.Rgn * axis3.Rgn))) / axis3.Jmn;
+  Tm_full_sub[2].a00 = axis3.Ktn * axis3.Kvi * axis3.Kpp / axis3.Jmn;
 
   Tm_full_sub[2].den_3 = Tm_full_sub[2].b01 * Tp * Tp;
   Tm_full_sub[2].den_2 = (-Tm_full_sub[2].b01 * Tp * Tp) * Tm_full_sub[2].b0_rate;
@@ -3988,23 +3988,23 @@ void FDTD_Tm_Full_Init()
 
 void FDTD_Tm_Full_Update()
 {
-  Tm_full_sub[0].a02 = (axis1.Dmn + axis1.Ktn * axis1.fwm_wr + axis1.Ktn * axis1.Kvp_wr * (1.0 + axis1.Kfb_wr)) / axis1.Jmn;
-  Tm_full_sub[0].a01 = (axis1.Ktn * axis1.Kvp_wr * axis1.Kpp_wr + axis1.Ktn * axis1.Kvi_wr * (1.0 + axis1.Kfb_wr) + (axis1.Ktn * axis1.fqs_wr / axis1.Rgn) + (axis1.Ksn / (axis1.Rgn * axis1.Rgn))) / axis1.Jmn;
-  Tm_full_sub[0].a00 = axis1.Ktn * axis1.Kvi_wr * axis1.Kpp_wr / axis1.Jmn;
+  Tm_full_sub[0].a02 = (axis1.Dmn + axis1.Ktn * axis1.fwm + axis1.Ktn * axis1.Kvp * (1.0 + axis1.Kfb)) / axis1.Jmn;
+  Tm_full_sub[0].a01 = (axis1.Ktn * axis1.Kvp * axis1.Kpp + axis1.Ktn * axis1.Kvi * (1.0 + axis1.Kfb) + (axis1.Ktn * axis1.fqs / axis1.Rgn) + (axis1.Ksn / (axis1.Rgn * axis1.Rgn))) / axis1.Jmn;
+  Tm_full_sub[0].a00 = axis1.Ktn * axis1.Kvi * axis1.Kpp / axis1.Jmn;
   Tm_full_sub[0].num_2 = -3.0 + Tm_full_sub[0].a02 * Tp + Tm_full_sub[0].a01 * Tp * Tp;
   Tm_full_sub[0].num_1 = 3.0 - 2.0 * Tm_full_sub[0].a02 * Tp - Tm_full_sub[0].a01 * Tp * Tp + Tm_full_sub[0].a00 * Tp * Tp * Tp;
   Tm_full_sub[0].num_0 = -1.0 + Tm_full_sub[0].a02 * Tp;
 
-  Tm_full_sub[1].a02 = (axis2.Dmn + axis2.Ktn * axis2.fwm_wr + axis2.Ktn * axis2.Kvp_wr * (1.0 + axis2.Kfb_wr)) / axis2.Jmn;
-  Tm_full_sub[1].a01 = (axis2.Ktn * axis2.Kvp_wr * axis2.Kpp_wr + axis2.Ktn * axis2.Kvi_wr * (1.0 + axis2.Kfb_wr) + (axis2.Ktn * axis2.fqs_wr / axis2.Rgn) + (axis2.Ksn / (axis2.Rgn * axis2.Rgn))) / axis2.Jmn;
-  Tm_full_sub[1].a00 = axis2.Ktn * axis2.Kvi_wr * axis2.Kpp_wr / axis2.Jmn;
+  Tm_full_sub[1].a02 = (axis2.Dmn + axis2.Ktn * axis2.fwm + axis2.Ktn * axis2.Kvp * (1.0 + axis2.Kfb)) / axis2.Jmn;
+  Tm_full_sub[1].a01 = (axis2.Ktn * axis2.Kvp * axis2.Kpp + axis2.Ktn * axis2.Kvi * (1.0 + axis2.Kfb) + (axis2.Ktn * axis2.fqs / axis2.Rgn) + (axis2.Ksn / (axis2.Rgn * axis2.Rgn))) / axis2.Jmn;
+  Tm_full_sub[1].a00 = axis2.Ktn * axis2.Kvi * axis2.Kpp / axis2.Jmn;
   Tm_full_sub[1].num_2 = -3.0 + Tm_full_sub[1].a02 * Tp + Tm_full_sub[1].a01 * Tp * Tp;
   Tm_full_sub[1].num_1 = 3.0 - 2.0 * Tm_full_sub[1].a02 * Tp - Tm_full_sub[1].a01 * Tp * Tp + Tm_full_sub[1].a00 * Tp * Tp * Tp;
   Tm_full_sub[1].num_0 = -1.0 + Tm_full_sub[1].a02 * Tp;
 
-  Tm_full_sub[2].a02 = (axis3.Dmn + axis3.Ktn * axis3.fwm_wr + axis3.Ktn * axis3.Kvp_wr * (1.0 + axis3.Kfb_wr)) / axis3.Jmn;
-  Tm_full_sub[2].a01 = (axis3.Ktn * axis3.Kvp_wr * axis3.Kpp_wr + axis3.Ktn * axis3.Kvi_wr * (1.0 + axis3.Kfb_wr) + (axis3.Ktn * axis3.fqs_wr / axis3.Rgn) + (axis3.Ksn / (axis3.Rgn * axis3.Rgn))) / axis3.Jmn;
-  Tm_full_sub[2].a00 = axis3.Ktn * axis3.Kvi_wr * axis3.Kpp_wr / axis3.Jmn;
+  Tm_full_sub[2].a02 = (axis3.Dmn + axis3.Ktn * axis3.fwm + axis3.Ktn * axis3.Kvp * (1.0 + axis3.Kfb)) / axis3.Jmn;
+  Tm_full_sub[2].a01 = (axis3.Ktn * axis3.Kvp * axis3.Kpp + axis3.Ktn * axis3.Kvi * (1.0 + axis3.Kfb) + (axis3.Ktn * axis3.fqs / axis3.Rgn) + (axis3.Ksn / (axis3.Rgn * axis3.Rgn))) / axis3.Jmn;
+  Tm_full_sub[2].a00 = axis3.Ktn * axis3.Kvi * axis3.Kpp / axis3.Jmn;
   Tm_full_sub[2].num_2 = -3.0 + Tm_full_sub[2].a02 * Tp + Tm_full_sub[2].a01 * Tp * Tp;
   Tm_full_sub[2].num_1 = 3.0 - 2.0 * Tm_full_sub[2].a02 * Tp - Tm_full_sub[2].a01 * Tp * Tp + Tm_full_sub[2].a00 * Tp * Tp * Tp;
   Tm_full_sub[2].num_0 = -1.0 + Tm_full_sub[2].a02 * Tp;
