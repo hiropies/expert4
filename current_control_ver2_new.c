@@ -2513,6 +2513,8 @@ void MW_main(void)
   // 1軸目
   gsub[0].tau_cdm = 0.05;
   gsub[0].zw = 50.0;
+  // gsub[0].tau_cdm = 0.058;
+  // gsub[0].zw = 50.0;
   gsub[0].r_cdm1 = 2.5;
   gsub[0].r_cdm2 = 2.0;
   gsub[0].r_cdm3 = 2.0;
@@ -2525,6 +2527,8 @@ void MW_main(void)
   // 2軸目
   gsub[1].tau_cdm = 0.05;
   gsub[1].zw = 30.0;
+  // gsub[1].tau_cdm = 0.058;
+  // gsub[1].zw = 50.0;
   gsub[1].r_cdm1 = 2.5;
   gsub[1].r_cdm2 = 2.0;
   gsub[1].r_cdm3 = 2.0;
@@ -2537,6 +2541,8 @@ void MW_main(void)
   // 3軸目
   gsub[2].tau_cdm = 0.058;
   gsub[2].zw = 30.0;
+  // gsub[2].tau_cdm = 0.058;
+  // gsub[2].zw = 50.0;
   gsub[2].r_cdm1 = 2.5;
   gsub[2].r_cdm2 = 2.0;
   gsub[2].r_cdm3 = 2.0;
@@ -7025,14 +7031,14 @@ void CalcGravIcmp(Robot axis[])
   static float S23 = 0.0;
 
   // 実験用
-  // C23 = cos(axis2.ql + axis3.ql);
-  // S2 = sin(axis2.ql);
-  // S23 = sin(axis2.ql + axis3.ql);
+  C23 = cos(axis2.ql + axis3.ql);
+  S2 = sin(axis2.ql);
+  S23 = sin(axis2.ql + axis3.ql);
 
   // Wr出力確認用
-  C23 = cos(axis2.ql_calc + axis3.ql_calc);
-  S2 = sin(axis2.ql_calc);
-  S23 = sin(axis2.ql_calc + axis3.ql_calc);
+  // C23 = cos(axis2.ql_calc + axis3.ql_calc);
+  // S2 = sin(axis2.ql_calc);
+  // S23 = sin(axis2.ql_calc + axis3.ql_calc);
 
   // ラグランジュ法に基づく動力学
   // 重力項
