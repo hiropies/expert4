@@ -637,10 +637,10 @@ volatile float WAVE_VWZ;
 // volatile float WAVE_wr_al3 = 0;
 // volatile float WAVE_wr_n3 = 0;
 // volatile float WAVE_wr_m3 = 0;
-/*********************************
-  FRA試験用変数
 volatile float Wave_FRAFreq = 0.0;    // FRA更新周波数
 volatile float Wave_FRATime = 0.0;    // FRA試験時間数
+/*********************************
+FRA試験用変数
 volatile float Wave_Nif = 0.0;        // Ni/f:fをN回分取得するまでの時間
 volatile int Wave_FRAtest_flag = 0.0; // FRA試験開始フラグの描画
 
@@ -1765,7 +1765,7 @@ interrupt void ControlFunction(void)
           }
           if (flag_FRA_test_start == 1)
           {
-            static float Ratio_FRA_Au = 0.4;
+            static float Ratio_FRA_Au = 1.0;
             if (freq != 0)
             {
               wmcmd1 = 0.0;
@@ -2322,12 +2322,12 @@ interrupt void ControlFunction(void)
   WAVE_Icmp2 = axis2.Icmp;
   WAVE_Icmp3 = axis3.Icmp;
 
-  WAVE_Icmd1 = axis1.Icmd;
-  WAVE_Icmd2 = axis2.Icmd;
-  WAVE_Icmd3 = axis3.Icmd;
+  // WAVE_Icmd1 = axis1.Icmd;
+  // WAVE_Icmd2 = axis2.Icmd;
+  // WAVE_Icmd3 = axis3.Icmd;
 
-  WAVE_Freq = freq;
-  WAVE_Tfra = Time_FRA;
+  // WAVE_Freq = freq;
+  // WAVE_Tfra = Time_FRA;
 
   // ModRatioU = axis2.Vu_std;
   // ModRatioV = axis2.Vv_std;
@@ -2478,7 +2478,7 @@ interrupt void ControlFunction(void)
   Wave_FRAFreq = freq;     // FRA更新周波数
   Wave_FRATime = Time_FRA; // FRA試験時間数
   // Wave_Nif = Ni/freq;			//Ni/f:fをN回分取得するまでの時間
-  Wave_FRAtest_flag = flag_FRA_test_start;
+  // Wave_FRAtest_flag = flag_FRA_test_start;
 
   // 制御演算開始
   t = (float)LoopCount * Ts; //!< 時刻計算
