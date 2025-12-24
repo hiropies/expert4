@@ -56,7 +56,8 @@
 // PIオリジナル　DPD　β調整　指令値補正用ゲイン
 // static const float CmdGain[] = {1.0499, 1.0600, 1.0402};
 static const float CmdGain[] = {1.3200, 1.2748, 1.2476};
-static const float CmdGain_EX[] = {0.9145, 0.9172, 0.8908};
+// static const float CmdGain_EX[] = {0.9145, 0.9172, 0.8908};
+static const float CmdGain_EX[] = {1.0000, 1.0000, 1.0000};
 
 /// 制御用定数
 static const float PI = 3.14159265358979; /// 円周率
@@ -162,22 +163,22 @@ int Flag_ARCS_clear = 0; // ARCSへの制御フラグ信号
 volatile float speed_hand = 2.0;           // 軌跡制御手先速度
 volatile float ref_wm_direct = 0.0;         // 全慣性測定用速度指令値
 volatile int debug_theta = 0;               // デバッグ用変数。axis1.theta_rl_fullをこれで置き換えて、プログラムの挙動を見る
-volatile float load_angle_limit_deg1 = 0.0; // 1軸 負荷側角度リミット
-volatile float load_angle_limit_deg2 = 0.0; // 2軸 負荷側角度リミット
-volatile float load_angle_limit_deg3 = 0.0; // 3軸 負荷側角度リミット
-volatile float load_angle_limit_deg5 = 0.0; // 5軸 負荷側角度リミット
-volatile float load_angle_limit_rad1 = 0.0; // 1軸 負荷側角度リミット
-volatile float load_angle_limit_rad2 = 0.0; // 2軸 負荷側角度リミット
-volatile float load_angle_limit_rad3 = 0.0; // 3軸 負荷側角度リミット
-volatile float load_angle_limit_rad5 = 0.0; // 5軸 負荷側角度リミット
-volatile int left_rotation_flag = 1;        // 1軸 ロボットから見て左方向に回転させるフラグ
-volatile int right_rotation_flag = 0;       // 1軸 ロボットから見て右方向に回転させるフラグ
-volatile int down_rotation_flag2 = 1;       // 2軸 ロボットから見て下方向に回転させるフラグ
-volatile int up_rotation_flag2 = 0;         // 2軸 ロボットから見て上方向に回転させるフラグ
-volatile int down_rotation_flag3 = 1;       // 3軸 ロボットから見て下方向に回転させるフラグ
-volatile int up_rotation_flag3 = 0;         // 3軸 ロボットから見て上方向に回転させるフラグ
-volatile int down_rotation_flag5 = 1;       // 5軸 ロボットから見て下方向に回転させるフラグ
-volatile int up_rotation_flag5 = 0;         // 5軸 ロボットから見て上方向に回転させるフラグ
+// volatile float load_angle_limit_deg1 = 0.0; // 1軸 負荷側角度リミット
+// volatile float load_angle_limit_deg2 = 0.0; // 2軸 負荷側角度リミット
+// volatile float load_angle_limit_deg3 = 0.0; // 3軸 負荷側角度リミット
+// volatile float load_angle_limit_deg5 = 0.0; // 5軸 負荷側角度リミット
+// volatile float load_angle_limit_rad1 = 0.0; // 1軸 負荷側角度リミット
+// volatile float load_angle_limit_rad2 = 0.0; // 2軸 負荷側角度リミット
+// volatile float load_angle_limit_rad3 = 0.0; // 3軸 負荷側角度リミット
+// volatile float load_angle_limit_rad5 = 0.0; // 5軸 負荷側角度リミット
+// volatile int left_rotation_flag = 1;        // 1軸 ロボットから見て左方向に回転させるフラグ
+// volatile int right_rotation_flag = 0;       // 1軸 ロボットから見て右方向に回転させるフラグ
+// volatile int down_rotation_flag2 = 1;       // 2軸 ロボットから見て下方向に回転させるフラグ
+// volatile int up_rotation_flag2 = 0;         // 2軸 ロボットから見て上方向に回転させるフラグ
+// volatile int down_rotation_flag3 = 1;       // 3軸 ロボットから見て下方向に回転させるフラグ
+// volatile int up_rotation_flag3 = 0;         // 3軸 ロボットから見て上方向に回転させるフラグ
+// volatile int down_rotation_flag5 = 1;       // 5軸 ロボットから見て下方向に回転させるフラグ
+// volatile int up_rotation_flag5 = 0;         // 5軸 ロボットから見て上方向に回転させるフラグ
 
 // 変調率
 volatile float WAVE_MRU1;
@@ -197,61 +198,64 @@ volatile float WAVE_MRBR3;
 
 /// ゲイン
 // 1軸目
-volatile float WAVE_Kpp1 = 0.0;
-volatile float WAVE_Kff1 = 0.0;
-volatile float WAVE_Kfb1 = 0.0;
-volatile float WAVE_Kvp1 = 0.0;
-volatile float WAVE_Kvi1 = 0.0;
-volatile float WAVE_fwm1 = 0.0;
-volatile float WAVE_fqs1 = 0.0;
-volatile float WAVE_fwl1 = 0.0;
-volatile float WAVE_Kpp1_wr = 0.0;
-volatile float WAVE_Kff1_wr = 0.0;
-volatile float WAVE_Kfb1_wr = 0.0;
-volatile float WAVE_Kvp1_wr = 0.0;
-volatile float WAVE_Kvi1_wr = 0.0;
-volatile float WAVE_fwm1_wr = 0.0;
-volatile float WAVE_fqs1_wr = 0.0;
-volatile float WAVE_fwl1_wr = 0.0;
+// volatile float WAVE_Kpp1 = 0.0;
+// volatile float WAVE_Kff1 = 0.0;
+// volatile float WAVE_Kfb1 = 0.0;
+// volatile float WAVE_Kvp1 = 0.0;
+// volatile float WAVE_Kvi1 = 0.0;
+// volatile float WAVE_fwm1 = 0.0;
+// volatile float WAVE_fqs1 = 0.0;
+// volatile float WAVE_fwl1 = 0.0;
+// volatile float WAVE_Kpp1_wr = 0.0;
+// volatile float WAVE_Kff1_wr = 0.0;
+// volatile float WAVE_Kfb1_wr = 0.0;
+// volatile float WAVE_Kvp1_wr = 0.0;
+// volatile float WAVE_Kvi1_wr = 0.0;
+// volatile float WAVE_fwm1_wr = 0.0;
+// volatile float WAVE_fqs1_wr = 0.0;
+// volatile float WAVE_fwl1_wr = 0.0;
 // 2軸目
-volatile float WAVE_Kpp2 = 0.0;
-volatile float WAVE_Kff2 = 0.0;
-volatile float WAVE_Kfb2 = 0.0;
-volatile float WAVE_Kvp2 = 0.0;
-volatile float WAVE_Kvi2 = 0.0;
-volatile float WAVE_fwm2 = 0.0;
-volatile float WAVE_fqs2 = 0.0;
-volatile float WAVE_fwl2 = 0.0;
-volatile float WAVE_Kpp2_wr = 0.0;
-volatile float WAVE_Kff2_wr = 0.0;
-volatile float WAVE_Kfb2_wr = 0.0;
-volatile float WAVE_Kvp2_wr = 0.0;
-volatile float WAVE_Kvi2_wr = 0.0;
-volatile float WAVE_fwm2_wr = 0.0;
-volatile float WAVE_fqs2_wr = 0.0;
-volatile float WAVE_fwl2_wr = 0.0;
+// volatile float WAVE_Kpp2 = 0.0;
+// volatile float WAVE_Kff2 = 0.0;
+// volatile float WAVE_Kfb2 = 0.0;
+// volatile float WAVE_Kvp2 = 0.0;
+// volatile float WAVE_Kvi2 = 0.0;
+// volatile float WAVE_fwm2 = 0.0;
+// volatile float WAVE_fqs2 = 0.0;
+// volatile float WAVE_fwl2 = 0.0;
+// volatile float WAVE_Kpp2_wr = 0.0;
+// volatile float WAVE_Kff2_wr = 0.0;
+// volatile float WAVE_Kfb2_wr = 0.0;
+// volatile float WAVE_Kvp2_wr = 0.0;
+// volatile float WAVE_Kvi2_wr = 0.0;
+// volatile float WAVE_fwm2_wr = 0.0;
+// volatile float WAVE_fqs2_wr = 0.0;
+// volatile float WAVE_fwl2_wr = 0.0;
 // 3軸目
-volatile float WAVE_Kpp3 = 0.0;
-volatile float WAVE_Kff3 = 0.0;
-volatile float WAVE_Kfb3 = 0.0;
-volatile float WAVE_Kvp3 = 0.0;
-volatile float WAVE_Kvi3 = 0.0;
-volatile float WAVE_fwm3 = 0.0;
-volatile float WAVE_fqs3 = 0.0;
-volatile float WAVE_fwl3 = 0.0;
-volatile float WAVE_Kpp3_wr = 0.0;
-volatile float WAVE_Kff3_wr = 0.0;
-volatile float WAVE_Kfb3_wr = 0.0;
-volatile float WAVE_Kvp3_wr = 0.0;
-volatile float WAVE_Kvi3_wr = 0.0;
-volatile float WAVE_fwm3_wr = 0.0;
-volatile float WAVE_fqs3_wr = 0.0;
-volatile float WAVE_fwl3_wr = 0.0;
+// volatile float WAVE_Kpp3 = 0.0;
+// volatile float WAVE_Kff3 = 0.0;
+// volatile float WAVE_Kfb3 = 0.0;
+// volatile float WAVE_Kvp3 = 0.0;
+// volatile float WAVE_Kvi3 = 0.0;
+// volatile float WAVE_fwm3 = 0.0;
+// volatile float WAVE_fqs3 = 0.0;
+// volatile float WAVE_fwl3 = 0.0;
+// volatile float WAVE_Kpp3_wr = 0.0;
+// volatile float WAVE_Kff3_wr = 0.0;
+// volatile float WAVE_Kfb3_wr = 0.0;
+// volatile float WAVE_Kvp3_wr = 0.0;
+// volatile float WAVE_Kvi3_wr = 0.0;
+// volatile float WAVE_fwm3_wr = 0.0;
+// volatile float WAVE_fqs3_wr = 0.0;
+// volatile float WAVE_fwl3_wr = 0.0;
 
 // 動力学外乱トルク
 volatile float WAVE_tauLdyn1; // [Nm] 動力学外乱トルク
 volatile float WAVE_tauLdyn2; // [Nm] 動力学外乱トルク
 volatile float WAVE_tauLdyn3; // [Nm] 動力学外乱トルク
+volatile float WAVE_tauLwoG1; // [Nm] 動力学外乱トルク 重力項なし
+volatile float WAVE_tauLwoG2; // [Nm] 動力学外乱トルク 重力項なし
+volatile float WAVE_tauLwoG3; // [Nm] 動力学外乱トルク 重力項なし
 // 動力学によるJl計算値
 volatile float WAVE_Jl_calc1; // [kgm^2] 動力学によるJl計算値
 volatile float WAVE_Jl_calc2; // [kgm^2] 動力学によるJl計算値
@@ -262,71 +266,71 @@ volatile float WAVE_Jl_Wr2; // [kgm^2] 動力学によるJl計算値
 volatile float WAVE_Jl_Wr3; // [kgm^2] 動力学によるJl計算値
 
 // 　負荷側情報計算関数　計算結果
-volatile float WAVE_al_calc1 = 0.0;
-volatile float WAVE_wl_calc1 = 0.0;
-volatile float WAVE_ql_calc1 = 0.0;
-volatile float WAVE_wm_calc1 = 0.0;
-volatile float WAVE_al_calc2 = 0.0;
-volatile float WAVE_wl_calc2 = 0.0;
-volatile float WAVE_ql_calc2 = 0.0;
-volatile float WAVE_wm_calc2 = 0.0;
-volatile float WAVE_al_calc3 = 0.0;
-volatile float WAVE_wl_calc3 = 0.0;
-volatile float WAVE_ql_calc3 = 0.0;
-volatile float WAVE_wm_calc3 = 0.0;
+// volatile float WAVE_al_calc1 = 0.0;
+// volatile float WAVE_wl_calc1 = 0.0;
+// volatile float WAVE_ql_calc1 = 0.0;
+// volatile float WAVE_wm_calc1 = 0.0;
+// volatile float WAVE_al_calc2 = 0.0;
+// volatile float WAVE_wl_calc2 = 0.0;
+// volatile float WAVE_ql_calc2 = 0.0;
+// volatile float WAVE_wm_calc2 = 0.0;
+// volatile float WAVE_al_calc3 = 0.0;
+// volatile float WAVE_wl_calc3 = 0.0;
+// volatile float WAVE_ql_calc3 = 0.0;
+// volatile float WAVE_wm_calc3 = 0.0;
 
-volatile float WAVE_al_calc_DPD1 = 0.0;
-volatile float WAVE_wl_calc_DPD1 = 0.0;
-volatile float WAVE_ql_calc_DPD1 = 0.0;
-volatile float WAVE_wm_calc_DPD1 = 0.0;
-volatile float WAVE_al_calc_DPD2 = 0.0;
-volatile float WAVE_wl_calc_DPD2 = 0.0;
-volatile float WAVE_ql_calc_DPD2 = 0.0;
-volatile float WAVE_wm_calc_DPD2 = 0.0;
-volatile float WAVE_al_calc_DPD3 = 0.0;
-volatile float WAVE_wl_calc_DPD3 = 0.0;
-volatile float WAVE_ql_calc_DPD3 = 0.0;
-volatile float WAVE_wm_calc_DPD3 = 0.0;
+// volatile float WAVE_al_calc_DPD1 = 0.0;
+// volatile float WAVE_wl_calc_DPD1 = 0.0;
+// volatile float WAVE_ql_calc_DPD1 = 0.0;
+// volatile float WAVE_wm_calc_DPD1 = 0.0;
+// volatile float WAVE_al_calc_DPD2 = 0.0;
+// volatile float WAVE_wl_calc_DPD2 = 0.0;
+// volatile float WAVE_ql_calc_DPD2 = 0.0;
+// volatile float WAVE_wm_calc_DPD2 = 0.0;
+// volatile float WAVE_al_calc_DPD3 = 0.0;
+// volatile float WAVE_wl_calc_DPD3 = 0.0;
+// volatile float WAVE_ql_calc_DPD3 = 0.0;
+// volatile float WAVE_wm_calc_DPD3 = 0.0;
 
-volatile float WAVE_est_wm1 = 0.0;
-volatile float WAVE_est_qs1 = 0.0;
-volatile float WAVE_est_wl1 = 0.0;
-volatile float WAVE_est_wm2 = 0.0;
-volatile float WAVE_est_qs2 = 0.0;
-volatile float WAVE_est_wl2 = 0.0;
-volatile float WAVE_est_wm3 = 0.0;
-volatile float WAVE_est_qs3 = 0.0;
-volatile float WAVE_est_wl3 = 0.0;
+// volatile float WAVE_est_wm1 = 0.0;
+// volatile float WAVE_est_qs1 = 0.0;
+// volatile float WAVE_est_wl1 = 0.0;
+// volatile float WAVE_est_wm2 = 0.0;
+// volatile float WAVE_est_qs2 = 0.0;
+// volatile float WAVE_est_wl2 = 0.0;
+// volatile float WAVE_est_wm3 = 0.0;
+// volatile float WAVE_est_qs3 = 0.0;
+// volatile float WAVE_est_wl3 = 0.0;
 
-volatile float WAVE_est_conv_wm1 = 0.0;
-volatile float WAVE_est_conv_qs1 = 0.0;
-volatile float WAVE_est_conv_wl1 = 0.0;
-volatile float WAVE_est_conv_wm2 = 0.0;
-volatile float WAVE_est_conv_qs2 = 0.0;
-volatile float WAVE_est_conv_wl2 = 0.0;
-volatile float WAVE_est_conv_wm3 = 0.0;
-volatile float WAVE_est_conv_qs3 = 0.0;
-volatile float WAVE_est_conv_wl3 = 0.0;
+// volatile float WAVE_est_conv_wm1 = 0.0;
+// volatile float WAVE_est_conv_qs1 = 0.0;
+// volatile float WAVE_est_conv_wl1 = 0.0;
+// volatile float WAVE_est_conv_wm2 = 0.0;
+// volatile float WAVE_est_conv_qs2 = 0.0;
+// volatile float WAVE_est_conv_wl2 = 0.0;
+// volatile float WAVE_est_conv_wm3 = 0.0;
+// volatile float WAVE_est_conv_qs3 = 0.0;
+// volatile float WAVE_est_conv_wl3 = 0.0;
 
-volatile float WAVE_est_prop_wm1 = 0.0;
-volatile float WAVE_est_prop_qs1 = 0.0;
-volatile float WAVE_est_prop_wl1 = 0.0;
-volatile float WAVE_est_prop_wm2 = 0.0;
-volatile float WAVE_est_prop_qs2 = 0.0;
-volatile float WAVE_est_prop_wl2 = 0.0;
-volatile float WAVE_est_prop_wm3 = 0.0;
-volatile float WAVE_est_prop_qs3 = 0.0;
-volatile float WAVE_est_prop_wl3 = 0.0;
+// volatile float WAVE_est_prop_wm1 = 0.0;
+// volatile float WAVE_est_prop_qs1 = 0.0;
+// volatile float WAVE_est_prop_wl1 = 0.0;
+// volatile float WAVE_est_prop_wm2 = 0.0;
+// volatile float WAVE_est_prop_qs2 = 0.0;
+// volatile float WAVE_est_prop_wl2 = 0.0;
+// volatile float WAVE_est_prop_wm3 = 0.0;
+// volatile float WAVE_est_prop_qs3 = 0.0;
+// volatile float WAVE_est_prop_wl3 = 0.0;
 
-volatile float WAVE_est_ISOB_wm1 = 0.0;
-volatile float WAVE_est_ISOB_qs1 = 0.0;
-volatile float WAVE_est_ISOB_wl1 = 0.0;
-volatile float WAVE_est_ISOB_wm2 = 0.0;
-volatile float WAVE_est_ISOB_qs2 = 0.0;
-volatile float WAVE_est_ISOB_wl2 = 0.0;
-volatile float WAVE_est_ISOB_wm3 = 0.0;
-volatile float WAVE_est_ISOB_qs3 = 0.0;
-volatile float WAVE_est_ISOB_wl3 = 0.0;
+// volatile float WAVE_est_ISOB_wm1 = 0.0;
+// volatile float WAVE_est_ISOB_qs1 = 0.0;
+// volatile float WAVE_est_ISOB_wl1 = 0.0;
+// volatile float WAVE_est_ISOB_wm2 = 0.0;
+// volatile float WAVE_est_ISOB_qs2 = 0.0;
+// volatile float WAVE_est_ISOB_wl2 = 0.0;
+// volatile float WAVE_est_ISOB_wm3 = 0.0;
+// volatile float WAVE_est_ISOB_qs3 = 0.0;
+// volatile float WAVE_est_ISOB_wl3 = 0.0;
 
 /*****************************
  応答側の取得データ
@@ -393,9 +397,9 @@ volatile float WAVE_wm_ref3;
 volatile float WAVE_wm_cmd1;
 volatile float WAVE_wm_cmd2;
 volatile float WAVE_wm_cmd3;
-volatile float WAVE_wm_CCC1;
-volatile float WAVE_wm_CCC2;
-volatile float WAVE_wm_CCC3;
+// volatile float WAVE_wm_CCC1;
+// volatile float WAVE_wm_CCC2;
+// volatile float WAVE_wm_CCC3;
 volatile float WAVE_qm1;
 volatile float WAVE_qm2;
 volatile float WAVE_qm3;
@@ -415,18 +419,18 @@ volatile float WAVE_Isfb1;
 volatile float WAVE_Isfb2;
 volatile float WAVE_Isfb3;
 
-volatile float WAVE_jark1;
-volatile float WAVE_jark2;
-volatile float WAVE_jark3;
-volatile float WAVE_am_TriAccCmd1;
-volatile float WAVE_am_TriAccCmd2;
-volatile float WAVE_am_TriAccCmd3;
-volatile float WAVE_wm_TriAccCmd1;
-volatile float WAVE_wm_TriAccCmd2;
-volatile float WAVE_wm_TriAccCmd3;
-volatile float WAVE_qm_TriAccCmd1;
-volatile float WAVE_qm_TriAccCmd2;
-volatile float WAVE_qm_TriAccCmd3;
+// volatile float WAVE_jark1;
+// volatile float WAVE_jark2;
+// volatile float WAVE_jark3;
+// volatile float WAVE_am_TriAccCmd1;
+// volatile float WAVE_am_TriAccCmd2;
+// volatile float WAVE_am_TriAccCmd3;
+// volatile float WAVE_wm_TriAccCmd1;
+// volatile float WAVE_wm_TriAccCmd2;
+// volatile float WAVE_wm_TriAccCmd3;
+// volatile float WAVE_qm_TriAccCmd1;
+// volatile float WAVE_qm_TriAccCmd2;
+// volatile float WAVE_qm_TriAccCmd3;
 
 // 外部センサ取得用変数
 volatile float WAVE_ACC_LW8079 = 0.0;      // 加速度センサ
@@ -527,88 +531,115 @@ volatile float WAVE_VWX;
 volatile float WAVE_VWY;
 volatile float WAVE_VWZ;
 
-volatile float WAVE_AccCmd1 = 0;
-volatile float WAVE_VelCmd1 = 0;
-volatile float WAVE_AccCmd2 = 0;
-volatile float WAVE_VelCmd2 = 0;
-volatile float WAVE_AccCmd3 = 0;
-volatile float WAVE_VelCmd3 = 0;
+// volatile float WAVE_AccCmd1 = 0;
+// volatile float WAVE_VelCmd1 = 0;
+// volatile float WAVE_AccCmd2 = 0;
+// volatile float WAVE_VelCmd2 = 0;
+// volatile float WAVE_AccCmd3 = 0;
+// volatile float WAVE_VelCmd3 = 0;
 
-volatile float WAVE_av4_1 = 0;
-volatile float WAVE_av3_1 = 0;
-volatile float WAVE_av2_1 = 0;
-volatile float WAVE_av1_1 = 0;
-volatile float WAVE_av0_1 = 0;
-volatile float WAVE_bv3_1 = 0;
-volatile float WAVE_bv2_1 = 0;
-volatile float WAVE_bv1_1 = 0;
-volatile float WAVE_bv0_1 = 0;
-volatile float WAVE_aq2_1 = 0;
-volatile float WAVE_aq1_1 = 0;
-volatile float WAVE_aq0_1 = 0;
+// volatile float WAVE_av4_1 = 0;
+// volatile float WAVE_av3_1 = 0;
+// volatile float WAVE_av2_1 = 0;
+// volatile float WAVE_av1_1 = 0;
+// volatile float WAVE_av0_1 = 0;
+// volatile float WAVE_bv3_1 = 0;
+// volatile float WAVE_bv2_1 = 0;
+// volatile float WAVE_bv1_1 = 0;
+// volatile float WAVE_bv0_1 = 0;
+// volatile float WAVE_aq2_1 = 0;
+// volatile float WAVE_aq1_1 = 0;
+// volatile float WAVE_aq0_1 = 0;
 
-volatile float WAVE_av4_2 = 0;
-volatile float WAVE_av3_2 = 0;
-volatile float WAVE_av2_2 = 0;
-volatile float WAVE_av1_2 = 0;
-volatile float WAVE_av0_2 = 0;
-volatile float WAVE_bv3_2 = 0;
-volatile float WAVE_bv2_2 = 0;
-volatile float WAVE_bv1_2 = 0;
-volatile float WAVE_bv0_2 = 0;
-volatile float WAVE_aq2_2 = 0;
-volatile float WAVE_aq1_2 = 0;
-volatile float WAVE_aq0_2 = 0;
+// volatile float WAVE_av4_2 = 0;
+// volatile float WAVE_av3_2 = 0;
+// volatile float WAVE_av2_2 = 0;
+// volatile float WAVE_av1_2 = 0;
+// volatile float WAVE_av0_2 = 0;
+// volatile float WAVE_bv3_2 = 0;
+// volatile float WAVE_bv2_2 = 0;
+// volatile float WAVE_bv1_2 = 0;
+// volatile float WAVE_bv0_2 = 0;
+// volatile float WAVE_aq2_2 = 0;
+// volatile float WAVE_aq1_2 = 0;
+// volatile float WAVE_aq0_2 = 0;
 
-volatile float WAVE_av4_3 = 0;
-volatile float WAVE_av3_3 = 0;
-volatile float WAVE_av2_3 = 0;
-volatile float WAVE_av1_3 = 0;
-volatile float WAVE_av0_3 = 0;
-volatile float WAVE_bv3_3 = 0;
-volatile float WAVE_bv2_3 = 0;
-volatile float WAVE_bv1_3 = 0;
-volatile float WAVE_bv0_3 = 0;
-volatile float WAVE_aq2_3 = 0;
-volatile float WAVE_aq1_3 = 0;
-volatile float WAVE_aq0_3 = 0;
+// volatile float WAVE_av4_3 = 0;
+// volatile float WAVE_av3_3 = 0;
+// volatile float WAVE_av2_3 = 0;
+// volatile float WAVE_av1_3 = 0;
+// volatile float WAVE_av0_3 = 0;
+// volatile float WAVE_bv3_3 = 0;
+// volatile float WAVE_bv2_3 = 0;
+// volatile float WAVE_bv1_3 = 0;
+// volatile float WAVE_bv0_3 = 0;
+// volatile float WAVE_aq2_3 = 0;
+// volatile float WAVE_aq1_3 = 0;
+// volatile float WAVE_aq0_3 = 0;
 
-volatile float WAVE_av4_1_wr = 0;
-volatile float WAVE_av3_1_wr = 0;
-volatile float WAVE_av2_1_wr = 0;
-volatile float WAVE_av1_1_wr = 0;
-volatile float WAVE_av0_1_wr = 0;
-volatile float WAVE_bv3_1_wr = 0;
-volatile float WAVE_bv2_1_wr = 0;
-volatile float WAVE_bv1_1_wr = 0;
-volatile float WAVE_bv0_1_wr = 0;
-volatile float WAVE_aq2_1_wr = 0;
-volatile float WAVE_aq1_1_wr = 0;
-volatile float WAVE_aq0_1_wr = 0;
-volatile float WAVE_av4_2_wr = 0;
-volatile float WAVE_av3_2_wr = 0;
-volatile float WAVE_av2_2_wr = 0;
-volatile float WAVE_av1_2_wr = 0;
-volatile float WAVE_av0_2_wr = 0;
-volatile float WAVE_bv3_2_wr = 0;
-volatile float WAVE_bv2_2_wr = 0;
-volatile float WAVE_bv1_2_wr = 0;
-volatile float WAVE_bv0_2_wr = 0;
-volatile float WAVE_aq2_2_wr = 0;
-volatile float WAVE_aq1_2_wr = 0;
-volatile float WAVE_aq0_2_wr = 0;
-volatile float WAVE_av4_3_wr = 0;
-volatile float WAVE_av3_3_wr = 0;
-volatile float WAVE_av2_3_wr = 0;
-volatile float WAVE_av1_3_wr = 0;
-volatile float WAVE_av0_3_wr = 0;
-volatile float WAVE_bv3_3_wr = 0;
-volatile float WAVE_bv2_3_wr = 0;
-volatile float WAVE_bv1_3_wr = 0;
-volatile float WAVE_bv0_3_wr = 0;
-volatile float WAVE_aq2_3_wr = 0;
-volatile float WAVE_aq1_3_wr = 0;
-volatile float WAVE_aq0_3_wr = 0;
+// volatile float WAVE_av4_1_wr = 0;
+// volatile float WAVE_av3_1_wr = 0;
+// volatile float WAVE_av2_1_wr = 0;
+// volatile float WAVE_av1_1_wr = 0;
+// volatile float WAVE_av0_1_wr = 0;
+// volatile float WAVE_bv3_1_wr = 0;
+// volatile float WAVE_bv2_1_wr = 0;
+// volatile float WAVE_bv1_1_wr = 0;
+// volatile float WAVE_bv0_1_wr = 0;
+// volatile float WAVE_aq2_1_wr = 0;
+// volatile float WAVE_aq1_1_wr = 0;
+// volatile float WAVE_aq0_1_wr = 0;
+// volatile float WAVE_av4_2_wr = 0;
+// volatile float WAVE_av3_2_wr = 0;
+// volatile float WAVE_av2_2_wr = 0;
+// volatile float WAVE_av1_2_wr = 0;
+// volatile float WAVE_av0_2_wr = 0;
+// volatile float WAVE_bv3_2_wr = 0;
+// volatile float WAVE_bv2_2_wr = 0;
+// volatile float WAVE_bv1_2_wr = 0;
+// volatile float WAVE_bv0_2_wr = 0;
+// volatile float WAVE_aq2_2_wr = 0;
+// volatile float WAVE_aq1_2_wr = 0;
+// volatile float WAVE_aq0_2_wr = 0;
+// volatile float WAVE_av4_3_wr = 0;
+// volatile float WAVE_av3_3_wr = 0;
+// volatile float WAVE_av2_3_wr = 0;
+// volatile float WAVE_av1_3_wr = 0;
+// volatile float WAVE_av0_3_wr = 0;
+// volatile float WAVE_bv3_3_wr = 0;
+// volatile float WAVE_bv2_3_wr = 0;
+// volatile float WAVE_bv1_3_wr = 0;
+// volatile float WAVE_bv0_3_wr = 0;
+// volatile float WAVE_aq2_3_wr = 0;
+// volatile float WAVE_aq1_3_wr = 0;
+// volatile float WAVE_aq0_3_wr = 0;
+
+// volatile float WAVE_wr_wm1 = 0;
+// volatile float WAVE_wr_qm1 = 0;
+// volatile float WAVE_wr_qs1 = 0;
+// volatile float WAVE_wr_wl1 = 0;
+// volatile float WAVE_wr_ql1 = 0;
+// volatile float WAVE_wr_al1 = 0;
+// volatile float WAVE_wr_n1 = 0;
+// volatile float WAVE_wr_m1 = 0;
+
+// volatile float WAVE_wr_wm2 = 0;
+// volatile float WAVE_wr_qm2 = 0;
+// volatile float WAVE_wr_qs2 = 0;
+// volatile float WAVE_wr_wl2 = 0;
+// volatile float WAVE_wr_ql2 = 0;
+// volatile float WAVE_wr_al2 = 0;
+// volatile float WAVE_wr_n2 = 0;
+// volatile float WAVE_wr_m2 = 0;
+
+// volatile float WAVE_wr_wm3 = 0;
+// volatile float WAVE_wr_qm3 = 0;
+// volatile float WAVE_wr_qs3 = 0;
+// volatile float WAVE_wr_wl3 = 0;
+// volatile float WAVE_wr_ql3 = 0;
+// volatile float WAVE_wr_al3 = 0;
+// volatile float WAVE_wr_n3 = 0;
+// volatile float WAVE_wr_m3 = 0;
 
 #pragma SET_DATA_SECTION(".DATA_ON_HIGHER_SPEED")
 
@@ -789,6 +820,13 @@ typedef volatile struct Robot
   float tauLdyn; // 動力学外乱トルク(慣性行列の非対角項および遠心・コリオリ、重力項)
   float tauLdyn_z1;
   float tauLdyn_z2;
+
+  // 動力学計算結果
+  float tauLdyn_woG;
+  float tauLdyn_woG_z1;
+  float tauLdyn_woG_z2;
+  float tauLdyn_woG_z3;
+
   float Jl_calc; // 慣性行列の対角項
   float Jl_calc_z1;
   float Jl_calc_z2;
@@ -996,6 +1034,27 @@ typedef struct Fdtd_Tm_Coefficient
 
 Fdtd_Tm_Coefficient Tm_sub[3] = {0};
 
+typedef struct Fdtd_Tm_full_Coefficient
+{
+  float den_0;
+  float den_1;
+  float den_2;
+  float den_3;
+  float num_0;
+  float num_1;
+  float num_2;
+  float num_3;
+
+  float b0_rate;
+  float b01;
+  float a03;
+  float a02;
+  float a01;
+  float a00;
+} Fdtd_Tm_full_Coefficient;
+
+Fdtd_Tm_full_Coefficient Tm_full_sub[3] = {0};
+
 #pragma SET_DATA_SECTION()
 
 /*! @struct Controller
@@ -1081,7 +1140,11 @@ void CalcFDTDTSOBInit(void);
 void FDTDSOB(Robot *robo);
 // FF制御器　補償電流計算Tm(z)
 void FDTD_Tm(Robot *robo);
+void FDTD_Tm_woG(Robot *robo);
+void FDTD_Tm_Full_woG(Robot *robo);
 void FDTD_Tm_Init(void);
+void FDTD_Tm_Full_Init(void);
+void FDTD_Tm_Full_Update(void);
 /// 電流と各センサの値取得
 void GetVoltAndCurrent(Robot *robo, Sensor *sense);
 /// センサオフセット計算
@@ -1291,9 +1354,16 @@ interrupt void ControlFunction(void)
       CalcTauLDyn(joint);
 
       // FF制御　動力学補償電流
-      FDTD_Tm(&axis1);
-      FDTD_Tm(&axis2);
-      FDTD_Tm(&axis3);
+      FDTD_Tm_Full_Update(); // 重力補償無し
+      // FDTD_Tm(&axis1); // 重力補償込み
+      // FDTD_Tm(&axis2); // 重力補償込み
+      // FDTD_Tm(&axis3); // 重力補償込み
+      // FDTD_Tm_woG(&axis1); // 重力補償無し
+      // FDTD_Tm_woG(&axis2); // 重力補償無し
+      // FDTD_Tm_woG(&axis3); // 重力補償無し
+      FDTD_Tm_Full_woG(&axis1); // 重力補償無し
+      FDTD_Tm_Full_woG(&axis2); // 重力補償無し
+      FDTD_Tm_Full_woG(&axis3); // 重力補償無し
 
       // axis1.IrefQ = Ref_Iq_ref_direct;
       // axis1.IrefQ = Ref_Iq_ref_direct*sinf(2.0*PI*t); // 正弦波指令 電流指令確認用;
@@ -1411,9 +1481,16 @@ interrupt void ControlFunction(void)
         }
 
         // FF制御　動力学補償電流
-        FDTD_Tm(&axis1);
-        FDTD_Tm(&axis2);
-        FDTD_Tm(&axis3);
+        FDTD_Tm_Full_Update(); // 重力補償無し
+        // FDTD_Tm(&axis1); // 重力補償込み
+        // FDTD_Tm(&axis2); // 重力補償込み
+        // FDTD_Tm(&axis3); // 重力補償込み
+        // FDTD_Tm_woG(&axis1); // 重力補償無し
+        // FDTD_Tm_woG(&axis2); // 重力補償無し
+        // FDTD_Tm_woG(&axis3); // 重力補償無し
+        FDTD_Tm_Full_woG(&axis1); // 重力補償無し
+        FDTD_Tm_Full_woG(&axis2); // 重力補償無し
+        FDTD_Tm_Full_woG(&axis3); // 重力補償無し
 
         CalcGravIcmp(joint);
 
@@ -1498,7 +1575,7 @@ interrupt void ControlFunction(void)
             axis3.qm_ref = start_go3;
             flag_reposition = 0;
             // 指令値の設定値
-            SetRampParams((motor_cmd[0] * (1.0/CmdGain[0]/CmdGain_EX[0])) - start_go1, (motor_cmd[1]-start_go2), (motor_cmd[2]-start_go3));
+            SetRampParams((motor_cmd[0] * (1.0/(CmdGain[0]*CmdGain_EX[0]))) - start_go1, (motor_cmd[1]-start_go2), (motor_cmd[2]-start_go3));
           }
           // ランプ指令用変数の設定
 
@@ -1525,15 +1602,16 @@ interrupt void ControlFunction(void)
           // 1軸目 位置指令
           // ランプ関数生成関数で位置指令を決定
           // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
+          axis1.wm_cmd_z3 = axis1.wm_cmd_z2;
           axis1.wm_cmd_z2 = axis1.wm_cmd_z1;
           axis1.wm_cmd_z1 = axis1.wm_cmd;
           axis1.wm_cmd = 1.0 * ManyRampGenerator1stAxis(axis1.a_ramp, axis1.vel, axis1.t_start, axis1.t_ramp, axis1.t_const, axis1.a_ramp_back, axis1.t_ramp_back);
           axis1.qm_ref_z1 = axis1.qm_ref;
           
-          axis1.qm_ref = axis1.wm_cmd_z2 * Tp + axis1.qm_ref_z1;
+          axis1.qm_ref = axis1.wm_cmd_z3 * Tp + axis1.qm_ref_z1;
           LimitPosCmd(&axis1);
 
-          axis1.wm_ref = (axis1.qm_ref - axis1.qm) * axis1.Kpp + axis1.Kff * axis1.wm_cmd_z2 - axis1.Kfb * axis1.wm;          
+          axis1.wm_ref = (axis1.qm_ref - axis1.qm) * axis1.Kpp + axis1.Kff * axis1.wm_cmd_z3 - axis1.Kfb * axis1.wm;
           axis1.Ipi = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1);
           if (flag_FF == 1)
           {
@@ -1560,71 +1638,73 @@ interrupt void ControlFunction(void)
           // 2軸目 位置指令
           // ランプ関数生成関数で位置指令を決定
           // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
+          axis2.wm_cmd_z3 = axis2.wm_cmd_z2;
           axis2.wm_cmd_z2 = axis2.wm_cmd_z1;
           axis2.wm_cmd_z1 = axis2.wm_cmd;
           axis2.wm_cmd = 1.0 * ManyRampGenerator2ndAxis(axis2.a_ramp, axis2.vel, axis2.t_start, axis2.t_ramp, axis2.t_const, axis2.a_ramp_back, axis2.t_ramp_back);
           axis2.qm_ref_z1 = axis2.qm_ref;
 
-          axis2.qm_ref = axis2.wm_cmd_z2 * Tp + axis2.qm_ref_z1;
+          axis2.qm_ref = axis2.wm_cmd_z3 * Tp + axis2.qm_ref_z1;
           LimitPosCmd(&axis2);
           
-          axis2.wm_ref = (axis2.qm_ref - axis2.qm) * axis2.Kpp + axis2.Kff * axis2.wm_cmd_z2 - axis2.Kfb * axis2.wm;          
+          axis2.wm_ref = (axis2.qm_ref - axis2.qm) * axis2.Kpp + axis2.Kff * axis2.wm_cmd_z3 - axis2.Kfb * axis2.wm;
           axis2.Ipi = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1);
           if (flag_FF == 1)
           {
             // 2軸目 速度PI制御＋SFB＋FF
-            axis2.IrefQ = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb + axis2.Iff;
-            axis2.I_SOBinput = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb;
+            axis2.IrefQ = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb + axis2.Iff + axis2.Icmp;
+            axis2.I_SOBinput = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb + axis2.Icmp;
 
             if (flag_SOB == 1)
             {
-              axis2.I_SOBinput = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb;
+              axis2.I_SOBinput = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb + axis2.Icmp;
             }
             else if (flag_SOB == 2)
             {
-              axis2.I_SOBinput = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb + axis2.Iff;
+              axis2.I_SOBinput = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb + axis2.Iff + axis2.Icmp;
             }
           }
           else if (flag_FF == 0)
           {
             // 2軸目 速度PI制御＋SFB
-            axis2.IrefQ = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb;
+            axis2.IrefQ = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb + axis2.Icmp;
             axis2.I_SOBinput = axis2.IrefQ;
           }
 
           // 3軸目 位置指令
           // ランプ関数生成関数で位置指令を決定
           // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
+          axis3.wm_cmd_z3 = axis3.wm_cmd_z2;
           axis3.wm_cmd_z2 = axis3.wm_cmd_z1;
           axis3.wm_cmd_z1 = axis3.wm_cmd;
           axis3.wm_cmd = 1.0 * ManyRampGenerator3rdAxis(axis3.a_ramp, axis3.vel, axis3.t_start, axis3.t_ramp, axis3.t_const, axis3.a_ramp_back, axis3.t_ramp_back);
           axis3.qm_ref_z1 = axis3.qm_ref;
           
-          axis3.qm_ref = axis3.wm_cmd_z2 * Tp + axis3.qm_ref_z1;
+          axis3.qm_ref = axis3.wm_cmd_z3 * Tp + axis3.qm_ref_z1;
           LimitPosCmd(&axis3);
           
-          axis3.wm_ref = (axis3.qm_ref - axis3.qm) * axis3.Kpp + axis3.Kff * axis3.wm_cmd_z2 - axis3.Kfb * axis3.wm;
+          axis3.wm_ref = (axis3.qm_ref - axis3.qm) * axis3.Kpp + axis3.Kff * axis3.wm_cmd_z3 - axis3.Kfb * axis3.wm;
           axis3.Ipi = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1);
           
           // 3軸目 速度PI制御＋SFB
           if (flag_FF == 1)
           {
             // 3軸目 速度PI制御＋SFB＋FF
-            axis3.IrefQ = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb + axis3.Iff;
+            axis3.IrefQ = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb + axis3.Iff + axis3.Icmp;
             axis3.I_SOBinput = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb;
 
             if (flag_SOB == 1)
             {
-              axis3.I_SOBinput = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb;
+              axis3.I_SOBinput = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb + axis3.Icmp;
             }
             else if (flag_SOB == 2)
             {
-              axis3.I_SOBinput = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb + axis3.Iff;
+              axis3.I_SOBinput = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb + axis3.Iff + axis3.Icmp;
             }
           }
           else if (flag_FF == 0)
           {
-            axis3.IrefQ = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb;
+            axis3.IrefQ = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb + axis3.Icmp;
             axis3.I_SOBinput = axis3.IrefQ;
           }
 
@@ -1684,15 +1764,16 @@ interrupt void ControlFunction(void)
           // 1軸目 位置指令
           // ランプ関数生成関数で位置指令を決定
           // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
+          axis1.wm_cmd_z3 = axis1.wm_cmd_z2;
           axis1.wm_cmd_z2 = axis1.wm_cmd_z1;
           axis1.wm_cmd_z1 = axis1.wm_cmd;
           axis1.wm_cmd = motor_vel_cmd[0] * (1.0 / CmdGain[0] / CmdGain_EX[0]);
           axis1.qm_ref_z1 = axis1.qm_ref;
-          axis1.qm_ref = axis1.wm_cmd_z2 * Tp + axis1.qm_ref_z1;
+          axis1.qm_ref = axis1.wm_cmd_z3 * Tp + axis1.qm_ref_z1;
           
           LimitPosCmd(&axis1);
 
-          axis1.wm_ref = (axis1.qm_ref - axis1.qm) * axis1.Kpp + axis1.Kff * axis1.wm_cmd_z2 - axis1.Kfb * axis1.wm;
+          axis1.wm_ref = (axis1.qm_ref - axis1.qm) * axis1.Kpp + axis1.Kff * axis1.wm_cmd_z3 - axis1.Kfb * axis1.wm;
           axis1.Ipi = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1);
 
           if (flag_FF == 1)
@@ -1720,71 +1801,69 @@ interrupt void ControlFunction(void)
           // 2軸目 位置指令
           // ランプ関数生成関数で位置指令を決定
           // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
+          axis2.wm_cmd_z3 = axis2.wm_cmd_z2;
           axis2.wm_cmd_z2 = axis2.wm_cmd_z1;
           axis2.wm_cmd_z1 = axis2.wm_cmd;
           axis2.wm_cmd = motor_vel_cmd[1] * (1.0 / CmdGain[1] / CmdGain_EX[1]);
           axis2.qm_ref_z1 = axis2.qm_ref;
-          axis2.qm_ref = axis2.wm_cmd_z2 * Tp + axis2.qm_ref_z1;
+          axis2.qm_ref = axis2.wm_cmd_z3 * Tp + axis2.qm_ref_z1;
 
           LimitPosCmd(&axis2);
-          
-          axis2.wm_ref = (axis2.qm_ref - axis2.qm) * axis2.Kpp + axis2.Kff * axis2.wm_cmd_z2 - axis2.Kfb * axis2.wm;
+          axis2.wm_ref = (axis2.qm_ref - axis2.qm) * axis2.Kpp + axis2.Kff * axis2.wm_cmd_z3 - axis2.Kfb * axis2.wm;
           axis2.Ipi = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1);
-
           if (flag_FF == 1)
           {
             // 2軸目 速度PI制御＋SFB＋FF
-            axis2.IrefQ = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb + axis2.Iff;
-            axis2.I_SOBinput = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb;
+            axis2.IrefQ = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb + axis2.Iff + axis2.Icmp;
+            axis2.I_SOBinput = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb + axis2.Icmp;
 
             if (flag_SOB == 1)
             {
-              axis2.I_SOBinput = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb;
+              axis2.I_SOBinput = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb + axis2.Icmp;
             }
             else if (flag_SOB == 2)
             {
-              axis2.I_SOBinput = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb + axis2.Iff;
+              axis2.I_SOBinput = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb + axis2.Iff + axis2.Icmp;
             }
           }
           else if (flag_FF == 0)
           {
             // 2軸目 速度PI制御＋SFB
-            axis2.IrefQ = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb;
+            axis2.IrefQ = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb + axis2.Icmp;
             axis2.I_SOBinput = axis2.IrefQ;
           }
 
           // 3軸目 位置指令
           // ランプ関数生成関数で位置指令を決定
           // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
+          axis3.wm_cmd_z3 = axis3.wm_cmd_z2;
           axis3.wm_cmd_z2 = axis3.wm_cmd_z1;
           axis3.wm_cmd_z1 = axis3.wm_cmd;
           axis3.wm_cmd = motor_vel_cmd[2] * (1.0 / CmdGain[2] / CmdGain_EX[2]);
           axis3.qm_ref_z1 = axis3.qm_ref;
-          axis3.qm_ref = axis3.wm_cmd_z2 * Tp + axis3.qm_ref_z1;
-          
+          axis3.qm_ref = axis3.wm_cmd_z3 * Tp + axis3.qm_ref_z1;
           LimitPosCmd(&axis3);
-          
-          axis3.wm_ref = (axis3.qm_ref - axis3.qm) * axis3.Kpp + axis3.Kff * axis3.wm_cmd_z2 - axis3.Kfb * axis3.wm;
+          axis3.wm_ref = (axis3.qm_ref - axis3.qm) * axis3.Kpp + axis3.Kff * axis3.wm_cmd_z3 - axis3.Kfb * axis3.wm;
           axis3.Ipi = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1);
           // 3軸目 速度PI制御＋SFB
           if (flag_FF == 1)
           {
             // 3軸目 速度PI制御＋SFB＋FF
-            axis3.IrefQ = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb + axis3.Iff;
+            axis3.IrefQ = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb + axis3.Iff + axis3.Icmp;
             axis3.I_SOBinput = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb;
 
             if (flag_SOB == 1)
             {
-              axis3.I_SOBinput = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb;
+              axis3.I_SOBinput = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb + axis3.Icmp;
             }
             else if (flag_SOB == 2)
             {
-              axis3.I_SOBinput = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb + axis3.Iff;
+              axis3.I_SOBinput = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb + axis3.Iff + axis3.Icmp;
             }
           }
           else if (flag_FF == 0)
           {
-            axis3.IrefQ = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb;
+            axis3.IrefQ = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb + axis3.Icmp;
             axis3.I_SOBinput = axis3.IrefQ;
           }
         }
@@ -1828,6 +1907,7 @@ interrupt void ControlFunction(void)
           // 1軸目 位置指令
           // ランプ関数生成関数で位置指令を決定
           // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
+          axis1.wm_cmd_z3 = axis1.wm_cmd_z2;
           axis1.wm_cmd_z2 = axis1.wm_cmd_z1;
           axis1.wm_cmd_z1 = axis1.wm_cmd;
           axis1.qm_ref_z1 = axis1.qm_ref;
@@ -1835,14 +1915,13 @@ interrupt void ControlFunction(void)
           if (flag_end3 == 1)
           {            
             axis1.wm_cmd = 1.0 * ManyRampGenerator1stAxis(axis1.a_ramp, axis1.vel, axis1.t_start, axis1.t_ramp, axis1.t_const, axis1.a_ramp_back, axis1.t_ramp_back);
-            axis1.qm_ref = axis1.wm_cmd_z2 * Tp + axis1.qm_ref_z1;
+            axis1.qm_ref = axis1.wm_cmd_z3 * Tp + axis1.qm_ref_z1;
           }
           else
           {
             axis1.wm_cmd = 0.0;
             axis1.qm_ref =  axis1.qm_ref_z1;
           }
-
           // 1軸目 位置P制御
           axis1.wm_ref = (axis1.qm_ref - axis1.qm) * axis1.Kpp;
           axis1.Ipi = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1);
@@ -1851,7 +1930,6 @@ interrupt void ControlFunction(void)
             // 1軸目 速度PI制御＋SFB＋FF
             axis1.IrefQ = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1) - axis1.Isfb + axis1.Iff;
             axis1.I_SOBinput = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1) - axis1.Isfb;
-
             if (flag_SOB == 1)
             {
               axis1.I_SOBinput = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1) - axis1.Isfb;
@@ -1871,6 +1949,7 @@ interrupt void ControlFunction(void)
           // 2軸目 位置指令
           // ランプ関数生成関数で位置指令を決定
           // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
+          axis2.wm_cmd_z3 = axis2.wm_cmd_z2;
           axis2.wm_cmd_z2 = axis2.wm_cmd_z1;
           axis2.wm_cmd_z1 = axis2.wm_cmd;
           axis2.qm_ref_z1 = axis2.qm_ref;
@@ -1878,7 +1957,7 @@ interrupt void ControlFunction(void)
           if (flag_end3 == 1 && flag_end1 == 1)
           {
             axis2.wm_cmd = 1.0 * ManyRampGenerator2ndAxis(axis2.a_ramp, axis2.vel, axis2.t_start, axis2.t_ramp, axis2.t_const, axis2.a_ramp_back, axis2.t_ramp_back);
-            axis2.qm_ref = axis2.wm_cmd_z2 * Tp + axis2.qm_ref_z1;
+            axis2.qm_ref = axis2.wm_cmd_z3 * Tp + axis2.qm_ref_z1;
           }
           else
           {
@@ -1893,22 +1972,22 @@ interrupt void ControlFunction(void)
           if (flag_FF == 1)
           {
             // 2軸目 速度PI制御＋SFB＋FF
-            axis2.IrefQ = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb + axis2.Iff;
-            axis2.I_SOBinput = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb;
+            axis2.IrefQ = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb + axis2.Iff + axis2.Icmp;
+            axis2.I_SOBinput = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb + axis2.Icmp;
 
             if (flag_SOB == 1)
             {
-              axis2.I_SOBinput = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb;
+              axis2.I_SOBinput = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb + axis2.Icmp;
             }
             else if (flag_SOB == 2)
             {
-              axis2.I_SOBinput = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb + axis2.Iff;
+              axis2.I_SOBinput = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb + axis2.Iff + axis2.Icmp;
             }
           }
           else if (flag_FF == 0)
           {
             // 2軸目 速度PI制御＋SFB
-            axis2.IrefQ = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb;
+            axis2.IrefQ = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb + axis2.Icmp;
             axis2.I_SOBinput = axis2.IrefQ;
           }
 
@@ -1917,13 +1996,13 @@ interrupt void ControlFunction(void)
           // 引数 a:傾き、t_wait:開始時間、t_ramp:ランプアップ時間、t_const:定常時間
           // axis3.qm_ref_z2 = axis3.qm_ref_z1;
           // axis3.qm_ref_z1 = axis3.qm_ref;
+          axis3.wm_cmd_z3 = axis3.wm_cmd_z2;
           axis3.wm_cmd_z2 = axis3.wm_cmd_z1;
           axis3.wm_cmd_z1 = axis3.wm_cmd;
           axis3.qm_ref_z1 = axis3.qm_ref;
           axis3.wm_cmd = 1.0 * ManyRampGenerator3rdAxis(axis3.a_ramp, axis3.vel, axis3.t_start, axis3.t_ramp, axis3.t_const, axis3.a_ramp_back, axis3.t_ramp_back);
           // axis3.qm_ref = 1.0 * ManyRampGenerator3rdAxis(axis3.a_ramp, axis3.vel, axis3.t_start, axis3.t_ramp, axis3.t_const, axis3.a_ramp_back, axis3.t_ramp_back) + start_back3;
-          axis3.qm_ref = axis3.wm_cmd_z2 * Tp + axis3.qm_ref_z1;
-
+          axis3.qm_ref = axis3.wm_cmd_z3 * Tp + axis3.qm_ref_z1;
           // 3軸目 位置P制御
           axis3.wm_ref = (axis3.qm_ref - axis3.qm) * axis3.Kpp;
           axis3.Ipi = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1);
@@ -1931,21 +2010,21 @@ interrupt void ControlFunction(void)
           if (flag_FF == 1)
           {
             // 3軸目 速度PI制御＋SFB＋FF
-            axis3.IrefQ = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb + axis3.Iff;
+            axis3.IrefQ = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb + axis3.Iff + axis3.Icmp;
             axis3.I_SOBinput = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb;
 
             if (flag_SOB == 1)
             {
-              axis3.I_SOBinput = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb;
+              axis3.I_SOBinput = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb + axis3.Icmp;
             }
             else if (flag_SOB == 2)
             {
-              axis3.I_SOBinput = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb + axis3.Iff;
+              axis3.I_SOBinput = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb + axis3.Iff + axis3.Icmp;
             }
           }
           else if (flag_FF == 0)
           {
-            axis3.IrefQ = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb;
+            axis3.IrefQ = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb + axis3.Icmp;
             axis3.I_SOBinput = axis3.IrefQ;
           }
           if (flag_end1 == 1 && flag_end2 == 1 && flag_end3 == 1)
@@ -2127,9 +2206,9 @@ interrupt void ControlFunction(void)
   WAVE_wm_cmd1 = axis1.wm_cmd;
   WAVE_wm_cmd2 = axis2.wm_cmd;
   WAVE_wm_cmd3 = axis3.wm_cmd;
-  WAVE_wm_CCC1 = motor_vel_cmd[0];
-  WAVE_wm_CCC2 = motor_vel_cmd[1];
-  WAVE_wm_CCC3 = motor_vel_cmd[2];
+  // WAVE_wm_CCC1 = motor_vel_cmd[0];
+  // WAVE_wm_CCC2 = motor_vel_cmd[1];
+  // WAVE_wm_CCC3 = motor_vel_cmd[2];
 
   WAVE_IrefQ1 = axis1.IrefQ;
   WAVE_IrefQ2 = axis2.IrefQ;
@@ -2193,6 +2272,10 @@ interrupt void ControlFunction(void)
   WAVE_tauLdyn1 = axis1.tauLdyn;
   WAVE_tauLdyn2 = axis2.tauLdyn;
   WAVE_tauLdyn3 = axis3.tauLdyn;
+  
+  WAVE_tauLwoG1 = axis1.tauLdyn_woG;
+  WAVE_tauLwoG2 = axis2.tauLdyn_woG;
+  WAVE_tauLwoG3 = axis3.tauLdyn_woG;
 
   WAVE_Jl_calc1 = axis1.Jl_calc;
   WAVE_Jl_calc2 = axis2.Jl_calc;
@@ -2202,125 +2285,126 @@ interrupt void ControlFunction(void)
   WAVE_Jl_Wr2 = axis2.Jl_calc_Wr;
   WAVE_Jl_Wr3 = axis3.Jl_calc_Wr;
 
-  WAVE_al_calc1 = axis1.al_calc;
-  WAVE_wl_calc1 = axis1.wl_calc;
-  WAVE_ql_calc1 = axis1.ql_calc;
-  WAVE_wm_calc1 = axis1.wm_calc;
-  WAVE_al_calc2 = axis2.al_calc;
-  WAVE_wl_calc2 = axis2.wl_calc;
-  WAVE_ql_calc2 = axis2.ql_calc;
-  WAVE_wm_calc2 = axis2.wm_calc;
-  WAVE_al_calc3 = axis3.al_calc;
-  WAVE_wl_calc3 = axis3.wl_calc;
-  WAVE_ql_calc3 = axis3.ql_calc;
-  WAVE_wm_calc3 = axis3.wm_calc;
+  // WAVE_al_calc1 = axis1.al_calc;
+  // WAVE_wl_calc1 = axis1.wl_calc;
+  // WAVE_ql_calc1 = axis1.ql_calc;
+  // WAVE_wm_calc1 = axis1.wm_calc;
+  // WAVE_al_calc2 = axis2.al_calc;
+  // WAVE_wl_calc2 = axis2.wl_calc;
+  // WAVE_ql_calc2 = axis2.ql_calc;
+  // WAVE_wm_calc2 = axis2.wm_calc;
+  // WAVE_al_calc3 = axis3.al_calc;
+  // WAVE_wl_calc3 = axis3.wl_calc;
+  // WAVE_ql_calc3 = axis3.ql_calc;
+  // WAVE_wm_calc3 = axis3.wm_calc;
 
-  WAVE_al_calc_DPD1 = axis1.al_calc_DPD;
-  WAVE_wl_calc_DPD1 = axis1.wl_calc_DPD;
-  WAVE_ql_calc_DPD1 = axis1.ql_calc_DPD;
-  WAVE_wm_calc_DPD1 = axis1.wm_calc_DPD;
-  WAVE_al_calc_DPD2 = axis2.al_calc_DPD;
-  WAVE_wl_calc_DPD2 = axis2.wl_calc_DPD;
-  WAVE_ql_calc_DPD2 = axis2.ql_calc_DPD;
-  WAVE_wm_calc_DPD2 = axis2.wm_calc_DPD;
-  WAVE_al_calc_DPD3 = axis3.al_calc_DPD;
-  WAVE_wl_calc_DPD3 = axis3.wl_calc_DPD;
-  WAVE_ql_calc_DPD3 = axis3.ql_calc_DPD;
-  WAVE_wm_calc_DPD3 = axis3.wm_calc_DPD;
+  // WAVE_al_calc_DPD1 = axis1.al_calc_DPD;
+  // WAVE_wl_calc_DPD1 = axis1.wl_calc_DPD;
+  // WAVE_ql_calc_DPD1 = axis1.ql_calc_DPD;
+  // WAVE_wm_calc_DPD1 = axis1.wm_calc_DPD;
+  // WAVE_al_calc_DPD2 = axis2.al_calc_DPD;
+  // WAVE_wl_calc_DPD2 = axis2.wl_calc_DPD;
+  // WAVE_ql_calc_DPD2 = axis2.ql_calc_DPD;
+  // WAVE_wm_calc_DPD2 = axis2.wm_calc_DPD;
+  // WAVE_al_calc_DPD3 = axis3.al_calc_DPD;
+  // WAVE_wl_calc_DPD3 = axis3.wl_calc_DPD;
+  // WAVE_ql_calc_DPD3 = axis3.ql_calc_DPD;
+  // WAVE_wm_calc_DPD3 = axis3.wm_calc_DPD;
 
   WAVE_TRG_WM1 = axis1.posi_trg_rad;
   WAVE_TRG_WM2 = axis2.posi_trg_rad;
   WAVE_TRG_WM3 = axis3.posi_trg_rad;
-  if (flag_SOB == 0)
-  {
-    WAVE_est_wm2 = axis2.est_conv_wm;
-    WAVE_est_qs2 = axis2.est_conv_qs;
-    WAVE_est_wl2 = axis2.est_conv_wl;
-    WAVE_est_wm3 = axis3.est_conv_wm;
-    WAVE_est_qs3 = axis3.est_conv_qs;
-    WAVE_est_wl3 = axis3.est_conv_wl;
-  }
-  else if (flag_SOB == 1)
-  {
-    WAVE_est_wm2 = axis2.est_prop_wm;
-    WAVE_est_qs2 = axis2.est_prop_qs;
-    WAVE_est_wl2 = axis2.est_prop_wl;
-    WAVE_est_wm3 = axis3.est_prop_wm;
-    WAVE_est_qs3 = axis3.est_prop_qs;
-    WAVE_est_wl3 = axis3.est_prop_wl;
-  }
-  else if (flag_SOB == 2)
-  {
-    WAVE_est_wm2 = axis2.est_prop_wm;
-    WAVE_est_qs2 = axis2.est_prop_qs;
-    WAVE_est_wl2 = axis2.est_prop_wl;
-    WAVE_est_wm3 = axis3.est_prop_wm;
-    WAVE_est_qs3 = axis3.est_prop_qs;
-    WAVE_est_wl3 = axis3.est_prop_wl;
-  }
+  // if (flag_SOB == 0)
+  // {
+  //   WAVE_est_wm2 = axis2.est_conv_wm;
+  //   WAVE_est_qs2 = axis2.est_conv_qs;
+  //   WAVE_est_wl2 = axis2.est_conv_wl;
+  //   WAVE_est_wm3 = axis3.est_conv_wm;
+  //   WAVE_est_qs3 = axis3.est_conv_qs;
+  //   WAVE_est_wl3 = axis3.est_conv_wl;
+  // }
+  // else if (flag_SOB == 1)
+  // {
+  //   WAVE_est_wm2 = axis2.est_prop_wm;
+  //   WAVE_est_qs2 = axis2.est_prop_qs;
+  //   WAVE_est_wl2 = axis2.est_prop_wl;
+  //   WAVE_est_wm3 = axis3.est_prop_wm;
+  //   WAVE_est_qs3 = axis3.est_prop_qs;
+  //   WAVE_est_wl3 = axis3.est_prop_wl;
+  // }
+  // else if (flag_SOB == 2)
+  // {
+  //   WAVE_est_wm2 = axis2.est_prop_wm;
+  //   WAVE_est_qs2 = axis2.est_prop_qs;
+  //   WAVE_est_wl2 = axis2.est_prop_wl;
+  //   WAVE_est_wm3 = axis3.est_prop_wm;
+  //   WAVE_est_qs3 = axis3.est_prop_qs;
+  //   WAVE_est_wl3 = axis3.est_prop_wl;
+  // }
 
-  WAVE_est_conv_wm1 = axis1.est_conv_wm;
-  WAVE_est_conv_qs1 = axis1.est_conv_qs;
-  WAVE_est_conv_wl1 = axis1.est_conv_wl;
-  WAVE_est_conv_wm2 = axis2.est_conv_wm;
-  WAVE_est_conv_qs2 = axis2.est_conv_qs;
-  WAVE_est_conv_wl2 = axis2.est_conv_wl;
-  WAVE_est_conv_wm3 = axis3.est_conv_wm;
-  WAVE_est_conv_qs3 = axis3.est_conv_qs;
-  WAVE_est_conv_wl3 = axis3.est_conv_wl;
+  // WAVE_est_conv_wm1 = axis1.est_conv_wm;
+  // WAVE_est_conv_qs1 = axis1.est_conv_qs;
+  // WAVE_est_conv_wl1 = axis1.est_conv_wl;
+  // WAVE_est_conv_wm2 = axis2.est_conv_wm;
+  // WAVE_est_conv_qs2 = axis2.est_conv_qs;
+  // WAVE_est_conv_wl2 = axis2.est_conv_wl;
+  // WAVE_est_conv_wm3 = axis3.est_conv_wm;
+  // WAVE_est_conv_qs3 = axis3.est_conv_qs;
+  // WAVE_est_conv_wl3 = axis3.est_conv_wl;
 
-  WAVE_est_prop_wm1 = axis1.est_prop_wm;
-  WAVE_est_prop_qs1 = axis1.est_prop_qs;
-  WAVE_est_prop_wl1 = axis1.est_prop_wl;
-  WAVE_est_prop_wm2 = axis2.est_prop_wm;
-  WAVE_est_prop_qs2 = axis2.est_prop_qs;
-  WAVE_est_prop_wl2 = axis2.est_prop_wl;
-  WAVE_est_prop_wm3 = axis3.est_prop_wm;
-  WAVE_est_prop_qs3 = axis3.est_prop_qs;
-  WAVE_est_prop_wl3 = axis3.est_prop_wl;
+  // WAVE_est_prop_wm1 = axis1.est_prop_wm;
+  // WAVE_est_prop_qs1 = axis1.est_prop_qs;
+  // WAVE_est_prop_wl1 = axis1.est_prop_wl;
+  // WAVE_est_prop_wm2 = axis2.est_prop_wm;
+  // WAVE_est_prop_qs2 = axis2.est_prop_qs;
+  // WAVE_est_prop_wl2 = axis2.est_prop_wl;
+  // WAVE_est_prop_wm3 = axis3.est_prop_wm;
+  // WAVE_est_prop_qs3 = axis3.est_prop_qs;
+  // WAVE_est_prop_wl3 = axis3.est_prop_wl;
 
-  WAVE_est_ISOB_wm1 = axis1.est_ISOB_wm;
-  WAVE_est_ISOB_qs1 = axis1.est_ISOB_qs;
-  WAVE_est_ISOB_wl1 = axis1.est_ISOB_wl;
-  WAVE_est_ISOB_wm2 = axis2.est_ISOB_wm;
-  WAVE_est_ISOB_qs2 = axis2.est_ISOB_qs;
-  WAVE_est_ISOB_wl2 = axis2.est_ISOB_wl;
-  WAVE_est_ISOB_wm3 = axis3.est_ISOB_wm;
-  WAVE_est_ISOB_qs3 = axis3.est_ISOB_qs;
-  WAVE_est_ISOB_wl3 = axis3.est_ISOB_wl;
+  // WAVE_est_ISOB_wm1 = axis1.est_ISOB_wm;
+  // WAVE_est_ISOB_qs1 = axis1.est_ISOB_qs;
+  // WAVE_est_ISOB_wl1 = axis1.est_ISOB_wl;
+  // WAVE_est_ISOB_wm2 = axis2.est_ISOB_wm;
+  // WAVE_est_ISOB_qs2 = axis2.est_ISOB_qs;
+  // WAVE_est_ISOB_wl2 = axis2.est_ISOB_wl;
+  // WAVE_est_ISOB_wm3 = axis3.est_ISOB_wm;
+  // WAVE_est_ISOB_qs3 = axis3.est_ISOB_qs;
+  // WAVE_est_ISOB_wl3 = axis3.est_ISOB_wl;
 
-  WAVE_Kff1 = axis1.Kff;
-  WAVE_Kfb1 = axis1.Kfb;
-  WAVE_Kpp1 = axis1.Kpp;
-  WAVE_Kff1 = axis1.Kff;
-  WAVE_Kfb1 = axis1.Kfb;
-  WAVE_Kvp1 = axis1.Kvp;
-  WAVE_Kvi1 = axis1.Kvi;
-  WAVE_fwm1 = axis1.fwm;
-  WAVE_fqs1 = axis1.fqs;
-  WAVE_fwl1 = axis1.fwl;
+  // WAVE_Kff1 = axis1.Kff;
+  // WAVE_Kfb1 = axis1.Kfb;
+  // WAVE_Kpp1 = axis1.Kpp;
+  // WAVE_Kff1 = axis1.Kff;
+  // WAVE_Kfb1 = axis1.Kfb;
+  // WAVE_Kvp1 = axis1.Kvp;
+  // WAVE_Kvi1 = axis1.Kvi;
+  // WAVE_fwm1 = axis1.fwm;
+  // WAVE_fqs1 = axis1.fqs;
+  // WAVE_fwl1 = axis1.fwl;
 
-  WAVE_Kff2 = axis2.Kff;
-  WAVE_Kfb2 = axis2.Kfb;
-  WAVE_Kpp2 = axis2.Kpp;
-  WAVE_Kff2 = axis2.Kff;
-  WAVE_Kfb2 = axis2.Kfb;
-  WAVE_Kvp2 = axis2.Kvp;
-  WAVE_Kvi2 = axis2.Kvi;
-  WAVE_fwm2 = axis2.fwm;
-  WAVE_fqs2 = axis2.fqs;
-  WAVE_fwl2 = axis2.fwl;
+  // WAVE_Kff2 = axis2.Kff;
+  // WAVE_Kfb2 = axis2.Kfb;
+  // WAVE_Kpp2 = axis2.Kpp;
+  // WAVE_Kff2 = axis2.Kff;
+  // WAVE_Kfb2 = axis2.Kfb;
+  // WAVE_Kvp2 = axis2.Kvp;
+  // WAVE_Kvi2 = axis2.Kvi;
+  // WAVE_fwm2 = axis2.fwm;
+  // WAVE_fqs2 = axis2.fqs;
+  // WAVE_fwl2 = axis2.fwl;
 
-  WAVE_Kff3 = axis3.Kff;
-  WAVE_Kfb3 = axis3.Kfb;
-  WAVE_Kpp3 = axis3.Kpp;
-  WAVE_Kff3 = axis3.Kff;
-  WAVE_Kfb3 = axis3.Kfb;
-  WAVE_Kvp3 = axis3.Kvp;
-  WAVE_Kvi3 = axis3.Kvi;
-  WAVE_fwm3 = axis3.fwm;
-  WAVE_fqs3 = axis3.fqs;
-  WAVE_fwl3 = axis3.fwl;
+  // WAVE_Kff3 = axis3.Kff;
+  // WAVE_Kfb3 = axis3.Kfb;
+  // WAVE_Kpp3 = axis3.Kpp;
+  // WAVE_Kff3 = axis3.Kff;
+  // WAVE_Kfb3 = axis3.Kfb;
+  // WAVE_Kvp3 = axis3.Kvp;
+  // WAVE_Kvi3 = axis3.Kvi;
+  // WAVE_fwm3 = axis3.fwm;
+  // WAVE_fqs3 = axis3.fqs;
+  // WAVE_fwl3 = axis3.fwl;
+
   // WAVE_ACC_LW8174_axis = axis2.al; // 加速度センサrad/s^2換算値
   // WAVE_ACC_LW8079 = ACC_LW8079;
   // WAVE_ACC_LW8174 = ACC_LW8174;
@@ -2435,7 +2519,8 @@ void MW_main(void)
   CalcFDTDTSOBInit();
 
   // FF制御　補償電流計算関数Tm 係数計算
-  FDTD_Tm_Init();
+  // FDTD_Tm_Init();
+  FDTD_Tm_Full_Init();
 
   // 可変ゲインの極を指定する(係数図法)
   // 1軸目
@@ -3746,6 +3831,47 @@ void FDTD_Tm(Robot *robo)
   }
 }
 
+void FDTD_Tm_woG(Robot *robo)
+{
+  static float y_0 = 0.0;
+  static float y_1 = 0.0;
+  static float y_2 = 0.0;
+  static float uZ1_0 = 0.0;
+  static float uZ1_1 = 0.0;
+  static float uZ1_2 = 0.0;
+  static float uZ2_0 = 0.0;
+  static float uZ2_1 = 0.0;
+  static float uZ2_2 = 0.0;
+  static float a_0 = 0.0;
+  static float a_1 = 0.0;
+  static float a_2 = 0.0;
+
+  if (robo->BDN == BDN0)
+  {
+    y_0 = 1.0 / Tm_sub[0].den_2 * (Tm_sub[0].num_2 * robo->tauLdyn_woG + Tm_sub[0].num_1 * uZ1_0 + Tm_sub[0].num_0 * uZ2_0);
+    robo->Iff = y_0;
+    a_0 = uZ1_0;
+    uZ1_0 = robo->tauLdyn_woG;
+    uZ2_0 = a_0;
+  }
+  else if (robo->BDN == BDN1)
+  {
+    y_1 = 1.0 / Tm_sub[1].den_2 * (Tm_sub[1].num_2 * robo->tauLdyn_woG + Tm_sub[1].num_1 * uZ1_1 + Tm_sub[1].num_0 * uZ2_1);
+    robo->Iff = y_1;
+    a_1 = uZ1_1;
+    uZ1_1 = robo->tauLdyn_woG;
+    uZ2_1 = a_1;
+  }
+  else if (robo->BDN == BDN2)
+  {
+    y_2 = 1.0 / Tm_sub[2].den_2 * (Tm_sub[2].num_2 * robo->tauLdyn_woG + Tm_sub[2].num_1 * uZ1_2 + Tm_sub[2].num_0 * uZ2_2);
+    robo->Iff = y_2;
+    a_2 = uZ1_2;
+    uZ1_2 = robo->tauLdyn_woG;
+    uZ2_2 = a_2;
+  }
+}
+
 void FDTD_Tm_Init()
 {
   Tm_sub[0].den_0 = 0.0;
@@ -3768,6 +3894,133 @@ void FDTD_Tm_Init()
   Tm_sub[2].num_0 = (-Tp * axis3.Dmn + axis3.Jmn) / axis3.Jmn;
   Tm_sub[2].num_1 = (axis3.Rgn * axis3.Rgn * (Tp * axis3.Dmn - 2.0 * axis3.Jmn) + Tp * Tp * axis3.Ksn) / axis3.Rgn / axis3.Rgn / axis3.Jmn;
   Tm_sub[2].num_2 = 1.0;
+}
+
+void FDTD_Tm_Full_woG(Robot *robo)
+{
+  static float y_0 = 0.0;
+  static float yZ1_0 = 0.0;
+  static float uZ1_0 = 0.0;
+  static float uZ2_0 = 0.0;
+  static float uZ3_0 = 0.0;
+  static float a_0 = 0.0;
+
+  static float y_1 = 0.0;
+  static float yZ1_1 = 0.0;
+  static float uZ1_1 = 0.0;
+  static float uZ2_1 = 0.0;
+  static float uZ3_1 = 0.0;
+  static float a_1 = 0.0;
+
+  static float y_2 = 0.0;
+  static float yZ1_2 = 0.0;
+  static float uZ1_2 = 0.0;
+  static float uZ2_2 = 0.0;
+  static float uZ3_2 = 0.0;
+  static float a_2 = 0.0;
+
+  if (robo->BDN == BDN0)
+  {
+    y_0 = (-Tm_full_sub[0].den_2 * yZ1_0 + Tm_full_sub[0].num_3 * robo->tauLdyn_woG + Tm_full_sub[0].num_2 * uZ1_0 + Tm_full_sub[0].num_1 * uZ2_0 + Tm_full_sub[0].num_0 * uZ3_0) / Tm_full_sub[0].den_3;
+    robo->Iff = y_0;
+    yZ1_0 = robo->Iff;
+    uZ3_0 = uZ2_0;
+    uZ2_0 = uZ1_0;
+    uZ1_0 = robo->tauLdyn_woG;
+  }
+  else if (robo->BDN == BDN1)
+  {
+    y_0 = (-Tm_full_sub[1].den_2 * yZ1_1 + Tm_full_sub[1].num_3 * robo->tauLdyn_woG + Tm_full_sub[1].num_2 * uZ1_1 + Tm_full_sub[1].num_1 * uZ2_1 + Tm_full_sub[1].num_0 * uZ3_1) / Tm_full_sub[1].den_3;
+    robo->Iff = y_0;
+    yZ1_1 = robo->Iff;
+    uZ3_1 = uZ2_1;
+    uZ2_1 = uZ1_1;
+    uZ1_1 = robo->tauLdyn_woG;
+  }
+  else if (robo->BDN == BDN2)
+  {
+    y_0 = (-Tm_full_sub[2].den_2 * yZ1_2 + Tm_full_sub[2].num_3 * robo->tauLdyn_woG + Tm_full_sub[2].num_2 * uZ1_2 + Tm_full_sub[2].num_1 * uZ2_2 + Tm_full_sub[2].num_0 * uZ3_2) / Tm_full_sub[2].den_3;
+    robo->Iff = y_0;
+    yZ1_2 = robo->Iff;
+    uZ3_2 = uZ2_2;
+    uZ2_2 = uZ1_2;
+    uZ1_2 = robo->tauLdyn_woG;
+  }
+}
+
+void FDTD_Tm_Full_Init()
+{
+  Tm_full_sub[0].b0_rate = 1.0;
+  Tm_full_sub[0].b01 = axis1.Ksn * axis1.Ktn / (axis1.Rgn * axis1.Jmn);
+  Tm_full_sub[0].a03 = 1.0;
+  Tm_full_sub[0].a02 = (axis1.Dmn + axis1.Ktn * axis1.fwm + axis1.Ktn * axis1.Kvp * (1.0 + axis1.Kfb)) / axis1.Jmn;
+  Tm_full_sub[0].a01 = (axis1.Ktn * axis1.Kvp * axis1.Kpp + axis1.Ktn * axis1.Kvi * (1.0 + axis1.Kfb) + (axis1.Ktn * axis1.fqs / axis1.Rgn) + (axis1.Ksn / (axis1.Rgn * axis1.Rgn))) / axis1.Jmn;
+  Tm_full_sub[0].a00 = axis1.Ktn * axis1.Kvi * axis1.Kpp / axis1.Jmn;
+
+  Tm_full_sub[0].den_3 = Tm_full_sub[0].b01 * Tp * Tp;
+  Tm_full_sub[0].den_2 = (-Tm_full_sub[0].b01 * Tp * Tp) * Tm_full_sub[0].b0_rate;
+  Tm_full_sub[0].den_1 = 0.0;
+  Tm_full_sub[0].den_0 = 0.0;
+  Tm_full_sub[0].num_3 = 1.0;
+  Tm_full_sub[0].num_2 = -3.0 + Tm_full_sub[0].a02 * Tp + Tm_full_sub[0].a01 * Tp * Tp;
+  Tm_full_sub[0].num_1 = 3.0 - 2 * Tm_full_sub[0].a02 * Tp - Tm_full_sub[0].a01 * Tp * Tp + Tm_full_sub[0].a00 * Tp * Tp * Tp;
+  Tm_full_sub[0].num_0 = -1.0 + Tm_full_sub[0].a02 * Tp;
+
+  Tm_full_sub[1].b0_rate = 1.0;
+  Tm_full_sub[1].b01 = axis2.Ksn * axis2.Ktn / (axis2.Rgn * axis2.Jmn);
+  Tm_full_sub[1].a03 = 1.0;
+  Tm_full_sub[1].a02 = (axis2.Dmn + axis2.Ktn * axis2.fwm + axis2.Ktn * axis2.Kvp * (1.0 + axis2.Kfb)) / axis2.Jmn;
+  Tm_full_sub[1].a01 = (axis2.Ktn * axis2.Kvp * axis2.Kpp + axis2.Ktn * axis2.Kvi * (1.0 + axis2.Kfb) + (axis2.Ktn * axis2.fqs / axis2.Rgn) + (axis2.Ksn / (axis2.Rgn * axis2.Rgn))) / axis2.Jmn;
+  Tm_full_sub[1].a00 = axis2.Ktn * axis2.Kvi * axis2.Kpp / axis2.Jmn;
+
+  Tm_full_sub[1].den_3 = Tm_full_sub[1].b01 * Tp * Tp;
+  Tm_full_sub[1].den_2 = (-Tm_full_sub[1].b01 * Tp * Tp) * Tm_full_sub[1].b0_rate;
+  Tm_full_sub[1].den_1 = 0.0;
+  Tm_full_sub[1].den_0 = 0.0;
+  Tm_full_sub[1].num_3 = 1.0;
+  Tm_full_sub[1].num_2 = -3.0 + Tm_full_sub[1].a02 * Tp + Tm_full_sub[1].a01 * Tp * Tp;
+  Tm_full_sub[1].num_1 = 3.0 - 2.0 * Tm_full_sub[1].a02 * Tp - Tm_full_sub[1].a01 * Tp * Tp + Tm_full_sub[1].a00 * Tp * Tp * Tp;
+  Tm_full_sub[1].num_0 = -1.0 + Tm_full_sub[1].a02 * Tp;
+
+  Tm_full_sub[2].b0_rate = 1.0;
+  Tm_full_sub[2].b01 = axis3.Ksn * axis3.Ktn / (axis3.Rgn * axis3.Jmn);
+  Tm_full_sub[2].a03 = 1.0;
+  Tm_full_sub[2].a02 = (axis3.Dmn + axis3.Ktn * axis3.fwm + axis3.Ktn * axis3.Kvp * (1.0 + axis3.Kfb)) / axis3.Jmn;
+  Tm_full_sub[2].a01 = (axis3.Ktn * axis3.Kvp * axis3.Kpp + axis3.Ktn * axis3.Kvi * (1.0 + axis3.Kfb) + (axis3.Ktn * axis3.fqs / axis3.Rgn) + (axis3.Ksn / (axis3.Rgn * axis3.Rgn))) / axis3.Jmn;
+  Tm_full_sub[2].a00 = axis3.Ktn * axis3.Kvi * axis3.Kpp / axis3.Jmn;
+
+  Tm_full_sub[2].den_3 = Tm_full_sub[2].b01 * Tp * Tp;
+  Tm_full_sub[2].den_2 = (-Tm_full_sub[2].b01 * Tp * Tp) * Tm_full_sub[2].b0_rate;
+  Tm_full_sub[2].den_1 = 0.0;
+  Tm_full_sub[2].den_0 = 0.0;
+  Tm_full_sub[2].num_3 = 1.0;
+  Tm_full_sub[2].num_2 = -3.0 + Tm_full_sub[2].a02 * Tp + Tm_full_sub[2].a01 * Tp * Tp;
+  Tm_full_sub[2].num_1 = 3.0 - 2.0 * Tm_full_sub[2].a02 * Tp - Tm_full_sub[2].a01 * Tp * Tp + Tm_full_sub[2].a00 * Tp * Tp * Tp;
+  Tm_full_sub[2].num_0 = -1.0 + Tm_full_sub[2].a02 * Tp;
+}
+
+void FDTD_Tm_Full_Update()
+{
+  Tm_full_sub[0].a02 = (axis1.Dmn + axis1.Ktn * axis1.fwm + axis1.Ktn * axis1.Kvp * (1.0 + axis1.Kfb)) / axis1.Jmn;
+  Tm_full_sub[0].a01 = (axis1.Ktn * axis1.Kvp * axis1.Kpp + axis1.Ktn * axis1.Kvi * (1.0 + axis1.Kfb) + (axis1.Ktn * axis1.fqs / axis1.Rgn) + (axis1.Ksn / (axis1.Rgn * axis1.Rgn))) / axis1.Jmn;
+  Tm_full_sub[0].a00 = axis1.Ktn * axis1.Kvi * axis1.Kpp / axis1.Jmn;
+  Tm_full_sub[0].num_2 = -3.0 + Tm_full_sub[0].a02 * Tp + Tm_full_sub[0].a01 * Tp * Tp;
+  Tm_full_sub[0].num_1 = 3.0 - 2.0 * Tm_full_sub[0].a02 * Tp - Tm_full_sub[0].a01 * Tp * Tp + Tm_full_sub[0].a00 * Tp * Tp * Tp;
+  Tm_full_sub[0].num_0 = -1.0 + Tm_full_sub[0].a02 * Tp;
+
+  Tm_full_sub[1].a02 = (axis2.Dmn + axis2.Ktn * axis2.fwm + axis2.Ktn * axis2.Kvp * (1.0 + axis2.Kfb)) / axis2.Jmn;
+  Tm_full_sub[1].a01 = (axis2.Ktn * axis2.Kvp * axis2.Kpp + axis2.Ktn * axis2.Kvi * (1.0 + axis2.Kfb) + (axis2.Ktn * axis2.fqs / axis2.Rgn) + (axis2.Ksn / (axis2.Rgn * axis2.Rgn))) / axis2.Jmn;
+  Tm_full_sub[1].a00 = axis2.Ktn * axis2.Kvi * axis2.Kpp / axis2.Jmn;
+  Tm_full_sub[1].num_2 = -3.0 + Tm_full_sub[1].a02 * Tp + Tm_full_sub[1].a01 * Tp * Tp;
+  Tm_full_sub[1].num_1 = 3.0 - 2.0 * Tm_full_sub[1].a02 * Tp - Tm_full_sub[1].a01 * Tp * Tp + Tm_full_sub[1].a00 * Tp * Tp * Tp;
+  Tm_full_sub[1].num_0 = -1.0 + Tm_full_sub[1].a02 * Tp;
+
+  Tm_full_sub[2].a02 = (axis3.Dmn + axis3.Ktn * axis3.fwm + axis3.Ktn * axis3.Kvp * (1.0 + axis3.Kfb)) / axis3.Jmn;
+  Tm_full_sub[2].a01 = (axis3.Ktn * axis3.Kvp * axis3.Kpp + axis3.Ktn * axis3.Kvi * (1.0 + axis3.Kfb) + (axis3.Ktn * axis3.fqs / axis3.Rgn) + (axis3.Ksn / (axis3.Rgn * axis3.Rgn))) / axis3.Jmn;
+  Tm_full_sub[2].a00 = axis3.Ktn * axis3.Kvi * axis3.Kpp / axis3.Jmn;
+  Tm_full_sub[2].num_2 = -3.0 + Tm_full_sub[2].a02 * Tp + Tm_full_sub[2].a01 * Tp * Tp;
+  Tm_full_sub[2].num_1 = 3.0 - 2.0 * Tm_full_sub[2].a02 * Tp - Tm_full_sub[2].a01 * Tp * Tp + Tm_full_sub[2].a00 * Tp * Tp * Tp;
+  Tm_full_sub[2].num_0 = -1.0 + Tm_full_sub[2].a02 * Tp;
 }
 
 void SetLPF(LPF_param *Filter, float Ts, float fs, float Q)
@@ -4717,8 +4970,8 @@ float ManyRampGenerator1stAxis(float a_ramp, float vel, float t_wait, float t_ra
     t = 0;
     t_all = 0;
   }
-  WAVE_AccCmd1 = a;
-  WAVE_VelCmd1 = w;
+  // WAVE_AccCmd1 = a;
+  // WAVE_VelCmd1 = w;
   // return z;
   return w; // D-PD
 }
@@ -4798,8 +5051,8 @@ float ManyRampGenerator2ndAxis(float a_ramp, float vel, float t_wait, float t_ra
     t = 0;
     t_all = 0;
   }
-  WAVE_AccCmd2 = a;
-  WAVE_VelCmd2 = w;
+  // WAVE_AccCmd2 = a;
+  // WAVE_VelCmd2 = w;
   // return z;
   return w; // D-PD
 }
@@ -4879,8 +5132,8 @@ float ManyRampGenerator3rdAxis(float a_ramp, float vel, float t_wait, float t_ra
     t = 0;
     t_all = 0;
   }
-  WAVE_AccCmd3 = a;
-  WAVE_VelCmd3 = w;
+  // WAVE_AccCmd3 = a;
+  // WAVE_VelCmd3 = w;
   // return z;
   return w; // D-PD
 }
@@ -4964,10 +5217,10 @@ float TriangularAccelerationCommandGenerator(int BDN)
     qm_ref = Tp * wm_ref + qm_prev[0];
     qm_prev[0] = qm_ref;
 
-    WAVE_jark1 = tri[0].jark;
-    WAVE_am_TriAccCmd1 = am_ref;
-    WAVE_wm_TriAccCmd1 = wm_ref;
-    WAVE_qm_TriAccCmd1 = qm_ref;
+    // WAVE_jark1 = tri[0].jark;
+    // WAVE_am_TriAccCmd1 = am_ref;
+    // WAVE_wm_TriAccCmd1 = wm_ref;
+    // WAVE_qm_TriAccCmd1 = qm_ref;
   }
 
   // 2軸目指令値生成
@@ -5022,10 +5275,10 @@ float TriangularAccelerationCommandGenerator(int BDN)
     qm_ref = Tp * wm_ref + qm_prev[1];
     qm_prev[1] = qm_ref;
 
-    WAVE_jark2 = tri[1].jark;
-    WAVE_am_TriAccCmd2 = am_ref;
-    WAVE_wm_TriAccCmd2 = wm_ref;
-    WAVE_qm_TriAccCmd2 = qm_ref;
+    // WAVE_jark2 = tri[1].jark;
+    // WAVE_am_TriAccCmd2 = am_ref;
+    // WAVE_wm_TriAccCmd2 = wm_ref;
+    // WAVE_qm_TriAccCmd2 = qm_ref;
   }
 
   // 3軸目指令値生成
@@ -5080,10 +5333,10 @@ float TriangularAccelerationCommandGenerator(int BDN)
     qm_ref = Tp * wm_ref + qm_prev[2];
     qm_prev[2] = qm_ref;
 
-    WAVE_jark3 = tri[2].jark;
-    WAVE_am_TriAccCmd3 = am_ref;
-    WAVE_wm_TriAccCmd3 = wm_ref;
-    WAVE_qm_TriAccCmd3 = qm_ref;
+    // WAVE_jark3 = tri[2].jark;
+    // WAVE_am_TriAccCmd3 = am_ref;
+    // WAVE_wm_TriAccCmd3 = wm_ref;
+    // WAVE_qm_TriAccCmd3 = qm_ref;
   }
 
   // 計算した位置指令値を返す
@@ -5620,6 +5873,15 @@ void CalcFDTDWr_WmcmdInputType(Robot *robo)
     robo->wl_calc = wl_Z[0];
     robo->al_calc = (robo->Ksn * qs_Z[0] - robo->Dln * wl_Z[0]) / robo->Jl_calc_Wr;
     robo->wm_calc = wm_Z[0];
+    
+    // WAVE_wr_wm1 = wm_Z[0];
+    // WAVE_wr_qm1 = qm_Z[0];
+    // WAVE_wr_qs1 = qs_Z[0];
+    // WAVE_wr_wl1 = wl_Z[0];
+    // WAVE_wr_ql1 = ql_Z[0];
+    // WAVE_wr_al1 = robo->al_calc;
+    // WAVE_wr_n1 = n_Z[0];
+    // WAVE_wr_m1 = m_Z[0];
   }
   else if (robo->BDN == BDN1)
   {
@@ -5646,6 +5908,15 @@ void CalcFDTDWr_WmcmdInputType(Robot *robo)
     robo->wl_calc = wl_Z[1];
     robo->al_calc = (robo->Ksn * qs_Z[1] - robo->Dln * wl_Z[1]) / robo->Jl_calc_Wr;
     robo->wm_calc = wm_Z[1];
+
+    // WAVE_wr_wm2 = wm_Z[1];
+    // WAVE_wr_qm2 = qm_Z[1];
+    // WAVE_wr_qs2 = qs_Z[1];
+    // WAVE_wr_wl2 = wl_Z[1];
+    // WAVE_wr_ql2 = ql_Z[1];
+    // WAVE_wr_al2 = robo->al_calc;
+    // WAVE_wr_n2  = n_Z[1];
+    // WAVE_wr_m2  = m_Z[1];
   }
   else if (robo->BDN == BDN2)
   {
@@ -5672,6 +5943,15 @@ void CalcFDTDWr_WmcmdInputType(Robot *robo)
     robo->wl_calc = wl_Z[2];
     robo->al_calc = (robo->Ksn * qs_Z[2] - robo->Dln * wl_Z[2]) / robo->Jl_calc_Wr;
     robo->wm_calc = wm_Z[2];
+
+    // WAVE_wr_wm3 = wm_Z[2];
+    // WAVE_wr_qm3 = qm_Z[2];
+    // WAVE_wr_qs3 = qs_Z[2];
+    // WAVE_wr_wl3 = wl_Z[2];
+    // WAVE_wr_ql3 = ql_Z[2];
+    // WAVE_wr_al3 = robo->al_calc;
+    // WAVE_wr_n3  = n_Z[2];
+    // WAVE_wr_m3  = m_Z[2];
   }
   else
   {
@@ -6055,26 +6335,26 @@ void CalcWrGain(void)
   axis1.Kfb_wr = (axis1.apm1_pd_wr - (axis1.av0_wr + axis1.Kpp_wr * axis1.bv1_wr)) / axis1.bv0_wr;
   axis1.Kff_wr = axis1.Kpp_wr / gsub[0].beta_pole;
 
-  WAVE_av4_1_wr = axis1.av4_wr;
-  WAVE_av3_1_wr = axis1.av3_wr;
-  WAVE_av2_1_wr = axis1.av2_wr;
-  WAVE_av1_1_wr = axis1.av1_wr;
-  WAVE_av0_1_wr = axis1.av0_wr;
-  WAVE_bv3_1_wr = axis1.bv3_wr;
-  WAVE_bv2_1_wr = axis1.bv2_wr;
-  WAVE_bv1_1_wr = axis1.bv1_wr;
-  WAVE_bv0_1_wr = axis1.bv0_wr;
-  WAVE_aq2_1_wr = axis1.apm2_pd_wr;
-  WAVE_aq1_1_wr = axis1.apm1_pd_wr;
-  WAVE_aq0_1_wr = axis1.apm0_pd_wr;
-  WAVE_Kff1_wr = axis1.Kff_wr;
-  WAVE_Kfb1_wr = axis1.Kfb_wr;
-  WAVE_Kpp1_wr = axis1.Kpp_wr;
-  WAVE_Kvp1_wr = axis1.Kvp_wr;
-  WAVE_Kvi1_wr = axis1.Kvi_wr;
-  WAVE_fwm1_wr = axis1.fwm_wr;
-  WAVE_fqs1_wr = axis1.fqs_wr;
-  WAVE_fwl1_wr = axis1.fwl_wr;
+  // WAVE_av4_1_wr = axis1.av4_wr;
+  // WAVE_av3_1_wr = axis1.av3_wr;
+  // WAVE_av2_1_wr = axis1.av2_wr;
+  // WAVE_av1_1_wr = axis1.av1_wr;
+  // WAVE_av0_1_wr = axis1.av0_wr;
+  // WAVE_bv3_1_wr = axis1.bv3_wr;
+  // WAVE_bv2_1_wr = axis1.bv2_wr;
+  // WAVE_bv1_1_wr = axis1.bv1_wr;
+  // WAVE_bv0_1_wr = axis1.bv0_wr;
+  // WAVE_aq2_1_wr = axis1.apm2_pd_wr;
+  // WAVE_aq1_1_wr = axis1.apm1_pd_wr;
+  // WAVE_aq0_1_wr = axis1.apm0_pd_wr;
+  // WAVE_Kff1_wr = axis1.Kff_wr;
+  // WAVE_Kfb1_wr = axis1.Kfb_wr;
+  // WAVE_Kpp1_wr = axis1.Kpp_wr;
+  // WAVE_Kvp1_wr = axis1.Kvp_wr;
+  // WAVE_Kvi1_wr = axis1.Kvi_wr;
+  // WAVE_fwm1_wr = axis1.fwm_wr;
+  // WAVE_fqs1_wr = axis1.fqs_wr;
+  // WAVE_fwl1_wr = axis1.fwl_wr;
 
   // 2軸目
   if (flag_SOB == 0)
@@ -6110,26 +6390,26 @@ void CalcWrGain(void)
   axis2.Kfb_wr = (axis2.apm1_pd_wr - (axis2.av0_wr + axis2.Kpp_wr * axis2.bv1_wr)) / axis2.bv0_wr;
   axis2.Kff_wr = axis2.Kpp_wr / gsub[1].beta_pole;
 
-  WAVE_av4_2_wr = axis2.av4_wr;
-  WAVE_av3_2_wr = axis2.av3_wr;
-  WAVE_av2_2_wr = axis2.av2_wr;
-  WAVE_av1_2_wr = axis2.av1_wr;
-  WAVE_av0_2_wr = axis2.av0_wr;
-  WAVE_bv3_2_wr = axis2.bv3_wr;
-  WAVE_bv2_2_wr = axis2.bv2_wr;
-  WAVE_bv1_2_wr = axis2.bv1_wr;
-  WAVE_bv0_2_wr = axis2.bv0_wr;
-  WAVE_aq2_2_wr = axis2.apm2_pd_wr;
-  WAVE_aq1_2_wr = axis2.apm1_pd_wr;
-  WAVE_aq0_2_wr = axis2.apm0_pd_wr;
-  WAVE_Kff2_wr = axis2.Kff_wr;
-  WAVE_Kfb2_wr = axis2.Kfb_wr;
-  WAVE_Kpp2_wr = axis2.Kpp_wr;
-  WAVE_Kvp2_wr = axis2.Kvp_wr;
-  WAVE_Kvi2_wr = axis2.Kvi_wr;
-  WAVE_fwm2_wr = axis2.fwm_wr;
-  WAVE_fqs2_wr = axis2.fqs_wr;
-  WAVE_fwl2_wr = axis2.fwl_wr;
+  // WAVE_av4_2_wr = axis2.av4_wr;
+  // WAVE_av3_2_wr = axis2.av3_wr;
+  // WAVE_av2_2_wr = axis2.av2_wr;
+  // WAVE_av1_2_wr = axis2.av1_wr;
+  // WAVE_av0_2_wr = axis2.av0_wr;
+  // WAVE_bv3_2_wr = axis2.bv3_wr;
+  // WAVE_bv2_2_wr = axis2.bv2_wr;
+  // WAVE_bv1_2_wr = axis2.bv1_wr;
+  // WAVE_bv0_2_wr = axis2.bv0_wr;
+  // WAVE_aq2_2_wr = axis2.apm2_pd_wr;
+  // WAVE_aq1_2_wr = axis2.apm1_pd_wr;
+  // WAVE_aq0_2_wr = axis2.apm0_pd_wr;
+  // WAVE_Kff2_wr = axis2.Kff_wr;
+  // WAVE_Kfb2_wr = axis2.Kfb_wr;
+  // WAVE_Kpp2_wr = axis2.Kpp_wr;
+  // WAVE_Kvp2_wr = axis2.Kvp_wr;
+  // WAVE_Kvi2_wr = axis2.Kvi_wr;
+  // WAVE_fwm2_wr = axis2.fwm_wr;
+  // WAVE_fqs2_wr = axis2.fqs_wr;
+  // WAVE_fwl2_wr = axis2.fwl_wr;
 
   // 3軸目
   axis3.Kvp_wr = gsub[2].Kvp_cfp1 * axis3.Jl_calc_Wr;
@@ -6155,26 +6435,26 @@ void CalcWrGain(void)
   axis3.Kfb_wr = (axis3.apm1_pd_wr - (axis3.av0_wr + axis3.Kpp_wr * axis3.bv1_wr)) / axis3.bv0_wr;
   axis3.Kff_wr = axis3.Kpp_wr / gsub[2].beta_pole;
 
-  WAVE_av4_3_wr = axis3.av4_wr;
-  WAVE_av3_3_wr = axis3.av3_wr;
-  WAVE_av2_3_wr = axis3.av2_wr;
-  WAVE_av1_3_wr = axis3.av1_wr;
-  WAVE_av0_3_wr = axis3.av0_wr;
-  WAVE_bv3_3_wr = axis3.bv3_wr;
-  WAVE_bv2_3_wr = axis3.bv2_wr;
-  WAVE_bv1_3_wr = axis3.bv1_wr;
-  WAVE_bv0_3_wr = axis3.bv0_wr;
-  WAVE_aq2_3_wr = axis3.apm2_pd_wr;
-  WAVE_aq1_3_wr = axis3.apm1_pd_wr;
-  WAVE_aq0_3_wr = axis3.apm0_pd_wr;
-  WAVE_Kff3_wr = axis3.Kff_wr;
-  WAVE_Kfb3_wr = axis3.Kfb_wr;
-  WAVE_Kpp3_wr = axis3.Kpp_wr;
-  WAVE_Kvp3_wr = axis3.Kvp_wr;
-  WAVE_Kvi3_wr = axis3.Kvi_wr;
-  WAVE_fwm3_wr = axis3.fwm_wr;
-  WAVE_fqs3_wr = axis3.fqs_wr;
-  WAVE_fwl3_wr = axis3.fwl_wr;
+  // WAVE_av4_3_wr = axis3.av4_wr;
+  // WAVE_av3_3_wr = axis3.av3_wr;
+  // WAVE_av2_3_wr = axis3.av2_wr;
+  // WAVE_av1_3_wr = axis3.av1_wr;
+  // WAVE_av0_3_wr = axis3.av0_wr;
+  // WAVE_bv3_3_wr = axis3.bv3_wr;
+  // WAVE_bv2_3_wr = axis3.bv2_wr;
+  // WAVE_bv1_3_wr = axis3.bv1_wr;
+  // WAVE_bv0_3_wr = axis3.bv0_wr;
+  // WAVE_aq2_3_wr = axis3.apm2_pd_wr;
+  // WAVE_aq1_3_wr = axis3.apm1_pd_wr;
+  // WAVE_aq0_3_wr = axis3.apm0_pd_wr;
+  // WAVE_Kff3_wr = axis3.Kff_wr;
+  // WAVE_Kfb3_wr = axis3.Kfb_wr;
+  // WAVE_Kpp3_wr = axis3.Kpp_wr;
+  // WAVE_Kvp3_wr = axis3.Kvp_wr;
+  // WAVE_Kvi3_wr = axis3.Kvi_wr;
+  // WAVE_fwm3_wr = axis3.fwm_wr;
+  // WAVE_fqs3_wr = axis3.fqs_wr;
+  // WAVE_fwl3_wr = axis3.fwl_wr;
 }
 
 // 位置・速度制御系可変ゲイン演算関数
@@ -6205,26 +6485,26 @@ void CalcPVGain(void)
   axis1.Kfb = (axis1.apm1_pd - (axis1.av0 + axis1.Kpp * axis1.bv1)) / axis1.bv0;
   axis1.Kff = axis1.Kpp / gsub[0].beta_pole;
 
-  WAVE_av4_1 = axis1.av4;
-  WAVE_av3_1 = axis1.av3;
-  WAVE_av2_1 = axis1.av2;
-  WAVE_av1_1 = axis1.av1;
-  WAVE_av0_1 = axis1.av0;
-  WAVE_bv3_1 = axis1.bv3;
-  WAVE_bv2_1 = axis1.bv2;
-  WAVE_bv1_1 = axis1.bv1;
-  WAVE_bv0_1 = axis1.bv0;
-  WAVE_aq2_1 = axis1.apm2_pd;
-  WAVE_aq1_1 = axis1.apm1_pd;
-  WAVE_aq0_1 = axis1.apm0_pd;
-  WAVE_Kff1 = axis1.Kff;
-  WAVE_Kfb1 = axis1.Kfb;
-  WAVE_Kpp1 = axis1.Kpp;
-  WAVE_Kvp1 = axis1.Kvp;
-  WAVE_Kvi1 = axis1.Kvi;
-  WAVE_fwm1 = axis1.fwm;
-  WAVE_fqs1 = axis1.fqs;
-  WAVE_fwl1 = axis1.fwl;
+  // WAVE_av4_1 = axis1.av4;
+  // WAVE_av3_1 = axis1.av3;
+  // WAVE_av2_1 = axis1.av2;
+  // WAVE_av1_1 = axis1.av1;
+  // WAVE_av0_1 = axis1.av0;
+  // WAVE_bv3_1 = axis1.bv3;
+  // WAVE_bv2_1 = axis1.bv2;
+  // WAVE_bv1_1 = axis1.bv1;
+  // WAVE_bv0_1 = axis1.bv0;
+  // WAVE_aq2_1 = axis1.apm2_pd;
+  // WAVE_aq1_1 = axis1.apm1_pd;
+  // WAVE_aq0_1 = axis1.apm0_pd;
+  // WAVE_Kff1 = axis1.Kff;
+  // WAVE_Kfb1 = axis1.Kfb;
+  // WAVE_Kpp1 = axis1.Kpp;
+  // WAVE_Kvp1 = axis1.Kvp;
+  // WAVE_Kvi1 = axis1.Kvi;
+  // WAVE_fwm1 = axis1.fwm;
+  // WAVE_fqs1 = axis1.fqs;
+  // WAVE_fwl1 = axis1.fwl;
   // 2軸目
   if (flag_SOB == 0)
   {
@@ -6261,26 +6541,26 @@ void CalcPVGain(void)
   axis2.Kfb = (axis2.apm1_pd - (axis2.av0 + axis2.Kpp * axis2.bv1)) / axis2.bv0;
   axis2.Kff = axis2.Kpp / gsub[1].beta_pole;
 
-  WAVE_av4_2 = axis2.av4;
-  WAVE_av3_2 = axis2.av3;
-  WAVE_av2_2 = axis2.av2;
-  WAVE_av1_2 = axis2.av1;
-  WAVE_av0_2 = axis2.av0;
-  WAVE_bv3_2 = axis2.bv3;
-  WAVE_bv2_2 = axis2.bv2;
-  WAVE_bv1_2 = axis2.bv1;
-  WAVE_bv0_2 = axis2.bv0;
-  WAVE_aq2_2 = axis2.apm2_pd;
-  WAVE_aq1_2 = axis2.apm1_pd;
-  WAVE_aq0_2 = axis2.apm0_pd;
-  WAVE_Kff2 = axis2.Kff;
-  WAVE_Kfb2 = axis2.Kfb;
-  WAVE_Kpp2 = axis2.Kpp;
-  WAVE_Kvp2 = axis2.Kvp;
-  WAVE_Kvi2 = axis2.Kvi;
-  WAVE_fwm2 = axis2.fwm;
-  WAVE_fqs2 = axis2.fqs;
-  WAVE_fwl2 = axis2.fwl;
+  // WAVE_av4_2 = axis2.av4;
+  // WAVE_av3_2 = axis2.av3;
+  // WAVE_av2_2 = axis2.av2;
+  // WAVE_av1_2 = axis2.av1;
+  // WAVE_av0_2 = axis2.av0;
+  // WAVE_bv3_2 = axis2.bv3;
+  // WAVE_bv2_2 = axis2.bv2;
+  // WAVE_bv1_2 = axis2.bv1;
+  // WAVE_bv0_2 = axis2.bv0;
+  // WAVE_aq2_2 = axis2.apm2_pd;
+  // WAVE_aq1_2 = axis2.apm1_pd;
+  // WAVE_aq0_2 = axis2.apm0_pd;
+  // WAVE_Kff2 = axis2.Kff;
+  // WAVE_Kfb2 = axis2.Kfb;
+  // WAVE_Kpp2 = axis2.Kpp;
+  // WAVE_Kvp2 = axis2.Kvp;
+  // WAVE_Kvi2 = axis2.Kvi;
+  // WAVE_fwm2 = axis2.fwm;
+  // WAVE_fqs2 = axis2.fqs;
+  // WAVE_fwl2 = axis2.fwl;
   
   // 3軸目
   axis3.Kvp = gsub[2].Kvp_cfp1 * axis3.Jl_calc;
@@ -6306,26 +6586,26 @@ void CalcPVGain(void)
   axis3.Kfb = (axis3.apm1_pd - (axis3.av0 + axis3.Kpp * axis3.bv1)) / axis3.bv0;
   axis3.Kff = axis3.Kpp / gsub[2].beta_pole;
 
-  WAVE_av4_3 = axis3.av4;
-  WAVE_av3_3 = axis3.av3;
-  WAVE_av2_3 = axis3.av2;
-  WAVE_av1_3 = axis3.av1;
-  WAVE_av0_3 = axis3.av0;
-  WAVE_bv3_3 = axis3.bv3;
-  WAVE_bv2_3 = axis3.bv2;
-  WAVE_bv1_3 = axis3.bv1;
-  WAVE_bv0_3 = axis3.bv0;
-  WAVE_aq2_3 = axis3.apm2_pd;
-  WAVE_aq1_3 = axis3.apm1_pd;
-  WAVE_aq0_3 = axis3.apm0_pd;
-  WAVE_Kff3 = axis3.Kff;
-  WAVE_Kfb3 = axis3.Kfb;
-  WAVE_Kpp3 = axis3.Kpp;
-  WAVE_Kvp3 = axis3.Kvp;
-  WAVE_Kvi3 = axis3.Kvi;
-  WAVE_fwm3 = axis3.fwm;
-  WAVE_fqs3 = axis3.fqs;
-  WAVE_fwl3 = axis3.fwl;
+  // WAVE_av4_3 = axis3.av4;
+  // WAVE_av3_3 = axis3.av3;
+  // WAVE_av2_3 = axis3.av2;
+  // WAVE_av1_3 = axis3.av1;
+  // WAVE_av0_3 = axis3.av0;
+  // WAVE_bv3_3 = axis3.bv3;
+  // WAVE_bv2_3 = axis3.bv2;
+  // WAVE_bv1_3 = axis3.bv1;
+  // WAVE_bv0_3 = axis3.bv0;
+  // WAVE_aq2_3 = axis3.apm2_pd;
+  // WAVE_aq1_3 = axis3.apm1_pd;
+  // WAVE_aq0_3 = axis3.apm0_pd;
+  // WAVE_Kff3 = axis3.Kff;
+  // WAVE_Kfb3 = axis3.Kfb;
+  // WAVE_Kpp3 = axis3.Kpp;
+  // WAVE_Kvp3 = axis3.Kvp;
+  // WAVE_Kvi3 = axis3.Kvi;
+  // WAVE_fwm3 = axis3.fwm;
+  // WAVE_fqs3 = axis3.fqs;
+  // WAVE_fwl3 = axis3.fwl;
 }
 
 // 位置・速度制御系可変ゲイン演算関数(初期化用：係数図法)
@@ -6623,6 +6903,8 @@ void CalcTauLDyn(Robot axis[])
   // T = H*aL + bcen*wLsq + 2*bcor*wLcr + grav;
 
   // 動力学外乱トルクの計算(3軸同時、簡略化)
+  axis1.tauLdyn_z2 = axis1.tauLdyn_z1;
+  axis1.tauLdyn_z1 = axis1.tauLdyn;
   axis1.tauLdyn = H12 * axis2.al_calc + b122 * (axis2.wl_calc * axis2.wl_calc) + b112 * axis1.wl_calc * axis2.wl_calc + b113 * axis1.wl_calc * axis3.wl_calc;
   axis2.tauLdyn_z2 = axis2.tauLdyn_z1;
   axis2.tauLdyn_z1 = axis2.tauLdyn;
@@ -6630,10 +6912,22 @@ void CalcTauLDyn(Robot axis[])
   axis3.tauLdyn_z2 = axis3.tauLdyn_z1;
   axis3.tauLdyn_z1 = axis3.tauLdyn;
   axis3.tauLdyn = H32 * axis2.al_calc + b311 * (axis1.wl_calc * axis1.wl_calc) + b322 * (axis2.wl_calc * axis2.wl_calc) + G3;
-  // Jlの計算
-  // axis1.Jl_calc = H11;
-  // axis2.Jl_calc = H22;
-  // axis3.Jl_calc = H33;
+
+  // 動力学外乱トルクの計算(3軸同時、簡略化) FB付きTm用、重力補償別計算
+  axis1.tauLdyn_woG_z3 = axis1.tauLdyn_woG_z2;
+  axis1.tauLdyn_woG_z2 = axis1.tauLdyn_woG_z1;
+  axis1.tauLdyn_woG_z1 = axis1.tauLdyn_woG;
+  axis1.tauLdyn_woG = H12 * axis2.al_calc + b122 * (axis2.wl_calc * axis2.wl_calc) + b112 * axis1.wl_calc * axis2.wl_calc + b113 * axis1.wl_calc * axis3.wl_calc;
+
+  axis2.tauLdyn_woG_z3 = axis2.tauLdyn_woG_z2;
+  axis2.tauLdyn_woG_z2 = axis2.tauLdyn_woG_z1;
+  axis2.tauLdyn_woG_z1 = axis2.tauLdyn_woG;
+  axis2.tauLdyn_woG = H21 * axis1.al_calc + H23 * axis3.al_calc + b211 * (axis1.wl_calc * axis1.wl_calc) + b233 * (axis3.wl_calc * axis3.wl_calc) + b223 * axis2.wl_calc * axis3.wl_calc;
+
+  axis3.tauLdyn_woG_z3 = axis3.tauLdyn_woG_z2;
+  axis3.tauLdyn_woG_z2 = axis3.tauLdyn_woG_z1;
+  axis3.tauLdyn_woG_z1 = axis3.tauLdyn_woG;
+  axis3.tauLdyn_woG = H32 * axis2.al_calc + b311 * (axis1.wl_calc * axis1.wl_calc) + b322 * (axis2.wl_calc * axis2.wl_calc);
 
   // 動力学トルクの計算(3軸同時、簡略化)
   // axis1.tauLdyn = H11*axis1.al_calc + H12*axis2.al_calc + b122*powf(axis2.wl_calc,2) + b112*axis1.wl_calc*axis2.wl_calc + b113*axis1.wl_calc*axis3.wl_calc;
@@ -6744,9 +7038,14 @@ void CalcGravIcmp(Robot axis[])
   static float S23 = 0.0;
 
   // 実験用
-  C23 = cos(axis2.ql + axis3.ql);
-  S2 = sin(axis2.ql);
-  S23 = sin(axis2.ql + axis3.ql);
+  // C23 = cos(axis2.ql + axis3.ql);
+  // S2 = sin(axis2.ql);
+  // S23 = sin(axis2.ql + axis3.ql);
+
+  // Wr出力確認用
+  C23 = cos(axis2.ql_calc + axis3.ql_calc);
+  S2 = sin(axis2.ql_calc);
+  S23 = sin(axis2.ql_calc + axis3.ql_calc);
 
   // ラグランジュ法に基づく動力学
   // 重力項
