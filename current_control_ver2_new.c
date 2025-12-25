@@ -1428,8 +1428,8 @@ interrupt void ControlFunction(void)
         }
         else
         {
-          axis1.Jl_calc = 35.9000;
-          axis1.Jl_calc_Wr = 35.9000;
+          // axis1.Jl_calc = 35.9000;
+          // axis1.Jl_calc_Wr = 35.9000;
         }
 
         CalcPVGain();
@@ -1765,20 +1765,20 @@ interrupt void ControlFunction(void)
           }
           if (flag_FRA_test_start == 1)
           {
-            static float Ratio_FRA_Au = 1.0;
+            static float Ratio_FRA_Au = 0.3;
             if (freq != 0)
             {
               wmcmd1 = 0.0;
               wmcmd2 = 0.0;
               wmcmd3 = 0.0;
               if(flag_FRA_Axis == 1){
-                wmcmd1 = 0.5 * Ratio_FRA_Au * cosf(2.0 * PI * freq * (Time_FRA - tini)); // 単正弦波入力評価用(Sel FRA)
+                wmcmd1 = - 0.5 * 2.0 * PI * freq * Ratio_FRA_Au * sinf(2.0 * PI * freq * (Time_FRA - tini)); // 単正弦波入力評価用(Sel FRA)
               }
               else if(flag_FRA_Axis == 2){
-                wmcmd2 = 0.5 * Ratio_FRA_Au * cosf(2.0 * PI * freq * (Time_FRA - tini)); // 単正弦波入力評価用(Sel FRA)
+                wmcmd2 = - 0.5 * 2.0 * PI * freq * Ratio_FRA_Au * sinf(2.0 * PI * freq * (Time_FRA - tini)); // 単正弦波入力評価用(Sel FRA)
               }
               else if (flag_FRA_Axis == 3){
-                wmcmd3 = 0.5 * Ratio_FRA_Au * cosf(2.0 * PI * freq * (Time_FRA - tini)); // 単正弦波入力評価用(Sel FRA)
+                wmcmd3 = - 0.5 * 2.0 * PI * freq * Ratio_FRA_Au * sinf(2.0 * PI * freq * (Time_FRA - tini)); // 単正弦波入力評価用(Sel FRA)
               }
               // FRAの1周波数の時間が経過したら次の周波数へ
               if (Ni / freq <= (Time_FRA - tini))

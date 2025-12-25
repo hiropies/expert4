@@ -2,7 +2,7 @@ ad1 11f0397c FLOAT 1
 ad2 11f03980 FLOAT 1
 ad3 11f03984 FLOAT 1
 counter_2 11f032f0 INT 3
-debug3 c043c48 FLOAT 20 4
+debug3 c0439d8 FLOAT 20 4
 debug_theta 11f033bc INT 3
 Flag_ARCS_clear 11f033b0 INT 3
 Flag_ARCS_start 11f033ac INT 3
@@ -39,7 +39,7 @@ Iq_off 11f033a8 FLOAT 1
 ModRatioU 11f03988 FLOAT 1
 ModRatioV 11f0398c FLOAT 1
 ModRatioW 11f03990 FLOAT 1
-range c043be8 FLOAT 20 8
+range c043988 FLOAT 20 8
 ref_Iq_direct1 11f0340c FLOAT 1
 ref_Iq_direct2 11f03410 FLOAT 1
 ref_Iq_direct3 11f03414 FLOAT 1
