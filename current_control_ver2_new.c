@@ -247,6 +247,9 @@ volatile float WAVE_MRBR3;
 volatile float WAVE_tauLdyn1; // [Nm] 動力学外乱トルク
 volatile float WAVE_tauLdyn2; // [Nm] 動力学外乱トルク
 volatile float WAVE_tauLdyn3; // [Nm] 動力学外乱トルク
+volatile float WAVE_tauLwoG1; // [Nm] 動力学外乱トルク 重力項なし
+volatile float WAVE_tauLwoG2; // [Nm] 動力学外乱トルク 重力項なし
+volatile float WAVE_tauLwoG3; // [Nm] 動力学外乱トルク 重力項なし
 // 動力学によるJl計算値
 volatile float WAVE_Jl_calc1; // [kgm^2] 動力学によるJl計算値
 volatile float WAVE_Jl_calc2; // [kgm^2] 動力学によるJl計算値
@@ -2264,6 +2267,10 @@ interrupt void ControlFunction(void)
   WAVE_tauLdyn2 = axis2.tauLdyn;
   WAVE_tauLdyn3 = axis3.tauLdyn;
 
+  WAVE_tauLwoG1 = axis1.tauLdyn_woG;
+  WAVE_tauLwoG2 = axis2.tauLdyn_woG;
+  WAVE_tauLwoG3 = axis3.tauLdyn_woG;
+
   WAVE_Jl_calc1 = axis1.Jl_calc;
   WAVE_Jl_calc2 = axis2.Jl_calc;
   WAVE_Jl_calc3 = axis3.Jl_calc;
@@ -2511,10 +2518,10 @@ void MW_main(void)
 
   // 可変ゲインの極を指定する(係数図法)
   // 1軸目
-  gsub[0].tau_cdm = 0.05;
-  gsub[0].zw = 50.0;
-  // gsub[0].tau_cdm = 0.058;
+  // gsub[0].tau_cdm = 0.05;
   // gsub[0].zw = 50.0;
+  gsub[0].tau_cdm = 0.058;
+  gsub[0].zw = 50.0;
   gsub[0].r_cdm1 = 2.5;
   gsub[0].r_cdm2 = 2.0;
   gsub[0].r_cdm3 = 2.0;
@@ -2525,10 +2532,10 @@ void MW_main(void)
   gsub[0].r1_pole = 2.5;
 
   // 2軸目
-  gsub[1].tau_cdm = 0.05;
-  gsub[1].zw = 30.0;
-  // gsub[1].tau_cdm = 0.058;
-  // gsub[1].zw = 50.0;
+  // gsub[1].tau_cdm = 0.05;
+  // gsub[1].zw = 30.0;
+  gsub[1].tau_cdm = 0.058;
+  gsub[1].zw = 50.0;
   gsub[1].r_cdm1 = 2.5;
   gsub[1].r_cdm2 = 2.0;
   gsub[1].r_cdm3 = 2.0;
@@ -2539,10 +2546,10 @@ void MW_main(void)
   gsub[1].r1_pole = 2.5;
 
   // 3軸目
-  gsub[2].tau_cdm = 0.058;
-  gsub[2].zw = 30.0;
   // gsub[2].tau_cdm = 0.058;
-  // gsub[2].zw = 50.0;
+  // gsub[2].zw = 30.0;
+  gsub[2].tau_cdm = 0.058;
+  gsub[2].zw = 50.0;
   gsub[2].r_cdm1 = 2.5;
   gsub[2].r_cdm2 = 2.0;
   gsub[2].r_cdm3 = 2.0;
@@ -7040,6 +7047,7 @@ void CalcGravIcmp(Robot axis[])
   // S2 = sin(axis2.ql_calc);
   // S23 = sin(axis2.ql_calc + axis3.ql_calc);
 
+
   // ラグランジュ法に基づく動力学
   // 重力項
   axis2.Icmp = (dyn.G2p1 * S2 + dyn.G2p2 * S23 + dyn.G2p3 * C23) / (axis2.Rgn * axis2.Ktn);
@@ -7268,10 +7276,25 @@ void SetGain(Robot *robo)
 
   // 電流制御系の帯域 1kHz => 6283 rad/s => 159.1 us (立ち上がり時間)
   // 1軸 LCRメータ測定値　300Hz (Rはテスタで測定)				T = Ts*exp(-Rd/Ld*Ts)/(1-exp(-Rd/Ld*Ts))
-  robo[0].KpiQ = 12.8520;  // PI電流制御器 比例ゲイン		KpQ = ( 1-exp(-Wcd*Ts) )/( (Ts + T)/(T*Rq)*(1-exp(-Rq/Lq*Ts)) )
-  robo[0].KiiQ = 3.2889e3; // PI電流制御器 積分ゲイン		KiQ = KpQ/T
-  robo[0].KpiD = 10.4260;  // PI電流制御器 比例ゲイン		KpD = (1-exp(-Wcd*Ts))/( (Ts+T)/(T*Rd)*(1-exp(-Rd/Ld*Ts)) )
-  robo[0].KiiD = 3.2889e3; // PI電流制御器 積分ゲイン		KiD = KpD/T
+
+  // Ts = 100us
+  // robo[0].KpiQ = 12.8903;  // PI電流制御器 比例ゲイン		KpQ = ( 1-exp(-Wcd*Ts) )/( (Ts + T)/(T*Rq)*(1-exp(-Rq/Lq*Ts)) )
+  // robo[0].KiiQ = 2.9857e3; // PI電流制御器 積分ゲイン		KiQ = KpQ/T
+  // robo[0].KpiD = 10.2267;  // PI電流制御器 比例ゲイン		KpD = (1-exp(-Wcd*Ts))/( (Ts+T)/(T*Rd)*(1-exp(-Rd/Ld*Ts)) )
+  // robo[0].KiiD = 2.9857e3; // PI電流制御器 積分ゲイン		KiD = KpD/T
+
+  // Ts = 125us
+  robo[0].KpiQ = 11.9920;  // PI電流制御器 比例ゲイン		KpQ = ( 1-exp(-Wcd*Ts) )/( (Ts + T)/(T*Rq)*(1-exp(-Rq/Lq*Ts)) )
+  robo[0].KiiQ = 2.7856e3; // PI電流制御器 積分ゲイン		KiQ = KpQ/T
+  robo[0].KpiD = 9.5069;  // PI電流制御器 比例ゲイン		KpD = (1-exp(-Wcd*Ts))/( (Ts+T)/(T*Rd)*(1-exp(-Rd/Ld*Ts)) )
+  robo[0].KiiD = 2.7856e3; // PI電流制御器 積分ゲイン		KiD = KpD/T
+
+  // Ts = 160us
+  // robo[0].KpiQ = 10.8747;   // PI電流制御器 比例ゲイン		KpQ = ( 1-exp(-Wcd*Ts) )/( (Ts + T)/(T*Rq)*(1-exp(-Rq/Lq*Ts)) )
+  // robo[0].KiiQ = 2.5363e3; // PI電流制御器 積分ゲイン		KiQ = KpQ/T
+  // robo[0].KpiD = 8.6122;   // PI電流制御器 比例ゲイン		KpD = (1-exp(-Wcd*Ts))/( (Ts+T)/(T*Rd)*(1-exp(-Rd/Ld*Ts)) )
+  // robo[0].KiiD = 2.5363e3; // PI電流制御器 積分ゲイン		KiD = KpD/T
+
   robo[0].p = 4;
   robo[0].Rd = 0.64;                           // [Ω]		d軸抵抗
   robo[0].Rq = 0.64;                           // [Ω]		q軸抵抗
@@ -7309,10 +7332,24 @@ void SetGain(Robot *robo)
   robo[0].qm_min = robo[0].ql_min * robo[0].Rgn;
 
   // 2軸 LCRメータ測定周波数  300Hz (Rはテスタで測定)				T = Ts*exp(-Rd/Ld*Ts)/(1-exp(-Rd/Ld*Ts))
-  robo[1].KpiQ = 9.1576;   // PI電流制御器 比例ゲイン		KpQ = ( 1-exp(-Wcd*Ts) )/( (Ts + T)/(T*Rq)*(1-exp(-Rq/Lq*Ts)) )
-  robo[1].KiiQ = 2.7991e3; // PI電流制御器 積分ゲイン		KiQ = KpQ/T
-  robo[1].KpiD = 8.4026;   // PI電流制御器 比例ゲイン		KpD = (1-exp(-Wcd*Ts))/( (Ts+T)/(T*Rd)*(1-exp(-Rd/Ld*Ts)) )
-  robo[1].KiiD = 2.7991e3; // PI電流制御器 積分ゲイン		KiD = KpD/T
+
+  // Ts = 100us
+  // robo[1].KpiQ = 9.1576;   // PI電流制御器 比例ゲイン		KpQ = ( 1-exp(-Wcd*Ts) )/( (Ts + T)/(T*Rq)*(1-exp(-Rq/Lq*Ts)) )
+  // robo[1].KiiQ = 2.7991e3; // PI電流制御器 積分ゲイン		KiQ = KpQ/T
+  // robo[1].KpiD = 8.4026;   // PI電流制御器 比例ゲイン		KpD = (1-exp(-Wcd*Ts))/( (Ts+T)/(T*Rd)*(1-exp(-Rd/Ld*Ts)) )
+  // robo[1].KiiD = 2.7991e3; // PI電流制御器 積分ゲイン		KiD = KpD/T
+
+  // Ts = 125us
+  robo[1].KpiQ = 8.5117;   // PI電流制御器 比例ゲイン		KpQ = ( 1-exp(-Wcd*Ts) )/( (Ts + T)/(T*Rq)*(1-exp(-Rq/Lq*Ts)) )
+  robo[1].KiiQ = 2.6115e3; // PI電流制御器 積分ゲイン		KiQ = KpQ/T
+  robo[1].KpiD = 7.8073;   // PI電流制御器 比例ゲイン		KpD = (1-exp(-Wcd*Ts))/( (Ts+T)/(T*Rd)*(1-exp(-Rd/Ld*Ts)) )
+  robo[1].KiiD = 2.6115e3; // PI電流制御器 積分ゲイン		KiD = KpD/T
+
+  // Ts = 160us
+  // robo[1].KpiQ = 7.7088;   // PI電流制御器 比例ゲイン		KpQ = ( 1-exp(-Wcd*Ts) )/( (Ts + T)/(T*Rq)*(1-exp(-Rq/Lq*Ts)) )
+  // robo[1].KiiQ = 2.3778e3; // PI電流制御器 積分ゲイン		KiQ = KpQ/T
+  // robo[1].KpiD = 7.0676;   // PI電流制御器 比例ゲイン		KpD = (1-exp(-Wcd*Ts))/( (Ts+T)/(T*Rd)*(1-exp(-Rd/Ld*Ts)) )
+  // robo[1].KiiD = 2.3778e3; // PI電流制御器 積分ゲイン		KiD = KpD/T
 
   robo[1].p = 4;
   robo[1].Rd = 0.6;                            // [Ω]		d軸抵抗
@@ -7355,10 +7392,23 @@ void SetGain(Robot *robo)
   robo[1].qm_min = robo[1].ql_min * robo[1].Rgn;
 
   // 3軸 LCRメータ測定値　300Hz (Rはテスタで測定)					 T = Ts*exp(-Rd/Ld*Ts)/(1-exp(-Rd/Ld*Ts))
-  robo[2].KpiQ = 13.2473e+000; // PI電流制御器 比例ゲイン		KpQ = ( 1-exp(-Wcd*Ts) )/( (Ts + T)/(T*Rq)*(1-exp(-Rq/Lq*Ts)) )
-  robo[2].KiiQ = 3.4055e+003;  // PI電流制御器 積分ゲイン		KiQ = KpQ/T
-  robo[2].KpiD = 10.5347e+000; // PI電流制御器 比例ゲイン		KpD = (1-exp(-Wcd*Ts))/( (Ts+T)/(T*Rd)*(1-exp(-Rd/Ld*Ts)) )
-  robo[2].KiiD = 3.4055e+003;  // PI電流制御器 積分ゲイン		KiD = KpD/T
+  // Ts = 100us
+  // robo[2].KpiQ = 13.2473; // PI電流制御器 比例ゲイン		KpQ = ( 1-exp(-Wcd*Ts) )/( (Ts + T)/(T*Rq)*(1-exp(-Rq/Lq*Ts)) )
+  // robo[2].KiiQ = 3.4055e+003;  // PI電流制御器 積分ゲイン		KiQ = KpQ/T
+  // robo[2].KpiD = 10.5347; // PI電流制御器 比例ゲイン		KpD = (1-exp(-Wcd*Ts))/( (Ts+T)/(T*Rd)*(1-exp(-Rd/Ld*Ts)) )
+  // robo[2].KiiD = 3.4055e+003;  // PI電流制御器 積分ゲイン		KiD = KpD/T
+
+  // Ts = 125us
+  robo[2].KpiQ = 13.3202; // PI電流制御器 比例ゲイン		KpQ = ( 1-exp(-Wcd*Ts) )/( (Ts + T)/(T*Rq)*(1-exp(-Rq/Lq*Ts)) )
+  robo[2].KiiQ = 3.1773e3;  // PI電流制御器 積分ゲイン		KiQ = KpQ/T
+  robo[2].KpiD = 9.7895; // PI電流制御器 比例ゲイン		KpD = (1-exp(-Wcd*Ts))/( (Ts+T)/(T*Rd)*(1-exp(-Rd/Ld*Ts)) )
+  robo[2].KiiD = 3.1773e3; // PI電流制御器 積分ゲイン		KiD = KpD/T
+
+  // Ts = 160us
+  // robo[2].KpiQ = 11.1675;   // PI電流制御器 比例ゲイン		KpQ = ( 1-exp(-Wcd*Ts) )/( (Ts + T)/(T*Rq)*(1-exp(-Rq/Lq*Ts)) )
+  // robo[2].KiiQ = 2.8929e3; // PI電流制御器 積分ゲイン		KiQ = KpQ/T
+  // robo[2].KpiD = 8.8635;   // PI電流制御器 比例ゲイン		KpD = (1-exp(-Wcd*Ts))/( (Ts+T)/(T*Rd)*(1-exp(-Rd/Ld*Ts)) )
+  // robo[2].KiiD = 2.8929e3; // PI電流制御器 積分ゲイン		KiD = KpD/T
 
   robo[2].p = 4;
   robo[2].Rd = 0.73;      // [Ω]		d軸抵抗
