@@ -54,7 +54,9 @@
 #define QL3_MIN -10.0
 
 // PIオリジナル　DPD　β調整　指令値補正用ゲイン
-static const float CmdGain[] = {1.3200, 1.2748, 1.2476}; // D 20mm V 10m/min
+static const float CmdGain[] = {1.3103, 1.2703, 1.2476}; // D 20mm V 9.5m/min
+// static const float CmdGain[] = {1.3200, 1.2748, 1.2476}; // D 20mm V 10m/min
+// static const float CmdGain[] = {1.3379, 1.2859, 1.2476}; // D 20mm V 11m/min
 // static const float CmdGain[] = {1.0822, 1.0562, 1.0542}; // D 20mm V 05m/min
 // static const float CmdGain[] = {1.0033, 1.0022, 1.0022}; // D 20mm V 01m/min
 
@@ -2534,7 +2536,9 @@ void MW_main(void)
   gsub[0].r_cdm4 = 2.0;
   // 位置ゲイン設計指標
   gsub[0].tau_pole = 1 / 10.0;
-  gsub[0].beta_pole = 13.4674; // 10m/min
+  gsub[0].beta_pole = 13.6130; // 9.5m/min
+  // gsub[0].beta_pole = 13.4674; // 10m/min
+  // gsub[0].beta_pole = 13.2074; // 11m/min
   // gsub[0].beta_pole = 15.0464; // 05m/min
   // gsub[0].beta_pole = 15.7586; // 01m/min
   gsub[0].r1_pole = 2.5;
@@ -2548,7 +2552,9 @@ void MW_main(void)
   gsub[1].r_cdm4 = 2.0;
   // 位置ゲイン設計指標
   gsub[1].tau_pole = 1 / 10.0;
-  gsub[1].beta_pole = 19.3107; // 10m/min
+  gsub[1].beta_pole = 19.4440; // 9.5m/min
+  // gsub[1].beta_pole = 19.3107; // 10m/min
+  // gsub[1].beta_pole = 18.9924; // 11m/min
   // gsub[1].beta_pole = 20.0039; // 05m/min
   // gsub[1].beta_pole = 20.0021; // 01m/min
   gsub[1].r1_pole = 2.5;
@@ -7296,7 +7302,7 @@ void SetGain(Robot *robo)
   // robo[0].KiiD = 2.7856e3; // PI電流制御器 積分ゲイン		KiD = KpD/T
 
   // Ts = 160us
-  robo[0].KpiQ = 10.8747;   // PI電流制御器 比例ゲイン		KpQ = ( 1-exp(-Wcd*Ts) )/( (Ts + T)/(T*Rq)*(1-exp(-Rq/Lq*Ts)) )
+  robo[0].KpiQ = 10.8747;  // PI電流制御器 比例ゲイン		KpQ = ( 1-exp(-Wcd*Ts) )/( (Ts + T)/(T*Rq)*(1-exp(-Rq/Lq*Ts)) )
   robo[0].KiiQ = 2.5363e3; // PI電流制御器 積分ゲイン		KiQ = KpQ/T
   robo[0].KpiD = 8.6122;   // PI電流制御器 比例ゲイン		KpD = (1-exp(-Wcd*Ts))/( (Ts+T)/(T*Rd)*(1-exp(-Rd/Ld*Ts)) )
   robo[0].KiiD = 2.5363e3; // PI電流制御器 積分ゲイン		KiD = KpD/T
@@ -7411,7 +7417,7 @@ void SetGain(Robot *robo)
   // robo[2].KiiD = 3.1773e3; // PI電流制御器 積分ゲイン		KiD = KpD/T
 
   // Ts = 160us
-  robo[2].KpiQ = 11.1675;   // PI電流制御器 比例ゲイン		KpQ = ( 1-exp(-Wcd*Ts) )/( (Ts + T)/(T*Rq)*(1-exp(-Rq/Lq*Ts)) )
+  robo[2].KpiQ = 11.1675;  // PI電流制御器 比例ゲイン		KpQ = ( 1-exp(-Wcd*Ts) )/( (Ts + T)/(T*Rq)*(1-exp(-Rq/Lq*Ts)) )
   robo[2].KiiQ = 2.8929e3; // PI電流制御器 積分ゲイン		KiQ = KpQ/T
   robo[2].KpiD = 8.8635;   // PI電流制御器 比例ゲイン		KpD = (1-exp(-Wcd*Ts))/( (Ts+T)/(T*Rd)*(1-exp(-Rd/Ld*Ts)) )
   robo[2].KiiD = 2.8929e3; // PI電流制御器 積分ゲイン		KiD = KpD/T
