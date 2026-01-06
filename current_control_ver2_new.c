@@ -2526,7 +2526,9 @@ void MW_main(void)
   gsub[0].r_cdm4 = 2.0;
   // 位置ゲイン設計指標
   gsub[0].tau_pole = 1 / 10.0;
-  gsub[0].beta_pole = 13.4674; // 10m/min
+  gsub[0].beta_pole = 13.6130; // 9.5m/min
+  // gsub[0].beta_pole = 13.4674; // 10m/min
+  // gsub[0].beta_pole = 13.2074; // 11m/min
   // gsub[0].beta_pole = 15.0464; // 05m/min
   // gsub[0].beta_pole = 15.7586; // 01m/min
   gsub[0].r1_pole = 2.5;
@@ -2540,7 +2542,9 @@ void MW_main(void)
   gsub[1].r_cdm4 = 2.0;
   // 位置ゲイン設計指標
   gsub[1].tau_pole = 1 / 10.0;
-  gsub[1].beta_pole = 19.3107; // 10m/min
+  gsub[1].beta_pole = 19.4440; // 9.5m/min
+  // gsub[1].beta_pole = 19.3107; // 10m/min
+  // gsub[1].beta_pole = 18.9924; // 11m/min
   // gsub[1].beta_pole = 20.0039; // 05m/min
   // gsub[1].beta_pole = 20.0021; // 01m/min
   gsub[1].r1_pole = 2.5;
