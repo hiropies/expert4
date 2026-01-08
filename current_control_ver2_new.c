@@ -1784,6 +1784,7 @@ interrupt void ControlFunction(void)
           static float wmcmd3 = 0.0;
           if (flag_FRA_test_start == 0)
           {
+            flag_FRA_test_end = 0;
             // FRA
             wmcmd1 = 0.0;
             wmcmd2 = 0.0;
@@ -1823,6 +1824,7 @@ interrupt void ControlFunction(void)
             else
             {
               flag_FRA_test_end = 1.0;
+              
               wmcmd1 = 0.0;
               wmcmd2 = 0.0;
               wmcmd3 = 0.0;
@@ -1831,6 +1833,11 @@ interrupt void ControlFunction(void)
           }
           if (flag_FRA_test_end == 1)
           {
+            flag_FRA_test_start = 0;
+            Time_FRA = 0.0;
+            tini = 0.0;
+            freq = fmin;
+         
             // 指令はゼロ
             // FRA
             wmcmd1 = 0.0;
