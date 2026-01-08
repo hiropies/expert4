@@ -1264,11 +1264,11 @@ interrupt void ControlFunction(void)
   static float motor_cmd_init[3] = {0, 0, 0};
 
   // FRA試験関係変数
-  static float fmin = 1.0;      //[Hz] 開始周波数
+  static float fmin = 1.5;      //[Hz] 開始周波数
   static float fmax = 15.0;     //[Hz] 終了周波数
   static float fstep = 0.1;     //[Hz] 周波数刻み
   static float Ni = 10.0;       // Sin波の個数 (積分回数)
-  static float freq = 1.0;    // 現在の周波数:初めはfminからstart //プログラム上freq=fminを初期定義できないので、直接数値を打つ
+  static float freq = 1.5;    // 現在の周波数:初めはfminからstart //プログラム上freq=fminを初期定義できないので、直接数値を打つ
   static float tini = 0.0;     //[s] 時間初期化
   static float Time_FRA = 0.0; //[s] FRA試験開始時間(フラグが来たら時間カウント開始)
 
@@ -1771,7 +1771,7 @@ interrupt void ControlFunction(void)
           }
           if (flag_FRA_test_start == 1)
           {
-            static float Ratio_FRA_Au = 0.3;
+            static float Ratio_FRA_Au = 0.7;
             if (freq != 0)
             {
               wmcmd1 = 0.0;
@@ -1784,7 +1784,7 @@ interrupt void ControlFunction(void)
                 wmcmd2 = - 0.5 * 2.0 * PI * freq * Ratio_FRA_Au * sinf(2.0 * PI * freq * (Time_FRA - tini)); // 単正弦波入力評価用(Sel FRA)
               }
               else if (flag_FRA_Axis == 3){
-                wmcmd3 = - 0.5 * 2.0 * PI * freq * Ratio_FRA_Au * sinf(2.0 * PI * freq * (Time_FRA - tini)); // 単正弦波入力評価用(Sel FRA)
+                wmcmd3 = 0.5 * 2.0 * PI * freq * Ratio_FRA_Au * sinf(2.0 * PI * freq * (Time_FRA - tini)); // 単正弦波入力評価用(Sel FRA)
               }
               // FRAの1周波数の時間が経過したら次の周波数へ
               if (Ni / freq <= (Time_FRA - tini))
