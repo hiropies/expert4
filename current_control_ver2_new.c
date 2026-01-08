@@ -114,6 +114,7 @@ volatile int flag_cmd_end = 0;
 volatile int flag_FRA_Axis = 1; // 1->1軸 2->2軸 3->3軸
 volatile int flag_FRA_test_start = 0; // FRA試験開始フラグ
 volatile int flag_FRA_test_end = 0;   // FRA試験終了フラグ
+volatile int flag_tuneNo = 1;        // チューニングNo選択フラグ 1:統一設計 2:9.5m/min 3:10m/min 4:11m/min
 
 volatile float WAVE_Timer0 = 0.0; // タイマー記録変数
 volatile float WAVE_Timer1 = 0.0; // タイマー記録変数
@@ -1226,13 +1227,6 @@ void SetBDN(Robot *robo, int Bnum);                     //!< ロボット構造�
 void SetENC_CH(Robot *robo, int Ech);                   //!< エンコーダボードch番号
 void SetGain(Robot robo[]);                             ///!< 電流,速度,位置のゲインの挿入
 
-float Integrator_acc_ref(float u, const float Ts);  // 加速度指令==>速度指令　1軸用
-float Integrator_w_ref(float u, const float Ts);    // 速度指令==>位置指令　　1軸用
-float Integrator_acc_ref2(float u, const float Ts); // 加速度指令==>速度指令　1軸用
-float Integrator_w_ref2(float u, const float Ts);   // 速度指令==>位置指令　　1軸用
-float Integrator_acc_ref3(float u, const float Ts); // 加速度指令==>速度指令　3軸用
-float Integrator_w_ref3(float u, const float Ts);   // 速度指令==>位置指令  　3軸用
-
 // 制御器初期化
 Controller q_current[3] = {0}; /*!< q軸電流コントローラ */
 Controller d_current[3] = {0}; /*!< d軸電流コントローラ */
@@ -1330,26 +1324,52 @@ interrupt void ControlFunction(void)
       axis2.wm = axis2.omega_rm;
       axis2.wm = -1.0 * axis2.wm;
       axis3.wm = axis3.omega_rm;
-      // if (flag_on == 0)
-      // {
-      //   axis1.qm_ref = 0.0;
-      //   LimitPosCmd(&axis1);
-      //   axis2.qm_ref = 0.0;
-      //   LimitPosCmd(&axis2);
-      //   axis3.qm_ref = 0.0;
-      //   LimitPosCmd(&axis3);
-      // }
-      // else
-      // {
-      //   axis1.qm_ref = axis1.qm;
-      //   LimitPosCmd(&axis1);
-      //   axis2.qm_ref = axis2.qm;
-      //   LimitPosCmd(&axis2);
-      //   axis3.qm_ref = axis3.qm;
-      //   LimitPosCmd(&axis3);
-      // }
 
-      CalcGravIcmp(joint); // 2,3軸の重力補償電流を計算　main関数の初期姿勢を要確認！！！！
+      // モードを指定して位置ゲイン設計を変更する(動作中に変更しないよう、flag_cont_start == 1の時のみ変更する)
+      if (flag_tuneNo == 1) // tuneNo == 1 : 統一設計
+      {
+        gsub[0].beta_pole = 20.0; // 1軸目
+        gsub[1].beta_pole = 20.0; // 2軸目
+        gsub[2].beta_pole = 20.0; // 3軸目
+      }
+      else if (flag_tuneNo == 2) // tuneNo == 2 : 9.5m/min
+      {
+        gsub[0].beta_pole = 13.6130; // 9.5m/min
+        gsub[1].beta_pole = 19.4440; // 2軸目
+        gsub[2].beta_pole = 20.0; // 3軸目
+      }
+      else if (flag_tuneNo == 3) // tuneNo == 3 : 10m/min
+      {
+        gsub[0].beta_pole = 13.4674; // 1軸目
+        gsub[1].beta_pole = 19.3107; // 2軸目
+        gsub[2].beta_pole = 20.0;    // 3軸目
+      }
+      else if (flag_tuneNo == 4) // tuneNo == 4 : 11m/min
+      {
+        gsub[0].beta_pole = 13.2074; // 1軸目
+        gsub[1].beta_pole = 18.9924; // 2軸目
+        gsub[2].beta_pole = 20.0;    // 3軸目
+      }
+        // if (flag_on == 0)
+        // {
+        //   axis1.qm_ref = 0.0;
+        //   LimitPosCmd(&axis1);
+        //   axis2.qm_ref = 0.0;
+        //   LimitPosCmd(&axis2);
+        //   axis3.qm_ref = 0.0;
+        //   LimitPosCmd(&axis3);
+        // }
+        // else
+        // {
+        //   axis1.qm_ref = axis1.qm;
+        //   LimitPosCmd(&axis1);
+        //   axis2.qm_ref = axis2.qm;
+        //   LimitPosCmd(&axis2);
+        //   axis3.qm_ref = axis3.qm;
+        //   LimitPosCmd(&axis3);
+        // }
+
+        CalcGravIcmp(joint); // 2,3軸の重力補償電流を計算　main関数の初期姿勢を要確認！！！！
       CalcJl(joint);         // JLの変動は使うので3軸分計算
       CalcJlWr(joint);
 
@@ -1434,8 +1454,8 @@ interrupt void ControlFunction(void)
         }
         else
         {
-          // axis1.Jl_calc = 35.9000;
-          // axis1.Jl_calc_Wr = 35.9000;
+          axis1.Jl_calc = 35.9000;
+          axis1.Jl_calc_Wr = 35.9000;
         }
 
         CalcPVGain();
@@ -2561,21 +2581,6 @@ void MW_main(void)
   axis2.theta_rl_init = 0.0 * PI / 180.0; // [rad]
   axis3.theta_rl_init = 0.0 * PI / 180.0; // [rad]
 
-  // 指令軌跡中心点（ゲイン確認用）
-  // axis1.theta_rl_init = 0.0 * PI / 180.0; // [rad]
-  // axis2.theta_rl_init = 41.272 * PI / 180.0; // [rad]
-  // axis3.theta_rl_init = 0.756 * PI / 180.0; // [rad]
-
-  // JL最大
-  // axis2.theta_rl_init = 90.0 * PI/180.0; // [rad]
-  // axis3.theta_rl_init = -75.0 * PI/180.0; // [rad]
-  // 80%
-  // axis2.theta_rl_init = 41.27 * PI/180.0; // [rad]
-  // axis3.theta_rl_init = 0.76 * PI/180.0; // [rad]
-  // 50%
-  // axis2.theta_rl_init = 6.03 * PI/180.0; // [rad]
-  // axis3.theta_rl_init = 50.25 * PI/180.0; // [rad]
-
   // 指令値の設定値
   SetRampParams(cmd_1_soft[0], cmd_2_soft[0], cmd_3_soft[0]);
 
@@ -2611,8 +2616,10 @@ void MW_main(void)
   gsub[0].r_cdm4 = 2.0;
   // 位置ゲイン設計指標
   gsub[0].tau_pole = 1 / 10.0;
-  gsub[0].beta_pole = 20.00; // 10m/min
+  gsub[0].beta_pole = 20.0;
+  // gsub[0].beta_pole = 13.6130; // 9.5m/min
   // gsub[0].beta_pole = 13.4674; // 10m/min
+  // gsub[0].beta_pole = 13.2074; // 11m/min
   // gsub[0].beta_pole = 15.0464; // 05m/min
   // gsub[0].beta_pole = 15.7586; // 01m/min
   gsub[0].r1_pole = 2.5;
@@ -2628,8 +2635,10 @@ void MW_main(void)
   gsub[1].r_cdm4 = 2.0;
   // 位置ゲイン設計指標
   gsub[1].tau_pole = 1 / 10.0;
-  gsub[1].beta_pole = 20.00; // 10m/min
+  gsub[1].beta_pole = 20.0;
+  // gsub[1].beta_pole = 19.4440; // 9.5m/min
   // gsub[1].beta_pole = 19.3107; // 10m/min
+  // gsub[1].beta_pole = 18.9924; // 11m/min
   // gsub[1].beta_pole = 20.0039; // 05m/min
   // gsub[1].beta_pole = 20.0021; // 01m/min
   gsub[1].r1_pole = 2.5;
@@ -7378,7 +7387,7 @@ void SetGain(Robot *robo)
   // robo[0].KiiD = 2.7856e3; // PI電流制御器 積分ゲイン		KiD = KpD/T
 
   // Ts = 160us
-  robo[0].KpiQ = 10.8747;   // PI電流制御器 比例ゲイン		KpQ = ( 1-exp(-Wcd*Ts) )/( (Ts + T)/(T*Rq)*(1-exp(-Rq/Lq*Ts)) )
+  robo[0].KpiQ = 10.8747;  // PI電流制御器 比例ゲイン		KpQ = ( 1-exp(-Wcd*Ts) )/( (Ts + T)/(T*Rq)*(1-exp(-Rq/Lq*Ts)) )
   robo[0].KiiQ = 2.5363e3; // PI電流制御器 積分ゲイン		KiQ = KpQ/T
   robo[0].KpiD = 8.6122;   // PI電流制御器 比例ゲイン		KpD = (1-exp(-Wcd*Ts))/( (Ts+T)/(T*Rd)*(1-exp(-Rd/Ld*Ts)) )
   robo[0].KiiD = 2.5363e3; // PI電流制御器 積分ゲイン		KiD = KpD/T
@@ -7493,7 +7502,7 @@ void SetGain(Robot *robo)
   // robo[2].KiiD = 3.1773e3; // PI電流制御器 積分ゲイン		KiD = KpD/T
 
   // Ts = 160us
-  robo[2].KpiQ = 11.1675;   // PI電流制御器 比例ゲイン		KpQ = ( 1-exp(-Wcd*Ts) )/( (Ts + T)/(T*Rq)*(1-exp(-Rq/Lq*Ts)) )
+  robo[2].KpiQ = 11.1675;  // PI電流制御器 比例ゲイン		KpQ = ( 1-exp(-Wcd*Ts) )/( (Ts + T)/(T*Rq)*(1-exp(-Rq/Lq*Ts)) )
   robo[2].KiiQ = 2.8929e3; // PI電流制御器 積分ゲイン		KiQ = KpQ/T
   robo[2].KpiD = 8.8635;   // PI電流制御器 比例ゲイン		KpD = (1-exp(-Wcd*Ts))/( (Ts+T)/(T*Rd)*(1-exp(-Rd/Ld*Ts)) )
   robo[2].KiiD = 2.8929e3; // PI電流制御器 積分ゲイン		KiD = KpD/T
@@ -7541,76 +7550,4 @@ void SetGain(Robot *robo)
   robo[2].ql_min = QL3_MIN * PI / 180.0;
   robo[2].qm_max = robo[2].ql_max * robo[2].Rgn;
   robo[2].qm_min = robo[2].ql_min * robo[2].Rgn;
-}
-
-float Integrator_acc_ref(float u, const float Ts)
-{
-  // 加速度指令==>速度指令
-  // 積分器の状態量の定義
-  static float y = 0.0, yZ1 = 0.0, yZ = 0.0;
-
-  yZ1 = Ts * u + yZ;
-  yZ = yZ1;
-  y = yZ1;
-  return y;
-}
-
-float Integrator_w_ref(float u, const float Ts)
-{
-  // 速度指令==>位置指令
-  // 積分器の状態量の定義
-  static float y = 0.0, yZ1 = 0.0, yZ = 0.0;
-
-  yZ1 = Ts * u + yZ;
-  yZ = yZ1;
-  y = yZ1;
-  return y;
-}
-
-float Integrator_acc_ref2(float u, const float Ts)
-{
-  // 加速度指令==>速度指令
-  // 積分器の状態量の定義
-  static float y = 0.0, yZ1 = 0.0, yZ = 0.0;
-
-  yZ1 = Ts * u + yZ;
-  yZ = yZ1;
-  y = yZ1;
-  return y;
-}
-
-float Integrator_w_ref2(float u, const float Ts)
-{
-  // 速度指令==>位置指令
-  // 積分器の状態量の定義
-  static float y = 0.0, yZ1 = 0.0, yZ = 0.0;
-
-  yZ1 = Ts * u + yZ;
-  yZ = yZ1;
-  y = yZ1;
-  return y;
-}
-
-float Integrator_acc_ref3(float u, const float Ts)
-{
-  // 加速度指令==>速度指令
-  // 積分器の状態量の定義
-  static float y = 0.0, yZ1 = 0.0, yZ = 0.0;
-
-  yZ1 = Ts * u + yZ;
-  yZ = yZ1;
-  y = yZ1;
-  return y;
-}
-
-float Integrator_w_ref3(float u, const float Ts)
-{
-  // 速度指令==>位置指令
-  // 積分器の状態量の定義
-  static float y = 0.0, yZ1 = 0.0, yZ = 0.0;
-
-  yZ1 = Ts * u + yZ;
-  yZ = yZ1;
-  y = yZ1;
-  return y;
 }
