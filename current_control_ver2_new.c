@@ -1782,6 +1782,10 @@ interrupt void ControlFunction(void)
           static float wmcmd1 = 0.0;
           static float wmcmd2 = 0.0;
           static float wmcmd3 = 0.0;
+          static float phase = 0.0;
+          static float cycle = 0.0;
+          static float Ratio_FRA_Au = 1.0;
+
           if (flag_FRA_test_start == 0)
           {
             flag_FRA_test_end = 0;
@@ -1792,25 +1796,32 @@ interrupt void ControlFunction(void)
           }
           if (flag_FRA_test_start == 1)
           {
-            static float Ratio_FRA_Au = 1.0;
+            float omega = 2.0f*PI*freq;
+            float d_theta = omega * Tp;
+            phase += d_theta;
+            cycle += (d_theta / (2.0f*PI));
+            float sin_val = sinf(phase);
+            float amp = omega*Ratio_FRA_Au;
             if (freq != 0)
             {
               wmcmd1 = 0.0;
               wmcmd2 = 0.0;
               wmcmd3 = 0.0;
               if(flag_FRA_Axis == 1){
-                wmcmd1 = - 1.0 * 2.0 * PI * freq * Ratio_FRA_Au * sinf(2.0 * PI * freq * (Time_FRA - tini)); // 単正弦波入力評価用(Sel FRA)
+                wmcmd1 = - 1.0 * amp * sin_val; // 単正弦波入力評価用(Sel FRA)
               }
               else if(flag_FRA_Axis == 2){
-                wmcmd2 = - 1.0 * 2.0 * PI * freq * Ratio_FRA_Au * sinf(2.0 * PI * freq * (Time_FRA - tini)); // 単正弦波入力評価用(Sel FRA)
+                wmcmd2 = - 1.0 * amp * sin_val; // 単正弦波入力評価用(Sel FRA)
               }
               else if (flag_FRA_Axis == 3){
-                wmcmd3 = 1.0 * 2.0 * PI * freq * Ratio_FRA_Au * sinf(2.0 * PI * freq * (Time_FRA - tini)); // 単正弦波入力評価用(Sel FRA)
+                wmcmd3 = 1.0 * amp * sin_val; // 単正弦波入力評価用(Sel FRA)
               }
               // FRAの1周波数の時間が経過したら次の周波数へ
-              if (Ni / freq <= (Time_FRA - tini))
+              // if (Ni / freq <= (Time_FRA - tini))
+              if (cycle >= Ni)
               {
-                if (freq < fmax) // 1刻み多いから freq<fmaxでも良いのでは?
+                cycle = 0.0;
+                if (freq < fmax - (fstep * 0.5f)) // 1刻み多いから freq<fmaxでも良いのでは?
                 {
                   tini = Time_FRA;
                   freq = freq + fstep;
@@ -1837,7 +1848,9 @@ interrupt void ControlFunction(void)
             Time_FRA = 0.0;
             tini = 0.0;
             freq = fmin;
-         
+            cycle = 0.0;
+            phase = 0.0;
+            
             // 指令はゼロ
             // FRA
             wmcmd1 = 0.0;
