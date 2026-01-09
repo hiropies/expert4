@@ -1867,7 +1867,7 @@ interrupt void ControlFunction(void)
           // axis1.wm_cmd = motor_vel_cmd[0];
           axis1.wm_cmd = wmcmd1;
           axis1.qm_ref_z1 = axis1.qm_ref;
-          axis1.qm_ref = axis1.wm_cmd_z3 * Tp + axis1.qm_ref_z1;
+          axis1.qm_ref = axis1.wm_cmd * Tp + axis1.qm_ref_z1;
 
           LimitPosCmd(&axis1);
 
@@ -1905,7 +1905,7 @@ interrupt void ControlFunction(void)
           // axis2.wm_cmd = motor_vel_cmd[1];
           axis2.wm_cmd = wmcmd2;
           axis2.qm_ref_z1 = axis2.qm_ref;
-          axis2.qm_ref = axis2.wm_cmd_z3 * Tp + axis2.qm_ref_z1;
+          axis2.qm_ref = axis2.wm_cmd * Tp + axis2.qm_ref_z1;
 
           LimitPosCmd(&axis2);
           axis2.wm_ref = (axis2.qm_ref - axis2.qm) * axis2.Kpp + axis2.Kff * axis2.wm_cmd_z3 - axis2.Kfb * axis2.wm;
@@ -1941,7 +1941,7 @@ interrupt void ControlFunction(void)
           // axis3.wm_cmd = motor_vel_cmd[2];
           axis3.wm_cmd = wmcmd3;
           axis3.qm_ref_z1 = axis3.qm_ref;
-          axis3.qm_ref = axis3.wm_cmd_z3 * Tp + axis3.qm_ref_z1;
+          axis3.qm_ref = axis3.wm_cmd * Tp + axis3.qm_ref_z1;
           LimitPosCmd(&axis3);
           axis3.wm_ref = (axis3.qm_ref - axis3.qm) * axis3.Kpp + axis3.Kff * axis3.wm_cmd_z3 - axis3.Kfb * axis3.wm;
           axis3.Ipi = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1);

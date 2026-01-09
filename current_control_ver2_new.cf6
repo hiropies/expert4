@@ -84,8 +84,8 @@
     <BindWaveNormRec>
       <OnChipVarAddress>0</OnChipVarAddress>
       <OnchipVarType>0</OnchipVarType>
-      <bNormValDivValue>0.2</bNormValDivValue>
-      <bNormPosValue>0.4</bNormPosValue>
+      <bNormValDivValue>1</bNormValDivValue>
+      <bNormPosValue>2</bNormPosValue>
       <bNormPosAngle>180</bNormPosAngle>
       <bNormOffsetValue>0</bNormOffsetValue>
       <bNormOnOff>true</bNormOnOff>
@@ -97,8 +97,8 @@
     <BindWaveNormRec>
       <OnChipVarAddress>0</OnChipVarAddress>
       <OnchipVarType>0</OnchipVarType>
-      <bNormValDivValue>0.2</bNormValDivValue>
-      <bNormPosValue>0.4</bNormPosValue>
+      <bNormValDivValue>1</bNormValDivValue>
+      <bNormPosValue>2</bNormPosValue>
       <bNormPosAngle>180</bNormPosAngle>
       <bNormOffsetValue>0</bNormOffsetValue>
       <bNormOnOff>true</bNormOnOff>
@@ -874,9 +874,9 @@
   <bCurRangeValue>100</bCurRangeValue>
   <bHorValue>40</bHorValue>
   <bHorValue_rough>40</bHorValue_rough>
-  <bCurPosValue>200</bCurPosValue>
+  <bCurPosValue>195</bCurPosValue>
   <bIndex_TrgNo>0</bIndex_TrgNo>
-  <bTrgPosValue>-195</bTrgPosValue>
+  <bTrgPosValue>-200</bTrgPosValue>
   <wd6Dir>D:\Desktop\abe実験\20260108</wd6Dir>
   <cfgDir>C:\Users\Ikeda\Documents\mizo_expert4_program\テストモータ\20210112_8_プログラムver2でエンコーダ読めるようにする_エンコーダ読み取り部分修正</cfgDir>
   <bVarsList>
