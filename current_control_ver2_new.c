@@ -1258,11 +1258,11 @@ interrupt void ControlFunction(void)
   static float motor_cmd_init[3] = {0, 0, 0};
 
   // FRA試験関係変数
-  static float fmin = 0.1;      //[Hz] 開始周波数
-  static float fmax = 0.5;     //[Hz] 終了周波数
-  static float fstep = 0.05;     //[Hz] 周波数刻み
+  static float fmin = 1.5;      //[Hz] 開始周波数
+  static float fmax = 15.0;     //[Hz] 終了周波数
+  static float fstep = 0.1;     //[Hz] 周波数刻み
   static float Ni = 10.0;       // Sin波の個数 (積分回数)
-  static float freq = 0.1;    // 現在の周波数:初めはfminからstart //プログラム上freq=fminを初期定義できないので、直接数値を打つ
+  static float freq = 1.5;    // 現在の周波数:初めはfminからstart //プログラム上freq=fminを初期定義できないので、直接数値を打つ
   static float tini = 0.0;     //[s] 時間初期化
   static float Time_FRA = 0.0; //[s] FRA試験開始時間(フラグが来たら時間カウント開始)
 
@@ -1408,9 +1408,9 @@ interrupt void ControlFunction(void)
       // axis1.wm_ref = Ref_wM_direct * RectGenerator(t,ref_freq);
       // 動力学方程式より出るトルクの正負に合わせて補償電流を入れる
       // inspectorで要確認！！！！
-      axis1.Icmd = 5.1 * Ref_Iq_ref_direct1 * sinf(2.0*PI*2.0*t);
-      axis2.Icmd = 7.9 * Ref_Iq_ref_direct2 * sinf(2.0*PI*2.0*t);
-      axis3.Icmd = 4.6 * Ref_Iq_ref_direct3 * sinf(2.0*PI*2.0*t);
+      axis1.Icmd = 5.1 * Ref_Iq_ref_direct1 * sinf(2.0*PI*t);
+      axis2.Icmd = 7.9 * Ref_Iq_ref_direct2 * sinf(2.0*PI*t);
+      axis3.Icmd = 4.6 * Ref_Iq_ref_direct3 * sinf(2.0*PI*t);
 
       axis1.IrefQ = axis1.Icmd;
       axis2.IrefQ = axis2.Icmd + axis2.Icmp;
@@ -1796,25 +1796,20 @@ interrupt void ControlFunction(void)
           }
           if (flag_FRA_test_start == 1)
           {
-            float omega = 2.0f*PI*freq;
-            float d_theta = omega * Tp;
-            phase += d_theta;
-            cycle += (d_theta / (2.0f*PI));
-            float sin_val = sinf(phase);
-            float amp = omega*Ratio_FRA_Au;
+            static float Ratio_FRA_Au = 0.7;
             if (freq != 0)
             {
               wmcmd1 = 0.0;
               wmcmd2 = 0.0;
               wmcmd3 = 0.0;
               if(flag_FRA_Axis == 1){
-                wmcmd1 = - 1.0 * amp * sin_val; // 単正弦波入力評価用(Sel FRA)
+                wmcmd1 = - 0.5 * 2.0 * PI * freq * Ratio_FRA_Au * sinf(2.0 * PI * freq * (Time_FRA - tini)); // 単正弦波入力評価用(Sel FRA)
               }
               else if(flag_FRA_Axis == 2){
-                wmcmd2 = - 1.0 * amp * sin_val; // 単正弦波入力評価用(Sel FRA)
+                wmcmd2 = - 0.5 * 2.0 * PI * freq * Ratio_FRA_Au * sinf(2.0 * PI * freq * (Time_FRA - tini)); // 単正弦波入力評価用(Sel FRA)
               }
               else if (flag_FRA_Axis == 3){
-                wmcmd3 = 1.0 * amp * sin_val; // 単正弦波入力評価用(Sel FRA)
+                wmcmd3 = 0.5 * 2.0 * PI * freq * Ratio_FRA_Au * sinf(2.0 * PI * freq * (Time_FRA - tini)); // 単正弦波入力評価用(Sel FRA)
               }
               // FRAの1周波数の時間が経過したら次の周波数へ
               // if (Ni / freq <= (Time_FRA - tini))
