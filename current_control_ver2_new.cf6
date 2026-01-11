@@ -84,8 +84,8 @@
     <BindWaveNormRec>
       <OnChipVarAddress>0</OnChipVarAddress>
       <OnchipVarType>0</OnchipVarType>
-      <bNormValDivValue>1</bNormValDivValue>
-      <bNormPosValue>2</bNormPosValue>
+      <bNormValDivValue>0.5</bNormValDivValue>
+      <bNormPosValue>1</bNormPosValue>
       <bNormPosAngle>180</bNormPosAngle>
       <bNormOffsetValue>0</bNormOffsetValue>
       <bNormOnOff>true</bNormOnOff>
@@ -97,9 +97,9 @@
     <BindWaveNormRec>
       <OnChipVarAddress>0</OnChipVarAddress>
       <OnchipVarType>0</OnchipVarType>
-      <bNormValDivValue>1</bNormValDivValue>
-      <bNormPosValue>2</bNormPosValue>
-      <bNormPosAngle>180</bNormPosAngle>
+      <bNormValDivValue>0.5</bNormValDivValue>
+      <bNormPosValue>0</bNormPosValue>
+      <bNormPosAngle>90</bNormPosAngle>
       <bNormOffsetValue>0</bNormOffsetValue>
       <bNormOnOff>true</bNormOnOff>
       <i_NormWin1Win4>0</i_NormWin1Win4>
@@ -110,9 +110,9 @@
     <BindWaveNormRec>
       <OnChipVarAddress>0</OnChipVarAddress>
       <OnchipVarType>0</OnchipVarType>
-      <bNormValDivValue>10</bNormValDivValue>
-      <bNormPosValue>0</bNormPosValue>
-      <bNormPosAngle>90</bNormPosAngle>
+      <bNormValDivValue>5</bNormValDivValue>
+      <bNormPosValue>15</bNormPosValue>
+      <bNormPosAngle>225</bNormPosAngle>
       <bNormOffsetValue>0</bNormOffsetValue>
       <bNormOnOff>true</bNormOnOff>
       <i_NormWin1Win4>1</i_NormWin1Win4>
