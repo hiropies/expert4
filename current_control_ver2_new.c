@@ -1782,8 +1782,9 @@ interrupt void ControlFunction(void)
           static float wmcmd1 = 0.0;
           static float wmcmd2 = 0.0;
           static float wmcmd3 = 0.0;
-          static float phase = 0.0;
-          static float cycle = 0.0;
+          static float qmcmd1 = 0.0;
+          static float qmcmd2 = 0.0;
+          static float qmcmd3 = 0.0;
           static float Ratio_FRA_Au = 1.0;
 
           if (flag_FRA_test_start == 0)
@@ -1791,8 +1792,11 @@ interrupt void ControlFunction(void)
             flag_FRA_test_end = 0;
             // FRA
             wmcmd1 = 0.0;
+            qmcmd1 = 0.0;
             wmcmd2 = 0.0;
+            qmcmd2 = 0.0;
             wmcmd3 = 0.0;
+            qmcmd3 = 0.0;
           }
           if (flag_FRA_test_start == 1)
           {
@@ -1800,22 +1804,27 @@ interrupt void ControlFunction(void)
             if (freq != 0)
             {
               wmcmd1 = 0.0;
+              qmcmd1 = 0.0;
               wmcmd2 = 0.0;
+              qmcmd2 = 0.0;
               wmcmd3 = 0.0;
-              if(flag_FRA_Axis == 1){
+              qmcmd3 = 0.0;
+              if (flag_FRA_Axis == 1)
+              {
                 wmcmd1 = - 0.5 * 2.0 * PI * freq * Ratio_FRA_Au * sinf(2.0 * PI * freq * (Time_FRA - tini)); // 単正弦波入力評価用(Sel FRA)
+                qmcmd1 = 0.5*cosf(2.0 * PI * freq * (Time_FRA - tini)); // 位置指令用
               }
               else if(flag_FRA_Axis == 2){
                 wmcmd2 = - 0.5 * 2.0 * PI * freq * Ratio_FRA_Au * sinf(2.0 * PI * freq * (Time_FRA - tini)); // 単正弦波入力評価用(Sel FRA)
+                qmcmd2 = 0.5 * cosf(2.0 * PI * freq * (Time_FRA - tini));                                    // 位置指令用
               }
               else if (flag_FRA_Axis == 3){
                 wmcmd3 = 0.5 * 2.0 * PI * freq * Ratio_FRA_Au * sinf(2.0 * PI * freq * (Time_FRA - tini)); // 単正弦波入力評価用(Sel FRA)
+                qmcmd3 = 0.5 * cosf(2.0 * PI * freq * (Time_FRA - tini));                                  // 位置指令用
               }
               // FRAの1周波数の時間が経過したら次の周波数へ
-              // if (Ni / freq <= (Time_FRA - tini))
-              if (cycle >= Ni)
+              if (Ni / freq <= (Time_FRA - tini))
               {
-                cycle = 0.0;
                 if (freq < fmax - (fstep * 0.5f)) // 1刻み多いから freq<fmaxでも良いのでは?
                 {
                   tini = Time_FRA;
@@ -1843,8 +1852,6 @@ interrupt void ControlFunction(void)
             Time_FRA = 0.0;
             tini = 0.0;
             freq = fmin;
-            cycle = 0.0;
-            phase = 0.0;
             
             // 指令はゼロ
             // FRA
