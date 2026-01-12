@@ -1258,11 +1258,11 @@ interrupt void ControlFunction(void)
   static float motor_cmd_init[3] = {0, 0, 0};
 
   // FRA試験関係変数
-  static float fmin = 1.5;      //[Hz] 開始周波数
-  static float fmax = 15.0;     //[Hz] 終了周波数
-  static float fstep = 0.1;     //[Hz] 周波数刻み
+  static float fmin = 0.1;      //[Hz] 開始周波数
+  static float fmax = 0.5;     //[Hz] 終了周波数
+  static float fstep = 0.05;     //[Hz] 周波数刻み
   static float Ni = 10.0;       // Sin波の個数 (積分回数)
-  static float freq = 1.5;    // 現在の周波数:初めはfminからstart //プログラム上freq=fminを初期定義できないので、直接数値を打つ
+  static float freq = 0.1;    // 現在の周波数:初めはfminからstart //プログラム上freq=fminを初期定義できないので、直接数値を打つ
   static float tini = 0.0;     //[s] 時間初期化
   static float Time_FRA = 0.0; //[s] FRA試験開始時間(フラグが来たら時間カウント開始)
 
@@ -1612,7 +1612,7 @@ interrupt void ControlFunction(void)
             // motor_cmd[2] = 1.5867;
             
             // // X=0.010, Y = 0.00
-            motor_cmd[0] = 0.0000;
+            motor_cmd[0] = 1.0000;
             motor_cmd[1] = 87.7147;
             motor_cmd[2] = -0.3771;
 
@@ -1782,30 +1782,48 @@ interrupt void ControlFunction(void)
           static float wmcmd1 = 0.0;
           static float wmcmd2 = 0.0;
           static float wmcmd3 = 0.0;
+          static float qmcmd1 = 0.0;
+          static float qmcmd2 = 0.0;
+          static float qmcmd3 = 0.0;
+          static float qmcmd1_teststart = 0.0;
+          static float qmcmd2_teststart = 0.0;
+          static float qmcmd3_teststart = 0.0;
           if (flag_FRA_test_start == 0)
           {
+            qmcmd1_teststart = axis1.qm_ref;
+            qmcmd2_teststart = axis2.qm_ref;
+            qmcmd3_teststart = axis3.qm_ref;
             flag_FRA_test_end = 0;
             // FRA
             wmcmd1 = 0.0;
             wmcmd2 = 0.0;
             wmcmd3 = 0.0;
+            qmcmd1 = 0.0;
+            qmcmd2 = 0.0;
+            qmcmd3 = 0.0;
           }
           if (flag_FRA_test_start == 1)
           {
-            static float Ratio_FRA_Au = 0.7;
+            static float Ratio_FRA_Au = 1.0;
             if (freq != 0)
             {
               wmcmd1 = 0.0;
               wmcmd2 = 0.0;
               wmcmd3 = 0.0;
+              qmcmd1 = 0.0;
+              qmcmd2 = 0.0;
+              qmcmd3 = 0.0;
               if(flag_FRA_Axis == 1){
-                wmcmd1 = - 0.5 * 2.0 * PI * freq * Ratio_FRA_Au * sinf(2.0 * PI * freq * (Time_FRA - tini)); // 単正弦波入力評価用(Sel FRA)
+                wmcmd1 = -1.0 * 2.0 * PI * freq * Ratio_FRA_Au * sinf(2.0 * PI * freq * (Time_FRA - tini)); // 単正弦波入力評価用(Sel FRA)
+                qmcmd1 =  1.0 * Ratio_FRA_Au * cosf(2.0 * PI * freq * (Time_FRA - tini)) - 1.0*Ratio_FRA_Au; // 単正弦波入力評価用(Sel FRA)
               }
               else if(flag_FRA_Axis == 2){
-                wmcmd2 = - 0.5 * 2.0 * PI * freq * Ratio_FRA_Au * sinf(2.0 * PI * freq * (Time_FRA - tini)); // 単正弦波入力評価用(Sel FRA)
+                wmcmd2 = -0.5 * 2.0 * PI * freq * Ratio_FRA_Au * sinf(2.0 * PI * freq * (Time_FRA - tini)); // 単正弦波入力評価用(Sel FRA)
+                qmcmd2 =  0.5 * Ratio_FRA_Au * cosf(2.0 * PI * freq * (Time_FRA - tini)) - 0.5*Ratio_FRA_Au; // 単正弦波入力評価用(Sel FRA)
               }
               else if (flag_FRA_Axis == 3){
                 wmcmd3 = 0.5 * 2.0 * PI * freq * Ratio_FRA_Au * sinf(2.0 * PI * freq * (Time_FRA - tini)); // 単正弦波入力評価用(Sel FRA)
+                qmcmd3 = -0.5 * Ratio_FRA_Au * cosf(2.0 * PI * freq * (Time_FRA - tini)) + 0.5*Ratio_FRA_Au; // 単正弦波入力評価用(Sel FRA)
               }
               // FRAの1周波数の時間が経過したら次の周波数へ
               if (Ni / freq <= (Time_FRA - tini))
@@ -1825,6 +1843,9 @@ interrupt void ControlFunction(void)
             {
               flag_FRA_test_end = 1.0;
               
+              qmcmd1 = 0.0;
+              qmcmd2 = 0.0;
+              qmcmd3 = 0.0;
               wmcmd1 = 0.0;
               wmcmd2 = 0.0;
               wmcmd3 = 0.0;
@@ -1854,9 +1875,10 @@ interrupt void ControlFunction(void)
           // axis1.wm_cmd = motor_vel_cmd[0];
           axis1.wm_cmd = wmcmd1;
           axis1.qm_ref_z1 = axis1.qm_ref;
-          axis1.qm_ref = axis1.wm_cmd_z3 * Tp + axis1.qm_ref_z1;
+          // axis1.qm_ref = axis1.wm_cmd_z3 * Tp + axis1.qm_ref_z1;
+          axis1.qm_ref = qmcmd1 + qmcmd1_teststart;
 
-          LimitPosCmd(&axis1);
+          // LimitPosCmd(&axis1);
 
           axis1.wm_ref = (axis1.qm_ref - axis1.qm) * axis1.Kpp + axis1.Kff * axis1.wm_cmd_z3 - axis1.Kfb * axis1.wm;
           axis1.Ipi = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1);
@@ -1892,9 +1914,10 @@ interrupt void ControlFunction(void)
           // axis2.wm_cmd = motor_vel_cmd[1];
           axis2.wm_cmd = wmcmd2;
           axis2.qm_ref_z1 = axis2.qm_ref;
-          axis2.qm_ref = axis2.wm_cmd_z3 * Tp + axis2.qm_ref_z1;
+          // axis2.qm_ref = axis2.wm_cmd * Tp + axis2.qm_ref_z1;
+          axis2.qm_ref = qmcmd2 + qmcmd2_teststart;
 
-          LimitPosCmd(&axis2);
+          // LimitPosCmd(&axis2);
           axis2.wm_ref = (axis2.qm_ref - axis2.qm) * axis2.Kpp + axis2.Kff * axis2.wm_cmd_z3 - axis2.Kfb * axis2.wm;
           axis2.Ipi = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1);
           if (flag_FF == 1)
@@ -1928,8 +1951,10 @@ interrupt void ControlFunction(void)
           // axis3.wm_cmd = motor_vel_cmd[2];
           axis3.wm_cmd = wmcmd3;
           axis3.qm_ref_z1 = axis3.qm_ref;
-          axis3.qm_ref = axis3.wm_cmd_z3 * Tp + axis3.qm_ref_z1;
-          LimitPosCmd(&axis3);
+          // axis3.qm_ref = axis3.wm_cmd * Tp + axis3.qm_ref_z1;
+          axis3.qm_ref = qmcmd3 + qmcmd3_teststart;
+
+          // LimitPosCmd(&axis3);
           axis3.wm_ref = (axis3.qm_ref - axis3.qm) * axis3.Kpp + axis3.Kff * axis3.wm_cmd_z3 - axis3.Kfb * axis3.wm;
           axis3.Ipi = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1);
           // 3軸目 速度PI制御＋SFB
