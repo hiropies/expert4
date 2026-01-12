@@ -1258,11 +1258,11 @@ interrupt void ControlFunction(void)
   static float motor_cmd_init[3] = {0, 0, 0};
 
   // FRA試験関係変数
-  static float fmin = 1.5;      //[Hz] 開始周波数
-  static float fmax = 15.0;     //[Hz] 終了周波数
-  static float fstep = 0.1;     //[Hz] 周波数刻み
+  static float fmin = 0.8;      //[Hz] 開始周波数
+  static float fmax = 3.0;     //[Hz] 終了周波数
+  static float fstep = 0.05;     //[Hz] 周波数刻み
   static float Ni = 10.0;       // Sin波の個数 (積分回数)
-  static float freq = 1.5;    // 現在の周波数:初めはfminからstart //プログラム上freq=fminを初期定義できないので、直接数値を打つ
+  static float freq = 0.8;    // 現在の周波数:初めはfminからstart //プログラム上freq=fminを初期定義できないので、直接数値を打つ
   static float tini = 0.0;     //[s] 時間初期化
   static float Time_FRA = 0.0; //[s] FRA試験開始時間(フラグが来たら時間カウント開始)
 
