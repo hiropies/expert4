@@ -1369,13 +1369,13 @@ interrupt void ControlFunction(void)
         //   LimitPosCmd(&axis3);
         // }
 
-        CalcGravIcmp(joint); // 2,3軸の重力補償電流を計算　main関数の初期姿勢を要確認！！！！
+      CalcGravIcmp(joint); // 2,3軸の重力補償電流を計算　main関数の初期姿勢を要確認！！！！
       CalcJl(joint);         // JLの変動は使うので3軸分計算
-      CalcJlWr(joint);
+      // CalcJlWr(joint);
 
       // // 可変ゲイン計算
       CalcPVGain();
-      CalcWrGain();
+      // CalcWrGain();
 
       // 負荷側情報計算
       //P制御用Wr
@@ -1384,24 +1384,24 @@ interrupt void ControlFunction(void)
       // CalcFDTDWr_QmrefInputType(&axis3);
 
       //D-PD制御用Wr
-      CalcFDTDWr_WmcmdInputType(&axis1);
-      CalcFDTDWr_WmcmdInputType(&axis2);
-      CalcFDTDWr_WmcmdInputType(&axis3);
+      // CalcFDTDWr_WmcmdInputType(&axis1);
+      // CalcFDTDWr_WmcmdInputType(&axis2);
+      // CalcFDTDWr_WmcmdInputType(&axis3);
 
       // 動力学トルクを計算
-      CalcTauLDyn(joint);
+      // CalcTauLDyn(joint);
 
       // FF制御　動力学補償電流
-      FDTD_Tm_Full_Update(); // 重力補償無し
+      // FDTD_Tm_Full_Update(); // 重力補償無し
       // FDTD_Tm(&axis1); // 重力補償込み
       // FDTD_Tm(&axis2); // 重力補償込み
       // FDTD_Tm(&axis3); // 重力補償込み
       // FDTD_Tm_woG(&axis1); // 重力補償無し
       // FDTD_Tm_woG(&axis2); // 重力補償無し
       // FDTD_Tm_woG(&axis3); // 重力補償無し
-      FDTD_Tm_Full_woG(&axis1); // 重力補償無し
-      FDTD_Tm_Full_woG(&axis2); // 重力補償無し
-      FDTD_Tm_Full_woG(&axis3); // 重力補償無し
+      // FDTD_Tm_Full_woG(&axis1); // 重力補償無し
+      // FDTD_Tm_Full_woG(&axis2); // 重力補償無し
+      // FDTD_Tm_Full_woG(&axis3); // 重力補償無し
 
       // axis1.IrefQ = Ref_Iq_ref_direct;
       // axis1.IrefQ = Ref_Iq_ref_direct*sinf(2.0*PI*t); // 正弦波指令 電流指令確認用;
@@ -1450,36 +1450,36 @@ interrupt void ControlFunction(void)
         {
           // ラッチしたqlの情報をもとにJlを計算
           CalcJl(joint); // JLの変動は使うので3軸分計算
-          CalcJlWr(joint);
+          // CalcJlWr(joint);
         }
         else
         {
           axis1.Jl_calc = 35.9000;
-          axis1.Jl_calc_Wr = 35.9000;
+          // axis1.Jl_calc_Wr = 35.9000;
         }
 
         CalcPVGain();
-        CalcWrGain();
+        // CalcWrGain();
 
-        if (flag_FF_triple == 1)
-        {
-          // 1,2軸動力学モデル更新
-          // CalcFDTDWrUpdate_QmrefInputType_1st2nd();
-          CalcFDTDWrUpdate_WmcmdInputType_1st2nd(&axis1);
-          CalcFDTDWrUpdate_WmcmdInputType_1st2nd(&axis2);
-          CalcFDTDWrUpdate_WmcmdInputType_1st2nd(&axis3);
-        }
-        else
-        {
-          // 2軸のみモデル更新
-          // CalcFDTDWrUpdate_QmrefInputType_2nd();
-          // CalcFDTDWrUpdate_WmcmdInputType_2nd(&axis1);
-          CalcFDTDWrUpdate_WmcmdInputType_2nd(&axis2);
-          // CalcFDTDWrUpdate_WmcmdInputType_2nd(&axis3);
-        }
+        // if (flag_FF_triple == 1)
+        // {
+        //   // 1,2軸動力学モデル更新
+        //   // CalcFDTDWrUpdate_QmrefInputType_1st2nd();
+        //   CalcFDTDWrUpdate_WmcmdInputType_1st2nd(&axis1);
+        //   CalcFDTDWrUpdate_WmcmdInputType_1st2nd(&axis2);
+        //   CalcFDTDWrUpdate_WmcmdInputType_1st2nd(&axis3);
+        // }
+        // else
+        // {
+        //   // 2軸のみモデル更新
+        //   // CalcFDTDWrUpdate_QmrefInputType_2nd();
+        //   // CalcFDTDWrUpdate_WmcmdInputType_2nd(&axis1);
+        //   CalcFDTDWrUpdate_WmcmdInputType_2nd(&axis2);
+        //   // CalcFDTDWrUpdate_WmcmdInputType_2nd(&axis3);
+        // }
 
         // 動力学トルクを計算
-        CalcTauLDyn(joint); // 1~3軸分を計算
+        // CalcTauLDyn(joint); // 1~3軸分を計算
 
         // 制御周期の測定結果出力 ファンクションリファレンスp45より
         // 制御にかかった時間を測定している。
@@ -1495,40 +1495,40 @@ interrupt void ControlFunction(void)
         C6657_timer1_start();
 
         // FF制御　FDTDで離散化した負荷側情報計算関数(qmref入力)
-        if (flag_FF_triple == 1)
-        {
-          //P制御用Wr
-          // CalcFDTDWr_QmrefInputType(&axis1); // 1軸目は動力学外乱入力なし
-          // CalcFDTDWr_QmrefInputType(&axis2);
-          // CalcFDTDWr_QmrefInputType(&axis3);
+        // if (flag_FF_triple == 1)
+        // {
+        //   //P制御用Wr
+        //   // CalcFDTDWr_QmrefInputType(&axis1); // 1軸目は動力学外乱入力なし
+        //   // CalcFDTDWr_QmrefInputType(&axis2);
+        //   // CalcFDTDWr_QmrefInputType(&axis3);
 
-          //D-PD制御用Wr
-          CalcFDTDWr_WmcmdInputType(&axis1);
-          CalcFDTDWr_WmcmdInputType(&axis2);
-          CalcFDTDWr_WmcmdInputType(&axis3);
-        }
-        else
-        {
-          //P制御用Wr
-          // CalcFDTDWr_QmrefInputType(&axis2);
-          // CalcFDTDWr_QmrefInputType(&axis3);
+        //   //D-PD制御用Wr
+        //   CalcFDTDWr_WmcmdInputType(&axis1);
+        //   CalcFDTDWr_WmcmdInputType(&axis2);
+        //   CalcFDTDWr_WmcmdInputType(&axis3);
+        // }
+        // else
+        // {
+        //   //P制御用Wr
+        //   // CalcFDTDWr_QmrefInputType(&axis2);
+        //   // CalcFDTDWr_QmrefInputType(&axis3);
 
-          //D-PD制御用Wr
-          CalcFDTDWr_WmcmdInputType(&axis2);
-          CalcFDTDWr_WmcmdInputType(&axis3);
-        }
+        //   //D-PD制御用Wr
+        //   CalcFDTDWr_WmcmdInputType(&axis2);
+        //   CalcFDTDWr_WmcmdInputType(&axis3);
+        // }
 
         // FF制御　動力学補償電流
-        FDTD_Tm_Full_Update(); // 重力補償無し
+        // FDTD_Tm_Full_Update(); // 重力補償無し
         // FDTD_Tm(&axis1); // 重力補償込み
         // FDTD_Tm(&axis2); // 重力補償込み
         // FDTD_Tm(&axis3); // 重力補償込み
         // FDTD_Tm_woG(&axis1); // 重力補償無し
         // FDTD_Tm_woG(&axis2); // 重力補償無し
         // FDTD_Tm_woG(&axis3); // 重力補償無し
-        FDTD_Tm_Full_woG(&axis1); // 重力補償無し
-        FDTD_Tm_Full_woG(&axis2); // 重力補償無し
-        FDTD_Tm_Full_woG(&axis3); // 重力補償無し
+        // FDTD_Tm_Full_woG(&axis1); // 重力補償無し
+        // FDTD_Tm_Full_woG(&axis2); // 重力補償無し
+        // FDTD_Tm_Full_woG(&axis3); // 重力補償無し
 
         CalcGravIcmp(joint);
 
@@ -1667,27 +1667,32 @@ interrupt void ControlFunction(void)
 
           axis1.wm_ref = (axis1.qm_ref - axis1.qm) * axis1.Kpp + axis1.Kff * axis1.wm_cmd_z3 - axis1.Kfb * axis1.wm;
           axis1.Ipi = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1);
-          if (flag_FF == 1)
-          {
-            // 1軸目 速度PI制御＋SFB＋FF
-            axis1.IrefQ = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1) - axis1.Isfb + axis1.Iff;
-            axis1.I_SOBinput = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1) - axis1.Isfb;
 
-            if (flag_SOB == 1)
-            {
-              axis1.I_SOBinput = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1) - axis1.Isfb;
-            }
-            else if (flag_SOB == 2)
-            {
-              axis1.I_SOBinput = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1) - axis1.Isfb + axis1.Iff;
-            }
-          }
-          else if (flag_FF == 0)
-          {
           // 1軸目 速度PI制御＋SFB
           axis1.IrefQ = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1) - axis1.Isfb;
           axis1.I_SOBinput = axis1.IrefQ;
-          }
+
+          // if (flag_FF == 1)
+          // {
+          //   // 1軸目 速度PI制御＋SFB＋FF
+          //   axis1.IrefQ = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1) - axis1.Isfb + axis1.Iff;
+          //   axis1.I_SOBinput = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1) - axis1.Isfb;
+
+          //   if (flag_SOB == 1)
+          //   {
+          //     axis1.I_SOBinput = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1) - axis1.Isfb;
+          //   }
+          //   else if (flag_SOB == 2)
+          //   {
+          //     axis1.I_SOBinput = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1) - axis1.Isfb + axis1.Iff;
+          //   }
+          // }
+          // else if (flag_FF == 0)
+          // {
+          // // 1軸目 速度PI制御＋SFB
+          // axis1.IrefQ = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1) - axis1.Isfb;
+          // axis1.I_SOBinput = axis1.IrefQ;
+          // }
 
           // 2軸目 位置指令
           // ランプ関数生成関数で位置指令を決定
@@ -1703,27 +1708,31 @@ interrupt void ControlFunction(void)
           
           axis2.wm_ref = (axis2.qm_ref - axis2.qm) * axis2.Kpp + axis2.Kff * axis2.wm_cmd_z3 - axis2.Kfb * axis2.wm;
           axis2.Ipi = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1);
-          if (flag_FF == 1)
-          {
-            // 2軸目 速度PI制御＋SFB＋FF
-            axis2.IrefQ = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb + axis2.Iff + axis2.Icmp;
-            axis2.I_SOBinput = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb + axis2.Icmp;
 
-            if (flag_SOB == 1)
-            {
-              axis2.I_SOBinput = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb + axis2.Icmp;
-            }
-            else if (flag_SOB == 2)
-            {
-              axis2.I_SOBinput = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb + axis2.Iff + axis2.Icmp;
-            }
-          }
-          else if (flag_FF == 0)
-          {
           // 2軸目 速度PI制御＋SFB
-            axis2.IrefQ = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb + axis2.Icmp;
+          axis2.IrefQ = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb + axis2.Icmp;
           axis2.I_SOBinput = axis2.IrefQ;
-          }
+          // if (flag_FF == 1)
+          // {
+          //   // 2軸目 速度PI制御＋SFB＋FF
+          //   axis2.IrefQ = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb + axis2.Iff + axis2.Icmp;
+          //   axis2.I_SOBinput = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb + axis2.Icmp;
+
+          //   if (flag_SOB == 1)
+          //   {
+          //     axis2.I_SOBinput = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb + axis2.Icmp;
+          //   }
+          //   else if (flag_SOB == 2)
+          //   {
+          //     axis2.I_SOBinput = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb + axis2.Iff + axis2.Icmp;
+          //   }
+          // }
+          // else if (flag_FF == 0)
+          // {
+          //   // 2軸目 速度PI制御＋SFB
+          //   axis2.IrefQ = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb + axis2.Icmp;
+          //   axis2.I_SOBinput = axis2.IrefQ;
+          // }
 
           // 3軸目 位置指令
           // ランプ関数生成関数で位置指令を決定
@@ -1741,26 +1750,29 @@ interrupt void ControlFunction(void)
           axis3.Ipi = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1);
           
           // 3軸目 速度PI制御＋SFB
-          if (flag_FF == 1)
-          {
-            // 3軸目 速度PI制御＋SFB＋FF
-            axis3.IrefQ = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb + axis3.Iff + axis3.Icmp;
-            axis3.I_SOBinput = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb;
-
-            if (flag_SOB == 1)
-            {
-              axis3.I_SOBinput = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb + axis3.Icmp;
-            }
-            else if (flag_SOB == 2)
-            {
-              axis3.I_SOBinput = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb + axis3.Iff + axis3.Icmp;
-            }
-          }
-          else if (flag_FF == 0)
-          {
-            axis3.IrefQ = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb + axis3.Icmp;
+          axis3.IrefQ = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb + axis3.Icmp;
           axis3.I_SOBinput = axis3.IrefQ;
-          }
+
+          // if (flag_FF == 1)
+          // {
+          //   // 3軸目 速度PI制御＋SFB＋FF
+          //   axis3.IrefQ = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb + axis3.Iff + axis3.Icmp;
+          //   axis3.I_SOBinput = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb;
+
+          //   if (flag_SOB == 1)
+          //   {
+          //     axis3.I_SOBinput = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb + axis3.Icmp;
+          //   }
+          //   else if (flag_SOB == 2)
+          //   {
+          //     axis3.I_SOBinput = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb + axis3.Iff + axis3.Icmp;
+          //   }
+          // }
+          // else if (flag_FF == 0)
+          // {
+          //   axis3.IrefQ = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb + axis3.Icmp;
+          //   axis3.I_SOBinput = axis3.IrefQ;
+          // }
 
           if (flag_end1 == 1 && flag_end2 == 1 && flag_end3 == 1)
           {
@@ -1841,8 +1853,7 @@ interrupt void ControlFunction(void)
             }
             else
             {
-              flag_FRA_test_end = 1.0;
-              
+              flag_FRA_test_end = 1.0;              
               qmcmd1 = 0.0;
               qmcmd2 = 0.0;
               qmcmd3 = 0.0;
@@ -1857,8 +1868,7 @@ interrupt void ControlFunction(void)
             flag_FRA_test_start = 0;
             Time_FRA = 0.0;
             tini = 0.0;
-            freq = fmin;
-         
+            freq = fmin;         
             // 指令はゼロ
             // FRA
             wmcmd1 = 0.0;
@@ -1879,31 +1889,33 @@ interrupt void ControlFunction(void)
           axis1.qm_ref = qmcmd1 + qmcmd1_teststart;
 
           // LimitPosCmd(&axis1);
-
           axis1.wm_ref = (axis1.qm_ref - axis1.qm) * axis1.Kpp + axis1.Kff * axis1.wm_cmd_z3 - axis1.Kfb * axis1.wm;
           axis1.Ipi = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1);
 
-          if (flag_FF == 1)
-          {
-            // 1軸目 速度PI制御＋SFB＋FF
-            axis1.IrefQ = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1) - axis1.Isfb + axis1.Iff;
-            axis1.I_SOBinput = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1) - axis1.Isfb;
+          // 1軸目 速度PI制御＋SFB
+          axis1.IrefQ = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1) - axis1.Isfb;
+          axis1.I_SOBinput = axis1.IrefQ;
+          // if (flag_FF == 1)
+          // {
+          //   // 1軸目 速度PI制御＋SFB＋FF
+          //   axis1.IrefQ = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1) - axis1.Isfb + axis1.Iff;
+          //   axis1.I_SOBinput = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1) - axis1.Isfb;
 
-            if (flag_SOB == 1)
-            {
-              axis1.I_SOBinput = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1) - axis1.Isfb;
-            }
-            else if (flag_SOB == 2)
-            {
-              axis1.I_SOBinput = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1) - axis1.Isfb + axis1.Iff;
-            }
-          }
-          else if (flag_FF == 0)
-          {
-            // 1軸目 速度PI制御＋SFB
-            axis1.IrefQ = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1) - axis1.Isfb;
-            axis1.I_SOBinput = axis1.IrefQ;
-          }
+          //   if (flag_SOB == 1)
+          //   {
+          //     axis1.I_SOBinput = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1) - axis1.Isfb;
+          //   }
+          //   else if (flag_SOB == 2)
+          //   {
+          //     axis1.I_SOBinput = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1) - axis1.Isfb + axis1.Iff;
+          //   }
+          // }
+          // else if (flag_FF == 0)
+          // {
+          //   // 1軸目 速度PI制御＋SFB
+          //   axis1.IrefQ = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1) - axis1.Isfb;
+          //   axis1.I_SOBinput = axis1.IrefQ;
+          // }
 
           // 2軸目 位置指令
           // ランプ関数生成関数で位置指令を決定
@@ -1920,27 +1932,30 @@ interrupt void ControlFunction(void)
           // LimitPosCmd(&axis2);
           axis2.wm_ref = (axis2.qm_ref - axis2.qm) * axis2.Kpp + axis2.Kff * axis2.wm_cmd_z3 - axis2.Kfb * axis2.wm;
           axis2.Ipi = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1);
-          if (flag_FF == 1)
-          {
-            // 2軸目 速度PI制御＋SFB＋FF
-            axis2.IrefQ = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb + axis2.Iff + axis2.Icmp;
-            axis2.I_SOBinput = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb + axis2.Icmp;
+          // 2軸目 速度PI制御＋SFB
+          axis2.IrefQ = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb + axis2.Icmp;
+          axis2.I_SOBinput = axis2.IrefQ;
+          // if (flag_FF == 1)
+          // {
+          //   // 2軸目 速度PI制御＋SFB＋FF
+          //   axis2.IrefQ = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb + axis2.Iff + axis2.Icmp;
+          //   axis2.I_SOBinput = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb + axis2.Icmp;
 
-            if (flag_SOB == 1)
-            {
-              axis2.I_SOBinput = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb + axis2.Icmp;
-            }
-            else if (flag_SOB == 2)
-            {
-              axis2.I_SOBinput = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb + axis2.Iff + axis2.Icmp;
-            }
-          }
-          else if (flag_FF == 0)
-          {
-            // 2軸目 速度PI制御＋SFB
-            axis2.IrefQ = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb + axis2.Icmp;
-            axis2.I_SOBinput = axis2.IrefQ;
-          }
+          //   if (flag_SOB == 1)
+          //   {
+          //     axis2.I_SOBinput = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb + axis2.Icmp;
+          //   }
+          //   else if (flag_SOB == 2)
+          //   {
+          //     axis2.I_SOBinput = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb + axis2.Iff + axis2.Icmp;
+          //   }
+          // }
+          // else if (flag_FF == 0)
+          // {
+          //   // 2軸目 速度PI制御＋SFB
+          //   axis2.IrefQ = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb + axis2.Icmp;
+          //   axis2.I_SOBinput = axis2.IrefQ;
+          // }
 
           // 3軸目 位置指令
           // ランプ関数生成関数で位置指令を決定
@@ -1958,26 +1973,28 @@ interrupt void ControlFunction(void)
           axis3.wm_ref = (axis3.qm_ref - axis3.qm) * axis3.Kpp + axis3.Kff * axis3.wm_cmd_z3 - axis3.Kfb * axis3.wm;
           axis3.Ipi = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1);
           // 3軸目 速度PI制御＋SFB
-          if (flag_FF == 1)
-          {
-            // 3軸目 速度PI制御＋SFB＋FF
-            axis3.IrefQ = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb + axis3.Iff + axis3.Icmp;
-            axis3.I_SOBinput = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb;
+          axis3.IrefQ = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb + axis3.Icmp;
+          axis3.I_SOBinput = axis3.IrefQ;
+          // if (flag_FF == 1)
+          // {
+          //   // 3軸目 速度PI制御＋SFB＋FF
+          //   axis3.IrefQ = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb + axis3.Iff + axis3.Icmp;
+          //   axis3.I_SOBinput = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb;
 
-            if (flag_SOB == 1)
-            {
-              axis3.I_SOBinput = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb + axis3.Icmp;
-            }
-            else if (flag_SOB == 2)
-            {
-              axis3.I_SOBinput = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb + axis3.Iff + axis3.Icmp;
-            }
-          }
-          else if (flag_FF == 0)
-          {
-            axis3.IrefQ = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb + axis3.Icmp;
-            axis3.I_SOBinput = axis3.IrefQ;
-          }
+          //   if (flag_SOB == 1)
+          //   {
+          //     axis3.I_SOBinput = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb + axis3.Icmp;
+          //   }
+          //   else if (flag_SOB == 2)
+          //   {
+          //     axis3.I_SOBinput = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb + axis3.Iff + axis3.Icmp;
+          //   }
+          // }
+          // else if (flag_FF == 0)
+          // {
+          //   axis3.IrefQ = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb + axis3.Icmp;
+          //   axis3.I_SOBinput = axis3.IrefQ;
+          // }
         }
         else if (4 == flag_cont_start)
         {
@@ -2040,26 +2057,29 @@ interrupt void ControlFunction(void)
           // 1軸目 位置P制御
           axis1.wm_ref = (axis1.qm_ref - axis1.qm) * axis1.Kpp;
           axis1.Ipi = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1);
-          if (flag_FF == 1)
-          {
-            // 1軸目 速度PI制御＋SFB＋FF
-            axis1.IrefQ = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1) - axis1.Isfb + axis1.Iff;
-            axis1.I_SOBinput = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1) - axis1.Isfb;
-            if (flag_SOB == 1)
-            {
-              axis1.I_SOBinput = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1) - axis1.Isfb;
-            }
-            else if (flag_SOB == 2)
-            {
-              axis1.I_SOBinput = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1) - axis1.Isfb + axis1.Iff;
-            }
-          }
-          else if (flag_FF == 0)
-          {
           // 1軸目 速度PI制御＋SFB
           axis1.IrefQ = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1) - axis1.Isfb;
           axis1.I_SOBinput = axis1.IrefQ;
-          }
+          // if (flag_FF == 1)
+          // {
+          //   // 1軸目 速度PI制御＋SFB＋FF
+          //   axis1.IrefQ = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1) - axis1.Isfb + axis1.Iff;
+          //   axis1.I_SOBinput = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1) - axis1.Isfb;
+          //   if (flag_SOB == 1)
+          //   {
+          //     axis1.I_SOBinput = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1) - axis1.Isfb;
+          //   }
+          //   else if (flag_SOB == 2)
+          //   {
+          //     axis1.I_SOBinput = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1) - axis1.Isfb + axis1.Iff;
+          //   }
+          // }
+          // else if (flag_FF == 0)
+          // {
+          //   // 1軸目 速度PI制御＋SFB
+          //   axis1.IrefQ = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1) - axis1.Isfb;
+          //   axis1.I_SOBinput = axis1.IrefQ;
+          // }
 
           // 2軸目 位置指令
           // ランプ関数生成関数で位置指令を決定
@@ -2084,27 +2104,30 @@ interrupt void ControlFunction(void)
           // 2軸目 位置P制御
           axis2.wm_ref = (axis2.qm_ref - axis2.qm) * axis2.Kpp;
           axis2.Ipi = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1);
-          if (flag_FF == 1)
-          {
-            // 2軸目 速度PI制御＋SFB＋FF
-            axis2.IrefQ = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb + axis2.Iff + axis2.Icmp;
-            axis2.I_SOBinput = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb + axis2.Icmp;
-
-            if (flag_SOB == 1)
-            {
-              axis2.I_SOBinput = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb + axis2.Icmp;
-            }
-            else if (flag_SOB == 2)
-            {
-              axis2.I_SOBinput = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb + axis2.Iff + axis2.Icmp;
-            }
-          }
-          else if (flag_FF == 0)
-          {
           // 2軸目 速度PI制御＋SFB
-            axis2.IrefQ = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb + axis2.Icmp;
+          axis2.IrefQ = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb + axis2.Icmp;
           axis2.I_SOBinput = axis2.IrefQ;
-          }
+          // if (flag_FF == 1)
+          // {
+          //   // 2軸目 速度PI制御＋SFB＋FF
+          //   axis2.IrefQ = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb + axis2.Iff + axis2.Icmp;
+          //   axis2.I_SOBinput = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb + axis2.Icmp;
+
+          //   if (flag_SOB == 1)
+          //   {
+          //     axis2.I_SOBinput = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb + axis2.Icmp;
+          //   }
+          //   else if (flag_SOB == 2)
+          //   {
+          //     axis2.I_SOBinput = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb + axis2.Iff + axis2.Icmp;
+          //   }
+          // }
+          // else if (flag_FF == 0)
+          // {
+          //   // 2軸目 速度PI制御＋SFB
+          //   axis2.IrefQ = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1) - axis2.Isfb + axis2.Icmp;
+          //   axis2.I_SOBinput = axis2.IrefQ;
+          // }
 
           // 3軸目 位置指令
           // ランプ関数生成関数で位置指令を決定
@@ -2122,26 +2145,29 @@ interrupt void ControlFunction(void)
           axis3.wm_ref = (axis3.qm_ref - axis3.qm) * axis3.Kpp;
           axis3.Ipi = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1);
           // 3軸目 速度PI制御＋SFB
-          if (flag_FF == 1)
-          {
-            // 3軸目 速度PI制御＋SFB＋FF
-            axis3.IrefQ = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb + axis3.Iff + axis3.Icmp;
-            axis3.I_SOBinput = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb;
-
-            if (flag_SOB == 1)
-            {
-              axis3.I_SOBinput = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb + axis3.Icmp;
-            }
-            else if (flag_SOB == 2)
-            {
-              axis3.I_SOBinput = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb + axis3.Iff + axis3.Icmp;
-            }
-          }
-          else if (flag_FF == 0)
-          {
-            axis3.IrefQ = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb + axis3.Icmp;
+          axis3.IrefQ = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb + axis3.Icmp;
           axis3.I_SOBinput = axis3.IrefQ;
-          }
+          // if (flag_FF == 1)
+          // {
+          //   // 3軸目 速度PI制御＋SFB＋FF
+          //   axis3.IrefQ = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb + axis3.Iff + axis3.Icmp;
+          //   axis3.I_SOBinput = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb;
+
+          //   if (flag_SOB == 1)
+          //   {
+          //     axis3.I_SOBinput = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb + axis3.Icmp;
+          //   }
+          //   else if (flag_SOB == 2)
+          //   {
+          //     axis3.I_SOBinput = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb + axis3.Iff + axis3.Icmp;
+          //   }
+          // }
+          // else if (flag_FF == 0)
+          // {
+          //   axis3.IrefQ = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1) - axis3.Isfb + axis3.Icmp;
+          //   axis3.I_SOBinput = axis3.IrefQ;
+          // }
+
           if (flag_end1 == 1 && flag_end2 == 1 && flag_end3 == 1)
           {
             if (flag_fin > 20)
@@ -2625,16 +2651,16 @@ void MW_main(void)
   // 負荷側情報計算関数の定数計算関数
   // CalcFDTDWrInit_QmrefInputType();
   
-  CalcFDTDWrInit_WmcmdInputType(&axis1);
-  CalcFDTDWrInit_WmcmdInputType(&axis2);
-  CalcFDTDWrInit_WmcmdInputType(&axis3);
+  // CalcFDTDWrInit_WmcmdInputType(&axis1);
+  // CalcFDTDWrInit_WmcmdInputType(&axis2);
+  // CalcFDTDWrInit_WmcmdInputType(&axis3);
 
   // FDTD状態オブザーバの定数計算関数
   CalcFDTDTSOBInit();
 
   // FF制御　補償電流計算関数Tm 係数計算
   // FDTD_Tm_Init();
-  FDTD_Tm_Full_Init();
+  // FDTD_Tm_Full_Init();
 
   // 可変ゲインの極を指定する(係数図法)
   // 1軸目
