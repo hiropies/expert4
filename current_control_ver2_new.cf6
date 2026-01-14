@@ -84,28 +84,28 @@
     <BindWaveNormRec>
       <OnChipVarAddress>0</OnChipVarAddress>
       <OnchipVarType>0</OnchipVarType>
-      <bNormValDivValue>0.1</bNormValDivValue>
-      <bNormPosValue>0</bNormPosValue>
-      <bNormPosAngle>90</bNormPosAngle>
+      <bNormValDivValue>0.5</bNormValDivValue>
+      <bNormPosValue>1.5</bNormPosValue>
+      <bNormPosAngle>225</bNormPosAngle>
       <bNormOffsetValue>0</bNormOffsetValue>
       <bNormOnOff>true</bNormOnOff>
       <i_NormWin1Win4>0</i_NormWin1Win4>
       <Button_Name>Win1</Button_Name>
       <bColorPickerIndex>8</bColorPickerIndex>
-      <bNormVariableIndex>156</bNormVariableIndex>
+      <bNormVariableIndex>125</bNormVariableIndex>
     </BindWaveNormRec>
     <BindWaveNormRec>
       <OnChipVarAddress>0</OnChipVarAddress>
       <OnchipVarType>0</OnchipVarType>
-      <bNormValDivValue>0.1</bNormValDivValue>
-      <bNormPosValue>0</bNormPosValue>
-      <bNormPosAngle>90</bNormPosAngle>
+      <bNormValDivValue>0.5</bNormValDivValue>
+      <bNormPosValue>1.5</bNormPosValue>
+      <bNormPosAngle>225</bNormPosAngle>
       <bNormOffsetValue>0</bNormOffsetValue>
       <bNormOnOff>true</bNormOnOff>
       <i_NormWin1Win4>0</i_NormWin1Win4>
       <Button_Name>Win1</Button_Name>
       <bColorPickerIndex>5</bColorPickerIndex>
-      <bNormVariableIndex>153</bNormVariableIndex>
+      <bNormVariableIndex>122</bNormVariableIndex>
     </BindWaveNormRec>
     <BindWaveNormRec>
       <OnChipVarAddress>0</OnChipVarAddress>
@@ -118,7 +118,7 @@
       <i_NormWin1Win4>1</i_NormWin1Win4>
       <Button_Name>Win2</Button_Name>
       <bColorPickerIndex>3</bColorPickerIndex>
-      <bNormVariableIndex>243</bNormVariableIndex>
+      <bNormVariableIndex>159</bNormVariableIndex>
     </BindWaveNormRec>
     <BindWaveNormRec>
       <OnChipVarAddress>0</OnChipVarAddress>
@@ -131,7 +131,7 @@
       <i_NormWin1Win4>1</i_NormWin1Win4>
       <Button_Name>Win2</Button_Name>
       <bColorPickerIndex>9</bColorPickerIndex>
-      <bNormVariableIndex>237</bNormVariableIndex>
+      <bNormVariableIndex>153</bNormVariableIndex>
     </BindWaveNormRec>
     <BindWaveNormRec>
       <OnChipVarAddress>0</OnChipVarAddress>
@@ -144,7 +144,7 @@
       <i_NormWin1Win4>2</i_NormWin1Win4>
       <Button_Name>Win3</Button_Name>
       <bColorPickerIndex>21</bColorPickerIndex>
-      <bNormVariableIndex>98</bNormVariableIndex>
+      <bNormVariableIndex>85</bNormVariableIndex>
     </BindWaveNormRec>
     <BindWaveNormRec>
       <OnChipVarAddress>0</OnChipVarAddress>
@@ -157,7 +157,7 @@
       <i_NormWin1Win4>2</i_NormWin1Win4>
       <Button_Name>Win3</Button_Name>
       <bColorPickerIndex>11</bColorPickerIndex>
-      <bNormVariableIndex>79</bNormVariableIndex>
+      <bNormVariableIndex>66</bNormVariableIndex>
     </BindWaveNormRec>
     <BindWaveNormRec>
       <OnChipVarAddress>0</OnChipVarAddress>
@@ -170,7 +170,7 @@
       <i_NormWin1Win4>2</i_NormWin1Win4>
       <Button_Name>Win3</Button_Name>
       <bColorPickerIndex>18</bColorPickerIndex>
-      <bNormVariableIndex>85</bNormVariableIndex>
+      <bNormVariableIndex>156</bNormVariableIndex>
     </BindWaveNormRec>
     <BindWaveNormRec>
       <OnChipVarAddress>0</OnChipVarAddress>
@@ -183,7 +183,7 @@
       <i_NormWin1Win4>1</i_NormWin1Win4>
       <Button_Name>Win2</Button_Name>
       <bColorPickerIndex>20</bColorPickerIndex>
-      <bNormVariableIndex>240</bNormVariableIndex>
+      <bNormVariableIndex>157</bNormVariableIndex>
     </BindWaveNormRec>
     <BindWaveNormRec>
       <OnChipVarAddress>0</OnChipVarAddress>
@@ -196,46 +196,46 @@
       <i_NormWin1Win4>1</i_NormWin1Win4>
       <Button_Name>Win2</Button_Name>
       <bColorPickerIndex>19</bColorPickerIndex>
-      <bNormVariableIndex>241</bNormVariableIndex>
+      <bNormVariableIndex>158</bNormVariableIndex>
     </BindWaveNormRec>
     <BindWaveNormRec>
       <OnChipVarAddress>0</OnChipVarAddress>
       <OnchipVarType>0</OnchipVarType>
-      <bNormValDivValue>5</bNormValDivValue>
+      <bNormValDivValue>200</bNormValDivValue>
       <bNormPosValue>0</bNormPosValue>
       <bNormPosAngle>90</bNormPosAngle>
       <bNormOffsetValue>0</bNormOffsetValue>
-      <bNormOnOff>false</bNormOnOff>
+      <bNormOnOff>true</bNormOnOff>
       <i_NormWin1Win4>1</i_NormWin1Win4>
       <Button_Name>Win2</Button_Name>
       <bColorPickerIndex>8</bColorPickerIndex>
-      <bNormVariableIndex>242</bNormVariableIndex>
+      <bNormVariableIndex>162</bNormVariableIndex>
     </BindWaveNormRec>
     <BindWaveNormRec>
       <OnChipVarAddress>0</OnChipVarAddress>
       <OnchipVarType>0</OnchipVarType>
-      <bNormValDivValue>20</bNormValDivValue>
-      <bNormPosValue>-60</bNormPosValue>
-      <bNormPosAngle>-45</bNormPosAngle>
-      <bNormOffsetValue>0</bNormOffsetValue>
-      <bNormOnOff>false</bNormOnOff>
-      <i_NormWin1Win4>3</i_NormWin1Win4>
-      <Button_Name>Win4</Button_Name>
-      <bColorPickerIndex>5</bColorPickerIndex>
-      <bNormVariableIndex>180</bNormVariableIndex>
-    </BindWaveNormRec>
-    <BindWaveNormRec>
-      <OnChipVarAddress>0</OnChipVarAddress>
-      <OnchipVarType>0</OnchipVarType>
-      <bNormValDivValue>30</bNormValDivValue>
-      <bNormPosValue>-90</bNormPosValue>
-      <bNormPosAngle>-45</bNormPosAngle>
+      <bNormValDivValue>200</bNormValDivValue>
+      <bNormPosValue>0</bNormPosValue>
+      <bNormPosAngle>90</bNormPosAngle>
       <bNormOffsetValue>0</bNormOffsetValue>
       <bNormOnOff>true</bNormOnOff>
-      <i_NormWin1Win4>3</i_NormWin1Win4>
-      <Button_Name>Win4</Button_Name>
+      <i_NormWin1Win4>1</i_NormWin1Win4>
+      <Button_Name>Win2</Button_Name>
+      <bColorPickerIndex>5</bColorPickerIndex>
+      <bNormVariableIndex>163</bNormVariableIndex>
+    </BindWaveNormRec>
+    <BindWaveNormRec>
+      <OnChipVarAddress>0</OnChipVarAddress>
+      <OnchipVarType>0</OnchipVarType>
+      <bNormValDivValue>200</bNormValDivValue>
+      <bNormPosValue>0</bNormPosValue>
+      <bNormPosAngle>90</bNormPosAngle>
+      <bNormOffsetValue>0</bNormOffsetValue>
+      <bNormOnOff>true</bNormOnOff>
+      <i_NormWin1Win4>1</i_NormWin1Win4>
+      <Button_Name>Win2</Button_Name>
       <bColorPickerIndex>3</bColorPickerIndex>
-      <bNormVariableIndex>181</bNormVariableIndex>
+      <bNormVariableIndex>164</bNormVariableIndex>
     </BindWaveNormRec>
     <BindWaveNormRec>
       <OnChipVarAddress>0</OnChipVarAddress>
@@ -248,20 +248,20 @@
       <i_NormWin1Win4>3</i_NormWin1Win4>
       <Button_Name>Win4</Button_Name>
       <bColorPickerIndex>8</bColorPickerIndex>
-      <bNormVariableIndex>28</bNormVariableIndex>
+      <bNormVariableIndex>27</bNormVariableIndex>
     </BindWaveNormRec>
     <BindWaveNormRec>
       <OnChipVarAddress>0</OnChipVarAddress>
       <OnchipVarType>0</OnchipVarType>
-      <bNormValDivValue>5</bNormValDivValue>
-      <bNormPosValue>0</bNormPosValue>
-      <bNormPosAngle>90</bNormPosAngle>
+      <bNormValDivValue>0.5</bNormValDivValue>
+      <bNormPosValue>-1.5</bNormPosValue>
+      <bNormPosAngle>-45</bNormPosAngle>
       <bNormOffsetValue>0</bNormOffsetValue>
       <bNormOnOff>false</bNormOnOff>
       <i_NormWin1Win4>3</i_NormWin1Win4>
       <Button_Name>Win4</Button_Name>
       <bColorPickerIndex>5</bColorPickerIndex>
-      <bNormVariableIndex>71</bNormVariableIndex>
+      <bNormVariableIndex>63</bNormVariableIndex>
     </BindWaveNormRec>
     <BindWaveNormRec>
       <OnChipVarAddress>0</OnChipVarAddress>
@@ -274,7 +274,7 @@
       <i_NormWin1Win4>3</i_NormWin1Win4>
       <Button_Name>Win4</Button_Name>
       <bColorPickerIndex>3</bColorPickerIndex>
-      <bNormVariableIndex>72</bNormVariableIndex>
+      <bNormVariableIndex>64</bNormVariableIndex>
     </BindWaveNormRec>
     <BindWaveNormRec>
       <OnChipVarAddress>0</OnChipVarAddress>
@@ -287,7 +287,7 @@
       <i_NormWin1Win4>3</i_NormWin1Win4>
       <Button_Name>Win4</Button_Name>
       <bColorPickerIndex>23</bColorPickerIndex>
-      <bNormVariableIndex>12</bNormVariableIndex>
+      <bNormVariableIndex>11</bNormVariableIndex>
     </BindWaveNormRec>
   </bindNormRec>
   <bindMathRec>
@@ -872,19 +872,18 @@
   <bRecordLength>100000</bRecordLength>
   <bNumberOfData>100000</bNumberOfData>
   <bCurRangeValue>100</bCurRangeValue>
-  <bHorValue>0.05</bHorValue>
-  <bHorValue_rough>0.05</bHorValue_rough>
-  <bCurPosValue>0.25</bCurPosValue>
+  <bHorValue>30</bHorValue>
+  <bHorValue_rough>30</bHorValue_rough>
+  <bCurPosValue>30</bCurPosValue>
   <bIndex_TrgNo>0</bIndex_TrgNo>
-  <bTrgPosValue>-0.25</bTrgPosValue>
-  <wd6Dir>D:\Desktop\abe実験\20260106</wd6Dir>
+  <bTrgPosValue>-90</bTrgPosValue>
+  <wd6Dir>C:\Users\elemech\Desktop\abe_実験\log\20260114</wd6Dir>
   <cfgDir>C:\Users\Ikeda\Documents\mizo_expert4_program\テストモータ\20210112_8_プログラムver2でエンコーダ読めるようにする_エンコーダ読み取り部分修正</cfgDir>
   <bVarsList>
     <string>ad1</string>
     <string>ad2</string>
     <string>ad3</string>
     <string>counter_2</string>
-    <string>debug_theta</string>
     <string>Flag_ARCS_clear</string>
     <string>Flag_ARCS_start</string>
     <string>flag_CalcHandCmd</string>
@@ -921,12 +920,6 @@
     <string>ModRatioU</string>
     <string>ModRatioV</string>
     <string>ModRatioW</string>
-    <string>ref_Iq_direct1</string>
-    <string>ref_Iq_direct2</string>
-    <string>ref_Iq_direct3</string>
-    <string>ref_Iq_freq_direct1</string>
-    <string>ref_Iq_freq_direct2</string>
-    <string>ref_Iq_freq_direct3</string>
     <string>Ref_Iq_ref_direct</string>
     <string>Ref_Iq_ref_direct1</string>
     <string>Ref_Iq_ref_direct2</string>
@@ -942,7 +935,6 @@
     <string>WAVE_ACC_LW8079</string>
     <string>WAVE_ACC_LW8174</string>
     <string>WAVE_ACC_LW8174_axis</string>
-    <string>WAVE_check</string>
     <string>WAVE_ENC1</string>
     <string>WAVE_ENC2</string>
     <string>WAVE_ENC3</string>
@@ -953,12 +945,7 @@
     <string>WAVE_FIL_Y</string>
     <string>Wave_FRAFreq</string>
     <string>Wave_FRATime</string>
-    <string>WAVE_fx</string>
-    <string>WAVE_fy</string>
-    <string>WAVE_fz</string>
-    <string>WAVE_HandX</string>
-    <string>WAVE_HandY</string>
-    <string>WAVE_HandZ</string>
+    <string>WAVE_Fz</string>
     <string>WAVE_Icmp1</string>
     <string>WAVE_Icmp2</string>
     <string>WAVE_Icmp3</string>
@@ -1005,31 +992,13 @@
     <string>WAVE_Jl_Wr1</string>
     <string>WAVE_Jl_Wr2</string>
     <string>WAVE_Jl_Wr3</string>
-    <string>WAVE_Joint1</string>
-    <string>WAVE_Joint2</string>
-    <string>WAVE_Joint3</string>
     <string>WAVE_LoopCount</string>
     <string>WAVE_MRBR1</string>
     <string>WAVE_MRBR2</string>
     <string>WAVE_MRBR3</string>
-    <string>WAVE_MRU1</string>
-    <string>WAVE_MRU2</string>
-    <string>WAVE_MRU3</string>
-    <string>WAVE_MRV1</string>
-    <string>WAVE_MRV2</string>
-    <string>WAVE_MRV3</string>
-    <string>WAVE_MRW1</string>
-    <string>WAVE_MRW2</string>
-    <string>WAVE_MRW3</string>
     <string>WAVE_ofst_Iu</string>
     <string>WAVE_ofst_Iv</string>
     <string>WAVE_ofst_Iw</string>
-    <string>WAVE_omega_rm1</string>
-    <string>WAVE_omega_rm1_ref</string>
-    <string>WAVE_omega_rm2</string>
-    <string>WAVE_omega_rm2_ref</string>
-    <string>WAVE_omega_rm3</string>
-    <string>WAVE_omega_rm3_ref</string>
     <string>WAVE_ql1</string>
     <string>WAVE_ql2</string>
     <string>WAVE_ql3</string>
@@ -1039,26 +1008,12 @@
     <string>WAVE_qm_ref1</string>
     <string>WAVE_qm_ref2</string>
     <string>WAVE_qm_ref3</string>
-    <string>WAVE_state</string>
-    <string>WAVE_tauL_dyn_2nd</string>
     <string>WAVE_tauLdyn1</string>
     <string>WAVE_tauLdyn2</string>
     <string>WAVE_tauLdyn3</string>
     <string>WAVE_tauLwoG1</string>
     <string>WAVE_tauLwoG2</string>
     <string>WAVE_tauLwoG3</string>
-    <string>WAVE_theta_re1</string>
-    <string>WAVE_theta_re2</string>
-    <string>WAVE_theta_re3</string>
-    <string>WAVE_theta_rm1</string>
-    <string>WAVE_theta_rm2</string>
-    <string>WAVE_theta_rm3</string>
-    <string>WAVE_theta_rm_full1</string>
-    <string>WAVE_theta_rm_full2</string>
-    <string>WAVE_theta_rm_full3</string>
-    <string>WAVE_theta_rm_ref1</string>
-    <string>WAVE_theta_rm_ref2</string>
-    <string>WAVE_theta_rm_ref3</string>
     <string>WAVE_Timer0</string>
     <string>WAVE_Timer1</string>
     <string>WAVE_Timer2</string>
@@ -1070,52 +1025,13 @@
     <string>WAVE_TRG_WM3</string>
     <string>WAVE_U_modulation</string>
     <string>WAVE_V_modulation</string>
-    <string>WAVE_vd_lim_dif1</string>
-    <string>WAVE_vd_lim_dif2</string>
-    <string>WAVE_vd_lim_dif3</string>
     <string>WAVE_Vdc1</string>
     <string>WAVE_Vdc2</string>
     <string>WAVE_Vdc3</string>
     <string>WAVE_Vdc_ofst</string>
-    <string>WAVE_vq_lim_dif1</string>
-    <string>WAVE_vq_lim_dif2</string>
-    <string>WAVE_vq_lim_dif3</string>
-    <string>WAVE_VrefD1</string>
-    <string>WAVE_VrefD2</string>
-    <string>WAVE_VrefD3</string>
-    <string>WAVE_VrefD_dcpl1</string>
-    <string>WAVE_VrefD_dcpl2</string>
-    <string>WAVE_VrefD_dcpl3</string>
-    <string>WAVE_VrefQ1</string>
-    <string>WAVE_VrefQ2</string>
-    <string>WAVE_VrefQ3</string>
-    <string>WAVE_VrefQ_dcpl1</string>
-    <string>WAVE_VrefQ_dcpl2</string>
-    <string>WAVE_VrefQ_dcpl3</string>
-    <string>WAVE_VrefU1</string>
-    <string>WAVE_VrefU2</string>
-    <string>WAVE_VrefU3</string>
-    <string>WAVE_VrefV1</string>
-    <string>WAVE_VrefV2</string>
-    <string>WAVE_VrefV3</string>
-    <string>WAVE_VrefW1</string>
-    <string>WAVE_VrefW2</string>
-    <string>WAVE_VrefW3</string>
-    <string>WAVE_vu_ref_stand1</string>
-    <string>WAVE_vu_ref_stand2</string>
-    <string>WAVE_vu_ref_stand3</string>
-    <string>WAVE_vv_ref_stand1</string>
-    <string>WAVE_vv_ref_stand2</string>
-    <string>WAVE_vv_ref_stand3</string>
-    <string>WAVE_vw_ref_stand1</string>
-    <string>WAVE_vw_ref_stand2</string>
-    <string>WAVE_vw_ref_stand3</string>
     <string>WAVE_VWX</string>
     <string>WAVE_VWY</string>
     <string>WAVE_VWZ</string>
-    <string>WAVE_vx</string>
-    <string>WAVE_vy</string>
-    <string>WAVE_vz</string>
     <string>WAVE_W_modulation</string>
     <string>WAVE_wm1</string>
     <string>WAVE_wm2</string>
@@ -1126,7 +1042,6 @@
     <string>WAVE_wm_ref1</string>
     <string>WAVE_wm_ref2</string>
     <string>WAVE_wm_ref3</string>
-    <string>WAVE_wm_ref_org</string>
     <string>WAVE_WSX</string>
     <string>WAVE_WSY</string>
     <string>WAVE_WSZ</string>

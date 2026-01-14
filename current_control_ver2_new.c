@@ -120,20 +120,20 @@ volatile float WAVE_Timer0 = 0.0; // タイマー記録変数
 volatile float WAVE_Timer1 = 0.0; // タイマー記録変数
 volatile float WAVE_Timer2 = 0.0; // タイマー記録変数
 
-volatile float WAVE_Joint1 = 0.0;
-volatile float WAVE_Joint2 = 0.0;
-volatile float WAVE_Joint3 = 0.0;
-volatile float WAVE_HandX = 0.0;
-volatile float WAVE_HandY = 0.0;
-volatile float WAVE_HandZ = 0.0;
-volatile float WAVE_fx = 0.0;
-volatile float WAVE_fy = 0.0;
-volatile float WAVE_fz = 0.0;
-volatile float WAVE_vx = 0.0;
-volatile float WAVE_vy = 0.0;
-volatile float WAVE_vz = 0.0;
-volatile int WAVE_state = 0;
-volatile int WAVE_check = 0;
+// volatile float WAVE_Joint1 = 0.0;
+// volatile float WAVE_Joint2 = 0.0;
+// volatile float WAVE_Joint3 = 0.0;
+// volatile float WAVE_HandX = 0.0;
+// volatile float WAVE_HandY = 0.0;
+// volatile float WAVE_HandZ = 0.0;
+// volatile float WAVE_fx = 0.0;
+// volatile float WAVE_fy = 0.0;
+// volatile float WAVE_fz = 0.0;
+// volatile float WAVE_vx = 0.0;
+// volatile float WAVE_vy = 0.0;
+// volatile float WAVE_vz = 0.0;
+// volatile int WAVE_state = 0;
+// volatile int WAVE_check = 0;
 
 volatile int flag_reposition = 0;
 volatile int flag_first_go = 0;
@@ -165,8 +165,8 @@ int Flag_ARCS_clear = 0; // ARCSへの制御フラグ信号
 
 //
 volatile float speed_hand = 2.0;           // 軌跡制御手先速度
-volatile float ref_wm_direct = 0.0;         // 全慣性測定用速度指令値
-volatile int debug_theta = 0;               // デバッグ用変数。axis1.theta_rl_fullをこれで置き換えて、プログラムの挙動を見る
+// volatile float ref_wm_direct = 0.0;         // 全慣性測定用速度指令値
+// volatile int debug_theta = 0;               // デバッグ用変数。axis1.theta_rl_fullをこれで置き換えて、プログラムの挙動を見る
 // volatile float load_angle_limit_deg1 = 0.0; // 1軸 負荷側角度リミット
 // volatile float load_angle_limit_deg2 = 0.0; // 2軸 負荷側角度リミット
 // volatile float load_angle_limit_deg3 = 0.0; // 3軸 負荷側角度リミット
@@ -185,15 +185,15 @@ volatile int debug_theta = 0;               // デバッグ用変数。axis1.the
 // volatile int up_rotation_flag5 = 0;         // 5軸 ロボットから見て上方向に回転させるフラグ
 
 // 変調率
-volatile float WAVE_MRU1;
-volatile float WAVE_MRV1;
-volatile float WAVE_MRW1;
-volatile float WAVE_MRU2;
-volatile float WAVE_MRV2;
-volatile float WAVE_MRW2;
-volatile float WAVE_MRU3;
-volatile float WAVE_MRV3;
-volatile float WAVE_MRW3;
+// volatile float WAVE_MRU1;
+// volatile float WAVE_MRV1;
+// volatile float WAVE_MRW1;
+// volatile float WAVE_MRU2;
+// volatile float WAVE_MRV2;
+// volatile float WAVE_MRW2;
+// volatile float WAVE_MRU3;
+// volatile float WAVE_MRV3;
+// volatile float WAVE_MRW3;
 
 // 回生ブレーキ確認
 volatile float WAVE_MRBR1;
@@ -375,18 +375,18 @@ volatile int WAVE_ENC_temp3;
 volatile int WAVE_ENC1;
 volatile int WAVE_ENC2;
 volatile int WAVE_ENC3;
-volatile float WAVE_theta_rm1;      //!< 機械角
-volatile float WAVE_theta_rm2;      //!< 機械角
-volatile float WAVE_theta_rm3;      //!< 機械角
-volatile float WAVE_theta_rm_ref1;  //!< 総機械角指令値
-volatile float WAVE_theta_rm_ref2;  //!< 総機械角指令値
-volatile float WAVE_theta_rm_ref3;  //!< 総機械角指令値
-volatile float WAVE_theta_rm_full1; //!< 総機械角
-volatile float WAVE_theta_rm_full2; //!< 総機械角
-volatile float WAVE_theta_rm_full3; //!< 総機械角
-volatile float WAVE_theta_re1;      //!< 電気角
-volatile float WAVE_theta_re2;      //!< 電気角
-volatile float WAVE_theta_re3;      //!< 電気角
+// volatile float WAVE_theta_rm1;      //!< 機械角
+// volatile float WAVE_theta_rm2;      //!< 機械角
+// volatile float WAVE_theta_rm3;      //!< 機械角
+// volatile float WAVE_theta_rm_ref1;  //!< 総機械角指令値
+// volatile float WAVE_theta_rm_ref2;  //!< 総機械角指令値
+// volatile float WAVE_theta_rm_ref3;  //!< 総機械角指令値
+// volatile float WAVE_theta_rm_full1; //!< 総機械角
+// volatile float WAVE_theta_rm_full2; //!< 総機械角
+// volatile float WAVE_theta_rm_full3; //!< 総機械角
+// volatile float WAVE_theta_re1;      //!< 電気角
+// volatile float WAVE_theta_re2;      //!< 電気角
+// volatile float WAVE_theta_re3;      //!< 電気角
 
 volatile float WAVE_TRG_WM1;
 volatile float WAVE_TRG_WM2;
@@ -394,7 +394,7 @@ volatile float WAVE_TRG_WM3;
 volatile float WAVE_wm1;
 volatile float WAVE_wm2;
 volatile float WAVE_wm3;
-volatile float WAVE_wm_ref_org;
+// volatile float WAVE_wm_ref_org;
 volatile float WAVE_wm_ref1;
 volatile float WAVE_wm_ref2;
 volatile float WAVE_wm_ref3;
@@ -449,25 +449,25 @@ volatile float WAVE_WSZ = 0.0;             // レーザー変位計(z軸方向)
  指令側の取得データ
 *****************************/
 // uvw三相電圧　リミット前
-volatile float WAVE_VrefU1;
-volatile float WAVE_VrefV1;
-volatile float WAVE_VrefW1;
-volatile float WAVE_VrefU2;
-volatile float WAVE_VrefV2;
-volatile float WAVE_VrefW2;
-volatile float WAVE_VrefU3;
-volatile float WAVE_VrefV3;
-volatile float WAVE_VrefW3;
+// volatile float WAVE_VrefU1;
+// volatile float WAVE_VrefV1;
+// volatile float WAVE_VrefW1;
+// volatile float WAVE_VrefU2;
+// volatile float WAVE_VrefV2;
+// volatile float WAVE_VrefW2;
+// volatile float WAVE_VrefU3;
+// volatile float WAVE_VrefV3;
+// volatile float WAVE_VrefW3;
 // uvw三相電圧　規格化 リミット後
-volatile float WAVE_vu_ref_stand1;
-volatile float WAVE_vv_ref_stand1;
-volatile float WAVE_vw_ref_stand1;
-volatile float WAVE_vu_ref_stand2;
-volatile float WAVE_vv_ref_stand2;
-volatile float WAVE_vw_ref_stand2;
-volatile float WAVE_vu_ref_stand3;
-volatile float WAVE_vv_ref_stand3;
-volatile float WAVE_vw_ref_stand3;
+// volatile float WAVE_vu_ref_stand1;
+// volatile float WAVE_vv_ref_stand1;
+// volatile float WAVE_vw_ref_stand1;
+// volatile float WAVE_vu_ref_stand2;
+// volatile float WAVE_vv_ref_stand2;
+// volatile float WAVE_vw_ref_stand2;
+// volatile float WAVE_vu_ref_stand3;
+// volatile float WAVE_vv_ref_stand3;
+// volatile float WAVE_vw_ref_stand3;
 // dq直流二相電流
 volatile float WAVE_IrefD1;
 volatile float WAVE_IrefD2;
@@ -476,38 +476,38 @@ volatile float WAVE_IrefQ1;
 volatile float WAVE_IrefQ2;
 volatile float WAVE_IrefQ3;
 // dq直流二相電圧(非干渉化制御前)
-volatile float WAVE_VrefD_dcpl1;
-volatile float WAVE_VrefQ_dcpl1;
-volatile float WAVE_VrefD_dcpl2;
-volatile float WAVE_VrefQ_dcpl2;
-volatile float WAVE_VrefD_dcpl3;
-volatile float WAVE_VrefQ_dcpl3;
+// volatile float WAVE_VrefD_dcpl1;
+// volatile float WAVE_VrefQ_dcpl1;
+// volatile float WAVE_VrefD_dcpl2;
+// volatile float WAVE_VrefQ_dcpl2;
+// volatile float WAVE_VrefD_dcpl3;
+// volatile float WAVE_VrefQ_dcpl3;
 // dq直流二相電圧(非干渉化制御後)
-volatile float WAVE_VrefD1;
-volatile float WAVE_VrefQ1;
-volatile float WAVE_VrefD2;
-volatile float WAVE_VrefQ2;
-volatile float WAVE_VrefD3;
-volatile float WAVE_VrefQ3;
+// volatile float WAVE_VrefD1;
+// volatile float WAVE_VrefQ1;
+// volatile float WAVE_VrefD2;
+// volatile float WAVE_VrefQ2;
+// volatile float WAVE_VrefD3;
+// volatile float WAVE_VrefQ3;
 // dq直流二相電圧 リミット偏差FBのリミット前後の偏差分
-volatile float WAVE_vd_lim_dif1;
-volatile float WAVE_vq_lim_dif1;
-volatile float WAVE_vd_lim_dif2;
-volatile float WAVE_vq_lim_dif2;
-volatile float WAVE_vd_lim_dif3;
-volatile float WAVE_vq_lim_dif3;
+// volatile float WAVE_vd_lim_dif1;
+// volatile float WAVE_vq_lim_dif1;
+// volatile float WAVE_vd_lim_dif2;
+// volatile float WAVE_vq_lim_dif2;
+// volatile float WAVE_vd_lim_dif3;
+// volatile float WAVE_vq_lim_dif3;
 
 volatile float WAVE_U_modulation = 0.0;
 volatile float WAVE_V_modulation = 0.0;
 volatile float WAVE_W_modulation = 0.0;
 
-volatile float WAVE_omega_rm1;
-volatile float WAVE_omega_rm2;
-volatile float WAVE_omega_rm3;
+// volatile float WAVE_omega_rm1;
+// volatile float WAVE_omega_rm2;
+// volatile float WAVE_omega_rm3;
 
-volatile float WAVE_omega_rm1_ref;
-volatile float WAVE_omega_rm2_ref;
-volatile float WAVE_omega_rm3_ref;
+// volatile float WAVE_omega_rm1_ref;
+// volatile float WAVE_omega_rm2_ref;
+// volatile float WAVE_omega_rm3_ref;
 
 volatile float WAVE_Tq1;
 volatile float WAVE_Tq2;
@@ -517,19 +517,9 @@ volatile float WAVE_Icmp1;
 volatile float WAVE_Icmp2;
 volatile float WAVE_Icmp3;
 
-volatile float ref_Iq_direct1 = 0.0;
-volatile float ref_Iq_direct2 = 0.0;
-volatile float ref_Iq_direct3 = 0.0;
-
-volatile float ref_Iq_freq_direct1;
-volatile float ref_Iq_freq_direct2;
-volatile float ref_Iq_freq_direct3;
-
 volatile float WAVE_Iff_1;
 volatile float WAVE_Iff_2;
 volatile float WAVE_Iff_3;
-
-volatile float WAVE_tauL_dyn_2nd;
 
 volatile float WAVE_VWX;
 volatile float WAVE_VWY;
@@ -1799,7 +1789,7 @@ interrupt void ControlFunction(void)
               wmcmd2 = 0.0;
               wmcmd3 = 0.0;
               if(flag_FRA_Axis == 1){
-                wmcmd1 = - 1.5 * 2.0 * PI * freq * Ratio_FRA_Au * sinf(2.0 * PI * freq * (Time_FRA - tini)); // 単正弦波入力評価用(Sel FRA)
+                wmcmd1 = - 3.0 * 2.0 * PI * freq * Ratio_FRA_Au * sinf(2.0 * PI * freq * (Time_FRA - tini)); // 単正弦波入力評価用(Sel FRA)
               }
               else if(flag_FRA_Axis == 2){
                 wmcmd2 = - 0.5 * 2.0 * PI * freq * Ratio_FRA_Au * sinf(2.0 * PI * freq * (Time_FRA - tini)); // 単正弦波入力評価用(Sel FRA)
@@ -2226,12 +2216,12 @@ interrupt void ControlFunction(void)
   SetVoltReferences(&joint[2]);
 
   // 以下監視用変数への代入
-  WAVE_Joint1 = joint_cmd[0];
-  WAVE_Joint2 = joint_cmd[1];
-  WAVE_Joint3 = joint_cmd[2];
-  WAVE_HandX = hand_cmd[0];
-  WAVE_HandY = hand_cmd[1];
-  WAVE_HandZ = hand_cmd[2];
+  // WAVE_Joint1 = joint_cmd[0];
+  // WAVE_Joint2 = joint_cmd[1];
+  // WAVE_Joint3 = joint_cmd[2];
+  // WAVE_HandX = hand_cmd[0];
+  // WAVE_HandY = hand_cmd[1];
+  // WAVE_HandZ = hand_cmd[2];
 
   WAVE_IresU1 = axis1.IresU;
   WAVE_IresV1 = axis1.IresV;
@@ -2252,13 +2242,13 @@ interrupt void ControlFunction(void)
   WAVE_Idc3 = axis3.Idc;
 
   // 電流ループと位置/速度ループの制御周期が同じ時のエンコーダ情報格納変数
-  WAVE_theta_rm1 = axis1.theta_rm;
-  WAVE_theta_rm2 = axis2.theta_rm;
-  WAVE_theta_rm3 = axis3.theta_rm;
+  // WAVE_theta_rm1 = axis1.theta_rm;
+  // WAVE_theta_rm2 = axis2.theta_rm;
+  // WAVE_theta_rm3 = axis3.theta_rm;
 
-  WAVE_theta_rm_full1 = axis1.theta_rm_full;
-  WAVE_theta_rm_full2 = axis2.theta_rm_full;
-  WAVE_theta_rm_full3 = axis3.theta_rm_full;
+  // WAVE_theta_rm_full1 = axis1.theta_rm_full;
+  // WAVE_theta_rm_full2 = axis2.theta_rm_full;
+  // WAVE_theta_rm_full3 = axis3.theta_rm_full;
 
   WAVE_wm1 = axis1.wm;
   WAVE_wm2 = axis2.wm;
@@ -2316,36 +2306,36 @@ interrupt void ControlFunction(void)
   WAVE_IresD2 = -axis2.IresD;
   WAVE_IresD3 = axis3.IresD;
 
-  WAVE_VrefD1 = axis1.VrefD;
-  WAVE_VrefQ1 = axis1.VrefQ;
-  WAVE_VrefD2 = axis2.VrefD;
-  WAVE_VrefQ2 = axis2.VrefQ;
-  WAVE_VrefD3 = axis3.VrefD;
-  WAVE_VrefQ3 = axis3.VrefQ;
+  // WAVE_VrefD1 = axis1.VrefD;
+  // WAVE_VrefQ1 = axis1.VrefQ;
+  // WAVE_VrefD2 = axis2.VrefD;
+  // WAVE_VrefQ2 = axis2.VrefQ;
+  // WAVE_VrefD3 = axis3.VrefD;
+  // WAVE_VrefQ3 = axis3.VrefQ;
 
-  WAVE_VrefU1 = axis1.VrefU;
-  WAVE_VrefV1 = axis1.VrefV;
-  WAVE_VrefW1 = axis1.VrefW;
-  WAVE_VrefU2 = axis2.VrefU;
-  WAVE_VrefV2 = axis2.VrefV;
-  WAVE_VrefW2 = axis2.VrefW;
-  WAVE_VrefU3 = axis3.VrefU;
-  WAVE_VrefV3 = axis3.VrefV;
-  WAVE_VrefW3 = axis3.VrefW;
+  // WAVE_VrefU1 = axis1.VrefU;
+  // WAVE_VrefV1 = axis1.VrefV;
+  // WAVE_VrefW1 = axis1.VrefW;
+  // WAVE_VrefU2 = axis2.VrefU;
+  // WAVE_VrefV2 = axis2.VrefV;
+  // WAVE_VrefW2 = axis2.VrefW;
+  // WAVE_VrefU3 = axis3.VrefU;
+  // WAVE_VrefV3 = axis3.VrefV;
+  // WAVE_VrefW3 = axis3.VrefW;
 
-  WAVE_IresU2 = axis2.IresU;
-  WAVE_IresV2 = axis2.IresV;
-  WAVE_IresW2 = axis2.IresW;
+  // WAVE_IresU2 = axis2.IresU;
+  // WAVE_IresV2 = axis2.IresV;
+  // WAVE_IresW2 = axis2.IresW;
 
   WAVE_ofst_Iu = sen[1].offset[0];
 
-  WAVE_omega_rm1 = axis1.omega_rm;
-  WAVE_omega_rm2 = axis2.omega_rm;
-  WAVE_omega_rm3 = axis3.omega_rm;
+  // WAVE_omega_rm1 = axis1.omega_rm;
+  // WAVE_omega_rm2 = axis2.omega_rm;
+  // WAVE_omega_rm3 = axis3.omega_rm;
 
-  WAVE_omega_rm1_ref = axis1.omega_rm_ref;
-  WAVE_omega_rm2_ref = axis2.omega_rm_ref;
-  WAVE_omega_rm3_ref = axis3.omega_rm_ref;
+  // WAVE_omega_rm1_ref = axis1.omega_rm_ref;
+  // WAVE_omega_rm2_ref = axis2.omega_rm_ref;
+  // WAVE_omega_rm3_ref = axis3.omega_rm_ref;
 
   WAVE_Tq1 = axis1.Tq;
   WAVE_Tq2 = axis2.Tq;
@@ -4245,10 +4235,10 @@ int CalcHandCmdCircle(float goal[3], float vel_hand[3], float t_wait, float spee
   static int flag_init = 0;
   if (flag_cmd_end == 0)
   {
-    WAVE_state = 1;
+    // WAVE_state = 1;
     if (flag_init == 0)
     {
-      WAVE_state = 2;
+      // WAVE_state = 2;
       if (flag_loop == 1)
       {
         flag_init = 1;
@@ -4278,10 +4268,10 @@ int CalcHandCmdCircle(float goal[3], float vel_hand[3], float t_wait, float spee
     }
     if (flag_init == 1)
     {
-      WAVE_state = 3;
+      // WAVE_state = 3;
       if (Tall < t_wait)
       {
-        WAVE_state = 4;
+        // WAVE_state = 4;
         goal[0] = goalZ[0];
         goal[1] = goalZ[1];
         goal[2] = goalZ[2];
@@ -4291,7 +4281,7 @@ int CalcHandCmdCircle(float goal[3], float vel_hand[3], float t_wait, float spee
       }
       else if (Tall >= t_wait && Tall < (t_wait + t_task))
       {
-        WAVE_state = 5;
+        // WAVE_state = 5;
         fx = (D / 2.0) * sin(2 * PI * freq * (Tall - t_wait));
         fy = -(D / 2.0) * cos(2 * PI * freq * (Tall - t_wait));
         fz = 0;
@@ -4314,7 +4304,7 @@ int CalcHandCmdCircle(float goal[3], float vel_hand[3], float t_wait, float spee
       }
       else if (Tall >= t_wait + t_task)
       {
-        WAVE_state = 6;
+        // WAVE_state = 6;
         goal[0] = goalZ[0];
         goal[1] = goalZ[1];
         goal[2] = goalZ[2];
@@ -4337,13 +4327,13 @@ int CalcHandCmdCircle(float goal[3], float vel_hand[3], float t_wait, float spee
     Tall = 0;
     flag_init = 0;
   }
-  WAVE_check = 1;
-  WAVE_fx = goal[0];
-  WAVE_fy = goal[1];
-  WAVE_fz = goal[2];
-  WAVE_vx = vel_hand[0];
-  WAVE_vy = vel_hand[1];
-  WAVE_vz = vel_hand[2];
+  // WAVE_check = 1;
+  // WAVE_fx = goal[0];
+  // WAVE_fy = goal[1];
+  // WAVE_fz = goal[2];
+  // WAVE_vx = vel_hand[0];
+  // WAVE_vy = vel_hand[1];
+  // WAVE_vz = vel_hand[2];
   return 1; // 1を返すと逆運動学でFilterあり。０を返すとFilter無し。
 }
 
@@ -4466,9 +4456,9 @@ int CalcHandCmdRectangle(float goal[3], float t_wait, float speed, float start_h
     Tall = 0;
     flag_init = 0;
   }
-  WAVE_fx = fx;
-  WAVE_fy = fy;
-  WAVE_fz = fz;
+  // WAVE_fx = fx;
+  // WAVE_fy = fy;
+  // WAVE_fz = fz;
   return 0;
 }
 
@@ -4610,9 +4600,9 @@ int CalcHandCmdDiamond(float goal[3], float t_wait, float speed, float start_han
     Tall = 0;
     flag_init = 0;
   }
-  WAVE_fx = fx;
-  WAVE_fy = fy;
-  WAVE_fz = fz;
+  // WAVE_fx = fx;
+  // WAVE_fy = fy;
+  // WAVE_fz = fz;
   return 0;
 }
 
@@ -5608,24 +5598,24 @@ void SetVoltReferences(Robot *robo)
   }
 
   // 監視用変数に変調率を代入
-  if (robo->BDN == BDN0)
-  {
-    WAVE_MRU1 = ModRatioU;
-    WAVE_MRV1 = ModRatioV;
-    WAVE_MRW1 = ModRatioW;
-  }
-  else if (robo->BDN == BDN1)
-  {
-    WAVE_MRU2 = ModRatioU;
-    WAVE_MRV2 = ModRatioV;
-    WAVE_MRW2 = ModRatioW;
-  }
-  else if (robo->BDN == BDN2)
-  {
-    WAVE_MRU3 = ModRatioU;
-    WAVE_MRV3 = ModRatioV;
-    WAVE_MRW3 = ModRatioW;
-  }
+  // if (robo->BDN == BDN0)
+  // {
+  //   // WAVE_MRU1 = ModRatioU;
+  //   // WAVE_MRV1 = ModRatioV;
+  //   // WAVE_MRW1 = ModRatioW;
+  // }
+  // else if (robo->BDN == BDN1)
+  // {
+  //   // WAVE_MRU2 = ModRatioU;
+  //   // WAVE_MRV2 = ModRatioV;
+  //   // WAVE_MRW2 = ModRatioW;
+  // }
+  // else if (robo->BDN == BDN2)
+  // {
+  //   // WAVE_MRU3 = ModRatioU;
+  //   // WAVE_MRV3 = ModRatioV;
+  //   // WAVE_MRW3 = ModRatioW;
+  // }
 }
 
 void CalcFDTDWr_QmrefInputType(Robot *robo)
