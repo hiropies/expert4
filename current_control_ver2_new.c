@@ -1234,9 +1234,13 @@ Controller force[3] = {0}; //!< 力コントローラー(未実装)
 volatile int flag_fin = 0;
 interrupt void ControlFunction(void)
 {
-  C6657_timer2_stop();  /*!< 制御周期測定用タイマの停止 */
-  C6657_timer2_clear(); /*!< 制御周期測定用タイマのクリア */
-  C6657_timer2_start(); /*!< 制御周期測定用タイマの始動 */
+  C6657_timer0_stop();   /*!< 制御周期測定用タイマの停止 */
+  C6657_timer0_clear();  /*!< 制御周期測定用タイマのクリア */
+  C6657_timer0_start();  /*!< 制御周期測定用タイマの始動 */
+  
+  C6657_timer2_stop();   /*!< 制御周期測定用タイマの停止 */
+  C6657_timer2_clear();  /*!< 制御周期測定用タイマのクリア */
+  C6657_timer2_start();  /*!< 制御周期測定用タイマの始動 */
 
   static unsigned long int LoopCount = 0; //!< 制御周期カウンタ
   static float t = 0.0;                   //!< [s]		時刻
@@ -1283,10 +1287,15 @@ interrupt void ControlFunction(void)
   uvw2ab(joint[2].IresU, joint[2].IresV, joint[2].IresW, &joint[2].IresA, &joint[2].IresB);   //!< αβ軸へ変換
   ab2dq(joint[2].IresA, joint[2].IresB, joint[2].theta_re, &joint[2].IresD, &joint[2].IresQ); //!< d-q軸へ変換
 
+  // 制御周期の測定結果出力 ファンクションリファレンスp45より
+  // 制御にかかった時間を測定している。
+  WAVE_Timer0 = (float)C6657_timer0_read() * 4.8e-9 * 1e6;
+  C6657_timer1_stop();  /*!< 制御周期測定用タイマの停止 */
+  C6657_timer1_clear(); /*!< 制御周期測定用タイマのクリア */
+  C6657_timer1_start(); /*!< 制御周期測定用タイマの始動 */
   ///	制御開始フラグが立った場合
   if (1 <= flag_cont_start)
   {
-
     // flag_cont_start == 1 : 電流制御確認
     if (1 == flag_cont_start)
     {
@@ -1340,26 +1349,26 @@ interrupt void ControlFunction(void)
         gsub[1].beta_pole = 18.9924; // 2軸目
         gsub[2].beta_pole = 20.0;    // 3軸目
       }
-        // if (flag_on == 0)
-        // {
-        //   axis1.qm_ref = 0.0;
-        //   LimitPosCmd(&axis1);
-        //   axis2.qm_ref = 0.0;
-        //   LimitPosCmd(&axis2);
-        //   axis3.qm_ref = 0.0;
-        //   LimitPosCmd(&axis3);
-        // }
-        // else
-        // {
-        //   axis1.qm_ref = axis1.qm;
-        //   LimitPosCmd(&axis1);
-        //   axis2.qm_ref = axis2.qm;
-        //   LimitPosCmd(&axis2);
-        //   axis3.qm_ref = axis3.qm;
-        //   LimitPosCmd(&axis3);
-        // }
+      // if (flag_on == 0)
+      // {
+      //   axis1.qm_ref = 0.0;
+      //   LimitPosCmd(&axis1);
+      //   axis2.qm_ref = 0.0;
+      //   LimitPosCmd(&axis2);
+      //   axis3.qm_ref = 0.0;
+      //   LimitPosCmd(&axis3);
+      // }
+      // else
+      // {
+      //   axis1.qm_ref = axis1.qm;
+      //   LimitPosCmd(&axis1);
+      //   axis2.qm_ref = axis2.qm;
+      //   LimitPosCmd(&axis2);
+      //   axis3.qm_ref = axis3.qm;
+      //   LimitPosCmd(&axis3);
+      // }
 
-        CalcGravIcmp(joint); // 2,3軸の重力補償電流を計算　main関数の初期姿勢を要確認！！！！
+      CalcGravIcmp(joint); // 2,3軸の重力補償電流を計算　main関数の初期姿勢を要確認！！！！
       CalcJl(joint);         // JLの変動は使うので3軸分計算
       CalcJlWr(joint);
 
@@ -1417,9 +1426,6 @@ interrupt void ControlFunction(void)
         // 時間測定 flag_pv = 0
         // ****************************************************
         // 制御周期測定用タイマのクリア
-        C6657_timer0_stop();
-        C6657_timer0_clear();
-        C6657_timer0_start();
 
         // 位置応答と速度応答をラッチ
         axis1.qm = axis1.theta_rm_full - axis1.theta_rm_init;
@@ -1470,19 +1476,10 @@ interrupt void ControlFunction(void)
 
         // 動力学トルクを計算
         CalcTauLDyn(joint); // 1~3軸分を計算
-
-        // 制御周期の測定結果出力 ファンクションリファレンスp45より
-        // 制御にかかった時間を測定している。
-        WAVE_Timer0 = (float)C6657_timer0_read() * 4.8e-9 * 1e6;
       }
       else
-      {
+      { 
         flag_pv = 0;
-
-        // 制御周期測定用タイマのクリア
-        C6657_timer1_stop();
-        C6657_timer1_clear();
-        C6657_timer1_start();
 
         // FF制御　FDTDで離散化した負荷側情報計算関数(qmref入力)
         if (flag_FF_triple == 1)
@@ -2126,11 +2123,11 @@ interrupt void ControlFunction(void)
           axis2.IrefQ = axis2.Icmp;
           axis3.IrefQ = axis3.Icmp;
         }
-        // 制御周期の測定結果出力 ファンクションリファレンスp45より
-        // 制御にかかった時間を測定している。
-        WAVE_Timer1 = (float)C6657_timer1_read() * 4.8e-9 * 1e6;
       }
     }
+    // 制御周期の測定結果出力 ファンクションリファレンスp45より
+    // 制御にかかった時間を測定している。
+    WAVE_Timer1 = (float)C6657_timer1_read() * 4.8e-9 * 1e6;
 
     /// 電流指令リミッタ
     axis1.IrefQ = Limiter(joint[0].IrefQ, joint[0].IrefQ_Lim);
