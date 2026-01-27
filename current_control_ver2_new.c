@@ -210,6 +210,10 @@ volatile float sense_Iu_off3;
 volatile float sense_Iv_off3;
 volatile float sense_Iw_off3;
 
+volatile float WAVE_theta_re1;
+volatile float WAVE_theta_re2;
+volatile float WAVE_theta_re3;
+
 // 回生ブレーキ確認
 volatile float WAVE_MRBR1;
 volatile float WAVE_MRBR2;
@@ -2241,6 +2245,10 @@ interrupt void ControlFunction(void)
   // WAVE_HandY = hand_cmd[1];
   // WAVE_HandZ = hand_cmd[2];
 
+  WAVE_theta_re1 = joint[0].theta_re;
+  WAVE_theta_re2 = joint[1].theta_re;
+  WAVE_theta_re3 = joint[2].theta_re;
+
   WAVE_IresU1 = axis1.IresU;
   WAVE_IresV1 = axis1.IresV;
   WAVE_IresW1 = axis1.IresV;
@@ -2662,6 +2670,8 @@ void MW_main(void)
   // gsub[0].beta_pole = 13.6130; // 9.5m/min
   // gsub[0].beta_pole = 13.4674; // 10m/min
   // gsub[0].beta_pole = 13.2074; // 11m/min
+  // gsub[0].beta_pole = 13.2822; // 15.8m/min
+  // gsub[0].beta_pole = 15.6584; // 20.0m/min
   // gsub[0].beta_pole = 15.0464; // 05m/min
   // gsub[0].beta_pole = 15.7586; // 01m/min
   gsub[0].r1_pole = 2.5;
@@ -2678,9 +2688,13 @@ void MW_main(void)
   // 位置ゲイン設計指標
   gsub[1].tau_pole = 1 / 10.0;
   gsub[1].beta_pole = 20.0;
+  gsub[1].beta_pole = 16.8065; // 9.5m/min 1軸からシフト量を半分に
+  // gsub[1].beta_pole = 13.6130; // 9.5m/min 1軸からシフト量を拝借
   // gsub[1].beta_pole = 19.4440; // 9.5m/min
   // gsub[1].beta_pole = 19.3107; // 10m/min
   // gsub[1].beta_pole = 18.9924; // 11m/min
+  // gsub[0].beta_pole = 17.3046; // 15.8m/min
+  // gsub[0].beta_pole = 18.0299; // 20.0m/min
   // gsub[1].beta_pole = 20.0039; // 05m/min
   // gsub[1].beta_pole = 20.0021; // 01m/min
   gsub[1].r1_pole = 2.5;
