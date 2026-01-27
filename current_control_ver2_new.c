@@ -2688,7 +2688,7 @@ void MW_main(void)
   // 位置ゲイン設計指標
   gsub[1].tau_pole = 1 / 10.0;
   gsub[1].beta_pole = 20.0;
-  gsub[1].beta_pole = 16.8065; // 9.5m/min 1軸からシフト量を半分に
+  // gsub[1].beta_pole = 16.8065; // 9.5m/min 1軸からシフト量を半分に
   // gsub[1].beta_pole = 13.6130; // 9.5m/min 1軸からシフト量を拝借
   // gsub[1].beta_pole = 19.4440; // 9.5m/min
   // gsub[1].beta_pole = 19.3107; // 10m/min
