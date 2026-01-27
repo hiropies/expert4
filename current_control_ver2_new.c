@@ -119,6 +119,7 @@ volatile int flag_tuneNo = 1;        // チューニングNo選択フラグ 1:�
 volatile float WAVE_Timer0 = 0.0; // タイマー記録変数
 volatile float WAVE_Timer1 = 0.0; // タイマー記録変数
 volatile float WAVE_Timer2 = 0.0; // タイマー記録変数
+volatile float WAVE_TimerAll = 0.0; // タイマー記録変数
 
 // volatile float WAVE_Joint1 = 0.0;
 // volatile float WAVE_Joint2 = 0.0;
@@ -184,16 +185,30 @@ volatile float speed_hand = 2.0;           // 軌跡制御手先速度
 // volatile int down_rotation_flag5 = 1;       // 5軸 ロボットから見て下方向に回転させるフラグ
 // volatile int up_rotation_flag5 = 0;         // 5軸 ロボットから見て上方向に回転させるフラグ
 
+volatile float WAVE_theta_re1;
+volatile float WAVE_theta_re2;
+volatile float WAVE_theta_re3;
+
 // 変調率
-// volatile float WAVE_MRU1;
-// volatile float WAVE_MRV1;
-// volatile float WAVE_MRW1;
-// volatile float WAVE_MRU2;
-// volatile float WAVE_MRV2;
-// volatile float WAVE_MRW2;
-// volatile float WAVE_MRU3;
-// volatile float WAVE_MRV3;
-// volatile float WAVE_MRW3;
+volatile float WAVE_MRU1;
+volatile float WAVE_MRV1;
+volatile float WAVE_MRW1;
+volatile float WAVE_MRU2;
+volatile float WAVE_MRV2;
+volatile float WAVE_MRW2;
+volatile float WAVE_MRU3;
+volatile float WAVE_MRV3;
+volatile float WAVE_MRW3;
+
+volatile float sense_Iu_off1;
+volatile float sense_Iv_off1;
+volatile float sense_Iw_off1;
+volatile float sense_Iu_off2;
+volatile float sense_Iv_off2;
+volatile float sense_Iw_off2;
+volatile float sense_Iu_off3;
+volatile float sense_Iv_off3;
+volatile float sense_Iw_off3;
 
 // 回生ブレーキ確認
 volatile float WAVE_MRBR1;
@@ -358,6 +373,13 @@ volatile float WAVE_IresQ1;
 volatile float WAVE_IresQ2;
 volatile float WAVE_IresQ3;
 
+volatile float WAVE_IdifD1;
+volatile float WAVE_IdifD2;
+volatile float WAVE_IdifD3;
+volatile float WAVE_IdifQ1;
+volatile float WAVE_IdifQ2;
+volatile float WAVE_IdifQ3;
+
 // 直流リンク電圧
 volatile float WAVE_Vdc1;
 volatile float WAVE_Vdc2;
@@ -449,25 +471,25 @@ volatile float WAVE_WSZ = 0.0;             // レーザー変位計(z軸方向)
  指令側の取得データ
 *****************************/
 // uvw三相電圧　リミット前
-// volatile float WAVE_VrefU1;
-// volatile float WAVE_VrefV1;
-// volatile float WAVE_VrefW1;
-// volatile float WAVE_VrefU2;
-// volatile float WAVE_VrefV2;
-// volatile float WAVE_VrefW2;
-// volatile float WAVE_VrefU3;
-// volatile float WAVE_VrefV3;
-// volatile float WAVE_VrefW3;
+volatile float WAVE_VrefU1;
+volatile float WAVE_VrefV1;
+volatile float WAVE_VrefW1;
+volatile float WAVE_VrefU2;
+volatile float WAVE_VrefV2;
+volatile float WAVE_VrefW2;
+volatile float WAVE_VrefU3;
+volatile float WAVE_VrefV3;
+volatile float WAVE_VrefW3;
 // uvw三相電圧　規格化 リミット後
-// volatile float WAVE_vu_ref_stand1;
-// volatile float WAVE_vv_ref_stand1;
-// volatile float WAVE_vw_ref_stand1;
-// volatile float WAVE_vu_ref_stand2;
-// volatile float WAVE_vv_ref_stand2;
-// volatile float WAVE_vw_ref_stand2;
-// volatile float WAVE_vu_ref_stand3;
-// volatile float WAVE_vv_ref_stand3;
-// volatile float WAVE_vw_ref_stand3;
+volatile float WAVE_vu_ref_stand1;
+volatile float WAVE_vv_ref_stand1;
+volatile float WAVE_vw_ref_stand1;
+volatile float WAVE_vu_ref_stand2;
+volatile float WAVE_vv_ref_stand2;
+volatile float WAVE_vw_ref_stand2;
+volatile float WAVE_vu_ref_stand3;
+volatile float WAVE_vv_ref_stand3;
+volatile float WAVE_vw_ref_stand3;
 // dq直流二相電流
 volatile float WAVE_IrefD1;
 volatile float WAVE_IrefD2;
@@ -476,26 +498,26 @@ volatile float WAVE_IrefQ1;
 volatile float WAVE_IrefQ2;
 volatile float WAVE_IrefQ3;
 // dq直流二相電圧(非干渉化制御前)
-// volatile float WAVE_VrefD_dcpl1;
-// volatile float WAVE_VrefQ_dcpl1;
-// volatile float WAVE_VrefD_dcpl2;
-// volatile float WAVE_VrefQ_dcpl2;
-// volatile float WAVE_VrefD_dcpl3;
-// volatile float WAVE_VrefQ_dcpl3;
+volatile float WAVE_VrefD_dcpl1;
+volatile float WAVE_VrefQ_dcpl1;
+volatile float WAVE_VrefD_dcpl2;
+volatile float WAVE_VrefQ_dcpl2;
+volatile float WAVE_VrefD_dcpl3;
+volatile float WAVE_VrefQ_dcpl3;
 // dq直流二相電圧(非干渉化制御後)
-// volatile float WAVE_VrefD1;
-// volatile float WAVE_VrefQ1;
-// volatile float WAVE_VrefD2;
-// volatile float WAVE_VrefQ2;
-// volatile float WAVE_VrefD3;
-// volatile float WAVE_VrefQ3;
+volatile float WAVE_VrefD1;
+volatile float WAVE_VrefQ1;
+volatile float WAVE_VrefD2;
+volatile float WAVE_VrefQ2;
+volatile float WAVE_VrefD3;
+volatile float WAVE_VrefQ3;
 // dq直流二相電圧 リミット偏差FBのリミット前後の偏差分
-// volatile float WAVE_vd_lim_dif1;
-// volatile float WAVE_vq_lim_dif1;
-// volatile float WAVE_vd_lim_dif2;
-// volatile float WAVE_vq_lim_dif2;
-// volatile float WAVE_vd_lim_dif3;
-// volatile float WAVE_vq_lim_dif3;
+volatile float WAVE_vd_lim_dif1;
+volatile float WAVE_vq_lim_dif1;
+volatile float WAVE_vd_lim_dif2;
+volatile float WAVE_vq_lim_dif2;
+volatile float WAVE_vd_lim_dif3;
+volatile float WAVE_vq_lim_dif3;
 
 volatile float WAVE_U_modulation = 0.0;
 volatile float WAVE_V_modulation = 0.0;
@@ -1238,10 +1260,6 @@ interrupt void ControlFunction(void)
   C6657_timer0_clear();  /*!< 制御周期測定用タイマのクリア */
   C6657_timer0_start();  /*!< 制御周期測定用タイマの始動 */
   
-  C6657_timer2_stop();   /*!< 制御周期測定用タイマの停止 */
-  C6657_timer2_clear();  /*!< 制御周期測定用タイマのクリア */
-  C6657_timer2_start();  /*!< 制御周期測定用タイマの始動 */
-
   static unsigned long int LoopCount = 0; //!< 制御周期カウンタ
   static float t = 0.0;                   //!< [s]		時刻
   static float hand_cmd[3] = {0, 0, 0};
@@ -1252,11 +1270,11 @@ interrupt void ControlFunction(void)
   static float motor_cmd_init[3] = {0, 0, 0};
 
   // FRA試験関係変数
-  static float fmin = 0.9;      //[Hz] 開始周波数
-  static float fmax = 3.0;     //[Hz] 終了周波数
+  static float fmin = 0.95;      //[Hz] 開始周波数
+  static float fmax = 3.15;     //[Hz] 終了周波数
   static float fstep = 0.05;     //[Hz] 周波数刻み
   static float Ni = 10.0;       // Sin波の個数 (積分回数)
-  static float freq = 0.9;    // 現在の周波数:初めはfminからstart //プログラム上freq=fminを初期定義できないので、直接数値を打つ
+  static float freq = 0.95;    // 現在の周波数:初めはfminからstart //プログラム上freq=fminを初期定義できないので、直接数値を打つ
   static float tini = 0.0;     //[s] 時間初期化
   static float Time_FRA = 0.0; //[s] FRA試験開始時間(フラグが来たら時間カウント開始)
 
@@ -1789,7 +1807,7 @@ interrupt void ControlFunction(void)
                 wmcmd1 = - 3.0 * 2.0 * PI * freq * Ratio_FRA_Au * sinf(2.0 * PI * freq * (Time_FRA - tini)); // 単正弦波入力評価用(Sel FRA)
               }
               else if(flag_FRA_Axis == 2){
-                wmcmd2 = - 0.5 * 2.0 * PI * freq * Ratio_FRA_Au * sinf(2.0 * PI * freq * (Time_FRA - tini)); // 単正弦波入力評価用(Sel FRA)
+                wmcmd2 = - 1.0 * 2.0 * PI * freq * Ratio_FRA_Au * sinf(2.0 * PI * freq * (Time_FRA - tini)); // 単正弦波入力評価用(Sel FRA)
               }
               else if (flag_FRA_Axis == 3){
                 wmcmd3 = 1.0 * 2.0 * PI * freq * Ratio_FRA_Au * sinf(2.0 * PI * freq * (Time_FRA - tini)); // 単正弦波入力評価用(Sel FRA)
@@ -2125,10 +2143,7 @@ interrupt void ControlFunction(void)
         }
       }
     }
-    // 制御周期の測定結果出力 ファンクションリファレンスp45より
-    // 制御にかかった時間を測定している。
-    WAVE_Timer1 = (float)C6657_timer1_read() * 4.8e-9 * 1e6;
-
+    
     /// 電流指令リミッタ
     axis1.IrefQ = Limiter(joint[0].IrefQ, joint[0].IrefQ_Lim);
     axis1.IrefD = Limiter(joint[0].IrefD, joint[0].IrefD_Lim);
@@ -2185,6 +2200,12 @@ interrupt void ControlFunction(void)
       joint[i].IrefD = 0;
     }
   }
+  // 制御周期の測定結果出力 ファンクションリファレンスp45より
+  // 制御にかかった時間を測定している。
+  WAVE_Timer1 = (float)C6657_timer1_read() * 4.8e-9 * 1e6;
+  C6657_timer2_stop();   /*!< 制御周期測定用タイマの停止 */
+  C6657_timer2_clear();  /*!< 制御周期測定用タイマのクリア */
+  C6657_timer2_start();  /*!< 制御周期測定用タイマの始動 */
 
   // PEV_inverter_control_break()でブレーキの制御を正論理PWMで制御するように設定した
   // ファンクションリファレンスマニュアルpp.133の変調率の関係から、ブレーキチョッパのon/offの変調率は以下のように表される。
@@ -2247,6 +2268,10 @@ interrupt void ControlFunction(void)
   // WAVE_theta_rm_full2 = axis2.theta_rm_full;
   // WAVE_theta_rm_full3 = axis3.theta_rm_full;
 
+  WAVE_theta_re1 = joint[0].theta_re;
+  WAVE_theta_re2 = joint[1].theta_re;
+  WAVE_theta_re3 = joint[2].theta_re;
+
   WAVE_wm1 = axis1.wm;
   WAVE_wm2 = axis2.wm;
   WAVE_wm3 = axis3.wm;
@@ -2303,28 +2328,50 @@ interrupt void ControlFunction(void)
   WAVE_IresD2 = -axis2.IresD;
   WAVE_IresD3 = axis3.IresD;
 
-  // WAVE_VrefD1 = axis1.VrefD;
-  // WAVE_VrefQ1 = axis1.VrefQ;
-  // WAVE_VrefD2 = axis2.VrefD;
-  // WAVE_VrefQ2 = axis2.VrefQ;
-  // WAVE_VrefD3 = axis3.VrefD;
-  // WAVE_VrefQ3 = axis3.VrefQ;
+  WAVE_IdifQ1 = axis1.IdifQ;
+  WAVE_IdifQ2 = axis2.IdifQ;
+  WAVE_IdifQ3 = axis3.IdifQ;
+  WAVE_IdifD1 = axis1.IdifD;
+  WAVE_IdifD2 = axis2.IdifD;
+  WAVE_IdifD3 = axis3.IdifD;
 
-  // WAVE_VrefU1 = axis1.VrefU;
-  // WAVE_VrefV1 = axis1.VrefV;
-  // WAVE_VrefW1 = axis1.VrefW;
-  // WAVE_VrefU2 = axis2.VrefU;
-  // WAVE_VrefV2 = axis2.VrefV;
-  // WAVE_VrefW2 = axis2.VrefW;
-  // WAVE_VrefU3 = axis3.VrefU;
-  // WAVE_VrefV3 = axis3.VrefV;
-  // WAVE_VrefW3 = axis3.VrefW;
+  WAVE_VrefD1 = axis1.VrefD;
+  WAVE_VrefQ1 = axis1.VrefQ;
+  WAVE_VrefD2 = axis2.VrefD;
+  WAVE_VrefQ2 = axis2.VrefQ;
+  WAVE_VrefD3 = axis3.VrefD;
+  WAVE_VrefQ3 = axis3.VrefQ;
+  WAVE_VrefD_dcpl1 = joint[0].VrefD_dcpl;
+  WAVE_VrefQ_dcpl1 = joint[0].VrefQ_dcpl;
+  WAVE_VrefD_dcpl2 = joint[1].VrefD_dcpl;
+  WAVE_VrefQ_dcpl2 = joint[1].VrefQ_dcpl;
+  WAVE_VrefD_dcpl3 = joint[2].VrefD_dcpl;
+  WAVE_VrefQ_dcpl3 = joint[2].VrefQ_dcpl;
 
-  // WAVE_IresU2 = axis2.IresU;
-  // WAVE_IresV2 = axis2.IresV;
-  // WAVE_IresW2 = axis2.IresW;
+  WAVE_VrefU1 = axis1.VrefU;
+  WAVE_VrefV1 = axis1.VrefV;
+  WAVE_VrefW1 = axis1.VrefW;
+  WAVE_VrefU2 = axis2.VrefU;
+  WAVE_VrefV2 = axis2.VrefV;
+  WAVE_VrefW2 = axis2.VrefW;
+  WAVE_VrefU3 = axis3.VrefU;
+  WAVE_VrefV3 = axis3.VrefV;
+  WAVE_VrefW3 = axis3.VrefW;
+
+  WAVE_IresU2 = axis2.IresU;
+  WAVE_IresV2 = axis2.IresV;
+  WAVE_IresW2 = axis2.IresW;
 
   WAVE_ofst_Iu = sen[1].offset[0];
+  sense_Iu_off1 = sen[0].offset[0];
+  sense_Iv_off1 = sen[0].offset[1];
+  sense_Iw_off1 = sen[0].offset[2];
+  sense_Iu_off2 = sen[1].offset[0];
+  sense_Iv_off2 = sen[1].offset[1];
+  sense_Iw_off2 = sen[1].offset[2];
+  sense_Iu_off3 = sen[2].offset[0];
+  sense_Iv_off3 = sen[2].offset[1];
+  sense_Iw_off3 = sen[2].offset[2];
 
   // WAVE_omega_rm1 = axis1.omega_rm;
   // WAVE_omega_rm2 = axis2.omega_rm;
@@ -2512,6 +2559,7 @@ interrupt void ControlFunction(void)
   // 制御周期の測定結果出力
 
   WAVE_Timer2 = (float)C6657_timer2_read() * 4.8e-9 * 1e6;
+  WAVE_TimerAll = (float)C6657_timer0_read() * 4.8e-9 * 1e6;
   int3_ack(); //!< 次の割り込みを可能にするための関数
 }
 /**	@brief 各種ボード, インバータの初期化
