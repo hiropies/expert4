@@ -1,7 +1,7 @@
 ******************************************************************************
                TMS320C6x Linker PC v7.4.24                     
 ******************************************************************************
->> Linked Tue Jan 27 10:22:16 2026
+>> Linked Tue Jan 27 14:44:59 2026
 
 OUTPUT FILE NAME:   <current_control_ver2_new.out>
 ENTRY POINT SYMBOL: "_c_int00"  address: 0c041d60
@@ -65,8 +65,8 @@ SECTION ALLOCATION MAP
 section   page    origin      length       input sections
 --------  ----  ----------  ----------   ----------------
 .text      0    0c018000    0002a4a0     
-                  0c018000    0001fec0     current_control_ver2_new.obj (.text)
-                  0c037ec0    00004960     current_control_ver2_new.obj (.text:retain)
+                  0c018000    0001fee0     current_control_ver2_new.obj (.text)
+                  0c037ee0    00004940     current_control_ver2_new.obj (.text:retain)
                   0c03c820    00000b20     enc.obj (.text)
                   0c03d340    00000700     rts6600_elf.lib : pow.obj (.text:pow)
                   0c03da40    000006c0     mwio4.lib : mw_i2c_eeprom.obj (.text)
@@ -448,9 +448,9 @@ $.text:mwio4.lib<EMIF16.obj>$0x180  $Tramp$S$$EMF_Write2_s32
                              0c0403a4             : IPFPGA_LIB.obj (.text)
                              0c040410             : IPFPGA_LIB.obj (.text)
 $.text:mwio4.lib<gpio_int.obj>$0xd4  $Tramp$S$$GPI_int_ack_vo
-   11e02fd4     0c042210     0c03c748   current_control_ver2_new.obj (.text:retain)
+   11e02fd4     0c042210     0c03c758   current_control_ver2_new.obj (.text:retain)
 $.text:mwio4.lib<timer_lib.obj>$0x178  $Tramp$S$$C6657_timer2_read
-   11e01ad8     0c042220     0c03c6cc   current_control_ver2_new.obj (.text:retain)
+   11e01ad8     0c042220     0c03c6dc   current_control_ver2_new.obj (.text:retain)
 $.text:mwio4.lib<timer_lib.obj>$0x154  $Tramp$S$$C6657_timer2_start
    11e01ab4     0c042230     0c03bf84   current_control_ver2_new.obj (.text:retain)
 $.text:mwio4.lib<timer_lib.obj>$0x2ec  $Tramp$S$$C6657_timer2_clear
@@ -461,93 +461,93 @@ $.text:mwio4.lib<timer_lib.obj>$0x340  $Tramp$S$$C6657_timer1_read
    11e01ca0     0c042260     0c03bec0   current_control_ver2_new.obj (.text:retain)
                              0c03bf30   current_control_ver2_new.obj (.text:retain)
 $.text:mwio4.lib<timer_lib.obj>$0x320  $Tramp$S$$C6657_timer1_start
-   11e01c80     0c042270     0c0384b8   current_control_ver2_new.obj (.text:retain)
+   11e01c80     0c042270     0c0384d4   current_control_ver2_new.obj (.text:retain)
 $.text:mwio4.lib<timer_lib.obj>$0x48c  $Tramp$S$$C6657_timer1_clear
-   11e01dec     0c042280     0c0384b4   current_control_ver2_new.obj (.text:retain)
+   11e01dec     0c042280     0c0384d0   current_control_ver2_new.obj (.text:retain)
 $.text:mwio4.lib<timer_lib.obj>$0x308  $Tramp$S$$C6657_timer1_stop
-   11e01c68     0c042290     0c0384ac   current_control_ver2_new.obj (.text:retain)
+   11e01c68     0c042290     0c0384c8   current_control_ver2_new.obj (.text:retain)
 $.text:mwio4.lib<timer_lib.obj>$0x4e0  $Tramp$S$$C6657_timer0_read
-   11e01e40     0c0422a0     0c03846c   current_control_ver2_new.obj (.text:retain)
-                             0c03c708   current_control_ver2_new.obj (.text:retain)
+   11e01e40     0c0422a0     0c038488   current_control_ver2_new.obj (.text:retain)
+                             0c03c718   current_control_ver2_new.obj (.text:retain)
 $.text:mwio4.lib<timer_lib.obj>$0x4c0  $Tramp$S$$C6657_timer0_start
-   11e01e20     0c0422b0     0c037f78   current_control_ver2_new.obj (.text:retain)
+   11e01e20     0c0422b0     0c037f98   current_control_ver2_new.obj (.text:retain)
 $.text:mwio4.lib<timer_lib.obj>$0x62c  $Tramp$S$$C6657_timer0_clear
-   11e01f8c     0c0422c0     0c037f74   current_control_ver2_new.obj (.text:retain)
+   11e01f8c     0c0422c0     0c037f94   current_control_ver2_new.obj (.text:retain)
 $.text:mwio4.lib<timer_lib.obj>$0x4a8  $Tramp$S$$C6657_timer0_stop
-   11e01e08     0c0422d0     0c037f6c   current_control_ver2_new.obj (.text:retain)
+   11e01e08     0c0422d0     0c037f8c   current_control_ver2_new.obj (.text:retain)
 $.text:mwio4.lib<PEV_INV_LIB.obj>$0x394  $Tramp$S$$PEV_inverter_start_pwm
-   11e00394     0c0422e0     0c025fc0   current_control_ver2_new.obj (.text)
-                             0c025fc8   current_control_ver2_new.obj (.text)
-                             0c025fcc   current_control_ver2_new.obj (.text)
+   11e00394     0c0422e0     0c025fd4   current_control_ver2_new.obj (.text)
+                             0c025fe0   current_control_ver2_new.obj (.text)
+                             0c025fe4   current_control_ver2_new.obj (.text)
 $.text:mwio4.lib<timer_lib.obj>$0x298  $Tramp$S$$C6657_timer2_disable_int
-   11e01bf8     0c0422f0     0c025fb0   current_control_ver2_new.obj (.text)
+   11e01bf8     0c0422f0     0c025fc4   current_control_ver2_new.obj (.text)
 $.text:mwio4.lib<timer_lib.obj>$0x438  $Tramp$S$$C6657_timer1_disable_int
-   11e01d98     0c042300     0c025fac   current_control_ver2_new.obj (.text)
+   11e01d98     0c042300     0c025fc0   current_control_ver2_new.obj (.text)
 $.text:mwio4.lib<timer_lib.obj>$0x5d8  $Tramp$S$$C6657_timer0_disable_int
-   11e01f38     0c042310     0c025fa8   current_control_ver2_new.obj (.text)
+   11e01f38     0c042310     0c025fb8   current_control_ver2_new.obj (.text)
 $.text:mwio4.lib<PEV_INV_LIB.obj>$0x1460  $Tramp$S$$PEV_ad_disable_int
-   11e01460     0c042320     0c025f90   current_control_ver2_new.obj (.text)
-                             0c025f98   current_control_ver2_new.obj (.text)
-                             0c025fa0   current_control_ver2_new.obj (.text)
+   11e01460     0c042320     0c025fa4   current_control_ver2_new.obj (.text)
+                             0c025fac   current_control_ver2_new.obj (.text)
+                             0c025fb0   current_control_ver2_new.obj (.text)
 $.text:mwio4.lib<mwintc.obj>$0x3f0  $Tramp$S$$IRQ_globalEnable
-   11e029b0     0c042330     0c025f8c   current_control_ver2_new.obj (.text)
+   11e029b0     0c042330     0c025fa0   current_control_ver2_new.obj (.text)
 $.text:mwio4.lib<timer_lib.obj>$0x1d0  $Tramp$S$$C6657_timer2_init
-   11e01b30     0c042340     0c025f84   current_control_ver2_new.obj (.text)
+   11e01b30     0c042340     0c025f98   current_control_ver2_new.obj (.text)
 $.text:mwio4.lib<timer_lib.obj>$0x370  $Tramp$S$$C6657_timer1_init
-   11e01cd0     0c042350     0c025f78   current_control_ver2_new.obj (.text)
+   11e01cd0     0c042350     0c025f8c   current_control_ver2_new.obj (.text)
 $.text:mwio4.lib<timer_lib.obj>$0x510  $Tramp$S$$C6657_timer0_init
-   11e01e70     0c042360     0c025f6c   current_control_ver2_new.obj (.text)
+   11e01e70     0c042360     0c025f80   current_control_ver2_new.obj (.text)
 $.text:mwio4.lib<PEV_INV_LIB.obj>$0xda8  $Tramp$S$$PEV_inverter_control_break
-   11e00da8     0c042370     0c025f4c   current_control_ver2_new.obj (.text)
-                             0c025f54   current_control_ver2_new.obj (.text)
-                             0c025f60   current_control_ver2_new.obj (.text)
+   11e00da8     0c042370     0c025f60   current_control_ver2_new.obj (.text)
+                             0c025f68   current_control_ver2_new.obj (.text)
+                             0c025f70   current_control_ver2_new.obj (.text)
 $.text:mwio4.lib<PEV_INV_LIB.obj>$0xcf4  $Tramp$S$$PEV_inverter_enable_int
-   11e00cf4     0c042380     0c025f34   current_control_ver2_new.obj (.text)
-                             0c025f40   current_control_ver2_new.obj (.text)
-                             0c025f44   current_control_ver2_new.obj (.text)
+   11e00cf4     0c042380     0c025f48   current_control_ver2_new.obj (.text)
+                             0c025f50   current_control_ver2_new.obj (.text)
+                             0c025f54   current_control_ver2_new.obj (.text)
 $.text:mwio4.lib<PEV_INV_LIB.obj>$0x958  $Tramp$S$$PEV_inverter_init_refload_timing
-   11e00958     0c042390     0c025f18   current_control_ver2_new.obj (.text)
-                             0c025f28   current_control_ver2_new.obj (.text)
-                             0c025f2c   current_control_ver2_new.obj (.text)
+   11e00958     0c042390     0c025f2c   current_control_ver2_new.obj (.text)
+                             0c025f38   current_control_ver2_new.obj (.text)
+                             0c025f40   current_control_ver2_new.obj (.text)
 $.text:mwio4.lib<PEV_INV_LIB.obj>$0xaa8  $Tramp$S$$PEV_inverter_init_adtrig_timing
-   11e00aa8     0c0423a0     0c025ef4   current_control_ver2_new.obj (.text)
-                             0c025f08   current_control_ver2_new.obj (.text)
-                             0c025f0c   current_control_ver2_new.obj (.text)
+   11e00aa8     0c0423a0     0c025f08   current_control_ver2_new.obj (.text)
+                             0c025f18   current_control_ver2_new.obj (.text)
+                             0c025f20   current_control_ver2_new.obj (.text)
 $.text:mwio4.lib<PEV_INV_LIB.obj>$0x5e8  $Tramp$S$$PEV_inverter_set_uvw
-   11e005e8     0c0423b0     0c025ec4   current_control_ver2_new.obj (.text)
-                             0c025ed4   current_control_ver2_new.obj (.text)
+   11e005e8     0c0423b0     0c025ed4   current_control_ver2_new.obj (.text)
                              0c025ee8   current_control_ver2_new.obj (.text)
+                             0c025ef8   current_control_ver2_new.obj (.text)
 $.text:mwio4.lib<PEV_INV_LIB.obj>$0xfe0  $Tramp$S$$PEV_ad_set_mode
-   11e00fe0     0c0423c0     0c025e70   current_control_ver2_new.obj (.text)
-                             0c025e88   current_control_ver2_new.obj (.text)
+   11e00fe0     0c0423c0     0c025e84   current_control_ver2_new.obj (.text)
                              0c025e98   current_control_ver2_new.obj (.text)
+                             0c025eac   current_control_ver2_new.obj (.text)
 $.text:mwio4.lib<PEV_INV_LIB.obj>$0xf48  $Tramp$S$$PEV_ad_set_range
-   11e00f48     0c0423d0     0c025e6c   current_control_ver2_new.obj (.text)
-                             0c025e78   current_control_ver2_new.obj (.text)
-                             0c025e90   current_control_ver2_new.obj (.text)
+   11e00f48     0c0423d0     0c025e80   current_control_ver2_new.obj (.text)
+                             0c025e8c   current_control_ver2_new.obj (.text)
+                             0c025ea4   current_control_ver2_new.obj (.text)
 $.text:mwio4.lib<PEV_INV_LIB.obj>$0x150  $Tramp$S$$PEV_sync_pwm_out
-   11e00150     0c0423e0     0c025e44   current_control_ver2_new.obj (.text)
-                             0c025e50   current_control_ver2_new.obj (.text)
+   11e00150     0c0423e0     0c025e50   current_control_ver2_new.obj (.text)
+                             0c025e64   current_control_ver2_new.obj (.text)
 $.text:mwio4.lib<PEV_INV_LIB.obj>$0x260  $Tramp$S$$PEV_sync_pwm_init
-   11e00260     0c0423f0     0c025e20   current_control_ver2_new.obj (.text)
-                             0c025e2c   current_control_ver2_new.obj (.text)
-                             0c025e34   current_control_ver2_new.obj (.text)
+   11e00260     0c0423f0     0c025e30   current_control_ver2_new.obj (.text)
+                             0c025e38   current_control_ver2_new.obj (.text)
+                             0c025e48   current_control_ver2_new.obj (.text)
 $.text:mwio4.lib<PEV_INV_LIB.obj>$0x2b4  $Tramp$S$$PEV_sync_ad_out
-   11e002b4     0c042400     0c025e14   current_control_ver2_new.obj (.text)
+   11e002b4     0c042400     0c025e28   current_control_ver2_new.obj (.text)
 $.text:mwio4.lib<PEV_INV_LIB.obj>$0x30c  $Tramp$S$$PEV_sync_ad_init
-   11e0030c     0c042410     0c025df4   current_control_ver2_new.obj (.text)
-                             0c025e04   current_control_ver2_new.obj (.text)
-                             0c025e0c   current_control_ver2_new.obj (.text)
+   11e0030c     0c042410     0c025e04   current_control_ver2_new.obj (.text)
+                             0c025e10   current_control_ver2_new.obj (.text)
+                             0c025e18   current_control_ver2_new.obj (.text)
 $.text:mwio4.lib<PEV_INV_LIB.obj>$0xb84  $Tramp$S$$PEV_inverter_init
-   11e00b84     0c042420     0c025dc8   current_control_ver2_new.obj (.text)
-                             0c025dd8   current_control_ver2_new.obj (.text)
+   11e00b84     0c042420     0c025dd4   current_control_ver2_new.obj (.text)
                              0c025de8   current_control_ver2_new.obj (.text)
+                             0c025df8   current_control_ver2_new.obj (.text)
 $.text:mwio4.lib<gpio_int.obj>$0x14c  $Tramp$S$$GPI_enable_int_vo
-   11e0304c     0c042430     0c025da8   current_control_ver2_new.obj (.text)
+   11e0304c     0c042430     0c025db4   current_control_ver2_new.obj (.text)
 $.text:mwio4.lib<gpio_int.obj>$0x0  $Tramp$S$$GPI_setVector_vo
-   11e02f00     0c042440     0c025da4   current_control_ver2_new.obj (.text)
+   11e02f00     0c042440     0c025db0   current_control_ver2_new.obj (.text)
 $.text:mwio4.lib<PEV_INV_LIB.obj>$0xde0  $Tramp$S$$PEV_int_init
-   11e00de0     0c042450     0c025d78   current_control_ver2_new.obj (.text)
+   11e00de0     0c042450     0c025d88   current_control_ver2_new.obj (.text)
 $.text:mwio4.lib<mwintc.obj>$0x410  $Tramp$S$$IRQ_globalDisable
    11e029d0     0c042460     0c0259b8   current_control_ver2_new.obj (.text)
 $.text:mwio4.lib<PEV_INV_LIB.obj>$0x106c  $Tramp$S$$PEV_ad_in_grp
@@ -594,7 +594,7 @@ GLOBAL SYMBOLS: SORTED ALPHABETICALLY BY Name
 
 address    name
 --------   ----
-0c031a74   BrakeController
+0c031a94   BrakeController
 0c042140   C$$EXIT
 11e01f8c   C6657_timer0_clear
 11e01f78   C6657_timer0_clear_eventflag
@@ -642,32 +642,32 @@ address    name
 11e03220   CSL_intcInterruptEnable
 0c01b2a4   CalcDynamicsInit
 0c021874   CalcFDTDTSOBInit
-0c036250   CalcFDTDWrInit_QmrefInputType
+0c036270   CalcFDTDWrInit_QmrefInputType
 0c01f510   CalcFDTDWrInit_WmcmdInputType
-0c035640   CalcFDTDWrUpdate_QmrefInputType_1st2nd
-0c035094   CalcFDTDWrUpdate_QmrefInputType_2nd
-0c02f5c8   CalcFDTDWrUpdate_WmcmdInputType_1st2nd
-0c02eb24   CalcFDTDWrUpdate_WmcmdInputType_2nd
-0c033d48   CalcFDTDWr_QmrefInputType
-0c02c970   CalcFDTDWr_WmcmdInputType
-0c029184   CalcGravIcmp
-0c031564   CalcHandCmdCircle
-0c0334a0   CalcHandCmdDiamond
-0c032e20   CalcHandCmdRectangle
-0c032060   CalcInverseCmd_vel
-0c0292b8   CalcJl
-0c0295e8   CalcJlWr
+0c035660   CalcFDTDWrUpdate_QmrefInputType_1st2nd
+0c0350b4   CalcFDTDWrUpdate_QmrefInputType_2nd
+0c02f5e8   CalcFDTDWrUpdate_WmcmdInputType_1st2nd
+0c02eb44   CalcFDTDWrUpdate_WmcmdInputType_2nd
+0c033d68   CalcFDTDWr_QmrefInputType
+0c02c990   CalcFDTDWr_WmcmdInputType
+0c0291a4   CalcGravIcmp
+0c031584   CalcHandCmdCircle
+0c0334c0   CalcHandCmdDiamond
+0c032e40   CalcHandCmdRectangle
+0c032080   CalcInverseCmd_vel
+0c0292d8   CalcJl
+0c029608   CalcJlWr
 0c01a8ec   CalcOffset
-0c029914   CalcPVGain
+0c029934   CalcPVGain
 0c0245d4   CalcPVGainInitCDM
-0c031f64   CalcPref2axis
-0c031d64   CalcPrefRep2axis
-0c031b64   CalcPrefRep3axis
-0c02e1f0   CalcTauLDyn
-0c0319a0   CalcVdcMean
-0c02b138   CalcWrGain
-0c037ec0   ControlFunction
-0c0290ec   DecouplingControl
+0c031f84   CalcPref2axis
+0c031d84   CalcPrefRep2axis
+0c031b84   CalcPrefRep3axis
+0c02e210   CalcTauLDyn
+0c0319c0   CalcVdcMean
+0c02b158   CalcWrGain
+0c037ee0   ControlFunction
+0c02910c   DecouplingControl
 11e0252c   EMF_EnableIntr_s32
 11e02d20   EMF_ErrIntr_vo
 11f039f8   EMF_ExtWaitErrCnt_u32s
@@ -697,14 +697,14 @@ address    name
 0c03c980   ENC_ss_init
 0c03c8cc   ENC_start_abs
 0c03c820   ENC_stop_abs
-0c0285c0   FDTDSOB
-0c0277a4   FDTD_T_SOB
-0c027548   FDTD_Tm
+0c0285e0   FDTDSOB
+0c0277c4   FDTD_T_SOB
+0c027568   FDTD_Tm
 0c023c14   FDTD_Tm_Full_Init
-0c026e20   FDTD_Tm_Full_Update
-0c026b64   FDTD_Tm_Full_woG
-0c0267c0   FDTD_Tm_Init
-0c026568   FDTD_Tm_woG
+0c026e40   FDTD_Tm_Full_Update
+0c026b84   FDTD_Tm_Full_woG
+0c0267e0   FDTD_Tm_Init
+0c026588   FDTD_Tm_woG
 0c0400d0   FPGA_get_fpga_ver
 0c040084   FPGA_read
 0c040018   FPGA_read_f32
@@ -717,12 +717,12 @@ address    name
 11e03024   GPI_init_vo
 11e02fd4   GPI_int_ack_vo
 11e02f00   GPI_setVector_vo
-0c0264c0   GeneratorCircle1st
-0c026410   GeneratorCircle2nd
-0c026368   GeneratorCircle3rd
-0c0261c8   GetFilterdSignal
+0c0264e0   GeneratorCircle1st
+0c026430   GeneratorCircle2nd
+0c026388   GeneratorCircle3rd
+0c0261e0   GetFilterdSignal
 0c01ade4   GetMultiPositions
-0c026194   GetVelocity
+0c0261a8   GetVelocity
 0c01abc0   GetVoltAndCurrent
 0c04050c   IPFPGA_get_fpga_ver
 0c0404c0   IPFPGA_read
@@ -735,8 +735,8 @@ address    name
 11f03378   Iq_off
 0c0439d0   LPF_cmd
 0c043a58   LPF_motor
-0c026038   LimDiffCalcDQ
-0c025fd4   LimitPosCmd
+0c026050   LimDiffCalcDQ
+0c025fec   LimitPosCmd
 0c019744   Limiter
 0c0259b0   MW_main
 0c01a6b8   ManyRampGenerator1stAxis
@@ -1206,44 +1206,44 @@ address    name
 0c023c14   FDTD_Tm_Full_Init
 0c0245d4   CalcPVGainInitCDM
 0c0259b0   MW_main
-0c025fd4   LimitPosCmd
-0c026038   LimDiffCalcDQ
-0c026194   GetVelocity
-0c0261c8   GetFilterdSignal
-0c026368   GeneratorCircle3rd
-0c026410   GeneratorCircle2nd
-0c0264c0   GeneratorCircle1st
-0c026568   FDTD_Tm_woG
-0c0267c0   FDTD_Tm_Init
-0c026b64   FDTD_Tm_Full_woG
-0c026e20   FDTD_Tm_Full_Update
-0c027548   FDTD_Tm
-0c0277a4   FDTD_T_SOB
-0c0285c0   FDTDSOB
-0c0290ec   DecouplingControl
-0c029184   CalcGravIcmp
-0c0292b8   CalcJl
-0c0295e8   CalcJlWr
-0c029914   CalcPVGain
-0c02b138   CalcWrGain
-0c02c970   CalcFDTDWr_WmcmdInputType
-0c02e1f0   CalcTauLDyn
-0c02eb24   CalcFDTDWrUpdate_WmcmdInputType_2nd
-0c02f5c8   CalcFDTDWrUpdate_WmcmdInputType_1st2nd
-0c031564   CalcHandCmdCircle
-0c0319a0   CalcVdcMean
-0c031a74   BrakeController
-0c031b64   CalcPrefRep3axis
-0c031d64   CalcPrefRep2axis
-0c031f64   CalcPref2axis
-0c032060   CalcInverseCmd_vel
-0c032e20   CalcHandCmdRectangle
-0c0334a0   CalcHandCmdDiamond
-0c033d48   CalcFDTDWr_QmrefInputType
-0c035094   CalcFDTDWrUpdate_QmrefInputType_2nd
-0c035640   CalcFDTDWrUpdate_QmrefInputType_1st2nd
-0c036250   CalcFDTDWrInit_QmrefInputType
-0c037ec0   ControlFunction
+0c025fec   LimitPosCmd
+0c026050   LimDiffCalcDQ
+0c0261a8   GetVelocity
+0c0261e0   GetFilterdSignal
+0c026388   GeneratorCircle3rd
+0c026430   GeneratorCircle2nd
+0c0264e0   GeneratorCircle1st
+0c026588   FDTD_Tm_woG
+0c0267e0   FDTD_Tm_Init
+0c026b84   FDTD_Tm_Full_woG
+0c026e40   FDTD_Tm_Full_Update
+0c027568   FDTD_Tm
+0c0277c4   FDTD_T_SOB
+0c0285e0   FDTDSOB
+0c02910c   DecouplingControl
+0c0291a4   CalcGravIcmp
+0c0292d8   CalcJl
+0c029608   CalcJlWr
+0c029934   CalcPVGain
+0c02b158   CalcWrGain
+0c02c990   CalcFDTDWr_WmcmdInputType
+0c02e210   CalcTauLDyn
+0c02eb44   CalcFDTDWrUpdate_WmcmdInputType_2nd
+0c02f5e8   CalcFDTDWrUpdate_WmcmdInputType_1st2nd
+0c031584   CalcHandCmdCircle
+0c0319c0   CalcVdcMean
+0c031a94   BrakeController
+0c031b84   CalcPrefRep3axis
+0c031d84   CalcPrefRep2axis
+0c031f84   CalcPref2axis
+0c032080   CalcInverseCmd_vel
+0c032e40   CalcHandCmdRectangle
+0c0334c0   CalcHandCmdDiamond
+0c033d68   CalcFDTDWr_QmrefInputType
+0c0350b4   CalcFDTDWrUpdate_QmrefInputType_2nd
+0c035660   CalcFDTDWrUpdate_QmrefInputType_1st2nd
+0c036270   CalcFDTDWrInit_QmrefInputType
+0c037ee0   ControlFunction
 0c03c820   ENC_stop_abs
 0c03c8cc   ENC_start_abs
 0c03c980   ENC_ss_init

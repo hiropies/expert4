@@ -1430,7 +1430,7 @@ interrupt void ControlFunction(void)
       // 動力学方程式より出るトルクの正負に合わせて補償電流を入れる
       // inspectorで要確認！！！！
       axis1.Icmd = 5.1 * Ref_Iq_ref_direct1 * sinf(2.0*PI*t);
-      axis2.Icmd = 7.9 * Ref_Iq_ref_direct2 * sinf(2.0*PI*t);
+      axis2.Icmd = 7.9 * 0.5 * Ref_Iq_ref_direct2 * sinf(2.0*PI*t);
       axis3.Icmd = 4.6 * Ref_Iq_ref_direct3 * sinf(2.0*PI*t);
 
       axis1.IrefQ = axis1.Icmd;
