@@ -4659,7 +4659,19 @@ void CalcInverseCmd_vel(float goal[3], float vel_hand[3], float ql_cmd[3], float
   for (i = 0; i < 3; i++)
   {
     ql_cmd[i] = motor[i];
-    wl_cmd[i] = qm_vel[i];
+    if (i == 1)
+    {
+      ql_cmd[i] = 0.0; // 2軸目の指令値を0に固定(1，3軸のみで軌跡運動)
+      wl_cmd[i] = 0.0;
+    }
+    else if (i == 2)
+    {
+      wl_cmd[i] = qm_vel[i] * 0.6905; // 3軸目の指令値を調整(1，3軸のみで軌跡運動)
+    }
+    else
+    {
+      wl_cmd[i] = qm_vel[i];
+    }
     ql_init[i] = qm_first[i];
   }
   flag_init = 0;
