@@ -13,7 +13,7 @@
 
 
 @rem *** Tools Name ***
-@set COMPILER_DIR="C:\ti\bin"
+@set COMPILER_DIR="C:\ti\c6000_7.4.24\bin"
 @set CC=%COMPILER_DIR%\cl6x
 @set LD=%COMPILER_DIR%\cl6x
 @set HEX=%COMPILER_DIR%\hex6x
@@ -33,7 +33,7 @@
 @set LIBS="C:\Program Files (x86)\Myway Plus\PE-ViewX\pe-viewx\PEOS\c6657\3_05\lib\Main.obj" ^
  "C:\Program Files (x86)\Myway Plus\PE-ViewX\pe-viewx\PEOS\c6657\3_05\lib\mwio4.lib" ^
  "C:\ti\mathlib_c66x_3_0_1_1\lib\mathlib.ae66" ^
- "C:\ti\bin\..\lib\rts6600_elf.lib" ^
+ "C:\ti\c6000_7.4.24\bin\..\lib\rts6600_elf.lib" ^
  "C:\ti\pdk_C6657_1_1_2_6\packages\ti\csl\lib\ti.csl.ae66" ^
  "C:\ti\pdk_C6657_1_1_2_6\packages\ti\csl\lib\ti.csl.intc.ae66"
 
@@ -61,7 +61,7 @@
 
 
 @rem *** Flags ***
-@set BASE_CFLAGS=-mv6600 --display_error_number --preproc_with_compile --diag_warning=225 --abi=eabi -O2 -i"D:/Desktop/abe??/003_PhaseTune/003_11_org_beta_cmdGain_3rdTune" -i"C:/Program Files (x86)/Myway Plus/PE-ViewX/pe-viewx/PEOS/c6657/3_05/inc" -i"C:/ti/bin/../include" -i"C:/ti/pdk_C6657_1_1_2_6/packages/ti/csl" -i"C:/ti/mathlib_c66x_3_0_1_1/inc" -i"C:/ti/mathlib_c66x_3_0_1_1/packages" -i"C:/ti/pdk_C6657_1_1_2_6/packages/ti/csl/../.."
+@set BASE_CFLAGS=-mv6600 --display_error_number --preproc_with_compile --diag_warning=225 --abi=eabi -O2 -i"C:/Users/elemech/Desktop/00_desktop_abe_??/003_PhaseTune/003_07_beta_Cmd_3rdTune" -i"C:/Program Files (x86)/Myway Plus/PE-ViewX/pe-viewx/PEOS/c6657/3_05/inc" -i"C:/ti/c6000_7.4.24/bin/../include" -i"C:/ti/pdk_C6657_1_1_2_6/packages/ti/csl" -i"C:/ti/mathlib_c66x_3_0_1_1/inc" -i"C:/ti/mathlib_c66x_3_0_1_1/packages" -i"C:/ti/pdk_C6657_1_1_2_6/packages/ti/csl/../.."
 @set CFLAGS=%BASE_CFLAGS% -k
 @set ASMFLAGS=%BASE_CFLAGS%
 @set LDFLAGS=--run_linker --rom_model --map_file=%TARGET%.map -l=%LIBS% -l=%TARGET%.cmd --zero_init=off 

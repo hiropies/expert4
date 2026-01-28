@@ -57,6 +57,7 @@
 static const float CmdGain[] = {1.3103, 1.2703, 1.2476}; // D 20mm V 9.5m/min
 // static const float CmdGain[] = {1.3200, 1.2748, 1.2476}; // D 20mm V 10m/min
 // static const float CmdGain[] = {1.3379, 1.2859, 1.2476}; // D 20mm V 11m/min
+// static const float CmdGain[] = {1.3327, 1.3352, 1.2476}; // D 20mm V 15.8m/min
 // static const float CmdGain[] = {1.0822, 1.0562, 1.0542}; // D 20mm V 05m/min
 // static const float CmdGain[] = {1.0033, 1.0022, 1.0022}; // D 20mm V 01m/min
 
@@ -2485,7 +2486,7 @@ void MW_main(void)
 
   // ロボット実験開始時姿勢
   axis1.theta_rl_init = 0.0 * PI / 180.0; // [rad]
-  axis2.theta_rl_init = 0.0 * PI / 180.0; // [rad]
+  axis2.theta_rl_init = 41.2712 * PI / 180.0; // [rad]
   axis3.theta_rl_init = 0.0 * PI / 180.0; // [rad]
 
   // 指令軌跡中心点（ゲイン確認用）
@@ -2539,6 +2540,7 @@ void MW_main(void)
   gsub[0].beta_pole = 13.6130; // 9.5m/min
   // gsub[0].beta_pole = 13.4674; // 10m/min
   // gsub[0].beta_pole = 13.2074; // 11m/min
+  // gsub[0].beta_pole = 13.2822; // 15.8m/min
   // gsub[0].beta_pole = 15.0464; // 05m/min
   // gsub[0].beta_pole = 15.7586; // 01m/min
   gsub[0].r1_pole = 2.5;
@@ -2555,6 +2557,7 @@ void MW_main(void)
   gsub[1].beta_pole = 19.4440; // 9.5m/min
   // gsub[1].beta_pole = 19.3107; // 10m/min
   // gsub[1].beta_pole = 18.9924; // 11m/min
+  gsub[1].beta_pole = 17.3046; // 15.8m/min
   // gsub[1].beta_pole = 20.0039; // 05m/min
   // gsub[1].beta_pole = 20.0021; // 01m/min
   gsub[1].r1_pole = 2.5;

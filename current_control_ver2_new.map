@@ -1,7 +1,7 @@
 ******************************************************************************
                TMS320C6x Linker PC v7.4.24                     
 ******************************************************************************
->> Linked Fri Dec 26 15:22:00 2025
+>> Linked Wed Jan 28 17:11:26 2026
 
 OUTPUT FILE NAME:   <current_control_ver2_new.out>
 ENTRY POINT SYMBOL: "_c_int00"  address: 0c041400
@@ -659,17 +659,17 @@ address    name
 0c0334c4   CalcHandCmdDiamond
 0c032f84   CalcHandCmdRectangle
 0c031b0c   CalcInverseCmd_vel
-0c029414   CalcJl
-0c029744   CalcJlWr
+0c029418   CalcJl
+0c029748   CalcJlWr
 0c01a94c   CalcOffset
-0c029a70   CalcPVGain
+0c029a74   CalcPVGain
 0c024654   CalcPVGainInitCDM
 0c032e90   CalcPref2axis
 0c032c94   CalcPrefRep2axis
 0c032aa0   CalcPrefRep3axis
 0c02e350   CalcTauLDyn
 0c0328d0   CalcVdcMean
-0c02b294   CalcWrGain
+0c02b298   CalcWrGain
 0c037c40   ControlFunction
 0c02924c   DecouplingControl
 11e0252c   EMF_EnableIntr_s32
@@ -1253,10 +1253,10 @@ address    name
 0c028720   FDTDSOB
 0c02924c   DecouplingControl
 0c0292e4   CalcGravIcmp
-0c029414   CalcJl
-0c029744   CalcJlWr
-0c029a70   CalcPVGain
-0c02b294   CalcWrGain
+0c029418   CalcJl
+0c029748   CalcJlWr
+0c029a74   CalcPVGain
+0c02b298   CalcWrGain
 0c02cad0   CalcFDTDWr_WmcmdInputType
 0c02e350   CalcTauLDyn
 0c02ec84   CalcFDTDWrUpdate_WmcmdInputType_2nd

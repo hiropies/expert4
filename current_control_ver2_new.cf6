@@ -92,7 +92,7 @@
       <i_NormWin1Win4>1</i_NormWin1Win4>
       <Button_Name>Win2</Button_Name>
       <bColorPickerIndex>8</bColorPickerIndex>
-      <bNormVariableIndex>234</bNormVariableIndex>
+      <bNormVariableIndex>231</bNormVariableIndex>
     </BindWaveNormRec>
     <BindWaveNormRec>
       <OnChipVarAddress>0</OnChipVarAddress>
@@ -872,8 +872,8 @@
   <bRecordLength>100000</bRecordLength>
   <bNumberOfData>2000</bNumberOfData>
   <bCurRangeValue>25</bCurRangeValue>
-  <bHorValue>0.0005</bHorValue>
-  <bHorValue_rough>0.002</bHorValue_rough>
+  <bHorValue>0.05</bHorValue>
+  <bHorValue_rough>0.2</bHorValue_rough>
   <bCurPosValue>0</bCurPosValue>
   <bIndex_TrgNo>0</bIndex_TrgNo>
   <bTrgPosValue>0</bTrgPosValue>
