@@ -2475,7 +2475,7 @@ void MW_main(void)
 
   // ロボット実験開始時姿勢
   axis1.theta_rl_init = 0.0 * PI / 180.0; // [rad]
-  axis2.theta_rl_init = 0.0 * PI / 180.0; // [rad]
+  axis2.theta_rl_init = 41.2712 * PI / 180.0; // [rad]
   axis3.theta_rl_init = 0.0 * PI / 180.0; // [rad]
 
   // 指令軌跡中心点（ゲイン確認用）
