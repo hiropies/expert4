@@ -1211,13 +1211,6 @@ void SetBDN(Robot *robo, int Bnum);                     //!< ロボット構造�
 void SetENC_CH(Robot *robo, int Ech);                   //!< エンコーダボードch番号
 void SetGain(Robot robo[]);                             ///!< 電流,速度,位置のゲインの挿入
 
-float Integrator_acc_ref(float u, const float Ts);  // 加速度指令==>速度指令　1軸用
-float Integrator_w_ref(float u, const float Ts);    // 速度指令==>位置指令　　1軸用
-float Integrator_acc_ref2(float u, const float Ts); // 加速度指令==>速度指令　1軸用
-float Integrator_w_ref2(float u, const float Ts);   // 速度指令==>位置指令　　1軸用
-float Integrator_acc_ref3(float u, const float Ts); // 加速度指令==>速度指令　3軸用
-float Integrator_w_ref3(float u, const float Ts);   // 速度指令==>位置指令  　3軸用
-
 // 制御器初期化
 Controller q_current[3] = {0}; /*!< q軸電流コントローラ */
 Controller d_current[3] = {0}; /*!< d軸電流コントローラ */
@@ -4661,7 +4654,19 @@ void CalcInverseCmd_vel(float goal[3], float vel_hand[3], float ql_cmd[3], float
   for (i = 0; i < 3; i++)
   {
     ql_cmd[i] = motor[i];
-    wl_cmd[i] = qm_vel[i];
+    if (i == 1)
+    {
+      ql_cmd[i] = 0.0; // 2軸目の指令値を0に固定(1，3軸のみで軌跡運動)
+      wl_cmd[i] = 0.0;
+    }
+    else if (i == 2)
+    {
+      wl_cmd[i] = qm_vel[i] * 0.6905; // 3軸目の指令値を調整(1，3軸のみで軌跡運動)
+    }
+    else
+    {
+      wl_cmd[i] = qm_vel[i];
+    }
     ql_init[i] = qm_first[i];
   }
   flag_init = 0;
@@ -7455,76 +7460,4 @@ void SetGain(Robot *robo)
   robo[2].ql_min = QL3_MIN * PI / 180.0;
   robo[2].qm_max = robo[2].ql_max * robo[2].Rgn;
   robo[2].qm_min = robo[2].ql_min * robo[2].Rgn;
-}
-
-float Integrator_acc_ref(float u, const float Ts)
-{
-  // 加速度指令==>速度指令
-  // 積分器の状態量の定義
-  static float y = 0.0, yZ1 = 0.0, yZ = 0.0;
-
-  yZ1 = Ts * u + yZ;
-  yZ = yZ1;
-  y = yZ1;
-  return y;
-}
-
-float Integrator_w_ref(float u, const float Ts)
-{
-  // 速度指令==>位置指令
-  // 積分器の状態量の定義
-  static float y = 0.0, yZ1 = 0.0, yZ = 0.0;
-
-  yZ1 = Ts * u + yZ;
-  yZ = yZ1;
-  y = yZ1;
-  return y;
-}
-
-float Integrator_acc_ref2(float u, const float Ts)
-{
-  // 加速度指令==>速度指令
-  // 積分器の状態量の定義
-  static float y = 0.0, yZ1 = 0.0, yZ = 0.0;
-
-  yZ1 = Ts * u + yZ;
-  yZ = yZ1;
-  y = yZ1;
-  return y;
-}
-
-float Integrator_w_ref2(float u, const float Ts)
-{
-  // 速度指令==>位置指令
-  // 積分器の状態量の定義
-  static float y = 0.0, yZ1 = 0.0, yZ = 0.0;
-
-  yZ1 = Ts * u + yZ;
-  yZ = yZ1;
-  y = yZ1;
-  return y;
-}
-
-float Integrator_acc_ref3(float u, const float Ts)
-{
-  // 加速度指令==>速度指令
-  // 積分器の状態量の定義
-  static float y = 0.0, yZ1 = 0.0, yZ = 0.0;
-
-  yZ1 = Ts * u + yZ;
-  yZ = yZ1;
-  y = yZ1;
-  return y;
-}
-
-float Integrator_w_ref3(float u, const float Ts)
-{
-  // 速度指令==>位置指令
-  // 積分器の状態量の定義
-  static float y = 0.0, yZ1 = 0.0, yZ = 0.0;
-
-  yZ1 = Ts * u + yZ;
-  yZ = yZ1;
-  y = yZ1;
-  return y;
 }
