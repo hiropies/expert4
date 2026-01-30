@@ -1347,29 +1347,44 @@ interrupt void ControlFunction(void)
       axis3.wm = axis3.omega_rm;
 
       // モードを指定して位置ゲイン設計を変更する(動作中に変更しないよう、flag_cont_start == 1の時のみ変更する)
-      if (flag_tuneNo == 1) // tuneNo == 1 : 統一設計
+      if (flag_tuneNo == 1) // tuneNo == 1 : バラ設計
       {
         gsub[0].beta_pole = 20.0; // 1軸目
         gsub[1].beta_pole = 20.0; // 2軸目
         gsub[2].beta_pole = 20.0; // 3軸目
       }
-      else if (flag_tuneNo == 2) // tuneNo == 2 : 9.5m/min
+      else if (flag_tuneNo == 2) // tuneNo == 2 : 11.0m/min ノミナル設計
       {
-        gsub[0].beta_pole = 13.6130; // 9.5m/min
-        gsub[1].beta_pole = 19.4440; // 2軸目
+        gsub[0].beta_pole = 13.2074; // 1軸目
+        // gsub[0].beta_pole = 13.6130; // 9.5m/min
+        gsub[1].beta_pole = 19.4440; // 2軸目 9.5mmin
         gsub[2].beta_pole = 20.0; // 3軸目
       }
-      else if (flag_tuneNo == 3) // tuneNo == 3 : 10m/min
+      else if (flag_tuneNo == 3) // tuneNo == 3 : 11.0m/min -2.0deg
       {
-        gsub[0].beta_pole = 13.4674; // 1軸目
+        gsub[0].beta_pole = 14.2049; // 1軸目　実験合わせ　修正後の特性で-2degの３軸に合わせる
+        // gsub[0].beta_pole = 13.4674; // 1軸目 10.0mmin
         gsub[1].beta_pole = 19.3107; // 2軸目
         gsub[2].beta_pole = 20.0;    // 3軸目
       }
-      else if (flag_tuneNo == 4) // tuneNo == 4 : 11m/min
+      else if (flag_tuneNo == 4) // tuneNo == 4 : 11.0m/min +2.0deg
       {
-        gsub[0].beta_pole = 13.2074; // 1軸目
+        // gsub[0].beta_pole = 13.7062; // 1軸目　実験合わせ　修正後の特性で-2degの３軸に合わせる の半分の移動量
+        // gsub[0].beta_pole = 12.73315; // 1軸目　実験合わせ　修正後の特性で+2degの３軸に合わせる の半分の移動量
+        gsub[0].beta_pole = 12.2589; // 1軸目　実験合わせ　修正後の特性で+2degの３軸に合わせる
         gsub[1].beta_pole = 18.9924; // 2軸目
         gsub[2].beta_pole = 20.0;    // 3軸目
+      }
+      else if (flag_tuneNo == 5) // tuneNo == 4 : 15.8m/min
+      {
+        gsub[0].beta_pole = 13.2822; // 1軸目
+        gsub[1].beta_pole = 17.3046; // 2軸目
+        gsub[2].beta_pole = 20.0;    // 3軸目
+      }
+      else{        
+        gsub[0].beta_pole = 20.0; // 1軸目
+        gsub[1].beta_pole = 20.0; // 2軸目
+        gsub[2].beta_pole = 20.0; // 3軸目
       }
       // if (flag_on == 0)
       // {
