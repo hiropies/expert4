@@ -54,9 +54,13 @@
 #define QL3_MIN -10.0
 
 // PIオリジナル　DPD　β調整　指令値補正用ゲイン
-static const float CmdGain[] = {1.3103, 1.2703, 1.2476}; // D 20mm V 9.5m/min
+// static const float CmdGain[] = {1.3103, 1.2703, 1.2476}; // D 20mm V 9.5m/min
 // static const float CmdGain[] = {1.3200, 1.2748, 1.2476}; // D 20mm V 10m/min
 // static const float CmdGain[] = {1.3379, 1.2859, 1.2476}; // D 20mm V 11m/min
+// static const float CmdGain[] = {1.2733, 1.2859, 1.2476}; // D 20mm V 11m/min -2deg 調整
+// static const float CmdGain[] = {1.4108, 1.2859, 1.2476}; // D 20mm V 11m/min +2deg 調整
+static const float CmdGain[] = {1.3733, 1.2859, 1.2476}; // D 20mm V 11m/min +1deg 調整
+// static const float CmdGain[] = {1.3047, 1.2859, 1.2476}; // D 20mm V 11m/min -1deg 調整
 // static const float CmdGain[] = {1.3327, 1.3352, 1.2476}; // D 20mm V 15.8m/min
 // static const float CmdGain[] = {1.0822, 1.0562, 1.0542}; // D 20mm V 05m/min
 // static const float CmdGain[] = {1.0033, 1.0022, 1.0022}; // D 20mm V 01m/min
@@ -2537,9 +2541,13 @@ void MW_main(void)
   gsub[0].r_cdm4 = 2.0;
   // 位置ゲイン設計指標
   gsub[0].tau_pole = 1 / 10.0;
-  gsub[0].beta_pole = 13.6130; // 9.5m/min
+  // gsub[0].beta_pole = 13.6130; // 9.5m/min
   // gsub[0].beta_pole = 13.4674; // 10m/min
   // gsub[0].beta_pole = 13.2074; // 11m/min
+  // gsub[0].beta_pole = 14.2049; // 11m/min 実験合わせ　修正後の特性で-2degの３軸に合わせる
+  // gsub[0].beta_pole = 13.7062; // 11m/min 実験合わせ　修正後の特性で-2degの３軸に合わせる の半分の移動量
+  // gsub[0].beta_pole = 12.2589; // 11m/min 実験合わせ　修正後の特性で+2degの３軸に合わせる
+  gsub[0].beta_pole = 12.7332; // 11m/min 実験合わせ　修正後の特性で+2degの３軸に合わせる の半分の移動量
   // gsub[0].beta_pole = 13.2822; // 15.8m/min
   // gsub[0].beta_pole = 15.0464; // 05m/min
   // gsub[0].beta_pole = 15.7586; // 01m/min
@@ -2554,10 +2562,10 @@ void MW_main(void)
   gsub[1].r_cdm4 = 2.0;
   // 位置ゲイン設計指標
   gsub[1].tau_pole = 1 / 10.0;
-  gsub[1].beta_pole = 19.4440; // 9.5m/min
+  // gsub[1].beta_pole = 19.4440; // 9.5m/min
   // gsub[1].beta_pole = 19.3107; // 10m/min
-  // gsub[1].beta_pole = 18.9924; // 11m/min
-  gsub[1].beta_pole = 17.3046; // 15.8m/min
+  gsub[1].beta_pole = 18.9924; // 11m/min
+  // gsub[1].beta_pole = 17.3046; // 15.8m/min
   // gsub[1].beta_pole = 20.0039; // 05m/min
   // gsub[1].beta_pole = 20.0021; // 01m/min
   gsub[1].r1_pole = 2.5;

@@ -38,7 +38,7 @@ Iq_off 11f047d8 FLOAT 1
 ModRatioU 11f036f4 FLOAT 1
 ModRatioV 11f036f8 FLOAT 1
 ModRatioW 11f036fc FLOAT 1
-range c042228 FLOAT 20 8
+range c042088 FLOAT 20 8
 ref_Iq_direct1 11f0483c FLOAT 1
 ref_Iq_direct2 11f04840 FLOAT 1
 ref_Iq_direct3 11f04844 FLOAT 1
