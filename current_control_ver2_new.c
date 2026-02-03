@@ -1362,16 +1362,16 @@ interrupt void ControlFunction(void)
       }
       else if (flag_tuneNo == 3) // tuneNo == 3 : 11.0m/min -2.0deg
       {
-        gsub[0].beta_pole = 14.2049; // 1軸目　実験合わせ　修正後の特性で-2degの３軸に合わせる
+        // gsub[0].beta_pole = 14.2049; // 1軸目　実験合わせ　修正後の特性で-2degの３軸に合わせる
+        gsub[0].beta_pole = 13.7062; // 1軸目　実験合わせ　修正後の特性で-2degの３軸に合わせる の半分の移動量
         // gsub[0].beta_pole = 13.4674; // 1軸目 10.0mmin
         gsub[1].beta_pole = 19.3107; // 2軸目
         gsub[2].beta_pole = 20.0;    // 3軸目
       }
       else if (flag_tuneNo == 4) // tuneNo == 4 : 11.0m/min +2.0deg
       {
-        // gsub[0].beta_pole = 13.7062; // 1軸目　実験合わせ　修正後の特性で-2degの３軸に合わせる の半分の移動量
-        // gsub[0].beta_pole = 12.73315; // 1軸目　実験合わせ　修正後の特性で+2degの３軸に合わせる の半分の移動量
-        gsub[0].beta_pole = 12.2589; // 1軸目　実験合わせ　修正後の特性で+2degの３軸に合わせる
+        // gsub[0].beta_pole = 12.2589; // 1軸目　実験合わせ　修正後の特性で+2degの３軸に合わせる
+        gsub[0].beta_pole = 12.73315; // 1軸目　実験合わせ　修正後の特性で+2degの３軸に合わせる の半分の移動量
         gsub[1].beta_pole = 18.9924; // 2軸目
         gsub[2].beta_pole = 20.0;    // 3軸目
       }
