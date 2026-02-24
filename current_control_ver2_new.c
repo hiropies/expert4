@@ -54,16 +54,17 @@
 #define QL3_MIN -10.0
 
 // PIオリジナル　DPD　β調整　指令値補正用ゲイン
-// static const float CmdGain[] = {1.3103, 1.2703, 1.2476}; // D 20mm V 9.5m/min
-// static const float CmdGain[] = {1.3200, 1.2748, 1.2476}; // D 20mm V 10m/min
-// static const float CmdGain[] = {1.3379, 1.2859, 1.2476}; // D 20mm V 11m/min
-// static const float CmdGain[] = {1.2733, 1.2859, 1.2476}; // D 20mm V 11m/min -2deg 調整
-// static const float CmdGain[] = {1.4108, 1.2859, 1.2476}; // D 20mm V 11m/min +2deg 調整
-static const float CmdGain[] = {1.3733, 1.2859, 1.2476}; // D 20mm V 11m/min +1deg 調整
-// static const float CmdGain[] = {1.3047, 1.2859, 1.2476}; // D 20mm V 11m/min -1deg 調整
-// static const float CmdGain[] = {1.3327, 1.3352, 1.2476}; // D 20mm V 15.8m/min
-// static const float CmdGain[] = {1.0822, 1.0562, 1.0542}; // D 20mm V 05m/min
-// static const float CmdGain[] = {1.0033, 1.0022, 1.0022}; // D 20mm V 01m/min
+// static float CmdGain[] = {1.3103, 1.2703, 1.2476}; // D 20mm V 9.5m/min
+static float CmdGain[] = {1.3379, 1.2859, 1.2476}; // D 20mm V 11m/min
+// static float CmdGain[] = {1.1566, 1.2859, 1.1342}; // D 20mm V 11m/min 実験振幅特性
+// static float CmdGain[] = {1.3733, 1.2859, 1.2476}; // D 20mm V 11m/min +1deg 調整
+// static float CmdGain[] = {1.3047, 1.2859, 1.2476}; // D 20mm V 11m/min -1deg 調整
+// static float CmdGain[] = {1.3200, 1.2748, 1.2476}; // D 20mm V 10m/min
+// static float CmdGain[] = {1.2733, 1.2859, 1.2476}; // D 20mm V 11m/min -2deg 調整
+// static float CmdGain[] = {1.4108, 1.2859, 1.2476}; // D 20mm V 11m/min +2deg 調整
+// static float CmdGain[] = {1.3327, 1.3352, 1.2476}; // D 20mm V 15.8m/min
+// static float CmdGain[] = {1.0822, 1.0562, 1.0542}; // D 20mm V 05m/min
+// static float CmdGain[] = {1.0033, 1.0022, 1.0022}; // D 20mm V 01m/min
 
 // static const float CmdGain_EX[] = {0.9145, 0.9172, 0.8908};
 static const float CmdGain_EX[] = {1.0000, 1.0000, 1.0000};
@@ -123,6 +124,7 @@ volatile int counter_2 = 0;       // 指令値Z^=2用カウンタ
 volatile int WAVE_LoopCount = 1;
 volatile int flag_FF_triple = 1;
 volatile int flag_cmd_end = 0;
+volatile int flag_tuneNo = 1;        // チューニングNo選択フラグ 1:統一設計 2:9.5m/min 3:10m/min 4:11m/min
 
 volatile float WAVE_Timer0 = 0.0; // タイマー記録変数
 volatile float WAVE_Timer1 = 0.0; // タイマー記録変数
@@ -1226,13 +1228,6 @@ void SetBDN(Robot *robo, int Bnum);                     //!< ロボット構造�
 void SetENC_CH(Robot *robo, int Ech);                   //!< エンコーダボードch番号
 void SetGain(Robot robo[]);                             ///!< 電流,速度,位置のゲインの挿入
 
-float Integrator_acc_ref(float u, const float Ts);  // 加速度指令==>速度指令　1軸用
-float Integrator_w_ref(float u, const float Ts);    // 速度指令==>位置指令　　1軸用
-float Integrator_acc_ref2(float u, const float Ts); // 加速度指令==>速度指令　1軸用
-float Integrator_w_ref2(float u, const float Ts);   // 速度指令==>位置指令　　1軸用
-float Integrator_acc_ref3(float u, const float Ts); // 加速度指令==>速度指令　3軸用
-float Integrator_w_ref3(float u, const float Ts);   // 速度指令==>位置指令  　3軸用
-
 // 制御器初期化
 Controller q_current[3] = {0}; /*!< q軸電流コントローラ */
 Controller d_current[3] = {0}; /*!< d軸電流コントローラ */
@@ -1321,24 +1316,89 @@ interrupt void ControlFunction(void)
       axis2.wm = axis2.omega_rm;
       axis2.wm = -1.0 * axis2.wm;
       axis3.wm = axis3.omega_rm;
-      // if (flag_on == 0)
-      // {
-      //   axis1.qm_ref = 0.0;
-      //   LimitPosCmd(&axis1);
-      //   axis2.qm_ref = 0.0;
-      //   LimitPosCmd(&axis2);
-      //   axis3.qm_ref = 0.0;
-      //   LimitPosCmd(&axis3);
-      // }
-      // else
-      // {
-      //   axis1.qm_ref = axis1.qm;
-      //   LimitPosCmd(&axis1);
-      //   axis2.qm_ref = axis2.qm;
-      //   LimitPosCmd(&axis2);
-      //   axis3.qm_ref = axis3.qm;
-      //   LimitPosCmd(&axis3);
-      // }
+      
+      if (flag_tuneNo == 1) // tuneNo == 1 : バラ設計
+      {
+        gsub[0].beta_pole = 20.0; // 1軸目
+        gsub[1].beta_pole = 20.0; // 2軸目
+        gsub[2].beta_pole = 20.0; // 3軸目
+      }
+      else if (flag_tuneNo == 2) // tuneNo == 2 : 9.5m/min ノミナル設計
+      {
+        speed_hand = 9.50;
+        // CmdGain[] = {1.3103, 1.2703, 1.2476}; // D 20mm V 9.5m/min
+        CmdGain[0] = 1.3103;
+        CmdGain[1] = 1.2703;
+        CmdGain[2] = 1.2476;
+        gsub[0].beta_pole = 13.6130; // 9.5m/min
+        gsub[1].beta_pole = 19.4440; // 2軸目 9.5mmin
+        gsub[2].beta_pole = 20.0; // 3軸目
+      }
+      else if (flag_tuneNo == 3) // tuneNo == 3 : 11.0m/min
+      {
+        speed_hand = 11.0;
+        // CmdGain[] = {1.3379, 1.2859, 1.2476}; // D 20mm V 11m/min
+        CmdGain[0] = 1.3379;
+        CmdGain[1] = 1.2859;
+        CmdGain[2] = 1.2476;
+        gsub[0].beta_pole = 13.2074; // 1軸目
+        gsub[1].beta_pole = 18.9924; // 2軸目
+        gsub[2].beta_pole = 20.0;    // 3軸目
+      }
+      else if (flag_tuneNo == 4) // tuneNo == 4 : 11.0m/min -1deg
+      {
+        speed_hand = 11.0;
+        // CmdGain[] = {1.3047, 1.2859, 1.2476}; // D 20mm V 11m/min -1deg 調整
+        // CmdGain[0] = 1.3047;
+        // CmdGain[1] = 1.2859;
+        // CmdGain[2] = 1.2476;
+        // gsub[0].beta_pole = 14.2049; // 1軸目　実験合わせ　修正後の特性で-2degの３軸に合わせる
+        gsub[0].beta_pole = 13.7062; // 1軸目　実験合わせ　修正後の特性で-2degの３軸に合わせる の半分の移動量
+        gsub[1].beta_pole = 18.9924; // 2軸目
+        gsub[2].beta_pole = 20.0;    // 3軸目
+      }
+      else if (flag_tuneNo == 5) // tuneNo == 5 : 11.0m/min +1deg
+      {
+        speed_hand = 11.0;
+        // CmdGain[] = {1.3733, 1.2859, 1.2476}; // D 20mm V 11m/min +1deg 調整
+        // CmdGain[0] = 1.3733;
+        // CmdGain[1] = 1.2859;
+        // CmdGain[2] = 1.2476;
+        // gsub[0].beta_pole = 12.2589; // 1軸目　実験合わせ　修正後の特性で+2degの３軸に合わせる
+        gsub[0].beta_pole = 12.73315; // 1軸目　実験合わせ　修正後の特性で+2degの３軸に合わせる の半分の移動量
+        gsub[1].beta_pole = 18.9924; // 2軸目
+        gsub[2].beta_pole = 20.0;    // 3軸目
+      }
+      else if (flag_tuneNo == 6) // tuneNo == 4 : 11.0m/min -2deg
+      {
+        speed_hand = 11.0;
+        // CmdGain[] = {1.2733, 1.2859, 1.2476}; // D 20mm V 11m/min -2deg 調整
+        // CmdGain[0] = 1.2733;
+        // CmdGain[1] = 1.2859;
+        // CmdGain[2] = 1.2476;
+        gsub[0].beta_pole = 14.2049; // 1軸目　実験合わせ　修正後の特性で-2degの３軸に合わせる
+        // gsub[0].beta_pole = 13.7062; // 1軸目　実験合わせ　修正後の特性で-2degの３軸に合わせる の半分の移動量
+        gsub[1].beta_pole = 18.9924; // 2軸目
+        gsub[2].beta_pole = 20.0;    // 3軸目
+      }
+      else if (flag_tuneNo == 7) // tuneNo == 5 : 11.0m/min +2deg
+      {
+        speed_hand = 11.0;
+        // CmdGain[] = {1.4108, 1.2859, 1.2476}; // D 20mm V 11m/min +2deg 調整
+        // CmdGain[0] = 1.4108;
+        // CmdGain[1] = 1.2859;
+        // CmdGain[2] = 1.2476;
+        gsub[0].beta_pole = 12.2589; // 1軸目　実験合わせ　修正後の特性で+2degの３軸に合わせる
+        // gsub[0].beta_pole = 12.73315; // 1軸目　実験合わせ　修正後の特性で+2degの３軸に合わせる の半分の移動量
+        gsub[1].beta_pole = 18.9924; // 2軸目
+        gsub[2].beta_pole = 20.0;    // 3軸目
+      }
+      else
+      {        
+        gsub[0].beta_pole = 20.0; // 1軸目
+        gsub[1].beta_pole = 20.0; // 2軸目
+        gsub[2].beta_pole = 20.0; // 3軸目
+      }
 
       CalcGravIcmp(joint); // 2,3軸の重力補償電流を計算　main関数の初期姿勢を要確認！！！！
       CalcJl(joint);         // JLの変動は使うので3軸分計算
@@ -2541,13 +2601,14 @@ void MW_main(void)
   gsub[0].r_cdm4 = 2.0;
   // 位置ゲイン設計指標
   gsub[0].tau_pole = 1 / 10.0;
+  gsub[0].beta_pole = 20.0;
   // gsub[0].beta_pole = 13.6130; // 9.5m/min
   // gsub[0].beta_pole = 13.4674; // 10m/min
   // gsub[0].beta_pole = 13.2074; // 11m/min
   // gsub[0].beta_pole = 14.2049; // 11m/min 実験合わせ　修正後の特性で-2degの３軸に合わせる
   // gsub[0].beta_pole = 13.7062; // 11m/min 実験合わせ　修正後の特性で-2degの３軸に合わせる の半分の移動量
   // gsub[0].beta_pole = 12.2589; // 11m/min 実験合わせ　修正後の特性で+2degの３軸に合わせる
-  gsub[0].beta_pole = 12.7332; // 11m/min 実験合わせ　修正後の特性で+2degの３軸に合わせる の半分の移動量
+  // gsub[0].beta_pole = 12.73315; // 11m/min 実験合わせ　修正後の特性で+2degの３軸に合わせる の半分の移動量
   // gsub[0].beta_pole = 13.2822; // 15.8m/min
   // gsub[0].beta_pole = 15.0464; // 05m/min
   // gsub[0].beta_pole = 15.7586; // 01m/min
@@ -2562,9 +2623,10 @@ void MW_main(void)
   gsub[1].r_cdm4 = 2.0;
   // 位置ゲイン設計指標
   gsub[1].tau_pole = 1 / 10.0;
+  gsub[0].beta_pole = 20.0;
   // gsub[1].beta_pole = 19.4440; // 9.5m/min
   // gsub[1].beta_pole = 19.3107; // 10m/min
-  gsub[1].beta_pole = 18.9924; // 11m/min
+  // gsub[1].beta_pole = 18.9924; // 11m/min
   // gsub[1].beta_pole = 17.3046; // 15.8m/min
   // gsub[1].beta_pole = 20.0039; // 05m/min
   // gsub[1].beta_pole = 20.0021; // 01m/min
@@ -7488,76 +7550,4 @@ void SetGain(Robot *robo)
   robo[2].ql_min = QL3_MIN * PI / 180.0;
   robo[2].qm_max = robo[2].ql_max * robo[2].Rgn;
   robo[2].qm_min = robo[2].ql_min * robo[2].Rgn;
-}
-
-float Integrator_acc_ref(float u, const float Ts)
-{
-  // 加速度指令==>速度指令
-  // 積分器の状態量の定義
-  static float y = 0.0, yZ1 = 0.0, yZ = 0.0;
-
-  yZ1 = Ts * u + yZ;
-  yZ = yZ1;
-  y = yZ1;
-  return y;
-}
-
-float Integrator_w_ref(float u, const float Ts)
-{
-  // 速度指令==>位置指令
-  // 積分器の状態量の定義
-  static float y = 0.0, yZ1 = 0.0, yZ = 0.0;
-
-  yZ1 = Ts * u + yZ;
-  yZ = yZ1;
-  y = yZ1;
-  return y;
-}
-
-float Integrator_acc_ref2(float u, const float Ts)
-{
-  // 加速度指令==>速度指令
-  // 積分器の状態量の定義
-  static float y = 0.0, yZ1 = 0.0, yZ = 0.0;
-
-  yZ1 = Ts * u + yZ;
-  yZ = yZ1;
-  y = yZ1;
-  return y;
-}
-
-float Integrator_w_ref2(float u, const float Ts)
-{
-  // 速度指令==>位置指令
-  // 積分器の状態量の定義
-  static float y = 0.0, yZ1 = 0.0, yZ = 0.0;
-
-  yZ1 = Ts * u + yZ;
-  yZ = yZ1;
-  y = yZ1;
-  return y;
-}
-
-float Integrator_acc_ref3(float u, const float Ts)
-{
-  // 加速度指令==>速度指令
-  // 積分器の状態量の定義
-  static float y = 0.0, yZ1 = 0.0, yZ = 0.0;
-
-  yZ1 = Ts * u + yZ;
-  yZ = yZ1;
-  y = yZ1;
-  return y;
-}
-
-float Integrator_w_ref3(float u, const float Ts)
-{
-  // 速度指令==>位置指令
-  // 積分器の状態量の定義
-  static float y = 0.0, yZ1 = 0.0, yZ = 0.0;
-
-  yZ1 = Ts * u + yZ;
-  yZ = yZ1;
-  y = yZ1;
-  return y;
 }

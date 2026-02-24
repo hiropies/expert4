@@ -4,7 +4,7 @@
 "" "flag_cont_start" "true" "" "false" "" "" "1" "" "4" 
 "" "flag_Vdc_setted" "true" "" "false" "" "" "1" "" "1" 
 "" "flag_FF" "true" "" "false" "" "" "1" "" "1" 
-"" "flag_SOB" "true" "" "false" "" "" "1" "" "2" 
+"" "flag_tuneNo" "true" "" "false" "" "" "1" "" "7" 
 "" "speed_hand" "true" "" "false" "" "" "1" "" "11" 
 "" "flag_fin" "true" "" "false" "" "" "1" "" "" 
 "" "" "false" "" "false" "" "" "0" "" "" 
