@@ -108,6 +108,7 @@ volatile int counter_2 = 0;       // 指令値Z^=2用カウンタ
 volatile int WAVE_LoopCount = 1;
 volatile int flag_FF_triple = 1;
 volatile int flag_cmd_end = 0;
+volatile int flag_tuneNo = 1;        // チューニングNo選択フラグ 1:統一設計 2:9.5m/min 3:10m/min 4:11m/min
 
 volatile float WAVE_Timer0 = 0.0; // タイマー記録変数
 volatile float WAVE_Timer1 = 0.0; // タイマー記録変数
@@ -1299,24 +1300,64 @@ interrupt void ControlFunction(void)
       axis2.wm = axis2.omega_rm;
       axis2.wm = -1.0 * axis2.wm;
       axis3.wm = axis3.omega_rm;
-      // if (flag_on == 0)
-      // {
-      //   axis1.qm_ref = 0.0;
-      //   LimitPosCmd(&axis1);
-      //   axis2.qm_ref = 0.0;
-      //   LimitPosCmd(&axis2);
-      //   axis3.qm_ref = 0.0;
-      //   LimitPosCmd(&axis3);
-      // }
-      // else
-      // {
-      //   axis1.qm_ref = axis1.qm;
-      //   LimitPosCmd(&axis1);
-      //   axis2.qm_ref = axis2.qm;
-      //   LimitPosCmd(&axis2);
-      //   axis3.qm_ref = axis3.qm;
-      //   LimitPosCmd(&axis3);
-      // }
+      
+      if (flag_tuneNo == 1) // tuneNo == 1 : バラ設計
+      {
+        gsub[0].beta_pole = 20.0; // 1軸目
+        gsub[1].beta_pole = 20.0; // 2軸目
+        gsub[2].beta_pole = 20.0; // 3軸目
+      }
+      else if (flag_tuneNo == 2) // tuneNo == 2 : 9.5m/min ノミナル設計
+      {
+        speed_hand = 9.50;
+        gsub[0].beta_pole = 13.6130; // 9.5m/min
+        gsub[1].beta_pole = 19.4440; // 2軸目 9.5mmin
+        gsub[2].beta_pole = 20.0; // 3軸目
+      }
+      else if (flag_tuneNo == 3) // tuneNo == 3 : 11.0m/min
+      {
+        speed_hand = 11.0;
+        gsub[0].beta_pole = 13.2074; // 1軸目
+        gsub[1].beta_pole = 18.9924; // 2軸目
+        gsub[2].beta_pole = 20.0;    // 3軸目
+      }
+      else if (flag_tuneNo == 4) // tuneNo == 4 : 11.0m/min -1deg
+      {
+        speed_hand = 11.0;
+        // gsub[0].beta_pole = 14.2049; // 1軸目　実験合わせ　修正後の特性で-2degの３軸に合わせる
+        gsub[0].beta_pole = 13.7062; // 1軸目　実験合わせ　修正後の特性で-2degの３軸に合わせる の半分の移動量
+        gsub[1].beta_pole = 18.9924; // 2軸目
+        gsub[2].beta_pole = 20.0;    // 3軸目
+      }
+      else if (flag_tuneNo == 5) // tuneNo == 5 : 11.0m/min +1deg
+      {
+        speed_hand = 11.0;
+        // gsub[0].beta_pole = 12.2589; // 1軸目　実験合わせ　修正後の特性で+2degの３軸に合わせる
+        gsub[0].beta_pole = 12.73315; // 1軸目　実験合わせ　修正後の特性で+2degの３軸に合わせる の半分の移動量
+        gsub[1].beta_pole = 18.9924; // 2軸目
+        gsub[2].beta_pole = 20.0;    // 3軸目
+      }
+      else if (flag_tuneNo == 6) // tuneNo == 4 : 11.0m/min -2deg
+      {
+        speed_hand = 11.0;
+        gsub[0].beta_pole = 14.2049; // 1軸目　実験合わせ　修正後の特性で-2degの３軸に合わせる
+        // gsub[0].beta_pole = 13.7062; // 1軸目　実験合わせ　修正後の特性で-2degの３軸に合わせる の半分の移動量
+        gsub[1].beta_pole = 18.9924; // 2軸目
+        gsub[2].beta_pole = 20.0;    // 3軸目
+      }
+      else if (flag_tuneNo == 7) // tuneNo == 5 : 11.0m/min +2deg
+      {
+        speed_hand = 11.0;
+        gsub[0].beta_pole = 12.2589; // 1軸目　実験合わせ　修正後の特性で+2degの３軸に合わせる
+        // gsub[0].beta_pole = 12.73315; // 1軸目　実験合わせ　修正後の特性で+2degの３軸に合わせる の半分の移動量
+        gsub[1].beta_pole = 18.9924; // 2軸目
+        gsub[2].beta_pole = 20.0;    // 3軸目
+      }
+      else{        
+        gsub[0].beta_pole = 20.0; // 1軸目
+        gsub[1].beta_pole = 20.0; // 2軸目
+        gsub[2].beta_pole = 20.0; // 3軸目
+      }
 
       CalcGravIcmp(joint); // 2,3軸の重力補償電流を計算　main関数の初期姿勢を要確認！！！！
       CalcJl(joint);         // JLの変動は使うので3軸分計算
@@ -2468,7 +2509,7 @@ void MW_main(void)
 
   // ロボット実験開始時姿勢
   axis1.theta_rl_init = 0.0 * PI / 180.0; // [rad]
-  axis2.theta_rl_init = 41.2712 * PI / 180.0; // [rad]
+  axis2.theta_rl_init = 0.0 * PI / 180.0; // [rad]
   axis3.theta_rl_init = 0.0 * PI / 180.0; // [rad]
 
   // 指令軌跡中心点（ゲイン確認用）
@@ -2519,11 +2560,12 @@ void MW_main(void)
   gsub[0].r_cdm4 = 2.0;
   // 位置ゲイン設計指標
   gsub[0].tau_pole = 1 / 10.0;
+  gsub[0].beta_pole = 20.0;
   // gsub[0].beta_pole = 13.6130; // 9.5m/min
   // gsub[0].beta_pole = 13.4674; // 10m/min
   // gsub[0].beta_pole = 13.2074; // 11m/min
   // gsub[0].beta_pole = 14.2049; // 11m/min 実験合わせ　修正後の特性で-2degの３軸に合わせる
-  gsub[0].beta_pole = 13.7062; // 11m/min 実験合わせ　修正後の特性で-2degの３軸に合わせる の半分の移動量
+  // gsub[0].beta_pole = 13.7062; // 11m/min 実験合わせ　修正後の特性で-2degの３軸に合わせる の半分の移動量
   // gsub[0].beta_pole = 12.2589; // 11m/min 実験合わせ　修正後の特性で+2degの３軸に合わせる
   // gsub[0].beta_pole = 12.73315; // 11m/min 実験合わせ　修正後の特性で+2degの３軸に合わせる の半分の移動量
   // gsub[0].beta_pole = 13.2822; // 15.8m/min
@@ -2540,9 +2582,10 @@ void MW_main(void)
   gsub[1].r_cdm4 = 2.0;
   // 位置ゲイン設計指標
   gsub[1].tau_pole = 1 / 10.0;
+  gsub[0].beta_pole = 20.0;
   // gsub[1].beta_pole = 19.4440; // 9.5m/min
   // gsub[1].beta_pole = 19.3107; // 10m/min
-  gsub[1].beta_pole = 18.9924; // 11m/min
+  // gsub[1].beta_pole = 18.9924; // 11m/min
   // gsub[1].beta_pole = 17.3046; // 15.8m/min
   // gsub[1].beta_pole = 20.0039; // 05m/min
   // gsub[1].beta_pole = 20.0021; // 01m/min
@@ -2590,14 +2633,16 @@ void MW_main(void)
   sen[0].VtoI = 6.25;
   /// 1軸 MWINV-5R022 電流センサモニタ部仕様 31.25A/5V = 6.25[A/V]
   sen[0].VtoIdc = 6.25;
+  
   /// 2軸 MWINV-9R122B 電流センサモニタ部仕様 Page. 16/40 より 400V/5V = 80[V/V]
-  sen[1].VtoVdc = 80.0;
+  sen[1].VtoVdc = 100.0;
   /// 2軸 MWPE-IS-01 電流センサーユニット Page. 5/7 (50A,5回巻き)10A/5V = 2[A/V] -> 2軸目の定格電流は7.9[A]。瞬時最大で定格の3倍(=23.7[A])まで観測できない
   // sen[1].VtoI = 2.0;
   /// 2軸 MWINV-9R122B 電流センサモニタ部仕様 Page. 16/40 より 50/5V = 10[V/V]
   sen[1].VtoI = 10.0;
   /// 2軸 MWINV-9R122B 電流センサモニタ部仕様 Page. 16/40 より 50/5V = 10[V/V]
   sen[1].VtoIdc = 10.0;
+
   /// 3軸 MWINV-5R022 電圧センサモニタ部仕様 Page. 16/39 より 500V/5V = 100[V/V]
   sen[2].VtoVdc = 100.0;
   /// 3軸 MWINV-5R022 電流センサモニタ部仕様(U相,W相共通) 31.25A/5V = 6.25[A/V]
