@@ -68,7 +68,9 @@ static float CmdGain[] = {1.3379, 1.2859, 1.2476}; // D 20mm V 11m/min
 
 // static const float CmdGain_EX[] = {0.9145, 0.9172, 0.8908};
 static const float CmdGain_EX[] = {1.0000, 1.0000, 1.0000};
-
+static float GainX = 10.0/10.0;
+static float GainY = 10.0/10.0;
+        
 /// 制御用定数
 static const float PI = 3.14159265358979; /// 円周率
 static const float Fs = 6250;            /// キャリア周波数[Hz]
@@ -1338,9 +1340,11 @@ interrupt void ControlFunction(void)
       {
         speed_hand = 11.0;
         // CmdGain[] = {1.3379, 1.2859, 1.2476}; // D 20mm V 11m/min
-        CmdGain[0] = 1.3379;
-        CmdGain[1] = 1.2859;
-        CmdGain[2] = 1.2476;
+        CmdGain[0] = 1.000;
+        CmdGain[1] = 1.000;
+        CmdGain[2] = 1.000;
+        GainX = 10.0/10.10;
+        GainY = 10.0/12.53;
         gsub[0].beta_pole = 13.2074; // 1軸目
         gsub[1].beta_pole = 18.9924; // 2軸目
         gsub[2].beta_pole = 20.0;    // 3軸目
@@ -1349,9 +1353,11 @@ interrupt void ControlFunction(void)
       {
         speed_hand = 11.0;
         // CmdGain[] = {1.3047, 1.2859, 1.2476}; // D 20mm V 11m/min -1deg 調整
-        // CmdGain[0] = 1.3047;
-        // CmdGain[1] = 1.2859;
-        // CmdGain[2] = 1.2476;
+        CmdGain[0] = 1.000;
+        CmdGain[1] = 1.000;
+        CmdGain[2] = 1.000;
+        GainX = 10.0/10.25;
+        GainY = 10.0/12.26;
         // gsub[0].beta_pole = 14.2049; // 1軸目　実験合わせ　修正後の特性で-2degの３軸に合わせる
         gsub[0].beta_pole = 13.7062; // 1軸目　実験合わせ　修正後の特性で-2degの３軸に合わせる の半分の移動量
         gsub[1].beta_pole = 18.9924; // 2軸目
@@ -1361,9 +1367,11 @@ interrupt void ControlFunction(void)
       {
         speed_hand = 11.0;
         // CmdGain[] = {1.3733, 1.2859, 1.2476}; // D 20mm V 11m/min +1deg 調整
-        // CmdGain[0] = 1.3733;
-        // CmdGain[1] = 1.2859;
-        // CmdGain[2] = 1.2476;
+        CmdGain[0] = 1.000;
+        CmdGain[1] = 1.000;
+        CmdGain[2] = 1.000;
+        GainX = 10.0/10.19;
+        GainY = 10.0/12.96;
         // gsub[0].beta_pole = 12.2589; // 1軸目　実験合わせ　修正後の特性で+2degの３軸に合わせる
         gsub[0].beta_pole = 12.73315; // 1軸目　実験合わせ　修正後の特性で+2degの３軸に合わせる の半分の移動量
         gsub[1].beta_pole = 18.9924; // 2軸目
@@ -1373,9 +1381,9 @@ interrupt void ControlFunction(void)
       {
         speed_hand = 11.0;
         // CmdGain[] = {1.2733, 1.2859, 1.2476}; // D 20mm V 11m/min -2deg 調整
-        // CmdGain[0] = 1.2733;
-        // CmdGain[1] = 1.2859;
-        // CmdGain[2] = 1.2476;
+        CmdGain[0] = 1.000;
+        CmdGain[1] = 1.000;
+        CmdGain[2] = 1.000;
         gsub[0].beta_pole = 14.2049; // 1軸目　実験合わせ　修正後の特性で-2degの３軸に合わせる
         // gsub[0].beta_pole = 13.7062; // 1軸目　実験合わせ　修正後の特性で-2degの３軸に合わせる の半分の移動量
         gsub[1].beta_pole = 18.9924; // 2軸目
@@ -1385,9 +1393,9 @@ interrupt void ControlFunction(void)
       {
         speed_hand = 11.0;
         // CmdGain[] = {1.4108, 1.2859, 1.2476}; // D 20mm V 11m/min +2deg 調整
-        // CmdGain[0] = 1.4108;
-        // CmdGain[1] = 1.2859;
-        // CmdGain[2] = 1.2476;
+        CmdGain[0] = 1.000;
+        CmdGain[1] = 1.000;
+        CmdGain[2] = 1.000;
         gsub[0].beta_pole = 12.2589; // 1軸目　実験合わせ　修正後の特性で+2degの３軸に合わせる
         // gsub[0].beta_pole = 12.73315; // 1軸目　実験合わせ　修正後の特性で+2degの３軸に合わせる の半分の移動量
         gsub[1].beta_pole = 18.9924; // 2軸目
@@ -2550,7 +2558,7 @@ void MW_main(void)
 
   // ロボット実験開始時姿勢
   axis1.theta_rl_init = 0.0 * PI / 180.0; // [rad]
-  axis2.theta_rl_init = 41.2712 * PI / 180.0; // [rad]
+  axis2.theta_rl_init = 0.0 * PI / 180.0; // [rad]
   axis3.theta_rl_init = 0.0 * PI / 180.0; // [rad]
 
   // 指令軌跡中心点（ゲイン確認用）
@@ -2675,7 +2683,7 @@ void MW_main(void)
   /// 1軸 MWINV-5R022 電流センサモニタ部仕様 31.25A/5V = 6.25[A/V]
   sen[0].VtoIdc = 6.25;
   /// 2軸 MWINV-9R122B 電流センサモニタ部仕様 Page. 16/40 より 400V/5V = 80[V/V]
-  sen[1].VtoVdc = 80.0;
+  sen[1].VtoVdc = 100.0;
   /// 2軸 MWPE-IS-01 電流センサーユニット Page. 5/7 (50A,5回巻き)10A/5V = 2[A/V] -> 2軸目の定格電流は7.9[A]。瞬時最大で定格の3倍(=23.7[A])まで観測できない
   // sen[1].VtoI = 2.0;
   /// 2軸 MWINV-9R122B 電流センサモニタ部仕様 Page. 16/40 より 50/5V = 10[V/V]
@@ -4238,7 +4246,7 @@ int CalcHandCmdCircle(float goal[3], float vel_hand[3], float t_wait, float spee
         flag_init = 0;
       }
       fx = 0.000;
-      fy = -D / 2.0;
+      fy = -D * GainY / 2.0;
       fz = 0.000;
       goal[0] = C1 * fx + S1 * fz + x_slide;
       goal[1] = fy + y_slide;
@@ -4272,11 +4280,11 @@ int CalcHandCmdCircle(float goal[3], float vel_hand[3], float t_wait, float spee
       else if (Tall >= t_wait && Tall < (t_wait + t_task))
       {
         WAVE_state = 5;
-        fx = (D / 2.0) * sin(2 * PI * freq * (Tall - t_wait));
-        fy = -(D / 2.0) * cos(2 * PI * freq * (Tall - t_wait));
+        fx = (D * GainX / 2.0) * sin(2 * PI * freq * (Tall - t_wait));
+        fy = -(D * GainY / 2.0) * cos(2 * PI * freq * (Tall - t_wait));
         fz = 0;
-        vfx = (D / 2.0) * (2 * PI * freq) * cos(2 * PI * freq * (Tall - t_wait));
-        vfy = (D / 2.0) * (2 * PI * freq) * sin(2 * PI * freq * (Tall - t_wait));
+        vfx = (D * GainX  / 2.0) * (2 * PI * freq) * cos(2 * PI * freq * (Tall - t_wait));
+        vfy = (D * GainY  / 2.0) * (2 * PI * freq) * sin(2 * PI * freq * (Tall - t_wait));
         vfz = 0;
 
         goal[0] = C1 * fx + S1 * fz + x_slide;
