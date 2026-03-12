@@ -2475,7 +2475,7 @@ void MW_main(void)
 
   // ロボット実験開始時姿勢
   axis1.theta_rl_init = 0.0 * PI / 180.0; // [rad]
-  axis2.theta_rl_init = 41.2712 * PI / 180.0; // [rad]
+  axis2.theta_rl_init = 0.0 * PI / 180.0; // [rad]
   axis3.theta_rl_init = 0.0 * PI / 180.0; // [rad]
 
   // 指令軌跡中心点（ゲイン確認用）
@@ -2590,7 +2590,7 @@ void MW_main(void)
   /// 1軸 MWINV-5R022 電流センサモニタ部仕様 31.25A/5V = 6.25[A/V]
   sen[0].VtoIdc = 6.25;
   /// 2軸 MWINV-9R122B 電流センサモニタ部仕様 Page. 16/40 より 400V/5V = 80[V/V]
-  sen[1].VtoVdc = 80.0;
+  sen[1].VtoVdc = 100.0;
   /// 2軸 MWPE-IS-01 電流センサーユニット Page. 5/7 (50A,5回巻き)10A/5V = 2[A/V] -> 2軸目の定格電流は7.9[A]。瞬時最大で定格の3倍(=23.7[A])まで観測できない
   // sen[1].VtoI = 2.0;
   /// 2軸 MWINV-9R122B 電流センサモニタ部仕様 Page. 16/40 より 50/5V = 10[V/V]
