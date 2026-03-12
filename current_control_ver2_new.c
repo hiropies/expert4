@@ -1274,11 +1274,11 @@ interrupt void ControlFunction(void)
   static float motor_cmd_init[3] = {0, 0, 0};
 
   // FRA試験関係変数
-  static float fmin = 0.95;      //[Hz] 開始周波数
-  static float fmax = 3.15;     //[Hz] 終了周波数
-  static float fstep = 0.05;     //[Hz] 周波数刻み
+  static float fmin = 2.08;      //[Hz] 開始周波数
+  static float fmax = 3.03;     //[Hz] 終了周波数
+  static float fstep = 0.04;     //[Hz] 周波数刻み
   static float Ni = 10.0;       // Sin波の個数 (積分回数)
-  static float freq = 0.95;    // 現在の周波数:初めはfminからstart //プログラム上freq=fminを初期定義できないので、直接数値を打つ
+  static float freq = 2.08;    // 現在の周波数:初めはfminからstart //プログラム上freq=fminを初期定義できないので、直接数値を打つ
   static float tini = 0.0;     //[s] 時間初期化
   static float Time_FRA = 0.0; //[s] FRA試験開始時間(フラグが来たら時間カウント開始)
 
@@ -1355,23 +1355,25 @@ interrupt void ControlFunction(void)
       }
       else if (flag_tuneNo == 2) // tuneNo == 2 : 11.0m/min ノミナル設計
       {
-        gsub[0].beta_pole = 13.2074; // 1軸目
-        // gsub[0].beta_pole = 13.6130; // 9.5m/min
+        // gsub[0].beta_pole = 13.2074; // 1軸目 11.0m/min
+        gsub[0].beta_pole = 13.6130; // 9.5m/min
         gsub[1].beta_pole = 19.4440; // 2軸目 9.5mmin
         gsub[2].beta_pole = 20.0; // 3軸目
       }
       else if (flag_tuneNo == 3) // tuneNo == 3 : 11.0m/min -2.0deg
       {
-        // gsub[0].beta_pole = 14.2049; // 1軸目　実験合わせ　修正後の特性で-2degの３軸に合わせる
-        gsub[0].beta_pole = 13.7062; // 1軸目　実験合わせ　修正後の特性で-2degの３軸に合わせる の半分の移動量
+        gsub[0].beta_pole = 14.2049; // 1軸目　実験合わせ　修正後の特性で-2degの３軸に合わせる
+        // gsub[0].beta_pole = 13.7062; // 1軸目　実験合わせ　修正後の特性で-2degの３軸に合わせる の半分の移動量
+        // gsub[0].beta_pole = 13.4569; // 1軸目　実験合わせ　修正後の特性で-2degの３軸に合わせる の半分の さらに半分の移動量
         // gsub[0].beta_pole = 13.4674; // 1軸目 10.0mmin
         gsub[1].beta_pole = 19.3107; // 2軸目
         gsub[2].beta_pole = 20.0;    // 3軸目
       }
       else if (flag_tuneNo == 4) // tuneNo == 4 : 11.0m/min +2.0deg
       {
-        // gsub[0].beta_pole = 12.2589; // 1軸目　実験合わせ　修正後の特性で+2degの３軸に合わせる
-        gsub[0].beta_pole = 12.73315; // 1軸目　実験合わせ　修正後の特性で+2degの３軸に合わせる の半分の移動量
+        gsub[0].beta_pole = 12.2589; // 1軸目　実験合わせ　修正後の特性で+2degの３軸に合わせる
+        // gsub[0].beta_pole = 12.7332; // 1軸目　実験合わせ　修正後の特性で+2degの３軸に合わせる の半分の移動量
+        // gsub[0].beta_pole = 12.9703; // 1軸目　実験合わせ　修正後の特性で+2degの３軸に合わせる の半分の さらに半分の移動量
         gsub[1].beta_pole = 18.9924; // 2軸目
         gsub[2].beta_pole = 20.0;    // 3軸目
       }
@@ -1636,7 +1638,7 @@ interrupt void ControlFunction(void)
             // motor_cmd[2] = 1.5867;
             
             // // X=0.010, Y = 0.00
-            motor_cmd[0] = 0.0000;
+            motor_cmd[0] = 3.00;
             motor_cmd[1] = 87.7147;
             motor_cmd[2] = -0.3771;
 
@@ -1687,7 +1689,7 @@ interrupt void ControlFunction(void)
           axis1.qm_ref_z1 = axis1.qm_ref;
           
           axis1.qm_ref = axis1.wm_cmd_z3 * Tp + axis1.qm_ref_z1;
-          LimitPosCmd(&axis1);
+          // LimitPosCmd(&axis1);
 
           axis1.wm_ref = (axis1.qm_ref - axis1.qm) * axis1.Kpp + axis1.Kff * axis1.wm_cmd_z3 - axis1.Kfb * axis1.wm;
           axis1.Ipi = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1);
@@ -1723,7 +1725,7 @@ interrupt void ControlFunction(void)
           axis2.qm_ref_z1 = axis2.qm_ref;
 
           axis2.qm_ref = axis2.wm_cmd_z3 * Tp + axis2.qm_ref_z1;
-          LimitPosCmd(&axis2);
+          // LimitPosCmd(&axis2);
           
           axis2.wm_ref = (axis2.qm_ref - axis2.qm) * axis2.Kpp + axis2.Kff * axis2.wm_cmd_z3 - axis2.Kfb * axis2.wm;
           axis2.Ipi = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1);
@@ -1759,7 +1761,7 @@ interrupt void ControlFunction(void)
           axis3.qm_ref_z1 = axis3.qm_ref;
           
           axis3.qm_ref = axis3.wm_cmd_z3 * Tp + axis3.qm_ref_z1;
-          LimitPosCmd(&axis3);
+          // LimitPosCmd(&axis3);
           
           axis3.wm_ref = (axis3.qm_ref - axis3.qm) * axis3.Kpp + axis3.Kff * axis3.wm_cmd_z3 - axis3.Kfb * axis3.wm;
           axis3.Ipi = velocity[2].PIcontroller(axis3.wm_ref - axis3.wm, axis3.Kvp, axis3.Kvi, Tp, &velocity[2].uZ1, &velocity[2].yZ1);
