@@ -103,7 +103,7 @@ volatile int flag_Vdc_setted = 0; // 位置/速度制御切り替えフラグ
 volatile int flag_FBgain = 1;     // パナ指定FBゲイン倍率
 volatile int flag_PPgain = 2;     // 位置Pゲイン
 volatile int flag_FF = 0;         // FF制御フラグ
-volatile int flag_SOB = 2;        // 状態オブザーバフラグ
+volatile int flag_SOB = 0;        // 状態オブザーバフラグ
 volatile int counter_2 = 0;       // 指令値Z^=2用カウンタ
 volatile int WAVE_LoopCount = 1;
 volatile int flag_FF_triple = 1;
@@ -192,14 +192,14 @@ volatile float WAVE_MRBR3;
 
 /// ゲイン
 // 1軸目
-// volatile float WAVE_Kpp1 = 0.0;
-// volatile float WAVE_Kff1 = 0.0;
-// volatile float WAVE_Kfb1 = 0.0;
-// volatile float WAVE_Kvp1 = 0.0;
-// volatile float WAVE_Kvi1 = 0.0;
-// volatile float WAVE_fwm1 = 0.0;
-// volatile float WAVE_fqs1 = 0.0;
-// volatile float WAVE_fwl1 = 0.0;
+volatile float WAVE_Kpp1 = 0.0;
+volatile float WAVE_Kff1 = 0.0;
+volatile float WAVE_Kfb1 = 0.0;
+volatile float WAVE_Kvp1 = 0.0;
+volatile float WAVE_Kvi1 = 0.0;
+volatile float WAVE_fwm1 = 0.0;
+volatile float WAVE_fqs1 = 0.0;
+volatile float WAVE_fwl1 = 0.0;
 // volatile float WAVE_Kpp1_wr = 0.0;
 // volatile float WAVE_Kff1_wr = 0.0;
 // volatile float WAVE_Kfb1_wr = 0.0;
@@ -208,15 +208,15 @@ volatile float WAVE_MRBR3;
 // volatile float WAVE_fwm1_wr = 0.0;
 // volatile float WAVE_fqs1_wr = 0.0;
 // volatile float WAVE_fwl1_wr = 0.0;
-// 2軸目
-// volatile float WAVE_Kpp2 = 0.0;
-// volatile float WAVE_Kff2 = 0.0;
-// volatile float WAVE_Kfb2 = 0.0;
-// volatile float WAVE_Kvp2 = 0.0;
-// volatile float WAVE_Kvi2 = 0.0;
-// volatile float WAVE_fwm2 = 0.0;
-// volatile float WAVE_fqs2 = 0.0;
-// volatile float WAVE_fwl2 = 0.0;
+// // 2軸目
+volatile float WAVE_Kpp2 = 0.0;
+volatile float WAVE_Kff2 = 0.0;
+volatile float WAVE_Kfb2 = 0.0;
+volatile float WAVE_Kvp2 = 0.0;
+volatile float WAVE_Kvi2 = 0.0;
+volatile float WAVE_fwm2 = 0.0;
+volatile float WAVE_fqs2 = 0.0;
+volatile float WAVE_fwl2 = 0.0;
 // volatile float WAVE_Kpp2_wr = 0.0;
 // volatile float WAVE_Kff2_wr = 0.0;
 // volatile float WAVE_Kfb2_wr = 0.0;
@@ -225,15 +225,15 @@ volatile float WAVE_MRBR3;
 // volatile float WAVE_fwm2_wr = 0.0;
 // volatile float WAVE_fqs2_wr = 0.0;
 // volatile float WAVE_fwl2_wr = 0.0;
-// 3軸目
-// volatile float WAVE_Kpp3 = 0.0;
-// volatile float WAVE_Kff3 = 0.0;
-// volatile float WAVE_Kfb3 = 0.0;
-// volatile float WAVE_Kvp3 = 0.0;
-// volatile float WAVE_Kvi3 = 0.0;
-// volatile float WAVE_fwm3 = 0.0;
-// volatile float WAVE_fqs3 = 0.0;
-// volatile float WAVE_fwl3 = 0.0;
+// // 3軸目
+volatile float WAVE_Kpp3 = 0.0;
+volatile float WAVE_Kff3 = 0.0;
+volatile float WAVE_Kfb3 = 0.0;
+volatile float WAVE_Kvp3 = 0.0;
+volatile float WAVE_Kvi3 = 0.0;
+volatile float WAVE_fwm3 = 0.0;
+volatile float WAVE_fqs3 = 0.0;
+volatile float WAVE_fwl3 = 0.0;
 // volatile float WAVE_Kpp3_wr = 0.0;
 // volatile float WAVE_Kff3_wr = 0.0;
 // volatile float WAVE_Kfb3_wr = 0.0;
@@ -296,15 +296,15 @@ volatile float WAVE_Jl_Wr3; // [kgm^2] 動力学によるJl計算値
 // volatile float WAVE_est_qs3 = 0.0;
 // volatile float WAVE_est_wl3 = 0.0;
 
-// volatile float WAVE_est_conv_wm1 = 0.0;
-// volatile float WAVE_est_conv_qs1 = 0.0;
-// volatile float WAVE_est_conv_wl1 = 0.0;
-// volatile float WAVE_est_conv_wm2 = 0.0;
-// volatile float WAVE_est_conv_qs2 = 0.0;
-// volatile float WAVE_est_conv_wl2 = 0.0;
-// volatile float WAVE_est_conv_wm3 = 0.0;
-// volatile float WAVE_est_conv_qs3 = 0.0;
-// volatile float WAVE_est_conv_wl3 = 0.0;
+volatile float WAVE_est_conv_wm1 = 0.0;
+volatile float WAVE_est_conv_qs1 = 0.0;
+volatile float WAVE_est_conv_wl1 = 0.0;
+volatile float WAVE_est_conv_wm2 = 0.0;
+volatile float WAVE_est_conv_qs2 = 0.0;
+volatile float WAVE_est_conv_wl2 = 0.0;
+volatile float WAVE_est_conv_wm3 = 0.0;
+volatile float WAVE_est_conv_qs3 = 0.0;
+volatile float WAVE_est_conv_wl3 = 0.0;
 
 // volatile float WAVE_est_prop_wm1 = 0.0;
 // volatile float WAVE_est_prop_qs1 = 0.0;
@@ -1414,6 +1414,7 @@ interrupt void ControlFunction(void)
           axis1.Jl_calc_Wr = 35.9000;
         }
 
+        // // 可変ゲイン計算
         CalcPVGain();
         CalcWrGain();
 
@@ -2336,15 +2337,15 @@ interrupt void ControlFunction(void)
   //   WAVE_est_wl3 = axis3.est_prop_wl;
   // }
 
-  // WAVE_est_conv_wm1 = axis1.est_conv_wm;
-  // WAVE_est_conv_qs1 = axis1.est_conv_qs;
-  // WAVE_est_conv_wl1 = axis1.est_conv_wl;
-  // WAVE_est_conv_wm2 = axis2.est_conv_wm;
-  // WAVE_est_conv_qs2 = axis2.est_conv_qs;
-  // WAVE_est_conv_wl2 = axis2.est_conv_wl;
-  // WAVE_est_conv_wm3 = axis3.est_conv_wm;
-  // WAVE_est_conv_qs3 = axis3.est_conv_qs;
-  // WAVE_est_conv_wl3 = axis3.est_conv_wl;
+  WAVE_est_conv_wm1 = axis1.est_conv_wm;
+  WAVE_est_conv_qs1 = axis1.est_conv_qs;
+  WAVE_est_conv_wl1 = axis1.est_conv_wl;
+  WAVE_est_conv_wm2 = axis2.est_conv_wm;
+  WAVE_est_conv_qs2 = axis2.est_conv_qs;
+  WAVE_est_conv_wl2 = axis2.est_conv_wl;
+  WAVE_est_conv_wm3 = axis3.est_conv_wm;
+  WAVE_est_conv_qs3 = axis3.est_conv_qs;
+  WAVE_est_conv_wl3 = axis3.est_conv_wl;
 
   // WAVE_est_prop_wm1 = axis1.est_prop_wm;
   // WAVE_est_prop_qs1 = axis1.est_prop_qs;
@@ -2366,38 +2367,32 @@ interrupt void ControlFunction(void)
   // WAVE_est_ISOB_qs3 = axis3.est_ISOB_qs;
   // WAVE_est_ISOB_wl3 = axis3.est_ISOB_wl;
 
-  // WAVE_Kff1 = axis1.Kff;
-  // WAVE_Kfb1 = axis1.Kfb;
-  // WAVE_Kpp1 = axis1.Kpp;
-  // WAVE_Kff1 = axis1.Kff;
-  // WAVE_Kfb1 = axis1.Kfb;
-  // WAVE_Kvp1 = axis1.Kvp;
-  // WAVE_Kvi1 = axis1.Kvi;
-  // WAVE_fwm1 = axis1.fwm;
-  // WAVE_fqs1 = axis1.fqs;
-  // WAVE_fwl1 = axis1.fwl;
+  WAVE_Kpp1 = axis1.Kpp;
+  WAVE_Kff1 = axis1.Kff;
+  WAVE_Kfb1 = axis1.Kfb;
+  WAVE_Kvp1 = axis1.Kvp;
+  WAVE_Kvi1 = axis1.Kvi;
+  WAVE_fwm1 = axis1.fwm;
+  WAVE_fqs1 = axis1.fqs;
+  WAVE_fwl1 = axis1.fwl;
 
-  // WAVE_Kff2 = axis2.Kff;
-  // WAVE_Kfb2 = axis2.Kfb;
-  // WAVE_Kpp2 = axis2.Kpp;
-  // WAVE_Kff2 = axis2.Kff;
-  // WAVE_Kfb2 = axis2.Kfb;
-  // WAVE_Kvp2 = axis2.Kvp;
-  // WAVE_Kvi2 = axis2.Kvi;
-  // WAVE_fwm2 = axis2.fwm;
-  // WAVE_fqs2 = axis2.fqs;
-  // WAVE_fwl2 = axis2.fwl;
+  WAVE_Kpp2 = axis2.Kpp;
+  WAVE_Kff2 = axis2.Kff;
+  WAVE_Kfb2 = axis2.Kfb;
+  WAVE_Kvp2 = axis2.Kvp;
+  WAVE_Kvi2 = axis2.Kvi;
+  WAVE_fwm2 = axis2.fwm;
+  WAVE_fqs2 = axis2.fqs;
+  WAVE_fwl2 = axis2.fwl;
 
-  // WAVE_Kff3 = axis3.Kff;
-  // WAVE_Kfb3 = axis3.Kfb;
-  // WAVE_Kpp3 = axis3.Kpp;
-  // WAVE_Kff3 = axis3.Kff;
-  // WAVE_Kfb3 = axis3.Kfb;
-  // WAVE_Kvp3 = axis3.Kvp;
-  // WAVE_Kvi3 = axis3.Kvi;
-  // WAVE_fwm3 = axis3.fwm;
-  // WAVE_fqs3 = axis3.fqs;
-  // WAVE_fwl3 = axis3.fwl;
+  WAVE_Kpp3 = axis3.Kpp;
+  WAVE_Kff3 = axis3.Kff;
+  WAVE_Kfb3 = axis3.Kfb;
+  WAVE_Kvp3 = axis3.Kvp;
+  WAVE_Kvi3 = axis3.Kvi;
+  WAVE_fwm3 = axis3.fwm;
+  WAVE_fqs3 = axis3.fqs;
+  WAVE_fwl3 = axis3.fwl;
 
   // WAVE_ACC_LW8174_axis = axis2.al; // 加速度センサrad/s^2換算値
   // WAVE_ACC_LW8079 = ACC_LW8079;
