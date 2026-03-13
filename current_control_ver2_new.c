@@ -102,8 +102,8 @@ volatile int flag_delay = 0;      // FF用　1/z^2 遅延フラグ
 volatile int flag_Vdc_setted = 0; // 位置/速度制御切り替えフラグ
 volatile int flag_FBgain = 1;     // パナ指定FBゲイン倍率
 volatile int flag_PPgain = 2;     // 位置Pゲイン
-volatile int flag_FF = 0;         // FF制御フラグ
-volatile int flag_SOB = 2;        // 状態オブザーバフラグ
+volatile int flag_FF = 1;         // FF制御フラグ
+volatile int flag_SOB = 0;        // 状態オブザーバフラグ
 volatile int counter_2 = 0;       // 指令値Z^=2用カウンタ
 volatile int WAVE_LoopCount = 1;
 volatile int flag_FF_triple = 1;
@@ -1175,6 +1175,8 @@ float CalcPrefRep3axis(float t_lim_up, float ql_deg_tilt_up, float t_lim_down, f
 // 位置・速度制御系可変ゲイン演算関数
 void CalcWrGain(void);
 void CalcPVGain(void);
+void CalcPVGain_yabuki(void);
+void CalcWrGain_yabuki(void);
 void CalcPVGainInitCDM(void); // 係数図法
 // 回生ブレーキ関連
 float CalcVdcMean(int BDN, float Vdc);
@@ -1330,9 +1332,15 @@ interrupt void ControlFunction(void)
       CalcJlWr(joint);
 
       // // 可変ゲイン計算
-      CalcPVGain();
-      CalcWrGain();
-
+      if flag_cont_start != 3
+      {
+        CalcPVGain();
+        CalcWrGain();
+      }else{
+        CalcPVGain_yabuki();
+        CalcWrGain_yabuki();
+      }
+      
       // 負荷側情報計算
       //P制御用Wr
       // CalcFDTDWr_QmrefInputType(&axis1);
@@ -1414,8 +1422,17 @@ interrupt void ControlFunction(void)
           axis1.Jl_calc_Wr = 35.9000;
         }
 
-        CalcPVGain();
-        CalcWrGain();
+        // // 可変ゲイン計算
+        if (flag_cont_start != 3)
+        {
+          CalcPVGain();
+          CalcWrGain();
+        }
+        else
+        {
+          CalcPVGain_yabuki();
+          CalcWrGain_yabuki();
+        }
 
         if (flag_FF_triple == 1)
         {
@@ -1491,7 +1508,7 @@ interrupt void ControlFunction(void)
         if (flag_SOB == 0)
         {
           // 状態推定(従来法SOB)
-          StateObserver(axis1.IrefQ, axis1.wm, &axis1.est_conv_wm, &axis1.est_conv_qs, &axis1.est_conv_wl, axis1.BDN);
+          StateObserver(axis1.I_SOBinput, axis1.wm, &axis1.est_conv_wm, &axis1.est_conv_qs, &axis1.est_conv_wl, axis1.BDN);
           StateObserver(axis2.I_SOBinput, axis2.wm, &axis2.est_conv_wm, &axis2.est_conv_qs, &axis2.est_conv_wl, axis2.BDN);
           StateObserver(axis3.I_SOBinput, axis3.wm, &axis3.est_conv_wm, &axis3.est_conv_qs, &axis3.est_conv_wl, axis3.BDN);
           // 状態フィードバック電流の計算
@@ -1569,7 +1586,7 @@ interrupt void ControlFunction(void)
             axis3.qm_ref = start_go3;
             flag_reposition = 0;
             // 指令値の設定値
-            SetRampParams((motor_cmd[0]-start_go1), (motor_cmd[1]-start_go2), (motor_cmd[2]-start_go3));
+            SetRampParams((motor_cmd[0] - start_go1), (motor_cmd[1] - start_go2), (motor_cmd[2] - start_go3));
           }
           // ランプ指令用変数の設定
 
@@ -2475,6 +2492,7 @@ void MW_main(void)
 
   // ロボット実験開始時姿勢
   axis1.theta_rl_init = 0.0 * PI / 180.0; // [rad]
+  // axis2.theta_rl_init = 41.280 * PI / 180.0; // [rad]
   axis2.theta_rl_init = 0.0 * PI / 180.0; // [rad]
   axis3.theta_rl_init = 0.0 * PI / 180.0; // [rad]
 
@@ -3107,121 +3125,63 @@ void StateObserver(float Iref, float wM, volatile float *est_wM, volatile float 
   // 状態オブザーバ(ゼロ次ホールド離散化)
   // 各状態量の推定(二慣性系モデル) Iref; [A] 電流指令値, wM; [rad/s] 速度応答値
   // 以下はサンプルプログラムである。モデルごとに作成し直すこと
-  // 作成条件：p=-150 [rad/s] 、Ts=200[us]、
+  // 作成条件：p=-150 [rad/s] 、Ts=320[us]、
 
-  // 1軸目SOB　初期姿勢：2軸目10deg,3軸目60deg
-  // // A行列
-  // const double a1_11 = 9.1460e-01;
-  // const double a1_12 = -3.6622e+02;
-  // const double a1_13 = 3.6593e-02;
-  // const double a1_21 = 5.3870e-06;
-  // const double a1_22 = 9.9955e-01;
-  // const double a1_23 = -1.9971e-04;
-  // const double a1_31 = 1.5539e-04;
-  // const double a1_32 = 1.8700e+00;
-  // const double a1_33 = 9.9719e-01;
-  // // B行列
-  // const double b1_11 = 1.5688e-01;
-  // const double b1_12 = 8.5141e-02;
-  // const double b1_21 = 1.1186e-07;
-  // const double b1_22 = -3.9612e-06;
-  // const double b1_31 = 6.9782e-08;
-  // const double b1_32 = -1.5406e-04;
-
-  // 1軸目SOB　初期姿勢：2軸目90deg,3軸目-75deg
+  // 1軸目SOB TM1800パラメータを使用 Ts=320us 初期姿勢：軌跡開始点
   // A行列
-  const double a1_11 = 9.1228e-01;
-  const double a1_12 = -3.6624e+02;
-  const double a1_13 = 3.6619e-02;
-  const double a1_21 = 6.6759e-06;
-  const double a1_22 = 9.9970e-01;
-  const double a1_23 = -1.9992e-04;
-  const double a1_31 = -2.3138e-04;
-  const double a1_32 = 4.2219e-01;
-  const double a1_33 = 9.9936e-01;
+  const double a1_11 = 0.9531;
+  const double a1_12 = 0.1370;
+  const double a1_13 = 0.1005;
+  const double a1_21 = -2.0841e-10;
+  const double a1_22 = 0.9531;
+  const double a1_23 = -0.0796;
+  const double a1_31 = 0.0;
+  const double a1_32 = 0.0;
+  const double a1_33 = 0.9531;
   // B行列
-  const double b1_11 = 1.5688e-01;
-  const double b1_12 = 8.7464e-02;
-  const double b1_21 = 1.1186e-07;
-  const double b1_22 = -5.2501e-06;
-  const double b1_31 = 1.5747e-08;
-  const double b1_32 = 2.3168e-04;
+  const double b1_11 = -0.1678;
+  const double b1_12 = -0.2733;
+  const double b1_21 = 0.1147;
+  const double b1_22 = 0.0982;
+  const double b1_31 = 0.0595;
+  const double b1_32 = 0.0322;
 
   // 2軸目SOB　
-  // 初期姿勢：2軸目0.0deg,3軸目0.0deg JL = 23.9
-  const double a2_11 = 9.1330e-01;
-  const double a2_12 = -3.3086e+02;
-  const double a2_13 = 3.3071e-02;
-  const double a2_21 = 6.9233e-06;
-  const double a2_22 = 9.9965e-01;
-  const double a2_23 = -1.9982e-04;
-  const double a2_31 = -1.3375e-04;
-  const double a2_32 = 7.7399e-01;
-  const double a2_33 = 9.9839e-01;
+  const double a2_11 = 0.9531;
+  const double a2_12 = 0.1351;
+  const double a2_13 = 0.1037;
+  const double a2_21 = 0.0;
+  const double a2_22 = 0.9531;
+  const double a2_23 = -0.0815;
+  const double a2_31 = 0.0;
+  const double a2_32 = 8.0889e-11;
+  const double a2_33 = 0.9531;
   // B行列
-  const double b2_11 = 1.2688e-01;
-  const double b2_12 = 8.6428e-02;
-  const double b2_21 = 1.0486e-07;
-  const double b2_22 = -5.2706e-06;
-  const double b2_31 = 2.7068e-08;
-  const double b2_32 = 1.3439e-04;
-  /*
-  // 初期姿勢：2軸目72deg,3軸目-72deg JL = 24.30
-  // A行列
-  const double a2_11 = 9.1284e-01;
-  const double a2_12 = -3.3087e+02;
-  const double a2_13 = 3.3076e-02;
-  const double a2_21 = 7.1633e-06;
-  const double a2_22 = 9.9967e-01;
-  const double a2_23 = -1.9987e-04;
-  const double a2_31 = -2.0167e-04;
-  const double a2_32 = 5.6260e-01;
-  const double a2_33 = 9.9883e-01;
-  // B行列
-  const double b2_11 = 1.2688e-01;
-  const double b2_12 = 8.6889e-02;
-  const double b2_21 = 1.0486e-07;
-  const double b2_22 = -5.5106e-06;
-  const double b2_31 = 1.9674e-08;
-  const double b2_32 = 2.0214e-04;
-  // 初期姿勢：2軸目10deg,3軸目60deg
-  // A行列
-  const double a2_11 = 9.1523e-01;
-  const double a2_12 = -3.3085e+02;
-  const double a2_13 = 3.3052e-02;
-  const double a2_21 = 5.9320e-06;
-  const double a2_22 = 9.9956e-01;
-  const double a2_23 = -1.9964e-04;
-  const double a2_31 = 1.3344e-04;
-  const double a2_32 = 1.6577e+00;
-  const double a2_33 = 9.9655e-01;
-  // B行列
-  const double b2_11 = 1.2688e-01;
-  const double b2_12 = 8.4501e-02;
-  const double b2_21 = 1.0486e-07;
-  const double b2_22 = -4.2794e-06;
-  const double b2_31 = 5.8002e-08;
-  const double b2_32 = -1.3207e-04;
-  */
-
+  const double b2_11 = -0.2010;
+  const double b2_12 = -0.2641;
+  const double b2_21 = 0.1289;
+  const double b2_22 = 0.1021;
+  const double b2_31 = 0.0736;
+  const double b2_32 = 0.0394;
+  
   // 3軸目SOB　
   // A行列
-  const double a3_11 = 9.1366e-01;
-  const double a3_12 = -1.1761e+02;
-  const double a3_13 = 1.1753e-02;
-  const double a3_21 = 1.9806e-05;
-  const double a3_22 = 9.9986e-01;
-  const double a3_23 = -1.9978e-04;
-  const double a3_31 = -5.7786e-04;
-  const double a3_32 = 4.1917e-01;
-  const double a3_33 = 9.9782e-01;
+  const double a3_11 = 0.9531;
+  const double a3_12 = 0.1425;
+  const double a3_13 = 0.0332;
+  const double a3_21 = 0.0;
+  const double a3_22 = 0.9531;
+  const double a3_23 = -0.0839;
+  const double a3_31 = 0.0;
+  const double a3_32 = 5.2831e-10;
+  const double a3_33 = 0.9531;
   // B行列
-  const double b3_11 = 2.0511e-01;
-  const double b3_12 = 8.6247e-02;
-  const double b3_21 = 1.6951e-07;
-  const double b3_22 = -1.8153e-05;
-  const double b3_31 = 2.3699e-08;
-  const double b3_32 = 5.7821e-04;
+  const double b3_11 = -0.3636;
+  const double b3_12 = -0.0717;
+  const double b3_21 = 0.4109;
+  const double b3_22 = 0.1001;
+  const double b3_31 = 0.3371;
+  const double b3_32 = 0.0551;
 
   // 状態変数の定義
   static float est_wM_Z1[3] = {0}, est_Qs_Z1[3] = {0}, est_wL_Z1[3] = {0};
@@ -4118,7 +4078,7 @@ int CalcHandCmdCircle(float goal[3], float vel_hand[3], float t_wait, float spee
   float path = (PI * D);
   float freq = 1 / (path / (speed / 60.0));
   // float t_task = (1.0 / freq) * 1.5;
-  float t_task = (1.0 / freq) * 3.5;
+  float t_task = (1.0 / freq) * 4.0;
   // const float t_task = 1.5 / freq;
   // const float S1 = mwsin(theta);
   // const float C1 = mwcos(theta);
@@ -4126,7 +4086,7 @@ int CalcHandCmdCircle(float goal[3], float vel_hand[3], float t_wait, float spee
   // const float C2 = mwcos(theta2);
   float S1 = -0.7071;
   float C1 = 0.7071;
-  // static float start_hand[3] = {1.2746, -0.07071, 0.2466};
+  // static float start_hand[3] = {1.2746, -0.010, 0.2466};
   float x_slide = 1.2746;
   // const float x_slide = 1.2846; // +x側10mmオフセット
   // const float x_slide = 1.2696; // -x側10mmオフセット
@@ -4659,19 +4619,7 @@ void CalcInverseCmd_vel(float goal[3], float vel_hand[3], float ql_cmd[3], float
   for (i = 0; i < 3; i++)
   {
     ql_cmd[i] = motor[i];
-    if (i == 1)
-    {
-      ql_cmd[i] = 0.0; // 2軸目の指令値を0に固定(1，3軸のみで軌跡運動)
-      wl_cmd[i] = 0.0;
-    }
-    else if (i == 2)
-    {
-      wl_cmd[i] = qm_vel[i] * 0.6905; // 3軸目の指令値を調整(1，3軸のみで軌跡運動)
-    }
-    else
-    {
-      wl_cmd[i] = qm_vel[i];
-    }
+    wl_cmd[i] = qm_vel[i];
     ql_init[i] = qm_first[i];
   }
   flag_init = 0;
@@ -6467,6 +6415,65 @@ void CalcWrGain(void)
   // WAVE_fwm3_wr = axis3.fwm_wr;
   // WAVE_fqs3_wr = axis3.fqs_wr;
   // WAVE_fwl3_wr = axis3.fwl_wr;
+}
+
+void CalcPVGain_yabuki(void)
+{
+  axis1.Kvp_wr = 0.8748;
+  axis1.Kvi_wr = 25.2966;
+  axis1.fwm_wr = -0.1071;
+  axis1.fqs_wr = 1193.0;
+  axis1.fwl_wr = 68.0901;
+  axis1.Kpp_wr = 20.00;
+  axis1.Kfb_wr = 0.400;
+  axis1.Kff_wr = 1.400;
+
+  axis2.Kvp_wr = 0.9212;
+  axis2.Kvi_wr = 42.1610;
+  axis2.fwm_wr = -0.0327;
+  axis2.fqs_wr = 1191.7;
+  axis2.fwl_wr = 89.8096;
+  axis2.Kpp_wr = 20.00;
+  axis2.Kfb_wr = 0.400;
+  axis2.Kff_wr = 1.400;
+  
+  axis3.Kvp_wr = 0.4448;
+  axis3.Kvi_wr = 21.0805;
+  axis3.fwm_wr = -0.1435;
+  axis3.fqs_wr = 155.9;
+  axis3.fwl_wr = 16.9559;
+  axis3.Kpp_wr = 20.00;
+  axis3.Kfb_wr = 0.400;
+  axis3.Kff_wr = 1.400;
+}
+void CalcWrGain_yabuki(void)
+{
+  axis1.Kvp_wr = 0.8748;
+  axis1.Kvi_wr = 25.2966;
+  axis1.fwm_wr = -0.1071;
+  axis1.fqs_wr = 1193.0;
+  axis1.fwl_wr = 68.0901;
+  axis1.Kpp_wr = 20.00;
+  axis1.Kfb_wr = 0.400;
+  axis1.Kff_wr = 1.400;
+  
+  axis2.Kvp_wr = 0.9212;
+  axis2.Kvi_wr = 42.1610;
+  axis2.fwm_wr = -0.0327;
+  axis2.fqs_wr = 1191.7;
+  axis2.fwl_wr = 89.8096;
+  axis2.Kpp_wr = 20.00;
+  axis2.Kfb_wr = 0.400;
+  axis2.Kff_wr = 1.400;
+  
+  axis3.Kvp_wr = 0.4448;
+  axis3.Kvi_wr = 21.0805;
+  axis3.fwm_wr = -0.1435;
+  axis3.fqs_wr = 155.9;
+  axis3.fwl_wr = 16.9559;
+  axis3.Kpp_wr = 20.00;
+  axis3.Kfb_wr = 0.400;
+  axis3.Kff_wr = 1.400;
 }
 
 // 位置・速度制御系可変ゲイン演算関数
