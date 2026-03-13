@@ -4115,7 +4115,7 @@ int CalcHandCmdCircle(float goal[3], float vel_hand[3], float t_wait, float spee
   float path = (PI * D);
   float freq = 1 / (path / (speed / 60.0));
   // float t_task = (1.0 / freq) * 1.5;
-  float t_task = (1.0 / freq) * 4.0;
+  float t_task = (1.0 / freq) * 3.5;
   // const float t_task = 1.5 / freq;
   // const float S1 = mwsin(theta);
   // const float C1 = mwcos(theta);
