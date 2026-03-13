@@ -102,7 +102,7 @@ volatile int flag_delay = 0;      // FF用　1/z^2 遅延フラグ
 volatile int flag_Vdc_setted = 0; // 位置/速度制御切り替えフラグ
 volatile int flag_FBgain = 1;     // パナ指定FBゲイン倍率
 volatile int flag_PPgain = 2;     // 位置Pゲイン
-volatile int flag_FF = 1;         // FF制御フラグ
+volatile int flag_FF = 0;         // FF制御フラグ
 volatile int flag_SOB = 0;        // 状態オブザーバフラグ
 volatile int counter_2 = 0;       // 指令値Z^=2用カウンタ
 volatile int WAVE_LoopCount = 1;
@@ -192,14 +192,14 @@ volatile float WAVE_MRBR3;
 
 /// ゲイン
 // 1軸目
-// volatile float WAVE_Kpp1 = 0.0;
-// volatile float WAVE_Kff1 = 0.0;
-// volatile float WAVE_Kfb1 = 0.0;
-// volatile float WAVE_Kvp1 = 0.0;
-// volatile float WAVE_Kvi1 = 0.0;
-// volatile float WAVE_fwm1 = 0.0;
-// volatile float WAVE_fqs1 = 0.0;
-// volatile float WAVE_fwl1 = 0.0;
+volatile float WAVE_Kpp1 = 0.0;
+volatile float WAVE_Kff1 = 0.0;
+volatile float WAVE_Kfb1 = 0.0;
+volatile float WAVE_Kvp1 = 0.0;
+volatile float WAVE_Kvi1 = 0.0;
+volatile float WAVE_fwm1 = 0.0;
+volatile float WAVE_fqs1 = 0.0;
+volatile float WAVE_fwl1 = 0.0;
 // volatile float WAVE_Kpp1_wr = 0.0;
 // volatile float WAVE_Kff1_wr = 0.0;
 // volatile float WAVE_Kfb1_wr = 0.0;
@@ -208,15 +208,15 @@ volatile float WAVE_MRBR3;
 // volatile float WAVE_fwm1_wr = 0.0;
 // volatile float WAVE_fqs1_wr = 0.0;
 // volatile float WAVE_fwl1_wr = 0.0;
-// 2軸目
-// volatile float WAVE_Kpp2 = 0.0;
-// volatile float WAVE_Kff2 = 0.0;
-// volatile float WAVE_Kfb2 = 0.0;
-// volatile float WAVE_Kvp2 = 0.0;
-// volatile float WAVE_Kvi2 = 0.0;
-// volatile float WAVE_fwm2 = 0.0;
-// volatile float WAVE_fqs2 = 0.0;
-// volatile float WAVE_fwl2 = 0.0;
+// // 2軸目
+volatile float WAVE_Kpp2 = 0.0;
+volatile float WAVE_Kff2 = 0.0;
+volatile float WAVE_Kfb2 = 0.0;
+volatile float WAVE_Kvp2 = 0.0;
+volatile float WAVE_Kvi2 = 0.0;
+volatile float WAVE_fwm2 = 0.0;
+volatile float WAVE_fqs2 = 0.0;
+volatile float WAVE_fwl2 = 0.0;
 // volatile float WAVE_Kpp2_wr = 0.0;
 // volatile float WAVE_Kff2_wr = 0.0;
 // volatile float WAVE_Kfb2_wr = 0.0;
@@ -225,15 +225,15 @@ volatile float WAVE_MRBR3;
 // volatile float WAVE_fwm2_wr = 0.0;
 // volatile float WAVE_fqs2_wr = 0.0;
 // volatile float WAVE_fwl2_wr = 0.0;
-// 3軸目
-// volatile float WAVE_Kpp3 = 0.0;
-// volatile float WAVE_Kff3 = 0.0;
-// volatile float WAVE_Kfb3 = 0.0;
-// volatile float WAVE_Kvp3 = 0.0;
-// volatile float WAVE_Kvi3 = 0.0;
-// volatile float WAVE_fwm3 = 0.0;
-// volatile float WAVE_fqs3 = 0.0;
-// volatile float WAVE_fwl3 = 0.0;
+// // 3軸目
+volatile float WAVE_Kpp3 = 0.0;
+volatile float WAVE_Kff3 = 0.0;
+volatile float WAVE_Kfb3 = 0.0;
+volatile float WAVE_Kvp3 = 0.0;
+volatile float WAVE_Kvi3 = 0.0;
+volatile float WAVE_fwm3 = 0.0;
+volatile float WAVE_fqs3 = 0.0;
+volatile float WAVE_fwl3 = 0.0;
 // volatile float WAVE_Kpp3_wr = 0.0;
 // volatile float WAVE_Kff3_wr = 0.0;
 // volatile float WAVE_Kfb3_wr = 0.0;
@@ -296,15 +296,15 @@ volatile float WAVE_Jl_Wr3; // [kgm^2] 動力学によるJl計算値
 // volatile float WAVE_est_qs3 = 0.0;
 // volatile float WAVE_est_wl3 = 0.0;
 
-// volatile float WAVE_est_conv_wm1 = 0.0;
-// volatile float WAVE_est_conv_qs1 = 0.0;
-// volatile float WAVE_est_conv_wl1 = 0.0;
-// volatile float WAVE_est_conv_wm2 = 0.0;
-// volatile float WAVE_est_conv_qs2 = 0.0;
-// volatile float WAVE_est_conv_wl2 = 0.0;
-// volatile float WAVE_est_conv_wm3 = 0.0;
-// volatile float WAVE_est_conv_qs3 = 0.0;
-// volatile float WAVE_est_conv_wl3 = 0.0;
+volatile float WAVE_est_conv_wm1 = 0.0;
+volatile float WAVE_est_conv_qs1 = 0.0;
+volatile float WAVE_est_conv_wl1 = 0.0;
+volatile float WAVE_est_conv_wm2 = 0.0;
+volatile float WAVE_est_conv_qs2 = 0.0;
+volatile float WAVE_est_conv_wl2 = 0.0;
+volatile float WAVE_est_conv_wm3 = 0.0;
+volatile float WAVE_est_conv_qs3 = 0.0;
+volatile float WAVE_est_conv_wl3 = 0.0;
 
 // volatile float WAVE_est_prop_wm1 = 0.0;
 // volatile float WAVE_est_prop_qs1 = 0.0;
@@ -1334,14 +1334,6 @@ interrupt void ControlFunction(void)
       // // 可変ゲイン計算
       CalcPVGain_yabuki();
       CalcWrGain_yabuki();
-      // if (flag_cont_start != 3)
-      // {
-      //   CalcPVGain();
-      //   CalcWrGain();
-      // }else{
-      //   CalcPVGain_yabuki();
-      //   CalcWrGain_yabuki();
-      // }
       
       // 負荷側情報計算
       //P制御用Wr
@@ -1427,14 +1419,6 @@ interrupt void ControlFunction(void)
         // // 可変ゲイン計算
         CalcPVGain_yabuki();
         CalcWrGain_yabuki();
-        // if (flag_cont_start != 3)
-        // {
-        //   CalcPVGain();
-        //   CalcWrGain();
-        // }else{
-        //   CalcPVGain_yabuki();
-        //   CalcWrGain_yabuki();
-        // }
 
         if (flag_FF_triple == 1)
         {
@@ -1588,7 +1572,7 @@ interrupt void ControlFunction(void)
             axis3.qm_ref = start_go3;
             flag_reposition = 0;
             // 指令値の設定値
-            SetRampParams((motor_cmd[0] - start_go1), (motor_cmd[1] - start_go2), (motor_cmd[2] - start_go3));
+            SetRampParams((motor_cmd[0]-start_go1), (motor_cmd[1]-start_go2), (motor_cmd[2]-start_go3));
           }
           // ランプ指令用変数の設定
 
@@ -2355,15 +2339,15 @@ interrupt void ControlFunction(void)
   //   WAVE_est_wl3 = axis3.est_prop_wl;
   // }
 
-  // WAVE_est_conv_wm1 = axis1.est_conv_wm;
-  // WAVE_est_conv_qs1 = axis1.est_conv_qs;
-  // WAVE_est_conv_wl1 = axis1.est_conv_wl;
-  // WAVE_est_conv_wm2 = axis2.est_conv_wm;
-  // WAVE_est_conv_qs2 = axis2.est_conv_qs;
-  // WAVE_est_conv_wl2 = axis2.est_conv_wl;
-  // WAVE_est_conv_wm3 = axis3.est_conv_wm;
-  // WAVE_est_conv_qs3 = axis3.est_conv_qs;
-  // WAVE_est_conv_wl3 = axis3.est_conv_wl;
+  WAVE_est_conv_wm1 = axis1.est_conv_wm;
+  WAVE_est_conv_qs1 = axis1.est_conv_qs;
+  WAVE_est_conv_wl1 = axis1.est_conv_wl;
+  WAVE_est_conv_wm2 = axis2.est_conv_wm;
+  WAVE_est_conv_qs2 = axis2.est_conv_qs;
+  WAVE_est_conv_wl2 = axis2.est_conv_wl;
+  WAVE_est_conv_wm3 = axis3.est_conv_wm;
+  WAVE_est_conv_qs3 = axis3.est_conv_qs;
+  WAVE_est_conv_wl3 = axis3.est_conv_wl;
 
   // WAVE_est_prop_wm1 = axis1.est_prop_wm;
   // WAVE_est_prop_qs1 = axis1.est_prop_qs;
@@ -2385,38 +2369,32 @@ interrupt void ControlFunction(void)
   // WAVE_est_ISOB_qs3 = axis3.est_ISOB_qs;
   // WAVE_est_ISOB_wl3 = axis3.est_ISOB_wl;
 
-  // WAVE_Kff1 = axis1.Kff;
-  // WAVE_Kfb1 = axis1.Kfb;
-  // WAVE_Kpp1 = axis1.Kpp;
-  // WAVE_Kff1 = axis1.Kff;
-  // WAVE_Kfb1 = axis1.Kfb;
-  // WAVE_Kvp1 = axis1.Kvp;
-  // WAVE_Kvi1 = axis1.Kvi;
-  // WAVE_fwm1 = axis1.fwm;
-  // WAVE_fqs1 = axis1.fqs;
-  // WAVE_fwl1 = axis1.fwl;
+  WAVE_Kpp1 = axis1.Kpp;
+  WAVE_Kff1 = axis1.Kff;
+  WAVE_Kfb1 = axis1.Kfb;
+  WAVE_Kvp1 = axis1.Kvp;
+  WAVE_Kvi1 = axis1.Kvi;
+  WAVE_fwm1 = axis1.fwm;
+  WAVE_fqs1 = axis1.fqs;
+  WAVE_fwl1 = axis1.fwl;
+  
+  WAVE_Kpp2 = axis2.Kpp;
+  WAVE_Kff2 = axis2.Kff;
+  WAVE_Kfb2 = axis2.Kfb;
+  WAVE_Kvp2 = axis2.Kvp;
+  WAVE_Kvi2 = axis2.Kvi;
+  WAVE_fwm2 = axis2.fwm;
+  WAVE_fqs2 = axis2.fqs;
+  WAVE_fwl2 = axis2.fwl;
 
-  // WAVE_Kff2 = axis2.Kff;
-  // WAVE_Kfb2 = axis2.Kfb;
-  // WAVE_Kpp2 = axis2.Kpp;
-  // WAVE_Kff2 = axis2.Kff;
-  // WAVE_Kfb2 = axis2.Kfb;
-  // WAVE_Kvp2 = axis2.Kvp;
-  // WAVE_Kvi2 = axis2.Kvi;
-  // WAVE_fwm2 = axis2.fwm;
-  // WAVE_fqs2 = axis2.fqs;
-  // WAVE_fwl2 = axis2.fwl;
-
-  // WAVE_Kff3 = axis3.Kff;
-  // WAVE_Kfb3 = axis3.Kfb;
-  // WAVE_Kpp3 = axis3.Kpp;
-  // WAVE_Kff3 = axis3.Kff;
-  // WAVE_Kfb3 = axis3.Kfb;
-  // WAVE_Kvp3 = axis3.Kvp;
-  // WAVE_Kvi3 = axis3.Kvi;
-  // WAVE_fwm3 = axis3.fwm;
-  // WAVE_fqs3 = axis3.fqs;
-  // WAVE_fwl3 = axis3.fwl;
+  WAVE_Kpp3 = axis3.Kpp;
+  WAVE_Kff3 = axis3.Kff;
+  WAVE_Kfb3 = axis3.Kfb;
+  WAVE_Kvp3 = axis3.Kvp;
+  WAVE_Kvi3 = axis3.Kvi;
+  WAVE_fwm3 = axis3.fwm;
+  WAVE_fqs3 = axis3.fqs;
+  WAVE_fwl3 = axis3.fwl;
 
   // WAVE_ACC_LW8174_axis = axis2.al; // 加速度センサrad/s^2換算値
   // WAVE_ACC_LW8079 = ACC_LW8079;
@@ -2494,7 +2472,6 @@ void MW_main(void)
 
   // ロボット実験開始時姿勢
   axis1.theta_rl_init = 0.0 * PI / 180.0; // [rad]
-  // axis2.theta_rl_init = 41.280 * PI / 180.0; // [rad]
   axis2.theta_rl_init = 0.0 * PI / 180.0; // [rad]
   axis3.theta_rl_init = 0.0 * PI / 180.0; // [rad]
 
@@ -3129,7 +3106,26 @@ void StateObserver(float Iref, float wM, volatile float *est_wM, volatile float 
   // 以下はサンプルプログラムである。モデルごとに作成し直すこと
   // 作成条件：p=-150 [rad/s] 、Ts=320[us]、
 
-  // 1軸目SOB TM1800パラメータを使用 Ts=320us 初期姿勢：軌跡開始点
+  // 1軸目SOB　初期姿勢：2軸目10deg,3軸目60deg
+  // // A行列
+  // const double a1_11 = 9.1460e-01;
+  // const double a1_12 = -3.6622e+02;
+  // const double a1_13 = 3.6593e-02;
+  // const double a1_21 = 5.3870e-06;
+  // const double a1_22 = 9.9955e-01;
+  // const double a1_23 = -1.9971e-04;
+  // const double a1_31 = 1.5539e-04;
+  // const double a1_32 = 1.8700e+00;
+  // const double a1_33 = 9.9719e-01;
+  // // B行列
+  // const double b1_11 = 1.5688e-01;
+  // const double b1_12 = 8.5141e-02;
+  // const double b1_21 = 1.1186e-07;
+  // const double b1_22 = -3.9612e-06;
+  // const double b1_31 = 6.9782e-08;
+  // const double b1_32 = -1.5406e-04;
+
+  // 1軸目SOB　初期姿勢：2軸目90deg,3軸目-75deg
   // A行列
   const double a1_11 = 0.9531;
   const double a1_12 = 0.1370;
