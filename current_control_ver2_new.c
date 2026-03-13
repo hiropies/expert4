@@ -1606,9 +1606,25 @@ interrupt void ControlFunction(void)
           axis1.qm_ref_z1 = axis1.qm_ref;
           
           axis1.qm_ref = axis1.wm_cmd_z3 * Tp + axis1.qm_ref_z1;
+          // axis1.qm_ref = 0.0;
           LimitPosCmd(&axis1);
 
           axis1.wm_ref = (axis1.qm_ref - axis1.qm) * axis1.Kpp + axis1.Kff * axis1.wm_cmd_z3 - axis1.Kfb * axis1.wm;
+          // axis1.wm_ref = (axis1.qm_ref - axis1.qm) * axis1.Kpp - axis1.Kfb * axis1.wm; // 位置PD制御
+          // axis1.wm_ref = (axis1.qm_ref - axis1.qm) * axis1.Kpp; // 位置P制御
+
+          // static float T2 = 0.0;
+          // if(T2 < 0.5){
+          //   axis1.wm_ref = 0.0;
+          // }else if(T2 >= 0.5 && T2 < 1.5){
+          //   axis1.wm_ref = -10.0;
+          // }else if(T2 >= 1.0){
+          //   axis1.wm_ref = 0.0;
+          // }else{
+          //   axis1.wm_ref = 0.0;
+          // }
+          // T2 += Tp;
+
           axis1.Ipi = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1);
           if (flag_FF == 1)
           {
@@ -1628,8 +1644,7 @@ interrupt void ControlFunction(void)
           else if (flag_FF == 0)
           {
             // 1軸目 速度PI制御＋SFB
-            // axis1.IrefQ = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1) - axis1.Isfb;
-            axis1.IrefQ = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1);
+            axis1.IrefQ = velocity[0].PIcontroller(axis1.wm_ref - axis1.wm, axis1.Kvp, axis1.Kvi, Tp, &velocity[0].uZ1, &velocity[0].yZ1) - axis1.Isfb;
             axis1.I_SOBinput = axis1.IrefQ;
           }
 
@@ -1646,6 +1661,8 @@ interrupt void ControlFunction(void)
           LimitPosCmd(&axis2);
 
           axis2.wm_ref = (axis2.qm_ref - axis2.qm) * axis2.Kpp + axis2.Kff * axis2.wm_cmd_z3 - axis2.Kfb * axis2.wm;
+          // axis2.wm_ref = (axis2.qm_ref - axis2.qm) * axis2.Kpp - axis2.Kfb * axis2.wm; // PD
+          // axis2.wm_ref = (axis2.qm_ref - axis2.qm) * axis2.Kpp; // P
           axis2.Ipi = velocity[1].PIcontroller(axis2.wm_ref - axis2.wm, axis2.Kvp, axis2.Kvi, Tp, &velocity[1].uZ1, &velocity[1].yZ1);
           if (flag_FF == 1)
           {
@@ -6463,24 +6480,33 @@ void CalcPVGain_yabuki(void)
   axis1.fqs = 1193.0;
   axis1.fwl = 68.0901;
   axis1.Kpp = 20.00;
-  axis1.Kfb = 1.2159;
-  axis1.Kff = 1.9359;
+
   axis2.Kvp = 0.9212;
   axis2.Kvi = 42.1610;
   axis2.fwm = -0.0327;
   axis2.fqs = 1191.7;
   axis2.fwl = 89.8096;
   axis2.Kpp = 20.00;
-  axis2.Kfb = 1.1613;
-  axis2.Kff = 1.8813;
+  
   axis3.Kvp = 0.4448;
   axis3.Kvi = 21.0805;
   axis3.fwm = -0.1435;
   axis3.fqs = 155.9;
   axis3.fwl = 16.9559;
   axis3.Kpp = 20.00;
-  axis3.Kfb = 0.0470;
-  axis3.Kff = 0.7670;
+
+  axis1.Kfb = 0.60;
+  axis1.Kff = 1.10;
+  axis2.Kfb = 0.60;
+  axis2.Kff = 1.10;
+  axis3.Kfb = 0.05;
+  axis3.Kff = 0.55;
+  // axis1.Kfb = 0.400;
+  // axis1.Kff = 1.400;
+  // axis2.Kfb = 0.400;
+  // axis2.Kff = 1.400;
+  // axis3.Kfb = 0.400;
+  // axis3.Kff = 1.400;
 }
 void CalcWrGain_yabuki(void)
 {
@@ -6490,8 +6516,6 @@ void CalcWrGain_yabuki(void)
   axis1.fqs_wr = 1193.0;
   axis1.fwl_wr = 68.0901;
   axis1.Kpp_wr = 20.00;
-  axis1.Kfb_wr = 1.2159;
-  axis1.Kff_wr = 1.9359;
   
   axis2.Kvp_wr = 0.9212;
   axis2.Kvi_wr = 42.1610;
@@ -6499,17 +6523,26 @@ void CalcWrGain_yabuki(void)
   axis2.fqs_wr = 1191.7;
   axis2.fwl_wr = 89.8096;
   axis2.Kpp_wr = 20.00;
-  axis2.Kfb_wr = 1.1613;
-  axis2.Kff_wr = 1.8813;
-
+  
   axis3.Kvp_wr = 0.4448;
   axis3.Kvi_wr = 21.0805;
   axis3.fwm_wr = -0.1435;
   axis3.fqs_wr = 155.9;
   axis3.fwl_wr = 16.9559;
   axis3.Kpp_wr = 20.00;
-  axis3.Kfb_wr = 0.0470;
-  axis3.Kff_wr = 0.7670;
+
+  axis1.Kfb_wr = 0.90;
+  axis1.Kff_wr = 1.55;
+  axis2.Kfb_wr = 0.85;
+  axis2.Kff_wr = 1.50;
+  axis3.Kfb_wr = 0.05;
+  axis3.Kff_wr = 0.70;
+  // axis1.Kfb_wr = 0.400;
+  // axis1.Kff_wr = 1.400;
+  // axis2.Kfb_wr = 0.400;
+  // axis2.Kff_wr = 1.400;
+  // axis3.Kfb_wr = 0.400;
+  // axis3.Kff_wr = 1.400;
 }
 
 // 位置・速度制御系可変ゲイン演算関数
@@ -7345,7 +7378,7 @@ void SetGain(Robot *robo)
   // robo[0].KiiD = 2.7856e3; // PI電流制御器 積分ゲイン		KiD = KpD/T
 
   // Ts = 160us
-  robo[0].KpiQ = 10.8747;   // PI電流制御器 比例ゲイン		KpQ = ( 1-exp(-Wcd*Ts) )/( (Ts + T)/(T*Rq)*(1-exp(-Rq/Lq*Ts)) )
+  robo[0].KpiQ = 10.8747;  // PI電流制御器 比例ゲイン	KpQ = ( 1-exp(-Wcd*Ts) )/( (Ts + T)/(T*Rq)*(1-exp(-Rq/Lq*Ts)) )
   robo[0].KiiQ = 2.5363e3; // PI電流制御器 積分ゲイン		KiQ = KpQ/T
   robo[0].KpiD = 8.6122;   // PI電流制御器 比例ゲイン		KpD = (1-exp(-Wcd*Ts))/( (Ts+T)/(T*Rd)*(1-exp(-Rd/Ld*Ts)) )
   robo[0].KiiD = 2.5363e3; // PI電流制御器 積分ゲイン		KiD = KpD/T
