@@ -1332,14 +1332,16 @@ interrupt void ControlFunction(void)
       CalcJlWr(joint);
 
       // // 可変ゲイン計算
-      if flag_cont_start != 3
-      {
-        CalcPVGain();
-        CalcWrGain();
-      }else{
-        CalcPVGain_yabuki();
-        CalcWrGain_yabuki();
-      }
+      CalcPVGain_yabuki();
+      CalcWrGain_yabuki();
+      // if (flag_cont_start != 3)
+      // {
+      //   CalcPVGain();
+      //   CalcWrGain();
+      // }else{
+      //   CalcPVGain_yabuki();
+      //   CalcWrGain_yabuki();
+      // }
       
       // 負荷側情報計算
       //P制御用Wr
@@ -1423,16 +1425,16 @@ interrupt void ControlFunction(void)
         }
 
         // // 可変ゲイン計算
-        if (flag_cont_start != 3)
-        {
-          CalcPVGain();
-          CalcWrGain();
-        }
-        else
-        {
-          CalcPVGain_yabuki();
-          CalcWrGain_yabuki();
-        }
+        CalcPVGain_yabuki();
+        CalcWrGain_yabuki();
+        // if (flag_cont_start != 3)
+        // {
+        //   CalcPVGain();
+        //   CalcWrGain();
+        // }else{
+        //   CalcPVGain_yabuki();
+        //   CalcWrGain_yabuki();
+        // }
 
         if (flag_FF_triple == 1)
         {
@@ -6419,32 +6421,30 @@ void CalcWrGain(void)
 
 void CalcPVGain_yabuki(void)
 {
-  axis1.Kvp_wr = 0.8748;
-  axis1.Kvi_wr = 25.2966;
-  axis1.fwm_wr = -0.1071;
-  axis1.fqs_wr = 1193.0;
-  axis1.fwl_wr = 68.0901;
-  axis1.Kpp_wr = 20.00;
-  axis1.Kfb_wr = 0.400;
-  axis1.Kff_wr = 1.400;
-
-  axis2.Kvp_wr = 0.9212;
-  axis2.Kvi_wr = 42.1610;
-  axis2.fwm_wr = -0.0327;
-  axis2.fqs_wr = 1191.7;
-  axis2.fwl_wr = 89.8096;
-  axis2.Kpp_wr = 20.00;
-  axis2.Kfb_wr = 0.400;
-  axis2.Kff_wr = 1.400;
-  
-  axis3.Kvp_wr = 0.4448;
-  axis3.Kvi_wr = 21.0805;
-  axis3.fwm_wr = -0.1435;
-  axis3.fqs_wr = 155.9;
-  axis3.fwl_wr = 16.9559;
-  axis3.Kpp_wr = 20.00;
-  axis3.Kfb_wr = 0.400;
-  axis3.Kff_wr = 1.400;
+  axis1.Kvp = 0.8748;
+  axis1.Kvi = 25.2966;
+  axis1.fwm = -0.1071;
+  axis1.fqs = 1193.0;
+  axis1.fwl = 68.0901;
+  axis1.Kpp = 20.00;
+  axis1.Kfb = 1.2159;
+  axis1.Kff = 1.9359;
+  axis2.Kvp = 0.9212;
+  axis2.Kvi = 42.1610;
+  axis2.fwm = -0.0327;
+  axis2.fqs = 1191.7;
+  axis2.fwl = 89.8096;
+  axis2.Kpp = 20.00;
+  axis2.Kfb = 1.1613;
+  axis2.Kff = 1.8813;
+  axis3.Kvp = 0.4448;
+  axis3.Kvi = 21.0805;
+  axis3.fwm = -0.1435;
+  axis3.fqs = 155.9;
+  axis3.fwl = 16.9559;
+  axis3.Kpp = 20.00;
+  axis3.Kfb = 0.0470;
+  axis3.Kff = 0.7670;
 }
 void CalcWrGain_yabuki(void)
 {
@@ -6454,8 +6454,8 @@ void CalcWrGain_yabuki(void)
   axis1.fqs_wr = 1193.0;
   axis1.fwl_wr = 68.0901;
   axis1.Kpp_wr = 20.00;
-  axis1.Kfb_wr = 0.400;
-  axis1.Kff_wr = 1.400;
+  axis1.Kfb_wr = 1.2159;
+  axis1.Kff_wr = 1.9359;
   
   axis2.Kvp_wr = 0.9212;
   axis2.Kvi_wr = 42.1610;
@@ -6463,17 +6463,17 @@ void CalcWrGain_yabuki(void)
   axis2.fqs_wr = 1191.7;
   axis2.fwl_wr = 89.8096;
   axis2.Kpp_wr = 20.00;
-  axis2.Kfb_wr = 0.400;
-  axis2.Kff_wr = 1.400;
-  
+  axis2.Kfb_wr = 1.1613;
+  axis2.Kff_wr = 1.8813;
+
   axis3.Kvp_wr = 0.4448;
   axis3.Kvi_wr = 21.0805;
   axis3.fwm_wr = -0.1435;
   axis3.fqs_wr = 155.9;
   axis3.fwl_wr = 16.9559;
   axis3.Kpp_wr = 20.00;
-  axis3.Kfb_wr = 0.400;
-  axis3.Kff_wr = 1.400;
+  axis3.Kfb_wr = 0.0470;
+  axis3.Kff_wr = 0.7670;
 }
 
 // 位置・速度制御系可変ゲイン演算関数
