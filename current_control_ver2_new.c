@@ -3127,41 +3127,41 @@ void StateObserver(float Iref, float wM, volatile float *est_wM, volatile float 
 
   // 1軸目SOB　初期姿勢：2軸目00deg,3軸目00deg
   // A行列
-  const double a1_11 = 0.9632;
-  const double a1_12 = 0.0684;
-  const double a1_13 = 0.1014;
-  const double a1_21 = -2.4806e-10;
-  const double a1_22 = 0.9632;
-  const double a1_23 = -0.0827;
-  const double a1_31 = 0.0;
-  const double a1_32 = 0.0;
-  const double a1_33 = 0.9632;
+  const double a1_11 = 0.860036430344327;
+  const double a1_12 = -276.463329905868;
+  const double a1_13 = 0.0442374110236822;
+  const double a1_21 = 2.2484e-5;
+  const double a1_22 = 0.9996;
+  const double a1_23 = -3.1994e-4;
+  const double a1_31 = -7.6004e-4;
+  const double a1_32 = 0.7838;
+  const double a1_33 = 0.9998;
   // B行列
-  const double b1_11 = -0.3137;
-  const double b1_12 = -0.1904;
-  const double b1_21 = 0.1841;
-  const double b1_22 = 0.0981;
-  const double b1_31 = 0.1467;
-  const double b1_32 = 0.0394;
+  const double b1_11 = 0.1059;
+  const double b1_12 = 0.1395;
+  const double b1_21 = 1.1103e-7;
+  const double b1_22 = -2.0388e-5;
+  const double b1_31 = 2.9013e-8;
+  const double b1_32 = 7.6086e-4;
 
   // 2軸目SOB　
   // 初期姿勢：2軸目0.0deg,3軸目0.0deg JL = 23.9
-  const double a2_11 = 0.9632;
-  const double a2_12 = 0.1035;
-  const double a2_13 = -0.0758;
-  const double a2_21 = -3.0168e-10;
-  const double a2_22 = 0.9632;
-  const double a2_23 = 0.0604;
-  const double a2_31 = 0.0;
-  const double a2_32 = 0.0;
-  const double a2_33 = 0.9632;
+  const double a2_11 = 0.8606;
+  const double a2_12 = -565.4194;
+  const double a2_13 = 0.0905;
+  const double a2_21 = 1.0549e-5;
+  const double a2_22 = 0.9992;
+  const double a2_23 = -3.1989e-4;
+  const double a2_31 = -2.2348e-4;
+  const double a2_32 = 1.3847;
+  const double a2_33 = 0.9997;
   // B行列
-  const double b2_11 = 0.2516;
-  const double b2_12 = 0.2030;
-  const double b2_21 = -0.1671;
-  const double b2_22 = -0.0820;
-  const double b2_31 = 0.0968;
-  const double b2_32 = 0.0340;
+  const double b2_11 = 0.1249;
+  const double b2_12 = 0.1385;
+  const double b2_21 = 1.3222e-7;
+  const double b2_22 = -8.4332e-6;
+  const double b2_31 = 6.1054e-8;
+  const double b2_32 = 2.2495e-4;
   /*
   // 初期姿勢：2軸目72deg,3軸目-72deg JL = 24.30
   // A行列
@@ -3203,22 +3203,22 @@ void StateObserver(float Iref, float wM, volatile float *est_wM, volatile float 
   
   // 3軸目SOB　
   // A行列
-  const double a3_11 = 0.9632;
-  const double a3_12 = 0.0852;
-  const double a3_13 = -0.1256;
-  const double a3_21 = 0.0;
-  const double a3_22 = 0.9632;
-  const double a3_23 = 0.0784;
-  const double a3_31 = 0.0;
-  const double a3_32 = -1.6730e-10;
-  const double a3_33 = 0.9632;
+  const double a3_11 = 0.8638;
+  const double a3_12 = -2.1679e3;
+  const double a3_13 = 0.3471;
+  const double a3_21 = 2.0482e-6;
+  const double a3_22 = 0.9967;
+  const double a3_23 = -3.1961e-4;
+  const double a3_31 = 1.7050e-4;
+  const double a3_32 = 5.0444;
+  const double a3_33 = 0.9989;
   // B行列
-  const double b3_11 = 0.4267;
-  const double b3_12 = 0.2059;
-  const double b3_21 = -0.2543;
-  const double b3_22 = -0.0762;
-  const double b3_31 = 0.1274;
-  const double b3_32 = 0.0219;
+  const double b3_11 = 0.6435;
+  const double b3_12 = 0.1330;
+  const double b3_21 = 7.3576e-7;
+  const double b3_22 = 2.3411e-7;
+  const double b3_31 = 1.2389e-6;
+  const double b3_32 = -1.6474e-4;
 
   // 状態変数の定義
   static float est_wM_Z1[3] = {0}, est_Qs_Z1[3] = {0}, est_wL_Z1[3] = {0};
